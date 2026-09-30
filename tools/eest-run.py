@@ -7,8 +7,9 @@ Usage: eest-run.py GUEST.elf MANIFEST.tsv [--jobs N] [--limit N] [--filter S]
                    [--labels FILE]
 
 Classification mirrors evm-asm/scripts/eest-specref-check.sh:
-  root = bytes 0:32, succ = byte 32, tail = bytes 33:69 (69-byte results);
-  other lengths are compared byte-for-byte ("malformed" sentinel path).
+  root = bytes 0:32, succ = byte 32, tail = bytes 33:43 (chain_id, schema_id;
+  43-byte results); a zero schema_id (the decode-failure sentinel) is compared
+  byte-for-byte ("malformed" path).
 Also records the consumed instruction count reported by spike_run
 ("halted cleanly steps=N") per case and prints a summary.
 """
@@ -97,13 +98,14 @@ def run_case(elf, row, out_dir, use_zisk):
     if os.path.exists(out):
         raw = open(out, "rb").read()
         # output region is zero-padded to SPIKE_OUTPUT_LEN; the SSZ result
-        # length is 69 (normal) or 61 (sentinel). Trim by expected length.
+        # length is 43 bytes. Trim by expected length.
         n = len(expected_hex) // 2
         actual = raw[:n].hex()
         if len(raw) > 33 and raw[32] == 0xEE:
             trap = raw[33]
         dbg = raw[n] if len(raw) > n else 0   # guest debug bytes: fail class, code
-        if len(raw) > n + 1: dbg = f"{dbg}/{raw[n+1]}"
+        # the guest also records the detail code of a caught failure at OUTPUT_ADDR+70
+        if len(raw) > 70: dbg = f"{dbg}/{raw[70]}"
         if len(raw) > 100:
             stage_marker = raw[100]
     return dict(label=label, rc=rc, steps=steps, secs=dt, expected=expected_hex,
@@ -113,9 +115,11 @@ def classify(r):
     e, a = r["expected"], r["actual"]
     if r["rc"] != 0 or not a:
         return "ERROR", ""
-    if len(e) != 138:
+    # 43-byte StatelessValidationResult: root(32) succ(1) chain_id(8) schema_id(2).
+    # A zero schema_id is the decode-failure sentinel ("malformed").
+    if len(e) != 86 or e[82:86] == "0000":
         return ("PASS(malformed)" if e == a else "FAIL[malformed]"), ""
-    root = e[0:64] == a[0:64]; succ = e[64:66] == a[64:66]; tail = e[66:138] == a[66:138]
+    root = e[0:64] == a[0:64]; succ = e[64:66] == a[64:66]; tail = e[66:86] == a[66:86]
     tag = "/".join(["root" if root else "----", "succ" if succ else "----", "tail" if tail else "----"])
     if root and succ and tail and not a.endswith("+"):
         return "PASS(full)", tag
