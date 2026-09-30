@@ -87,22 +87,22 @@ exception TxErr : 1;
 
 /* Gas.lean GasCosts + Transactions.lean constants */
 #define TX_BASE 12000
-#define TX_CREATE 32000
-#define TX_VALUE_COST 4244
-#define TRANSFER_LOG_COST 1756
+#define TX_VALUE_COST 6000
 #define TX_DATA_TOKEN_STANDARD 4
 #define TX_DATA_TOKEN_FLOOR 16
 #define COLD_ACCOUNT_ACCESS 3000
-#define COLD_STORAGE_ACCESS 3000
-#define ACCOUNT_WRITE 8000
-#define CREATE_ACCESS 11000
+#define WARM_ACCESS 100
+#define COLD_STORAGE_ACCESS 2100
+#define ACCOUNT_WRITE 9000
+#define CREATE_ACCESS 12000
 #define CODE_INIT_PER_WORD 2
-#define TX_ACCESS_LIST_ADDRESS COLD_ACCOUNT_ACCESS
-#define TX_ACCESS_LIST_STORAGE_KEY COLD_STORAGE_ACCESS
+#define TX_ACCESS_LIST_ADDRESS (COLD_ACCOUNT_ACCESS - WARM_ACCESS)
+#define TX_ACCESS_LIST_STORAGE_KEY (COLD_STORAGE_ACCESS - WARM_ACCESS)
 #define REGULAR_PER_AUTH_BASE_COST 7816
 #define ACCESS_LIST_ADDRESS_FLOOR_TOKENS 80
 #define ACCESS_LIST_STORAGE_KEY_FLOOR_TOKENS 128
 #define TX_MAX_GAS_LIMIT 16777216
+#define TX_MAX_TOTAL_GAS_LIMIT 4294967295
 #define MAX_CODE_SIZE 65536
 #define MAX_INIT_CODE_SIZE 131072
 
@@ -846,22 +846,15 @@ fun 1 recover_sender(1 tx, 1 out20) {
   return 0;
 }
 
-/* recover_sender_from_public_key(chain_id, tx, public_key): recover and
-   compare with the supplied 65-byte 0x04 ++ x ++ y key (TxErr 47 on
-   mismatch); the address goes to out20. */
-fun 1 recover_sender_from_public_key(1 tx, 1 chain_id, 1 pubkey65, 1 out20) {
+/* recover_sender(chain_id, tx): recover the sender address with an explicit
+   chain id (the block's); out20 receives the address. */
+fun 1 recover_sender_with_chain_id(1 tx, 1 chain_id, 1 out20) {
   var 1 mark = heap_mark();
-  var 1 pk = alloc(64);
-  recover_transaction_public_key(tx, chain_id, pk);
-  var 1 eq = memeq(pubkey65 + 1, pk, 64);
+  var 1 pk = alloc(72);
+  st8 pk, 4;
+  recover_transaction_public_key(tx, chain_id, pk + 1);
+  sender_address_from_public_key(pk, out20);
   heap_release(mark);
-  if (ld8 pubkey65) != 4 {
-    throw TxErr 47;
-  }
-  if eq == 0 {
-    throw TxErr 47;
-  }
-  sender_address_from_public_key(pubkey65, out20);
   return 0;
 }
 
@@ -893,9 +886,6 @@ fun {1,1,1} calculate_intrinsic_cost(1 tx, 1 sender) {
   var init_code_gas = 0;
   if to == 0 {
     recipient_regular_gas = CREATE_ACCESS;
-    if value_zero == 0 {
-      recipient_regular_gas = recipient_regular_gas + TRANSFER_LOG_COST;
-    }
     /* init_code_cost = CODE_INIT_PER_WORD * ceil32(len) / 32 */
     init_code_gas = CODE_INIT_PER_WORD * ((data_n + 31) >>> 5);
   } else {
@@ -903,7 +893,7 @@ fun {1,1,1} calculate_intrinsic_cost(1 tx, 1 sender) {
     if is_self_transfer == 0 {
       recipient_regular_gas = COLD_ACCOUNT_ACCESS;
       if value_zero == 0 {
-        recipient_regular_gas = recipient_regular_gas + TRANSFER_LOG_COST + TX_VALUE_COST;
+        recipient_regular_gas = recipient_regular_gas + TX_VALUE_COST;
       }
     }
   }
@@ -937,10 +927,14 @@ fun {1,1,1} calculate_intrinsic_cost(1 tx, 1 sender) {
 /* validate_transaction(tx, sender): the intrinsic cost, or TxErr
    60 insufficient intrinsic gas, 61 insufficient calldata floor,
    62 code size too large, 63 regular > TX_MAX_GAS_LIMIT,
-   64 floor > TX_MAX_GAS_LIMIT, 65 nonce too high (>= 2^64 - 1). */
+   64 floor > TX_MAX_GAS_LIMIT, 65 nonce too high (>= 2^64 - 1),
+   66 gas limit > TX_MAX_TOTAL_GAS_LIMIT. */
 fun {1,1,1} validate_transaction(1 tx, 1 sender) {
   var {1,1,1} ic = calculate_intrinsic_cost(tx, sender);
   var gas = lds 1 (tx + TX_GAS);
+  if gas >+ TX_MAX_TOTAL_GAS_LIMIT {
+    throw TxErr 66;
+  }
   if (ic.0 + ic.1) >+ gas {
     throw TxErr 60;
   }

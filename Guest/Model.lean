@@ -74,10 +74,10 @@ def inputArenaSize : Word := 1073741824
 /-- Largest input blob the architecture can present: the input region minus the
 16-byte framing (`[8B zero meta][8B LE len]`). -/
 def maxInputBytes : Nat := 1073741824 - 16
-/-- `OUTPUT_ADDR`: start of the public output region. -/
-def outputAddr : Word := 2684420096
+/-- `OUTPUT_ADDR` (0xa0410000, ZisK >= 1.1.0-alpha): start of the public output region. -/
+def outputAddr : Word := 2688614400
 /-- `SCRATCH_BASE`: first byte after the output/debug prefix. -/
-def scratchBase : Word := 2684424192
+def scratchBase : Word := 2688618496
 /-- `HEAP_BASE`: the Pancake heap start, `@base`. -/
 def heapBase : Word := 2701131776
 /-- `HEAP_END`: end of the Pancake heap. -/

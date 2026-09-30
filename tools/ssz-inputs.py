@@ -10,8 +10,8 @@ form `tools/make-inputs.sh` produces, so `lake exe run-guest` and
 is the only way to get inputs that actually decode.
 
 Cases: a minimal well-formed StatelessInput; variants with non-empty extra
-data, transactions, withdrawals, block access list, witness lists, public keys
-and fork activations; the gas limit at 1, 200M and 2^64-1; single-byte
+data, transactions, withdrawals, block access list, witness lists and chain
+ids; the gas limit at 1, 200M and 2^64-1; single-byte
 mutations; truncations. With --fuzz, also every SSZ offset field of two base
 inputs set to each of eight boundary values -- the bytes a hand-written mirror
 of the decoder is most likely to disagree on.
@@ -103,19 +103,11 @@ def witness(state=(), codes=(), headers=()):
                      [var_list(state), var_list(codes), var_list(headers)])
 
 
-def chain_config(chain_id=1, bn=None, ts=None):
-    activation = container([None, None],
-                           [b'' if bn is None else u64(bn),
-                            b'' if ts is None else u64(ts)])
-    return container([u64(chain_id), None], [container([None], [activation])])
-
-
-def stateless_input(pl=None, wit=None, cc=None, pubkeys=b''):
-    body = container([None] * 4,
+def stateless_input(pl=None, wit=None, chain_id=1):
+    """StatelessInput = Container[new_payload_request, witness, chain_id: uint64]."""
+    body = container([None, None, u64(chain_id)],
                      [new_payload_request(pl if pl is not None else payload()),
-                      wit if wit is not None else witness(),
-                      cc if cc is not None else chain_config(),
-                      pubkeys])
+                      wit if wit is not None else witness()])
     return bytes([21, 1]) + body     # schema id, then the SSZ body
 
 
@@ -126,10 +118,10 @@ def pack(blob):
 def offset_positions(blob):
     """Byte positions of the u32 offset fields, by walking the layout."""
     positions, body = {}, 2
-    for index in range(4):
+    for index in range(2):
         positions[f'si{index}'] = body + index * 4
-    o_npr, o_wit, o_cc, _o_pk = (
-        struct.unpack_from('<I', blob, body + index * 4)[0] for index in range(4))
+    o_npr, o_wit = (
+        struct.unpack_from('<I', blob, body + index * 4)[0] for index in range(2))
     npr = body + o_npr
     for name, delta in (('npr_pl', 0), ('npr_vh', 4), ('npr_rq', 40)):
         positions[name] = npr + delta
@@ -143,11 +135,6 @@ def offset_positions(blob):
     wit = body + o_wit
     for index in range(3):
         positions[f'wit{index}'] = wit + index * 4
-    cc = body + o_cc
-    positions['cc_fork'] = cc + 8
-    positions['fork_act'] = cc + 12
-    positions['act0'] = cc + 16
-    positions['act1'] = cc + 20
     return positions
 
 
@@ -163,8 +150,7 @@ def base_cases():
         'wd1': stateless_input(payload(withdrawals=bytes(44))),
         'wit3': stateless_input(wit=witness(state=[bytes(5), bytes(1024)],
                                             codes=[bytes(3)], headers=[bytes(7)])),
-        'chain7': stateless_input(cc=chain_config(chain_id=7, bn=99, ts=1234)),
-        'pk2': stateless_input(pubkeys=bytes(130)),
+        'chain7': stateless_input(chain_id=7),
     }
     base = cases['minimal']
     rng = random.Random(20260909)
@@ -190,8 +176,7 @@ def fuzz_cases():
                        withdrawals=bytes(88), bal=bytes(96), slot=5),
             wit=witness(state=[bytes(2), bytes(33)], codes=[bytes(1), bytes(40)],
                         headers=[bytes(64)]),
-            cc=chain_config(chain_id=11155111, bn=1, ts=2),
-            pubkeys=bytes(65 * 3)),
+            chain_id=11155111),
     }
     cases = {}
     for base_name, blob in bases.items():

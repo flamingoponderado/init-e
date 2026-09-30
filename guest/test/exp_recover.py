@@ -1,94 +1,84 @@
 """Oracle for t_recover.pnk.
 
-StatelessInput carries one uncompressed SEC1 public key per payload
-transaction.  The guest verifies each key by recovering it from the
-transaction signature; once that equality is established, the sender
-address is simply keccak256(public_key[1:])[12:].  This oracle therefore
-does not duplicate secp256k1 arithmetic.  Malformed or missing keys model
-the zeroed output used for a TxErr path.
+StatelessInput no longer carries public-key hints (tests-zkevm@v21.0.1), so the
+guest recovers every sender from the transaction signature alone. This oracle
+recovers the same sender independently: it decodes each payload transaction with
+exp_tx.py (the strict-RLP Python reference), derives the signing hash and
+recovery id as the spec does, and recovers the public key with plain big-integer
+secp256k1 arithmetic. A transaction that fails decoding, signature validation
+or recovery yields a zeroed record, matching the guest's TxErr path.
 """
+import importlib.util
 import os
 import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "tools"))
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(HERE, "..", "..", "tools"))
 import pyref
 
+_spec = importlib.util.spec_from_file_location("exp_tx", os.path.join(HERE, "exp_tx.py"))
+exp_tx = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(exp_tx)
 
-PUBKEY_SIZE = 65
-PAYLOAD_FIXED = 540
-PAYLOAD_TXS_OFFSET = 504
-PAYLOAD_WITHDRAWALS_OFFSET = 508
-NPR_FIXED = 44
-SI_FIXED = 16
-
-
-def u32(data, offset):
-    end = offset + 4
-    if offset < 0 or end > len(data):
-        raise ValueError("truncated SSZ uint32")
-    return int.from_bytes(data[offset:end], "little")
+P = 2**256 - 2**32 - 977
+N = exp_tx.SECP256K1N
+GX = 0x79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798
+GY = 0x483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8
 
 
-def checked_offsets(offsets, fixed, length):
-    if any(offset < fixed or offset > length for offset in offsets):
-        raise ValueError("invalid SSZ container offset")
-    if offsets != sorted(offsets) or offsets[0] != fixed:
-        raise ValueError("invalid SSZ container offset order")
+def _add(a, b):
+    if a is None:
+        return b
+    if b is None:
+        return a
+    if a[0] == b[0] and (a[1] + b[1]) % P == 0:
+        return None
+    if a == b:
+        m = 3 * a[0] * a[0] * pow(2 * a[1], -1, P) % P
+    else:
+        m = (b[1] - a[1]) * pow(b[0] - a[0], -1, P) % P
+    x = (m * m - a[0] - b[0]) % P
+    return (x, (m * (a[0] - x) - a[1]) % P)
 
 
-def transaction_count(body, new_payload_offset, new_payload_end):
-    npr = body[new_payload_offset:new_payload_end]
-    if len(npr) < NPR_FIXED:
-        raise ValueError("truncated NewPayloadRequest")
-    payload_offset = u32(npr, 0)
-    versioned_hashes_offset = u32(npr, 4)
-    requests_offset = u32(npr, 40)
-    checked_offsets(
-        [payload_offset, versioned_hashes_offset, requests_offset],
-        NPR_FIXED,
-        len(npr),
-    )
-    payload = npr[payload_offset:versioned_hashes_offset]
-    if len(payload) < PAYLOAD_FIXED:
-        raise ValueError("truncated ExecutionPayload")
-    txs_offset = u32(payload, PAYLOAD_TXS_OFFSET)
-    withdrawals_offset = u32(payload, PAYLOAD_WITHDRAWALS_OFFSET)
-    if not PAYLOAD_FIXED <= txs_offset <= withdrawals_offset <= len(payload):
-        raise ValueError("invalid ExecutionPayload offsets")
-    txs = payload[txs_offset:withdrawals_offset]
-    if not txs:
-        return 0
-    first_offset = u32(txs, 0)
-    if first_offset == 0 or first_offset % 4:
-        raise ValueError("invalid transaction list offset")
-    return first_offset // 4
+def _mul(k, pt):
+    out = None
+    while k:
+        if k & 1:
+            out = _add(out, pt)
+        pt = _add(pt, pt)
+        k >>= 1
+    return out
+
+
+def recover_address(h, r, s, recid):
+    """Address of the signer of hash h, or None when recovery fails."""
+    x = r
+    y2 = (pow(x, 3, P) + 7) % P
+    y = pow(y2, (P + 1) // 4, P)
+    if y * y % P != y2:
+        return None
+    if (y & 1) != (recid & 1):
+        y = P - y
+    z = int.from_bytes(h, "big")
+    rinv = pow(r, -1, N)
+    q = _add(_mul(s * rinv % N, (x, y)), _mul((-z * rinv) % N, (GX, GY)))
+    if q is None:
+        return None
+    return pyref.keccak256(q[0].to_bytes(32, "big") + q[1].to_bytes(32, "big"))[12:]
 
 
 def expected(blob):
-    if len(blob) < 2 or blob[:2] != b"\x15\x01":
-        raise ValueError("missing Amsterdam stateless-input schema id")
     body = blob[2:]
-    if len(body) < SI_FIXED:
-        raise ValueError("truncated StatelessInput")
-    offsets = [u32(body, i * 4) for i in range(4)]
-    checked_offsets(offsets, SI_FIXED, len(body))
-    npr_offset, witness_offset, chain_config_offset, public_keys_offset = offsets
-    count = transaction_count(body, npr_offset, witness_offset)
-    public_keys = [
-        body[i : i + PUBKEY_SIZE]
-        for i in range(public_keys_offset, len(body), PUBKEY_SIZE)
-    ]
-    if len(body[public_keys_offset:]) % PUBKEY_SIZE:
-        raise ValueError("public-key list is not a multiple of 65 bytes")
-
-    output = bytearray()
-    for i in range(count):
-        if i >= len(public_keys) or len(public_keys[i]) != PUBKEY_SIZE:
-            output.extend(b"\x00" * 20)
-            continue
-        public_key = public_keys[i]
-        if public_key[0] != 4:
-            output.extend(b"\x00" * 20)
-            continue
-        output.extend(pyref.keccak256(public_key[1:])[12:])
-    return bytes(output)
+    chain_id = int.from_bytes(body[8:16], "little")
+    out = bytearray()
+    for raw in exp_tx.fixture_txs(blob):
+        addr = None
+        try:
+            tx = exp_tx.decode_transaction(raw)
+            recid, h = exp_tx.signature_recovery_parameters(tx, chain_id)
+            addr = recover_address(h, tx["r"], tx["s"], recid)
+        except exp_tx.TxErr:
+            pass
+        out.extend(addr if addr is not None else b"\x00" * 20)
+    return bytes(out)

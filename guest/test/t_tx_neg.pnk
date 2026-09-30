@@ -1767,8 +1767,8 @@ fun 1 main() {
   st8 buf + 1, 1;
   st8 buf + 2, 10;
   st8 buf + 3, 130;
-  st8 buf + 4, 89;
-  st8 buf + 5, 226;
+  st8 buf + 4, 93;
+  st8 buf + 5, 202;
   st8 buf + 6, 128;
   st8 buf + 7, 128;
   st8 buf + 9, 27;

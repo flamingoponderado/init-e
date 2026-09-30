@@ -323,6 +323,73 @@ fun 1 mix_in_length(1 root, 1 len, 1 out) {
   return 0;
 }
 
+/* merkleize_progressive(chunks) (EIP-7916): the chunks are split into
+   subtrees of 1, 4, 16, ... leaves; the root is
+   H(merkleize(first subtree), merkleize_progressive(rest)), with an empty
+   rest contributing 32 zero bytes. Writes 32 bytes at out. */
+fun 1 merkleize_progressive(1 p, 1 n, 1 out) {
+  var 1 mark = heap_mark();
+  var 1 roots = alloc(24 * 32);
+  var 1 acc = alloc(32);
+  var k = 0;
+  var off = 0;
+  var size = 1;
+  while off <+ n {
+    var cnt = n - off;
+    if size <+ cnt {
+      cnt = size;
+    }
+    merkleize(p + off * 32, cnt, size, roots + k * 32);
+    off = off + size;
+    size = size << 2;
+    k = k + 1;
+  }
+  memzero(acc, 32);
+  while k != 0 {
+    k = k - 1;
+    sha256_pair(roots + k * 32, acc, acc);
+  }
+  memcpy(out, acc, 32);
+  heap_release(mark);
+  return 0;
+}
+
+/* Root of a ProgressiveList whose element roots (or packed chunks) are the
+   n 32-byte words at roots; len is the list length mixed in. */
+fun 1 htr_plist_chunks(1 roots, 1 n, 1 len, 1 out) {
+  merkleize_progressive(roots, n, out);
+  mix_in_length(out, len, out);
+  return 0;
+}
+
+/* hash_tree_root of a ProgressiveByteList. */
+fun 1 htr_pbytes(1 p, 1 n, 1 out) {
+  var 1 mark = heap_mark();
+  var {1,1} pk = pack_bytes(p, n);
+  htr_plist_chunks(pk.0, pk.1, n, out);
+  heap_release(mark);
+  return 0;
+}
+
+/* Root of a ProgressiveContainer with n (all active) fields whose field
+   roots are the n 32-byte words at ch: H(merkleize_progressive(ch),
+   active_fields bitvector chunk). */
+fun 1 htr_pcontainer(1 ch, 1 n, 1 out) {
+  var 1 mark = heap_mark();
+  var 1 tmp = alloc(64);
+  merkleize_progressive(ch, n, tmp);
+  var 1 act = tmp + 32;
+  memzero(act, 32);
+  var i = 0;
+  while i < n {
+    st8 act + (i >>> 3), (ld8 (act + (i >>> 3))) | (1 << (i & 7));
+    i = i + 1;
+  }
+  sha256_pair(tmp, act, out);
+  heap_release(mark);
+  return 0;
+}
+
 /* Pack the n bytes at p into zero-padded 32-byte chunks in a fresh buffer.
    Returns <chunks, count>. Caller owns the heap mark. */
 fun {1,1} pack_bytes(1 p, 1 n) {
@@ -445,18 +512,6 @@ fun 1 ssz_fixed_list_count(1 len, 1 sz, 1 lim) {
   return qr.0;
 }
 
-/* Decode List[uint64, 1] at p (the optional fork activation value).
-   Returns <present, value>. */
-fun {1,1} ssz_optional_u64(1 p, 1 len) {
-  if len == 0 {
-    return <0, 0>;
-  }
-  if len != 8 {
-    ssz_fail(40);
-  }
-  return <1, LD_LE64(p)>;
-}
-
 /* ---- ExecutionPayload ------------------------------------------------ */
 
 fun 1 decode_payload(1 p, 1 len) {
@@ -481,25 +536,15 @@ fun 1 decode_payload(1 p, 1 len) {
   }
   st pl + PL_EXTRA, p + o_extra;
   st pl + PL_EXTRA_N, o_txs - o_extra;
-  /* transactions: List[ByteList[2^30], 2^20] */
-  var {1,1} txs = ssz_split_var_list(p + o_txs, o_wd - o_txs, MAX_TRANSACTIONS_PER_PAYLOAD);
+  /* transactions: ProgressiveList[ProgressiveByteList] (no limits) */
+  var {1,1} txs = ssz_split_var_list(p + o_txs, o_wd - o_txs, SSZ_UNBOUNDED);
   st pl + PL_TXS, txs.0;
   st pl + PL_TXS_N, txs.1;
-  var i = 0;
-  while i < txs.1 {
-    if SLICE_LEN(txs.0, i) >+ MAX_BYTES_PER_TRANSACTION {
-      ssz_fail(52);
-    }
-    i = i + 1;
-  }
-  /* withdrawals: List[Withdrawal(44 bytes), 16] */
-  var 1 nwd = ssz_fixed_list_count(o_bal - o_wd, WITHDRAWAL_SIZE, MAX_WITHDRAWALS_PER_PAYLOAD);
+  /* withdrawals: ProgressiveList[Withdrawal(44 bytes)] */
+  var 1 nwd = ssz_fixed_list_count(o_bal - o_wd, WITHDRAWAL_SIZE, SSZ_UNBOUNDED);
   st pl + PL_WD, p + o_wd;
   st pl + PL_WD_N, nwd;
-  /* block_access_list: ByteList[2^30] */
-  if (len - o_bal) >+ MAX_BLOCK_ACCESS_LIST_BYTES {
-    ssz_fail(53);
-  }
+  /* block_access_list: ProgressiveByteList */
   st pl + PL_BAL, p + o_bal;
   st pl + PL_BAL_N, len - o_bal;
   st pl + PL_NUMBER, LD_LE64(p + PLO_NUMBER);
@@ -530,11 +575,11 @@ fun 1 decode_requests(1 p, 1 len) {
   var o2 = lds 1 (ssz_offs + 16);
   var o3 = lds 1 (ssz_offs + 24);
   var o4 = lds 1 (ssz_offs + 32);
-  var 1 n0 = ssz_fixed_list_count(o1 - o0, DEPOSIT_SIZE, MAX_DEPOSIT_REQUESTS_PER_PAYLOAD);
-  var 1 n1 = ssz_fixed_list_count(o2 - o1, WDREQ_SIZE, MAX_WITHDRAWAL_REQUESTS_PER_PAYLOAD);
-  var 1 n2 = ssz_fixed_list_count(o3 - o2, CONS_SIZE, MAX_CONSOLIDATION_REQUESTS_PER_PAYLOAD);
-  var 1 n3 = ssz_fixed_list_count(o4 - o3, BDEP_SIZE, MAX_BUILDER_DEPOSIT_REQUESTS_PER_PAYLOAD);
-  var 1 n4 = ssz_fixed_list_count(len - o4, BEXIT_SIZE, MAX_BUILDER_EXIT_REQUESTS_PER_PAYLOAD);
+  var 1 n0 = ssz_fixed_list_count(o1 - o0, DEPOSIT_SIZE, SSZ_UNBOUNDED);
+  var 1 n1 = ssz_fixed_list_count(o2 - o1, WDREQ_SIZE, SSZ_UNBOUNDED);
+  var 1 n2 = ssz_fixed_list_count(o3 - o2, CONS_SIZE, SSZ_UNBOUNDED);
+  var 1 n3 = ssz_fixed_list_count(o4 - o3, BDEP_SIZE, SSZ_UNBOUNDED);
+  var 1 n4 = ssz_fixed_list_count(len - o4, BEXIT_SIZE, SSZ_UNBOUNDED);
   st rq + REQ_DEP, p + o0;
   st rq + REQ_DEP_N, n0;
   st rq + REQ_WDR, p + o1;
@@ -563,7 +608,8 @@ fun {1,1} decode_bytes_list(1 p, 1 len, 1 lim, 1 maxb) {
   return r;
 }
 
-/* deserialize_stateless_input (Guest.lean): schema id + SSZ body. */
+/* deserialize_stateless_input: schema id + SSZ body.
+   StatelessInput = Container[new_payload_request, witness, chain_id: uint64]. */
 fun 1 decode_stateless_input(1 p, 1 len) {
   if len <+ 2 {
     ssz_fail(1);   /* missingSchemaId */
@@ -576,17 +622,13 @@ fun 1 decode_stateless_input(1 p, 1 len) {
   if len <+ SI_FIXED {
     ssz_fail(80);
   }
-  var i = 0;
-  while i < 4 {
-    st ssz_offs + i * 8, LD_LE32(p + i * 4);
-    i = i + 1;
-  }
-  ssz_check_offsets(ssz_offs, 4, SI_FIXED, len);
+  st ssz_offs, LD_LE32(p);
+  st ssz_offs + 8, LD_LE32(p + 4);
+  ssz_check_offsets(ssz_offs, 2, SI_FIXED, len);
   var o_npr = lds 1 ssz_offs;
   var o_wit = lds 1 (ssz_offs + 8);
-  var o_cc = lds 1 (ssz_offs + 16);
-  var o_pk = lds 1 (ssz_offs + 24);
   var 1 si = alloc(SI_SIZE);
+  st si + SI_CHAIN_ID, LD_LE64(p + 8);
   /* NewPayloadRequest */
   var np = p + o_npr;
   var nlen = o_wit - o_npr;
@@ -602,7 +644,7 @@ fun 1 decode_stateless_input(1 p, 1 len) {
   ssz_check_offsets(ssz_offs, 3, NPR_FIXED, nlen);
   var 1 pl = decode_payload(np + o_pl, o_vh - o_pl);
   st si + SI_PL, pl;
-  var 1 nvh = ssz_fixed_list_count(o_rq - o_vh, 32, MAX_BLOB_COMMITMENTS_PER_BLOCK);
+  var 1 nvh = ssz_fixed_list_count(o_rq - o_vh, 32, SSZ_UNBOUNDED);
   st si + SI_VH, np + o_vh;
   st si + SI_VH_N, nvh;
   st si + SI_PBBR, np + 8;
@@ -610,11 +652,11 @@ fun 1 decode_stateless_input(1 p, 1 len) {
   st si + SI_REQ, rq;
   /* ExecutionWitness */
   var wp = p + o_wit;
-  var wlen = o_cc - o_wit;
+  var wlen = len - o_wit;
   if wlen <+ 12 {
     ssz_fail(82);
   }
-  i = 0;
+  var i = 0;
   while i < 3 {
     st ssz_offs + i * 8, LD_LE32(wp + i * 4);
     i = i + 1;
@@ -623,53 +665,15 @@ fun 1 decode_stateless_input(1 p, 1 len) {
   var w0 = lds 1 ssz_offs;
   var w1 = lds 1 (ssz_offs + 8);
   var w2 = lds 1 (ssz_offs + 16);
-  var {1,1} st0 = decode_bytes_list(wp + w0, w1 - w0, MAX_WITNESS_NODES, MAX_BYTES_PER_WITNESS_NODE);
+  var {1,1} st0 = decode_bytes_list(wp + w0, w1 - w0, SSZ_UNBOUNDED, MAX_BYTES_PER_WITNESS_NODE);
   st si + SI_STATE, st0.0;
   st si + SI_STATE_N, st0.1;
-  var {1,1} cd = decode_bytes_list(wp + w1, w2 - w1, MAX_WITNESS_CODES, MAX_BYTES_PER_CODE);
+  var {1,1} cd = decode_bytes_list(wp + w1, w2 - w1, SSZ_UNBOUNDED, MAX_BYTES_PER_CODE);
   st si + SI_CODES, cd.0;
   st si + SI_CODES_N, cd.1;
   var {1,1} hd = decode_bytes_list(wp + w2, wlen - w2, MAX_WITNESS_HEADERS, MAX_BYTES_PER_HEADER);
   st si + SI_HEADERS, hd.0;
   st si + SI_HEADERS_N, hd.1;
-  /* ChainConfig: [u64 chain_id, ForkConfig] */
-  var cp = p + o_cc;
-  var clen = o_pk - o_cc;
-  if clen <+ 12 {
-    ssz_fail(83);
-  }
-  st si + SI_CHAIN_ID, LD_LE64(cp);
-  st ssz_offs, LD_LE32(cp + 8);
-  ssz_check_offsets(ssz_offs, 1, 12, clen);
-  /* ForkConfig: [ForkActivation] */
-  var fp = cp + 12;
-  var flen = clen - 12;
-  if flen <+ 4 {
-    ssz_fail(84);
-  }
-  st ssz_offs, LD_LE32(fp);
-  ssz_check_offsets(ssz_offs, 1, 4, flen);
-  /* ForkActivation: [List[u64,1], List[u64,1]] */
-  var ap = fp + 4;
-  var alen = flen - 4;
-  if alen <+ 8 {
-    ssz_fail(85);
-  }
-  st ssz_offs, LD_LE32(ap);
-  st ssz_offs + 8, LD_LE32(ap + 4);
-  ssz_check_offsets(ssz_offs, 2, 8, alen);
-  var a0 = lds 1 ssz_offs;
-  var a1 = lds 1 (ssz_offs + 8);
-  var {1,1} bn = ssz_optional_u64(ap + a0, a1 - a0);
-  var {1,1} tsv = ssz_optional_u64(ap + a1, alen - a1);
-  st si + SI_BN_SOME, bn.0;
-  st si + SI_BN, bn.1;
-  st si + SI_TS_SOME, tsv.0;
-  st si + SI_TS, tsv.1;
-  /* public keys: List[ByteVector[65], 2^15] */
-  var 1 npk = ssz_fixed_list_count(len - o_pk, PUBKEY_SIZE, MAX_PUBLIC_KEYS);
-  st si + SI_PK, p + o_pk;
-  st si + SI_PK_N, npk;
   return si;
 }
 
@@ -719,10 +723,10 @@ fun 1 htr_payload(1 pl, 1 out) {
   var 1 roots = alloc(ntx * 32 + 32);
   var i = 0;
   while i < ntx {
-    htr_bytes_list(SLICE_PTR(txs, i), SLICE_LEN(txs, i), CHUNKS_2_30, roots + i * 32);
+    htr_pbytes(SLICE_PTR(txs, i), SLICE_LEN(txs, i), roots + i * 32);
     i = i + 1;
   }
-  htr_list_roots(roots, ntx, MAX_TRANSACTIONS_PER_PAYLOAD, ch + 416);
+  htr_plist_chunks(roots, ntx, ntx, ch + 416);
   heap_release(m2);
   /* withdrawals */
   var wd = lds 1 (pl + PL_WD);
@@ -733,13 +737,13 @@ fun 1 htr_payload(1 pl, 1 out) {
     htr_withdrawal(wd + i * WITHDRAWAL_SIZE, roots + i * 32);
     i = i + 1;
   }
-  htr_list_roots(roots, nwd, MAX_WITHDRAWALS_PER_PAYLOAD, ch + 448);
+  htr_plist_chunks(roots, nwd, nwd, ch + 448);
   heap_release(m2);
   htr_u64_at(raw + PLO_BLOB_GAS_USED, ch + 480);
   htr_u64_at(raw + PLO_EXCESS_BLOB_GAS, ch + 512);
-  htr_bytes_list(lds 1 (pl + PL_BAL), lds 1 (pl + PL_BAL_N), CHUNKS_2_30, ch + 544);
+  htr_pbytes(lds 1 (pl + PL_BAL), lds 1 (pl + PL_BAL_N), ch + 544);
   htr_u64_at(raw + PLO_SLOT, ch + 576);
-  merkleize(ch, 19, 19, out);
+  htr_pcontainer(ch, 19, out);
   heap_release(mark);
   return 0;
 }
@@ -803,8 +807,8 @@ fun 1 htr_bexit(1 e, 1 out) {
 }
 
 /* kind: 0 deposit, 1 withdrawal, 2 consolidation, 3 builder deposit,
-   4 builder exit. Root of List[container, lim]. */
-fun 1 htr_request_list(1 kind, 1 p, 1 n, 1 sz, 1 lim, 1 out) {
+   4 builder exit. Root of ProgressiveList[container]. */
+fun 1 htr_request_list(1 kind, 1 p, 1 n, 1 sz, 1 out) {
   var 1 mark = heap_mark();
   var 1 roots = alloc(n * 32 + 32);
   var i = 0;
@@ -816,7 +820,7 @@ fun 1 htr_request_list(1 kind, 1 p, 1 n, 1 sz, 1 lim, 1 out) {
     if kind == 4 { htr_bexit(p + i * sz, roots + i * 32); }
     i = i + 1;
   }
-  htr_list_roots(roots, n, lim, out);
+  htr_plist_chunks(roots, n, n, out);
   heap_release(mark);
   return 0;
 }
@@ -824,12 +828,12 @@ fun 1 htr_request_list(1 kind, 1 p, 1 n, 1 sz, 1 lim, 1 out) {
 fun 1 htr_requests(1 rq, 1 out) {
   var 1 mark = heap_mark();
   var 1 ch = alloc(5 * 32);
-  htr_request_list(0, lds 1 (rq + REQ_DEP), lds 1 (rq + REQ_DEP_N), DEPOSIT_SIZE, MAX_DEPOSIT_REQUESTS_PER_PAYLOAD, ch);
-  htr_request_list(1, lds 1 (rq + REQ_WDR), lds 1 (rq + REQ_WDR_N), WDREQ_SIZE, MAX_WITHDRAWAL_REQUESTS_PER_PAYLOAD, ch + 32);
-  htr_request_list(2, lds 1 (rq + REQ_CONS), lds 1 (rq + REQ_CONS_N), CONS_SIZE, MAX_CONSOLIDATION_REQUESTS_PER_PAYLOAD, ch + 64);
-  htr_request_list(3, lds 1 (rq + REQ_BDEP), lds 1 (rq + REQ_BDEP_N), BDEP_SIZE, MAX_BUILDER_DEPOSIT_REQUESTS_PER_PAYLOAD, ch + 96);
-  htr_request_list(4, lds 1 (rq + REQ_BEXIT), lds 1 (rq + REQ_BEXIT_N), BEXIT_SIZE, MAX_BUILDER_EXIT_REQUESTS_PER_PAYLOAD, ch + 128);
-  merkleize(ch, 5, 5, out);
+  htr_request_list(0, lds 1 (rq + REQ_DEP), lds 1 (rq + REQ_DEP_N), DEPOSIT_SIZE, ch);
+  htr_request_list(1, lds 1 (rq + REQ_WDR), lds 1 (rq + REQ_WDR_N), WDREQ_SIZE, ch + 32);
+  htr_request_list(2, lds 1 (rq + REQ_CONS), lds 1 (rq + REQ_CONS_N), CONS_SIZE, ch + 64);
+  htr_request_list(3, lds 1 (rq + REQ_BDEP), lds 1 (rq + REQ_BDEP_N), BDEP_SIZE, ch + 96);
+  htr_request_list(4, lds 1 (rq + REQ_BEXIT), lds 1 (rq + REQ_BEXIT_N), BEXIT_SIZE, ch + 128);
+  htr_pcontainer(ch, 5, out);
   heap_release(mark);
   return 0;
 }
@@ -839,9 +843,8 @@ fun 1 htr_new_payload_request(1 si, 1 out) {
   var 1 mark = heap_mark();
   var 1 ch = alloc(4 * 32);
   htr_payload(lds 1 (si + SI_PL), ch);
-  /* versioned hashes: List[Bytes32, 4096]; each root is the hash itself */
-  merkleize(lds 1 (si + SI_VH), lds 1 (si + SI_VH_N), MAX_BLOB_COMMITMENTS_PER_BLOCK, ch + 32);
-  mix_in_length(ch + 32, lds 1 (si + SI_VH_N), ch + 32);
+  /* versioned hashes: ProgressiveList[Bytes32]; each root is the hash itself */
+  htr_plist_chunks(lds 1 (si + SI_VH), lds 1 (si + SI_VH_N), lds 1 (si + SI_VH_N), ch + 32);
   memcpy(ch + 64, lds 1 (si + SI_PBBR), 32);
   htr_requests(lds 1 (si + SI_REQ), ch + 96);
   merkleize(ch, 4, 4, out);
@@ -851,26 +854,14 @@ fun 1 htr_new_payload_request(1 si, 1 out) {
 
 /* ---- StatelessValidationResult serialization -------------------------- */
 
-/* serialize_stateless_output: root(32) ++ succ(1) ++ chain config.
-   chain config fields are passed explicitly so the sentinel can reuse it.
-   Returns the byte length written at out (61 + 8 per present optional). */
-fun 1 serialize_result(1 out, 1 root, 1 succ, 1 chain_id, 1 bn_some, 1 bn, 1 ts_some, 1 ts) {
+/* serialize_stateless_output: StatelessValidationResult = Container[root:
+   Bytes32, successful_validation: bool, chain_id: uint64, schema_id: uint16],
+   43 bytes. The decode-failure sentinel is passed as zeros (schema_id 0). */
+fun 1 serialize_result(1 out, 1 root, 1 succ, 1 chain_id, 1 schema_id) {
   memcpy(out, root, 32);
   st8 out + 32, succ;
-  st_le32(out + 33, 37);
-  st_le64(out + 37, chain_id);
-  st_le32(out + 45, 12);
-  st_le32(out + 49, 4);
-  st_le32(out + 53, 8);
-  st_le32(out + 57, 8 + 8 * bn_some);
-  var n = 61;
-  if bn_some != 0 {
-    st_le64(out + n, bn);
-    n = n + 8;
-  }
-  if ts_some != 0 {
-    st_le64(out + n, ts);
-    n = n + 8;
-  }
-  return n;
+  st_le64(out + 33, chain_id);
+  st8 out + 41, schema_id & 255;
+  st8 out + 42, schema_id >>> 8;
+  return 43;
 }

@@ -44,7 +44,7 @@ fun 1 main() {
   var err_code = 0;
   try si = decode_stateless_input(inp.0, inp.1)
   catch SszErr => err_code {
-    var 1 n = serialize_result(out, z32, 0, 0, 0, 0, 0, 0);
+    var 1 n = serialize_result(out, z32, 0, 0, 0);
     st8 out + n, err_code;
     output_write(out, n + 1);
     @halt(@base, 0, @base, 0);
@@ -53,8 +53,7 @@ fun 1 main() {
   var 1 root = alloc(32);
   htr_new_payload_request(si, root);
   var 1 succ = verify_stateless_new_payload(si);
-  var 1 n = serialize_result(out, root, succ, lds 1 (si + SI_CHAIN_ID),
-      lds 1 (si + SI_BN_SOME), lds 1 (si + SI_BN), lds 1 (si + SI_TS_SOME), lds 1 (si + SI_TS));
+  var 1 n = serialize_result(out, root, succ, lds 1 (si + SI_CHAIN_ID), 5377);
   /* debug: failure code after the result bytes (harness compares only n bytes) */
   st8 out + n, fail_code;
   output_write(out, n + 1);
