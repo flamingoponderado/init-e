@@ -80,38 +80,20 @@
 #define SI_HEADERS     72
 #define SI_HEADERS_N   80
 #define SI_CHAIN_ID    88
-#define SI_BN_SOME     96
-#define SI_BN          104
-#define SI_TS_SOME     112
-#define SI_TS          120
-#define SI_PK          128   /* public keys: ptr to n*65 bytes */
-#define SI_PK_N        136
-#define SI_SIZE        144
-#define PUBKEY_SIZE    65
+#define SI_SIZE        96
 #define NPR_FIXED      44
 #define SI_FIXED       16
 
-/* SSZ list limits (Ssz.lean) */
+/* SSZ list limits (execution-specs stateless.py / execution_engine/types.py).
+   Everything except extra_data, witness headers and witness byte strings is a
+   progressive list / byte list with no limit; SSZ_UNBOUNDED stands in for it
+   in the (unsigned) count checks. */
+#define SSZ_UNBOUNDED 9223372036854775807
 #define MAX_EXTRA_DATA_BYTES 32
-#define MAX_BYTES_PER_TRANSACTION 1073741824
-#define MAX_TRANSACTIONS_PER_PAYLOAD 1048576
-#define MAX_WITHDRAWALS_PER_PAYLOAD 16
-#define MAX_BLOB_COMMITMENTS_PER_BLOCK 4096
-#define MAX_DEPOSIT_REQUESTS_PER_PAYLOAD 8192
-#define MAX_WITHDRAWAL_REQUESTS_PER_PAYLOAD 16
-#define MAX_CONSOLIDATION_REQUESTS_PER_PAYLOAD 2
-#define MAX_BUILDER_DEPOSIT_REQUESTS_PER_PAYLOAD 64
-#define MAX_BUILDER_EXIT_REQUESTS_PER_PAYLOAD 16
-#define MAX_BLOCK_ACCESS_LIST_BYTES 1073741824
-#define MAX_WITNESS_NODES 4194304
-#define MAX_WITNESS_CODES 262144
 #define MAX_WITNESS_HEADERS 256
 #define MAX_BYTES_PER_WITNESS_NODE 1024
 #define MAX_BYTES_PER_CODE 65536
 #define MAX_BYTES_PER_HEADER 1024
-#define MAX_PUBLIC_KEYS 32768
-/* chunk counts of the byte-list limits: (limit+31)/32 */
-#define CHUNKS_2_30 33554432
 
 /* Header record (Stateless.lean Header / mkHeaderFields). Byte fields are
    pointers (into the RLP payload or into computed 32-byte buffers). Scalars

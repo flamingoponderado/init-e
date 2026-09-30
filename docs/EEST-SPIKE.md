@@ -17,7 +17,7 @@ Follow `README.md`'s "Quick start" section first: it covers cloning, the
 initializing the `evm-asm` and `riscv-isa-sim` submodules, and building
 `spike_run`. This document only adds the full-corpus-specific steps below,
 against the EEST fixture tag this repo currently pins
-(`evm-asm/scripts/eest-fixture-tag.txt`; `tests-zkevm@v0.6.2` for the
+(`eest-fixture-tag.txt` at the repository root; `tests-zkevm@v21.0.1` for the
 recorded run below).
 
 ## Fetch, convert, build, and run all fixtures
@@ -43,22 +43,42 @@ inspection and reruns with `--from-json` or `--labels`.
 ## Recorded result
 
 Run on stateless-pancaketh commit
-`1489defbef04e9c22be83152ad53af145f2094b8`, with 32 Spike workers and the
-accelerated guest, built with `cake` (the only compiler `guest/build.sh`
-supported at that commit; today's default is `flapjack`, which builds an
-instruction-for-instruction identical guest — see the "Status" section of
-`README.md` and [docs/FLAPJACK-CORRECTNESS.md](FLAPJACK-CORRECTNESS.md) for
-the correctness comparison):
+`fb4553b7ac75caba73f01e7e0f29056fc12c8195`, with 32 Spike workers and the
+accelerated guest built with `flapjack` (5 min 36 s wall time), against
+`tests-zkevm@v21.0.1` (both the `blockchain_tests` and
+`blockchain_tests_engine` fixtures):
 
 ```text
-records: 26104
-PASS(full): 26096
-PASS(malformed): 8
+records: 33614
+PASS(full): 33605
+PASS(malformed): 9
 eest-run exit: 0
 ```
 
 There were no fixture failures. The commit-qualified run directory and result
 JSON are the reproducible record for this passing revision; the tracked
-`work/sweep/all.json.gz` is not used by this command. This full-corpus sweep
-has not yet been independently re-run with `flapjack`; the procedure above
-builds with it by default for anyone reproducing this today.
+`tools/eest-baseline.json` is not used by this command.
+
+The same accelerated guest (the same ELF: sha256
+`1181171037da6360b54665ad0ff6840572d03d1ac69178076302599c3914a6a9`) was also
+run over the same 33,614 inputs under `ziskemu 1.3.0-alpha`:
+
+```bash
+python3 tools/eest-run.py work/eest-spike-<commit>/guest-accel.elf \
+  work/eest-spike-<commit>/inputs/manifest.tsv --ziskemu --quiet-passes
+```
+
+```text
+total: 33614  PASS(full): 33605  PASS(malformed): 9
+steps over passing cases: min=25748 max=13364108009
+```
+
+(58 min on 32 cores; the largest blocks run to ~13.4 billion steps.) That run
+was made from the working tree before it was committed; the guest sources
+were unchanged by the commit, which is why the ELF digests match.
+
+The earlier recorded result for `tests-zkevm@v0.6.2` (commit `1489defb`, 26,104
+records: 26,096 `PASS(full)` and 8 `PASS(malformed)`, built with `cake`) is
+superseded by the above; the schema and several gas rules changed between the
+two (see [issue #135](https://github.com/pirapira/stateless-pancaketh/issues/135)
+for the list), so its numbers aren't comparable.

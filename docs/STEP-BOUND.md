@@ -43,15 +43,15 @@ tools/ssz-inputs.py work/ssz-inputs --fuzz
 lake exe input-decode-check work/ssz-inputs/*.bin
 ```
 
-* 45 base cases — a minimal well-formed `StatelessInput`; variants with
+* 44 base cases — a minimal well-formed `StatelessInput`; variants with
   non-empty extra data, transactions, withdrawals, block access list, witness
-  lists, public keys and fork activations; gas limits 1, 200M and 2^64−1; 24
-  single-byte mutations; 10 truncations. **31 decoded, 14 rejected, 0
-  mismatches.**
-* `--fuzz` adds 386 cases: every SSZ offset field of two base inputs set to
+  lists and a chain id; gas limits 1, 200M and 2^64−1; 24 single-byte
+  mutations; 10 truncations. **31 decoded, 13 rejected, 0 mismatches.**
+* `--fuzz` adds 290 cases: every SSZ offset field of two base inputs set to
   each of eight boundary values (0, ±1, +4, the body length, one past it,
   `0xffffffff`, half the length) — the bytes a hand-written mirror is most
-  likely to disagree on. **0 mismatches.**
+  likely to disagree on. **0 mismatches** (334 inputs in all: 49 decoded, 285
+  rejected; re-run for the `tests-zkevm@v21.0.1` three-field `StatelessInput`).
 
 Since the model is quadratic in the store count, the corpus deliberately keeps
 every list small; see the note at the end of this file.

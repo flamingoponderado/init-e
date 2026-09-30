@@ -12,13 +12,15 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'tools'))
 import pyref
 
 SECP256K1N = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141
-TX_BASE = 12000; TX_CREATE = 32000; TX_VALUE_COST = 4244; TRANSFER_LOG_COST = 1756
+TX_BASE = 12000; TX_VALUE_COST = 6000
 TX_DATA_TOKEN_STANDARD = 4; TX_DATA_TOKEN_FLOOR = 16
-COLD_ACCOUNT_ACCESS = 3000; COLD_STORAGE_ACCESS = 3000; ACCOUNT_WRITE = 8000
-CREATE_ACCESS = ACCOUNT_WRITE + COLD_STORAGE_ACCESS; CODE_INIT_PER_WORD = 2
-REGULAR_PER_AUTH_BASE_COST = 101 * 16 + 3000 + 3000 + 200
+WARM_ACCESS = 100; COLD_ACCOUNT_ACCESS = 3000; COLD_STORAGE_ACCESS = 2100; ACCOUNT_WRITE = 9000
+CREATE_ACCESS = ACCOUNT_WRITE + COLD_ACCOUNT_ACCESS; CODE_INIT_PER_WORD = 2
+TX_ACCESS_LIST_ADDRESS = COLD_ACCOUNT_ACCESS - WARM_ACCESS
+TX_ACCESS_LIST_STORAGE_KEY = COLD_STORAGE_ACCESS - WARM_ACCESS
+REGULAR_PER_AUTH_BASE_COST = 101 * 16 + 3000 + 3000 + 2 * WARM_ACCESS
 ACCESS_LIST_ADDRESS_FLOOR_TOKENS = 80; ACCESS_LIST_STORAGE_KEY_FLOOR_TOKENS = 128
-TX_MAX_GAS_LIMIT = 16777216; MAX_INIT_CODE_SIZE = 2 * 0x10000
+TX_MAX_GAS_LIMIT = 16777216; TX_MAX_TOTAL_GAS_LIMIT = 4294967295; MAX_INIT_CODE_SIZE = 2 * 0x10000
 
 class TxErr(Exception): pass
 
@@ -253,16 +255,16 @@ def calculate_intrinsic_cost(tx, sender):
     is_create = tx['to'] is None
     is_self = tx['to'] == sender
     if is_create:
-        rr = CREATE_ACCESS + (TRANSFER_LOG_COST if tx['value'] > 0 else 0)
+        rr = CREATE_ACCESS
         init = CODE_INIT_PER_WORD * ((len(data) + 31) // 32)
     elif not is_self:
-        rr = COLD_ACCOUNT_ACCESS + (TRANSFER_LOG_COST + TX_VALUE_COST if tx['value'] > 0 else 0)
+        rr = COLD_ACCOUNT_ACCESS + (TX_VALUE_COST if tx['value'] > 0 else 0)
         init = 0
     else:
         rr, init = 0, 0
     alc, tok = 0, 0
     for a in tx.get('access_list', []) if tx['type'] != 0 else []:
-        alc += COLD_ACCOUNT_ACCESS + len(a[1]) * COLD_STORAGE_ACCESS
+        alc += TX_ACCESS_LIST_ADDRESS + len(a[1]) * TX_ACCESS_LIST_STORAGE_KEY
         tok += ACCESS_LIST_ADDRESS_FLOOR_TOKENS + len(a[1]) * ACCESS_LIST_STORAGE_KEY_FLOOR_TOKENS
     alc += tok * TX_DATA_TOKEN_FLOOR
     auth = REGULAR_PER_AUTH_BASE_COST * len(tx['authorizations']) if tx['type'] == 4 else 0
@@ -271,8 +273,9 @@ def calculate_intrinsic_cost(tx, sender):
     return (base + init + data_cost + alc + auth, 0, floor_tokens * TX_DATA_TOKEN_FLOOR + base)
 
 def validate_transaction(tx, sender):
-    """0 if valid else the tx.pnk rejection code (60..65)."""
+    """0 if valid else the tx.pnk rejection code (60..66)."""
     reg, st, fl = calculate_intrinsic_cost(tx, sender)
+    if tx['gas'] > TX_MAX_TOTAL_GAS_LIMIT: return 66
     if reg + st > tx['gas']: return 60
     if fl > tx['gas']: return 61
     if tx['to'] is None and len(tx['data']) > MAX_INIT_CODE_SIZE: return 62

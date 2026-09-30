@@ -72,7 +72,7 @@ CASES = [
     (fee(yp=S(1)), 2, 0),
     (legacy(gas=S(14999)), 3, 60),                 # 12000 + 3000 = 15000 > gas
     (legacy(gas=S(15000)), 3, 0),
-    (legacy(to=B(b''), gas=S(23010), data=B(bytes(1))), 3, 61),  # regular 23006 <= gas < floor 23064
+    (legacy(to=B(b''), gas=S(24010), data=B(bytes(1))), 3, 61),  # regular 24006 <= gas < floor 24064
     (legacy(nonce=S(2**64 - 1), gas=S(15000)), 3, 65),
     (fee(nonce=S(2**64), gas=S(15000)), 3, 65),
     (legacy(to=B(b''), gas=S(9000000), data=B(b'\x00' * 131073)), 3, 62),  # init code too large

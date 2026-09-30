@@ -9,8 +9,8 @@ def var_list(b):
     return [b[offs[i]:offs[i+1]] for i in range(n)]
 def expected(blob):
     body = blob[2:]
-    o = [le32(body, 4*i) for i in range(4)]
-    wit = body[o[1]:o[2]]
+    o = [le32(body, 4*i) for i in range(2)]
+    wit = body[o[1]:]
     w = [le32(wit, 4*i) for i in range(3)]
     headers = var_list(wit[w[2]:])
     out = b''.join(pyref.keccak256(h) for h in headers)

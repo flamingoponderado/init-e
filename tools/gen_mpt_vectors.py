@@ -494,15 +494,48 @@ def _leaf_of(node, key_hash):
     raise AssertionError("leaf not found")
 
 
+def _le32(b, o):
+    return struct.unpack_from("<I", b, o)[0]
+
+
+def _var_list(b):
+    """A serialized List[variable-size element] as a list of byte strings."""
+    if not b:
+        return []
+    n = _le32(b, 0) // 4
+    offs = [_le32(b, 4 * i) for i in range(n)] + [len(b)]
+    return [b[offs[i]:offs[i + 1]] for i in range(n)]
+
+
+class _FixtureInput:
+    """The few StatelessInput fields the fixture scenario reads, parsed straight
+    from the SSZ bytes so that this generator does not depend on the spec
+    version's SSZ classes (the layout, from tests-zkevm@v21.0.1: StatelessInput
+    = [new_payload_request, witness, chain_id]; ExecutionPayload's fee_recipient
+    is at byte 32 and its block_access_list offset at byte 528)."""
+
+    def __init__(self, blob):
+        body = blob[2:]   # after the 0x1501 schema id
+        o_npr, o_wit = _le32(body, 0), _le32(body, 4)
+        npr = body[o_npr:o_wit]
+        o_pl, o_vh = _le32(npr, 0), _le32(npr, 4)
+        payload = npr[o_pl:o_vh]
+        wit = body[o_wit:]
+        w = [_le32(wit, 4 * i) for i in range(3)]
+        self.state = _var_list(wit[w[0]:w[1]])
+        self.headers = _var_list(wit[w[2]:])
+        self.fee_recipient = payload[32:52]
+        self.block_access_list = payload[_le32(payload, 528):]
+
+
 def scenario_fixture(g, rng, path):
-    from ethereum.forks.amsterdam.stateless_guest import deserialize_stateless_input
     from ethereum.forks.amsterdam.blocks import Header
     packed = open(path, "rb").read()
     n = struct.unpack("<Q", packed[:8])[0]
-    si = deserialize_stateless_input(packed[8:8 + n])
-    w = si.witness
-    hdr = rlp.decode_to(Header, w.headers[-1])
-    pl = si.new_payload_request.execution_payload
+    fx = _FixtureInput(packed[8:8 + n])
+    hdr = rlp.decode_to(Header, fx.headers[-1])
+    pl = fx   # payload-like view: .block_access_list, .fee_recipient
+    w = fx    # witness-like view: .state
     bal = rlp.decode(pl.block_access_list)
     addrs = [bytes(e[0]) for e in bal] + [bytes(pl.fee_recipient), rng.randbytes(20), rng.randbytes(20)]
     g.op_witness([bytes(x) for x in w.state], hdr.state_root)

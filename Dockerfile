@@ -4,8 +4,9 @@
 # mirrors (same ziskemu-from-source pattern, same license-collection style).
 #
 # The `evm-asm` submodule must be initialized in the build context before
-# `docker build` (its scripts/{eest-fetch-fixtures.sh,eest-fixture-tag.txt,
-# eest-stateless-to-input.py} are needed; `cakeml`, `flapjack`, and
+# `docker build` (its scripts/{eest-fetch-fixtures.sh,
+# eest-stateless-to-input.py} are needed; the fixture tag itself is pinned by
+# this repo's eest-fixture-tag.txt; `cakeml`, `flapjack`, and
 # `riscv-isa-sim` are not — flapjack is fetched by `lake` itself, and
 # `riscv-isa-sim`/`cakeml` are only needed for Spike/cake, not ziskemu):
 #
@@ -55,7 +56,7 @@ RUN mkdir -p /license-report \
 FROM ubuntu:24.04
 
 ARG DEBIAN_FRONTEND=noninteractive
-ARG EEST_TAG=tests-zkevm@v0.6.2
+ARG EEST_TAG=tests-zkevm@v21.0.1
 ARG GIT_COMMIT=unknown
 ARG GIT_REF=unknown
 ARG BUILD_DATE=unknown
@@ -130,9 +131,9 @@ RUN curl -sSf \
 # whole corpus into guest inputs + a manifest under work/inputs. Keep the
 # ARG so the resolved value remains visible in the image label, but reject
 # drift from the repository's canonical fixture-tag source.
-RUN canonical_tag="$(tr -d '[:space:]' < evm-asm/scripts/eest-fixture-tag.txt)" \
+RUN canonical_tag="$(tr -d '[:space:]' < eest-fixture-tag.txt)" \
     && if [ "${EEST_TAG}" != "${canonical_tag}" ]; then \
-         echo "EEST_TAG=${EEST_TAG} disagrees with evm-asm/scripts/eest-fixture-tag.txt=${canonical_tag}" >&2; \
+         echo "EEST_TAG=${EEST_TAG} disagrees with eest-fixture-tag.txt=${canonical_tag}" >&2; \
          exit 1; \
        fi \
     && tools/make-inputs.sh --all work/inputs

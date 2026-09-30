@@ -2,9 +2,9 @@ var 1 heap_ptr = 0;
 var 1 journal_n = 0;
 exception TrapErr : 1;
 fun 1 trap_with(1 code) {
-  !st8 2684420096 + 33, code;
-  !stw 2684420096 + 40, heap_ptr;
-  !stw 2684420096 + 48, journal_n;
+  !st8 2688614400 + 33, code;
+  !stw 2688614400 + 40, heap_ptr;
+  !stw 2688614400 + 48, journal_n;
   @trap(@base, code, @base, 0);
   throw TrapErr code;
 }
@@ -13,7 +13,7 @@ var 1 frame_mem_ptr = 0;
 fun 1 mem_init() {
   heap_ptr = @base;
   scratch_ptr = 2701127680;
-  frame_mem_ptr = 2684424192;
+  frame_mem_ptr = 2688618496;
   return 0;
 }
 fun 1 alloc(1 n) {
@@ -276,7 +276,7 @@ fun {1,1} input_blob() {
 fun 1 output_write(1 src, 1 n) {
   var i = 0;
   while i <+ n {
-    !st8 2684420096 + i, ld8 (src + i);
+    !st8 2688614400 + i, ld8 (src + i);
     i = i + 1;
   }
   return 0;
@@ -3602,6 +3602,59 @@ fun 1 mix_in_length(1 root, 1 len, 1 out) {
   sha256_pair(root, ssz_len_chunk, out);
   return 0;
 }
+fun 1 merkleize_progressive(1 p, 1 n, 1 out) {
+  var 1 mark = heap_mark();
+  var 1 roots = alloc(24 * 32);
+  var 1 acc = alloc(32);
+  var k = 0;
+  var off = 0;
+  var size = 1;
+  while off <+ n {
+    var cnt = n - off;
+    if size <+ cnt {
+      cnt = size;
+    }
+    merkleize(p + off * 32, cnt, size, roots + k * 32);
+    off = off + size;
+    size = size << 2;
+    k = k + 1;
+  }
+  memzero(acc, 32);
+  while k != 0 {
+    k = k - 1;
+    sha256_pair(roots + k * 32, acc, acc);
+  }
+  memcpy(out, acc, 32);
+  heap_release(mark);
+  return 0;
+}
+fun 1 htr_plist_chunks(1 roots, 1 n, 1 len, 1 out) {
+  merkleize_progressive(roots, n, out);
+  mix_in_length(out, len, out);
+  return 0;
+}
+fun 1 htr_pbytes(1 p, 1 n, 1 out) {
+  var 1 mark = heap_mark();
+  var {1,1} pk = pack_bytes(p, n);
+  htr_plist_chunks(pk.0, pk.1, n, out);
+  heap_release(mark);
+  return 0;
+}
+fun 1 htr_pcontainer(1 ch, 1 n, 1 out) {
+  var 1 mark = heap_mark();
+  var 1 tmp = alloc(64);
+  merkleize_progressive(ch, n, tmp);
+  var 1 act = tmp + 32;
+  memzero(act, 32);
+  var i = 0;
+  while i < n {
+    st8 act + (i >>> 3), (ld8 (act + (i >>> 3))) | (1 << (i & 7));
+    i = i + 1;
+  }
+  sha256_pair(tmp, act, out);
+  heap_release(mark);
+  return 0;
+}
 fun {1,1} pack_bytes(1 p, 1 n) {
   var count = (n + 31) >>> 5;
   var 1 buf = alloc(count * 32);
@@ -3703,15 +3756,6 @@ fun 1 ssz_fixed_list_count(1 len, 1 sz, 1 lim) {
   }
   return qr.0;
 }
-fun {1,1} ssz_optional_u64(1 p, 1 len) {
-  if len == 0 {
-    return <0, 0>;
-  }
-  if len != 8 {
-    ssz_fail(40);
-  }
-  return <1, (((ld8 (p)) | ((ld8 ((p) + 1)) << 8) | ((ld8 ((p) + 2)) << 16) | ((ld8 ((p) + 3)) << 24)) | (((ld8 ((p) + 4)) | ((ld8 (((p) + 4) + 1)) << 8) | ((ld8 (((p) + 4) + 2)) << 16) | ((ld8 (((p) + 4) + 3)) << 24)) << 32))>;
-}
 fun 1 decode_payload(1 p, 1 len) {
   if len <+ 540 {
     ssz_fail(50);
@@ -3733,22 +3777,12 @@ fun 1 decode_payload(1 p, 1 len) {
   }
   st pl + 16, p + o_extra;
   st pl + 24, o_txs - o_extra;
-  var {1,1} txs = ssz_split_var_list(p + o_txs, o_wd - o_txs, 1048576);
+  var {1,1} txs = ssz_split_var_list(p + o_txs, o_wd - o_txs, 9223372036854775807);
   st pl + 32, txs.0;
   st pl + 40, txs.1;
-  var i = 0;
-  while i < txs.1 {
-    if (lds 1 ((txs.0) + (i) * 16 + 8)) >+ 1073741824 {
-      ssz_fail(52);
-    }
-    i = i + 1;
-  }
-  var 1 nwd = ssz_fixed_list_count(o_bal - o_wd, 44, 16);
+  var 1 nwd = ssz_fixed_list_count(o_bal - o_wd, 44, 9223372036854775807);
   st pl + 48, p + o_wd;
   st pl + 56, nwd;
-  if (len - o_bal) >+ 1073741824 {
-    ssz_fail(53);
-  }
   st pl + 64, p + o_bal;
   st pl + 72, len - o_bal;
   st pl + 80, (((ld8 (p + 404)) | ((ld8 ((p + 404) + 1)) << 8) | ((ld8 ((p + 404) + 2)) << 16) | ((ld8 ((p + 404) + 3)) << 24)) | (((ld8 ((p + 404) + 4)) | ((ld8 (((p + 404) + 4) + 1)) << 8) | ((ld8 (((p + 404) + 4) + 2)) << 16) | ((ld8 (((p + 404) + 4) + 3)) << 24)) << 32));
@@ -3776,11 +3810,11 @@ fun 1 decode_requests(1 p, 1 len) {
   var o2 = lds 1 (ssz_offs + 16);
   var o3 = lds 1 (ssz_offs + 24);
   var o4 = lds 1 (ssz_offs + 32);
-  var 1 n0 = ssz_fixed_list_count(o1 - o0, 192, 8192);
-  var 1 n1 = ssz_fixed_list_count(o2 - o1, 76, 16);
-  var 1 n2 = ssz_fixed_list_count(o3 - o2, 116, 2);
-  var 1 n3 = ssz_fixed_list_count(o4 - o3, 184, 64);
-  var 1 n4 = ssz_fixed_list_count(len - o4, 68, 16);
+  var 1 n0 = ssz_fixed_list_count(o1 - o0, 192, 9223372036854775807);
+  var 1 n1 = ssz_fixed_list_count(o2 - o1, 76, 9223372036854775807);
+  var 1 n2 = ssz_fixed_list_count(o3 - o2, 116, 9223372036854775807);
+  var 1 n3 = ssz_fixed_list_count(o4 - o3, 184, 9223372036854775807);
+  var 1 n4 = ssz_fixed_list_count(len - o4, 68, 9223372036854775807);
   st rq + 0, p + o0;
   st rq + 8, n0;
   st rq + 16, p + o1;
@@ -3816,17 +3850,13 @@ fun 1 decode_stateless_input(1 p, 1 len) {
   if len <+ 16 {
     ssz_fail(80);
   }
-  var i = 0;
-  while i < 4 {
-    st ssz_offs + i * 8, ((ld8 (p + i * 4)) | ((ld8 ((p + i * 4) + 1)) << 8) | ((ld8 ((p + i * 4) + 2)) << 16) | ((ld8 ((p + i * 4) + 3)) << 24));
-    i = i + 1;
-  }
-  ssz_check_offsets(ssz_offs, 4, 16, len);
+  st ssz_offs, ((ld8 (p)) | ((ld8 ((p) + 1)) << 8) | ((ld8 ((p) + 2)) << 16) | ((ld8 ((p) + 3)) << 24));
+  st ssz_offs + 8, ((ld8 (p + 4)) | ((ld8 ((p + 4) + 1)) << 8) | ((ld8 ((p + 4) + 2)) << 16) | ((ld8 ((p + 4) + 3)) << 24));
+  ssz_check_offsets(ssz_offs, 2, 16, len);
   var o_npr = lds 1 ssz_offs;
   var o_wit = lds 1 (ssz_offs + 8);
-  var o_cc = lds 1 (ssz_offs + 16);
-  var o_pk = lds 1 (ssz_offs + 24);
-  var 1 si = alloc(144);
+  var 1 si = alloc(96);
+  st si + 88, (((ld8 (p + 8)) | ((ld8 ((p + 8) + 1)) << 8) | ((ld8 ((p + 8) + 2)) << 16) | ((ld8 ((p + 8) + 3)) << 24)) | (((ld8 ((p + 8) + 4)) | ((ld8 (((p + 8) + 4) + 1)) << 8) | ((ld8 (((p + 8) + 4) + 2)) << 16) | ((ld8 (((p + 8) + 4) + 3)) << 24)) << 32));
   var np = p + o_npr;
   var nlen = o_wit - o_npr;
   if nlen <+ 44 {
@@ -3841,18 +3871,18 @@ fun 1 decode_stateless_input(1 p, 1 len) {
   ssz_check_offsets(ssz_offs, 3, 44, nlen);
   var 1 pl = decode_payload(np + o_pl, o_vh - o_pl);
   st si + 0, pl;
-  var 1 nvh = ssz_fixed_list_count(o_rq - o_vh, 32, 4096);
+  var 1 nvh = ssz_fixed_list_count(o_rq - o_vh, 32, 9223372036854775807);
   st si + 8, np + o_vh;
   st si + 16, nvh;
   st si + 24, np + 8;
   var 1 rq = decode_requests(np + o_rq, nlen - o_rq);
   st si + 32, rq;
   var wp = p + o_wit;
-  var wlen = o_cc - o_wit;
+  var wlen = len - o_wit;
   if wlen <+ 12 {
     ssz_fail(82);
   }
-  i = 0;
+  var i = 0;
   while i < 3 {
     st ssz_offs + i * 8, ((ld8 (wp + i * 4)) | ((ld8 ((wp + i * 4) + 1)) << 8) | ((ld8 ((wp + i * 4) + 2)) << 16) | ((ld8 ((wp + i * 4) + 3)) << 24));
     i = i + 1;
@@ -3861,49 +3891,15 @@ fun 1 decode_stateless_input(1 p, 1 len) {
   var w0 = lds 1 ssz_offs;
   var w1 = lds 1 (ssz_offs + 8);
   var w2 = lds 1 (ssz_offs + 16);
-  var {1,1} st0 = decode_bytes_list(wp + w0, w1 - w0, 4194304, 1024);
+  var {1,1} st0 = decode_bytes_list(wp + w0, w1 - w0, 9223372036854775807, 1024);
   st si + 40, st0.0;
   st si + 48, st0.1;
-  var {1,1} cd = decode_bytes_list(wp + w1, w2 - w1, 262144, 65536);
+  var {1,1} cd = decode_bytes_list(wp + w1, w2 - w1, 9223372036854775807, 65536);
   st si + 56, cd.0;
   st si + 64, cd.1;
   var {1,1} hd = decode_bytes_list(wp + w2, wlen - w2, 256, 1024);
   st si + 72, hd.0;
   st si + 80, hd.1;
-  var cp = p + o_cc;
-  var clen = o_pk - o_cc;
-  if clen <+ 12 {
-    ssz_fail(83);
-  }
-  st si + 88, (((ld8 (cp)) | ((ld8 ((cp) + 1)) << 8) | ((ld8 ((cp) + 2)) << 16) | ((ld8 ((cp) + 3)) << 24)) | (((ld8 ((cp) + 4)) | ((ld8 (((cp) + 4) + 1)) << 8) | ((ld8 (((cp) + 4) + 2)) << 16) | ((ld8 (((cp) + 4) + 3)) << 24)) << 32));
-  st ssz_offs, ((ld8 (cp + 8)) | ((ld8 ((cp + 8) + 1)) << 8) | ((ld8 ((cp + 8) + 2)) << 16) | ((ld8 ((cp + 8) + 3)) << 24));
-  ssz_check_offsets(ssz_offs, 1, 12, clen);
-  var fp = cp + 12;
-  var flen = clen - 12;
-  if flen <+ 4 {
-    ssz_fail(84);
-  }
-  st ssz_offs, ((ld8 (fp)) | ((ld8 ((fp) + 1)) << 8) | ((ld8 ((fp) + 2)) << 16) | ((ld8 ((fp) + 3)) << 24));
-  ssz_check_offsets(ssz_offs, 1, 4, flen);
-  var ap = fp + 4;
-  var alen = flen - 4;
-  if alen <+ 8 {
-    ssz_fail(85);
-  }
-  st ssz_offs, ((ld8 (ap)) | ((ld8 ((ap) + 1)) << 8) | ((ld8 ((ap) + 2)) << 16) | ((ld8 ((ap) + 3)) << 24));
-  st ssz_offs + 8, ((ld8 (ap + 4)) | ((ld8 ((ap + 4) + 1)) << 8) | ((ld8 ((ap + 4) + 2)) << 16) | ((ld8 ((ap + 4) + 3)) << 24));
-  ssz_check_offsets(ssz_offs, 2, 8, alen);
-  var a0 = lds 1 ssz_offs;
-  var a1 = lds 1 (ssz_offs + 8);
-  var {1,1} bn = ssz_optional_u64(ap + a0, a1 - a0);
-  var {1,1} tsv = ssz_optional_u64(ap + a1, alen - a1);
-  st si + 96, bn.0;
-  st si + 104, bn.1;
-  st si + 112, tsv.0;
-  st si + 120, tsv.1;
-  var 1 npk = ssz_fixed_list_count(len - o_pk, 65, 32768);
-  st si + 128, p + o_pk;
-  st si + 136, npk;
   return si;
 }
 fun 1 htr_withdrawal(1 w, 1 out) {
@@ -3945,10 +3941,10 @@ fun 1 htr_payload(1 pl, 1 out) {
   var 1 roots = alloc(ntx * 32 + 32);
   var i = 0;
   while i < ntx {
-    htr_bytes_list((lds 1 ((txs) + (i) * 16)), (lds 1 ((txs) + (i) * 16 + 8)), 33554432, roots + i * 32);
+    htr_pbytes((lds 1 ((txs) + (i) * 16)), (lds 1 ((txs) + (i) * 16 + 8)), roots + i * 32);
     i = i + 1;
   }
-  htr_list_roots(roots, ntx, 1048576, ch + 416);
+  htr_plist_chunks(roots, ntx, ntx, ch + 416);
   heap_release(m2);
   var wd = lds 1 (pl + 48);
   var nwd = lds 1 (pl + 56);
@@ -3958,13 +3954,13 @@ fun 1 htr_payload(1 pl, 1 out) {
     htr_withdrawal(wd + i * 44, roots + i * 32);
     i = i + 1;
   }
-  htr_list_roots(roots, nwd, 16, ch + 448);
+  htr_plist_chunks(roots, nwd, nwd, ch + 448);
   heap_release(m2);
   htr_u64_at(raw + 512, ch + 480);
   htr_u64_at(raw + 520, ch + 512);
-  htr_bytes_list(lds 1 (pl + 64), lds 1 (pl + 72), 33554432, ch + 544);
+  htr_pbytes(lds 1 (pl + 64), lds 1 (pl + 72), ch + 544);
   htr_u64_at(raw + 532, ch + 576);
-  merkleize(ch, 19, 19, out);
+  htr_pcontainer(ch, 19, out);
   heap_release(mark);
   return 0;
 }
@@ -4020,7 +4016,7 @@ fun 1 htr_bexit(1 e, 1 out) {
   heap_release(mark);
   return 0;
 }
-fun 1 htr_request_list(1 kind, 1 p, 1 n, 1 sz, 1 lim, 1 out) {
+fun 1 htr_request_list(1 kind, 1 p, 1 n, 1 sz, 1 out) {
   var 1 mark = heap_mark();
   var 1 roots = alloc(n * 32 + 32);
   var i = 0;
@@ -4032,19 +4028,19 @@ fun 1 htr_request_list(1 kind, 1 p, 1 n, 1 sz, 1 lim, 1 out) {
     if kind == 4 { htr_bexit(p + i * sz, roots + i * 32); }
     i = i + 1;
   }
-  htr_list_roots(roots, n, lim, out);
+  htr_plist_chunks(roots, n, n, out);
   heap_release(mark);
   return 0;
 }
 fun 1 htr_requests(1 rq, 1 out) {
   var 1 mark = heap_mark();
   var 1 ch = alloc(5 * 32);
-  htr_request_list(0, lds 1 (rq + 0), lds 1 (rq + 8), 192, 8192, ch);
-  htr_request_list(1, lds 1 (rq + 16), lds 1 (rq + 24), 76, 16, ch + 32);
-  htr_request_list(2, lds 1 (rq + 32), lds 1 (rq + 40), 116, 2, ch + 64);
-  htr_request_list(3, lds 1 (rq + 48), lds 1 (rq + 56), 184, 64, ch + 96);
-  htr_request_list(4, lds 1 (rq + 64), lds 1 (rq + 72), 68, 16, ch + 128);
-  merkleize(ch, 5, 5, out);
+  htr_request_list(0, lds 1 (rq + 0), lds 1 (rq + 8), 192, ch);
+  htr_request_list(1, lds 1 (rq + 16), lds 1 (rq + 24), 76, ch + 32);
+  htr_request_list(2, lds 1 (rq + 32), lds 1 (rq + 40), 116, ch + 64);
+  htr_request_list(3, lds 1 (rq + 48), lds 1 (rq + 56), 184, ch + 96);
+  htr_request_list(4, lds 1 (rq + 64), lds 1 (rq + 72), 68, ch + 128);
+  htr_pcontainer(ch, 5, out);
   heap_release(mark);
   return 0;
 }
@@ -4052,33 +4048,20 @@ fun 1 htr_new_payload_request(1 si, 1 out) {
   var 1 mark = heap_mark();
   var 1 ch = alloc(4 * 32);
   htr_payload(lds 1 (si + 0), ch);
-  merkleize(lds 1 (si + 8), lds 1 (si + 16), 4096, ch + 32);
-  mix_in_length(ch + 32, lds 1 (si + 16), ch + 32);
+  htr_plist_chunks(lds 1 (si + 8), lds 1 (si + 16), lds 1 (si + 16), ch + 32);
   memcpy(ch + 64, lds 1 (si + 24), 32);
   htr_requests(lds 1 (si + 32), ch + 96);
   merkleize(ch, 4, 4, out);
   heap_release(mark);
   return 0;
 }
-fun 1 serialize_result(1 out, 1 root, 1 succ, 1 chain_id, 1 bn_some, 1 bn, 1 ts_some, 1 ts) {
+fun 1 serialize_result(1 out, 1 root, 1 succ, 1 chain_id, 1 schema_id) {
   memcpy(out, root, 32);
   st8 out + 32, succ;
-  st_le32(out + 33, 37);
-  st_le64(out + 37, chain_id);
-  st_le32(out + 45, 12);
-  st_le32(out + 49, 4);
-  st_le32(out + 53, 8);
-  st_le32(out + 57, 8 + 8 * bn_some);
-  var n = 61;
-  if bn_some != 0 {
-    st_le64(out + n, bn);
-    n = n + 8;
-  }
-  if ts_some != 0 {
-    st_le64(out + n, ts);
-    n = n + 8;
-  }
-  return n;
+  st_le64(out + 33, chain_id);
+  st8 out + 41, schema_id & 255;
+  st8 out + 42, schema_id >>> 8;
+  return 43;
 }
 exception HdrErr : 1;
 exception BlockErr : 1;
@@ -6149,19 +6132,13 @@ fun 1 recover_sender(1 tx, 1 out20) {
   heap_release(mark);
   return 0;
 }
-fun 1 recover_sender_from_public_key(1 tx, 1 chain_id, 1 pubkey65, 1 out20) {
+fun 1 recover_sender_with_chain_id(1 tx, 1 chain_id, 1 out20) {
   var 1 mark = heap_mark();
-  var 1 pk = alloc(64);
-  recover_transaction_public_key(tx, chain_id, pk);
-  var 1 eq = memeq(pubkey65 + 1, pk, 64);
+  var 1 pk = alloc(72);
+  st8 pk, 4;
+  recover_transaction_public_key(tx, chain_id, pk + 1);
+  sender_address_from_public_key(pk, out20);
   heap_release(mark);
-  if (ld8 pubkey65) != 4 {
-    throw TxErr 47;
-  }
-  if eq == 0 {
-    throw TxErr 47;
-  }
-  sender_address_from_public_key(pubkey65, out20);
   return 0;
 }
 fun 1 count_tokens_in_data(1 p, 1 n) {
@@ -6185,17 +6162,14 @@ fun {1,1,1} calculate_intrinsic_cost(1 tx, 1 sender) {
   var recipient_regular_gas = 0;
   var init_code_gas = 0;
   if to == 0 {
-    recipient_regular_gas = 11000;
-    if value_zero == 0 {
-      recipient_regular_gas = recipient_regular_gas + 1756;
-    }
+    recipient_regular_gas = 12000;
     init_code_gas = 2 * ((data_n + 31) >>> 5);
   } else {
     var 1 is_self_transfer = memeq(to, sender, 20);
     if is_self_transfer == 0 {
       recipient_regular_gas = 3000;
       if value_zero == 0 {
-        recipient_regular_gas = recipient_regular_gas + 1756 + 4244;
+        recipient_regular_gas = recipient_regular_gas + 6000;
       }
     }
   }
@@ -6207,7 +6181,7 @@ fun {1,1,1} calculate_intrinsic_cost(1 tx, 1 sender) {
     var i = 0;
     while i <+ n {
       var ns = lds 1 (recs + i * 24 + 16);
-      access_list_cost = access_list_cost + 3000 + ns * 3000;
+      access_list_cost = access_list_cost + (3000 - 100) + ns * (2100 - 100);
       tokens_in_access_list = tokens_in_access_list + 80
           + ns * 128;
       i = i + 1;
@@ -6228,6 +6202,9 @@ fun {1,1,1} calculate_intrinsic_cost(1 tx, 1 sender) {
 fun {1,1,1} validate_transaction(1 tx, 1 sender) {
   var {1,1,1} ic = calculate_intrinsic_cost(tx, sender);
   var gas = lds 1 (tx + 144);
+  if gas >+ 4294967295 {
+    throw TxErr 66;
+  }
   if (ic.0 + ic.1) >+ gas {
     throw TxErr 60;
   }
@@ -6828,6 +6805,9 @@ fun 1 track_ancestor_access(1 offset) {
 }
 var 1 bal_accounts = 0;
 var 1 bal_index = 0;
+var 1 bal_idx_accts = 0;
+var 1 bal_idx_stor = 0;
+var 1 bal_key_buf = 0;
 fun 1 lst_new(1 esz, 1 cap) {
   var 1 l = alloc(24);
   var 1 p = alloc(esz * cap);
@@ -6858,6 +6838,9 @@ fun 1 lst_push(1 l, 1 esz) {
 }
 fun 1 bal_init() {
   bal_accounts = htab_new(20, 64);
+  bal_idx_accts = htab_new(28, 64);
+  bal_idx_stor = htab_new(60, 64);
+  bal_key_buf = alloc(64);
   bal_index = 0;
   return 0;
 }
@@ -6969,6 +6952,87 @@ fun {1,1,1,1} get_pre_tx_storage(1 addr, 1 key) {
   var {1,1,1,1} r = ws_get_storage(addr, key);
   return r;
 }
+fun 1 idx_start_account(1 addr) {
+  var 1 kb = bal_key_buf;
+  st_le64(kb, bal_index);
+  memcpy(kb + 8, addr, 20);
+  var {1,1} m = htab_get(bal_idx_accts, kb);
+  if m.0 != 0 {
+    return m.1;
+  }
+  var 1 pre = get_pre_tx_account(addr);
+  var 1 rec = alloc(80);
+  memzero(rec, 80);
+  memcpy(rec + 48, empty_code_hash, 32);
+  if pre != 1 {
+    st rec, 1;
+    st rec + 8, lds 1 (pre + 0);
+    st rec + 16, lds {1,1,1,1} (pre + 8);
+    memcpy(rec + 48, lds 1 (pre + 48), 32);
+  }
+  st_le64(kb, bal_index);
+  memcpy(kb + 8, addr, 20);
+  htab_set(bal_idx_accts, kb, rec);
+  return rec;
+}
+fun {1,1,1,1} idx_start_storage(1 addr, 1 key) {
+  var 1 kb = bal_key_buf;
+  st_le64(kb, bal_index);
+  memcpy(kb + 8, addr, 20);
+  memcpy(kb + 28, key, 32);
+  var {1,1} m = htab_get(bal_idx_stor, kb);
+  if m.0 != 0 {
+    return lds {1,1,1,1} (m.1);
+  }
+  var {1,1,1,1} v = get_pre_tx_storage(addr, key);
+  var 1 rec = alloc(32);
+  st rec, v;
+  st_le64(kb, bal_index);
+  memcpy(kb + 8, addr, 20);
+  memcpy(kb + 28, key, 32);
+  htab_set(bal_idx_stor, kb, rec);
+  return v;
+}
+fun 1 bal_list_remove_idx(1 l, 1 esz, 1 idx) {
+  var n = lds 1 (l + 8);
+  var p = lds 1 (l + 0);
+  var i = 0;
+  while i < n {
+    if (lds 1 (p + i * esz)) == idx {
+      if i != (n - 1) {
+        memcpy(p + i * esz, p + (n - 1) * esz, esz);
+      }
+      st l + 8, n - 1;
+      return 0;
+    }
+    i = i + 1;
+  }
+  return 0;
+}
+fun 1 bal_remove_change(1 addr, 1 which, 1 esz, 1 idx) {
+  var {1,1} m = htab_get(bal_accounts, addr);
+  if m.0 == 0 {
+    return 0;
+  }
+  bal_list_remove_idx(lds 1 (m.1 + which), esz, idx);
+  return 0;
+}
+fun 1 remove_storage_write(1 addr, 1 slot, 1 idx) {
+  var {1,1} m = htab_get(bal_accounts, addr);
+  if m.0 == 0 {
+    return 0;
+  }
+  var t = lds 1 (m.1 + 0);
+  var {1,1} sl = htab_get(t, slot);
+  if sl.0 == 0 {
+    return 0;
+  }
+  bal_list_remove_idx(sl.1, 40, idx);
+  if (lds 1 (sl.1 + 8)) == 0 {
+    htab_del(t, slot);
+  }
+  return 0;
+}
 fun 1 update_builder_from_tx() {
   var idx = bal_index;
   var aw = lds 1 (ts + 16);
@@ -6979,15 +7043,10 @@ fun 1 update_builder_from_tx() {
     if s.0 != 0 {
       var addr = s.1;
       var post = s.2;
-      var 1 pre = get_pre_tx_account(addr);
-      var {1,1,1,1} pre_bal = <0, 0, 0, 0>;
-      var pre_nonce = 0;
-      var pre_ch = empty_code_hash;
-      if pre != 1 {
-        pre_bal = lds {1,1,1,1} (pre + 8);
-        pre_nonce = lds 1 (pre + 0);
-        pre_ch = lds 1 (pre + 48);
-      }
+      var 1 pre = idx_start_account(addr);
+      var {1,1,1,1} pre_bal = lds {1,1,1,1} (pre + 16);
+      var pre_nonce = lds 1 (pre + 8);
+      var pre_ch = pre + 48;
       var {1,1,1,1} post_bal = <0, 0, 0, 0>;
       var post_nonce = 0;
       var post_ch = empty_code_hash;
@@ -6999,14 +7058,20 @@ fun 1 update_builder_from_tx() {
       var 1 eq = u256_eq(pre_bal, post_bal);
       if eq == 0 {
         add_balance_change(addr, idx, post_bal);
+      } else {
+        bal_remove_change(addr, 16, 40, idx);
       }
       if pre_nonce != post_nonce {
         add_nonce_change(addr, idx, post_nonce);
+      } else {
+        bal_remove_change(addr, 24, 16, idx);
       }
       eq = memeq(pre_ch, post_ch, 32);
       if eq == 0 {
         var {1,1} code = get_code(post_ch, addr);
         add_code_change(addr, idx, code.0, code.1);
+      } else {
+        bal_remove_change(addr, 32, 24, idx);
       }
     }
     i = i + 1;
@@ -7023,11 +7088,13 @@ fun 1 update_builder_from_tx() {
       while j < icap {
         var {1,1,1} e = htab_item(inner, j);
         if e.0 != 0 {
-          var {1,1,1,1} pre_v = get_pre_tx_storage(s2.1, e.1);
+          var {1,1,1,1} pre_v = idx_start_storage(s2.1, e.1);
           var {1,1,1,1} post_v = lds {1,1,1,1} (e.2);
           var 1 eq2 = u256_eq(pre_v, post_v);
           if eq2 == 0 {
             add_storage_write(s2.1, e.1, idx, post_v);
+          } else {
+            remove_storage_write(s2.1, e.1, idx);
           }
         }
         j = j + 1;
@@ -8265,7 +8332,7 @@ fun 1 op_sload() {
     charge_gas(100);
   } else {
     warm_storage_key(target, key);
-    charge_gas(3000);
+    charge_gas(2100);
   }
   var {1,1,1,1} v = get_storage(target, key);
   stack_push(v);
@@ -8282,7 +8349,7 @@ fun 1 op_sstore() {
   var 1 warm = is_warm_storage_key(target, key);
   var access_cost = 100;
   if warm == 0 {
-    access_cost = 3000;
+    access_cost = 2100;
   }
   var 1 mx = max(access_cost, 2300 + 1);
   check_gas(mx);
@@ -8303,10 +8370,10 @@ fun 1 op_sstore() {
   }
   if cn == 0 {
     if (oz == 0) && (cz == 0) && (nz != 0) {
-      st ev + 96, (lds 1 (ev + 96)) + 12480;
+      st ev + 96, (lds 1 (ev + 96)) + 11616;
     }
     if (oz == 0) && (cz != 0) {
-      st ev + 96, (lds 1 (ev + 96)) - 12480;
+      st ev + 96, (lds 1 (ev + 96)) - 11616;
     }
     if on != 0 {
       st ev + 96, (lds 1 (ev + 96)) + 10000;
@@ -8738,7 +8805,7 @@ fun 1 op_selfdestruct() {
   var aw = 0;
   if (alive == 0) && (obz == 0) {
     state_gas = 183600;
-    aw = 8000;
+    aw = 9000;
   }
   charge_gas(gas_cost + aw);
   charge_state_gas(state_gas);
@@ -8882,7 +8949,7 @@ fun 1 set_delegation() {
       }
       var 1 wr = htab_has(written, authority);
       if wr == 0 {
-        charge_gas(8000);
+        charge_gas(9000);
         htab_set(written, authority, 1);
       }
       var 1 pre = get_pre_state_account(authority);
@@ -9384,6 +9451,13 @@ fun 1 incorporate_child_on_error(1 child) {
 fun 1 incorporate_child_on_success(1 child) {
   incorporate_child_on_error(child);
   st ev + 192, (lds 1 (ev + 192)) + (lds 1 (child + 192));
+  var rep = lds 1 (ev + 72);
+  if (lds 1 (ev + 192)) <+ rep {
+    rep = lds 1 (ev + 192);
+  }
+  st ev + 64, (lds 1 (ev + 64)) + rep;
+  st ev + 72, (lds 1 (ev + 72)) - rep;
+  st ev + 192, (lds 1 (ev + 192)) - rep;
   var cl = lds 1 (child + 88);
   var n = lds 1 (cl + 8);
   var p = lds 1 (cl + 0);
@@ -9530,7 +9604,7 @@ fun 1 op_create() {
   var 1 n = sat_word(msize);
   var {1,1} x = extend_memory_cost1(mstart, msize);
   var 1 w = words_of(n);
-  var 1 cost = add_sat(11000 + 2 * w, x.0);
+  var 1 cost = add_sat(12000 + 2 * w, x.0);
   charge_gas(cost);
   extend_memory(x.1);
   var msg = lds 1 (ev + 112);
@@ -9555,7 +9629,7 @@ fun 1 op_create2() {
   var 1 n = sat_word(msize);
   var {1,1} x = extend_memory_cost1(mstart, msize);
   var 1 w = words_of(n);
-  var 1 cost = add_sat(11000 + 6 * w + 2 * w, x.0);
+  var 1 cost = add_sat(12000 + 6 * w + 2 * w, x.0);
   charge_gas(cost);
   extend_memory(x.1);
   var msg = lds 1 (ev + 112);
@@ -9633,7 +9707,7 @@ fun 1 op_call() {
   }
   var transfer_cost = 0;
   if vz == 0 {
-    transfer_cost = 10300;
+    transfer_cost = 11300;
   }
   var 1 need = add_sat(access_cost + transfer_cost, x.0);
   check_gas(need);
@@ -9711,7 +9785,7 @@ fun 1 op_callcode() {
   var 1 vz = u256_is_zero(value);
   var transfer_cost = 0;
   if vz == 0 {
-    transfer_cost = 10300;
+    transfer_cost = 11300;
   }
   var 1 need = add_sat(access_cost + transfer_cost, x.0);
   check_gas(need);
@@ -15473,7 +15547,10 @@ fun 1 block_rlp_length(1 hdr, 1 pl) {
     if n != 0 {
       fb = ld8 ((lds 1 ((txs) + (i) * 16)));
     }
-    var 1 el = rlp_bytes_encoded_len(fb, n);
+    var 1 el = n;
+    if (n == 0) || (fb <+ 192) {
+      el = rlp_bytes_encoded_len(fb, n);
+    }
     tl = tl + el;
     i = i + 1;
   }
@@ -15728,7 +15805,7 @@ fun {1,1,1,1} check_transaction(1 tx, 1 sender) {
   }
   return price;
 }
-fun 1 process_transaction(1 tx, 1 index, 1 pubkey) {
+fun 1 process_transaction(1 tx, 1 index) {
   state_fresh_tx();
   bal_index = index + 1;
   var {1,1} enc = encode_transaction(tx);
@@ -15742,7 +15819,7 @@ fun 1 process_transaction(1 tx, 1 index, 1 pubkey) {
     }
   }
   var 1 sender = alloc(24);
-  recover_sender_from_public_key(tx, lds 1 (be + 0), pubkey, sender);
+  recover_sender_with_chain_id(tx, lds 1 (be + 0), sender);
   skip;
   var {1,1,1} intrinsic = validate_transaction(tx, sender);
   skip;
@@ -16078,7 +16155,7 @@ fun 1 execute_block(1 si, 1 hdr) {
   while i < ntx {
     var 1 tx = decode_transaction((lds 1 ((ptxs) + (i) * 16)), (lds 1 ((ptxs) + (i) * 16 + 8)));
     skip;
-    process_transaction(tx, i, (lds 1 (si + 128)) + i * 65);
+    process_transaction(tx, i);
     skip;
     i = i + 1;
   }
@@ -16145,19 +16222,6 @@ fun 1 execute_block(1 si, 1 hdr) {
 }
 fun 1 run_attempt(1 si) {
   var pl = lds 1 (si + 0);
-  if ((lds 1 (si + 96)) == 0) && ((lds 1 (si + 112)) == 0) {
-    throw BlockErr 1;
-  }
-  if (lds 1 (si + 96)) != 0 {
-    if (lds 1 (pl + 80)) <+ (lds 1 (si + 104)) {
-      throw BlockErr 2;
-    }
-  }
-  if (lds 1 (si + 112)) != 0 {
-    if (lds 1 (pl + 104)) <+ (lds 1 (si + 120)) {
-      throw BlockErr 2;
-    }
-  }
   skip;
   var {1,1} vh = validate_headers(lds 1 (si + 72), lds 1 (si + 80));
   var nh = lds 1 (si + 80);
@@ -16200,14 +16264,11 @@ fun 1 run_attempt(1 si) {
   if bl >+ 8388608 {
     throw BlockErr 7;
   }
-  if (lds 1 (si + 136)) != ntx {
-    throw BlockErr 8;
-  }
   skip;
   validate_header(parent, hdr);
   skip;
-  be = alloc(136);
-  memzero(be, 136);
+  be = alloc(120);
+  memzero(be, 120);
   st be + 0, lds 1 (si + 88);
   st be + 8, lds 1 (hdr + 104);
   st be + 16, block_hashes;
@@ -16220,8 +16281,6 @@ fun 1 run_attempt(1 si) {
   st be + 96, lds 1 (hdr + 208);
   st be + 104, lds 1 (hdr + 216);
   st be + 112, lds 1 (hdr + 240);
-  st be + 120, lds 1 (si + 128);
-  st be + 128, lds 1 (si + 136);
   skip;
   execute_block(si, hdr);
   skip;
@@ -16230,43 +16289,43 @@ fun 1 run_attempt(1 si) {
 fun 1 attempt_l1(1 si) {
   var e = 0;
   try run_attempt(si)
-  catch BlockErr => e { !st8 2684420096 + 70, e; throw Fail 1; }
+  catch BlockErr => e { !st8 2688614400 + 70, e; throw Fail 1; }
   return 0;
 }
 fun 1 attempt_l2(1 si) {
   var e = 0;
   try attempt_l1(si)
-  catch HdrErr => e { !st8 2684420096 + 70, e; throw Fail 2; }
+  catch HdrErr => e { !st8 2688614400 + 70, e; throw Fail 2; }
   return 0;
 }
 fun 1 attempt_l3(1 si) {
   var e = 0;
   try attempt_l2(si)
-  catch RlpErr => e { !st8 2684420096 + 70, e; throw Fail 3; }
+  catch RlpErr => e { !st8 2688614400 + 70, e; throw Fail 3; }
   return 0;
 }
 fun 1 attempt_l4(1 si) {
   var e = 0;
   try attempt_l3(si)
-  catch MptErr => e { !st8 2684420096 + 70, e; throw Fail 4; }
+  catch MptErr => e { !st8 2688614400 + 70, e; throw Fail 4; }
   return 0;
 }
 fun 1 attempt_l5(1 si) {
   var e = 0;
   try attempt_l4(si)
-  catch StateErr => e { !st8 2684420096 + 70, e; throw Fail 5; }
+  catch StateErr => e { !st8 2688614400 + 70, e; throw Fail 5; }
   return 0;
 }
 fun 1 attempt_l6(1 si) {
   var e = 0;
   try attempt_l5(si)
-  catch TxErr => e { !st8 2684420096 + 70, e; throw Fail 6; }
+  catch TxErr => e { !st8 2688614400 + 70, e; throw Fail 6; }
   return 0;
 }
 fun 1 attempt_l7(1 si) {
   var e = 0;
   try attempt_l6(si)
-  catch EvmErr => e { !st8 2684420096 + 70, e; throw Fail 7; }
+  catch EvmErr => e { !st8 2688614400 + 70, e; throw Fail 7; }
   return 0;
 }
 fun 1 verify_stateless_new_payload(1 si) {
@@ -16303,7 +16362,7 @@ fun 1 main() {
   var err_code = 0;
   try si = decode_stateless_input(inp.0, inp.1)
   catch SszErr => err_code {
-    var 1 n = serialize_result(out, z32, 0, 0, 0, 0, 0, 0);
+    var 1 n = serialize_result(out, z32, 0, 0, 0);
     st8 out + n, err_code;
     output_write(out, n + 1);
     @halt(@base, 0, @base, 0);
@@ -16312,8 +16371,7 @@ fun 1 main() {
   var 1 root = alloc(32);
   htr_new_payload_request(si, root);
   var 1 succ = verify_stateless_new_payload(si);
-  var 1 n = serialize_result(out, root, succ, lds 1 (si + 88),
-      lds 1 (si + 96), lds 1 (si + 104), lds 1 (si + 112), lds 1 (si + 120));
+  var 1 n = serialize_result(out, root, succ, lds 1 (si + 88), 5377);
   st8 out + n, fail_code;
   output_write(out, n + 1);
   @halt(@base, 0, @base, 0);

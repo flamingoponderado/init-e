@@ -28,6 +28,9 @@
 
 var 1 bal_accounts = 0;   /* htab addr -> AccountData */
 var 1 bal_index = 0;      /* builder.block_access_index */
+var 1 bal_idx_accts = 0;  /* (index||addr) 28 bytes -> account record at index start */
+var 1 bal_idx_stor = 0;   /* (index||addr||slot) 60 bytes -> 32-byte value at index start */
+var 1 bal_key_buf = 0;    /* scratch key (htab copies keys) */
 
 fun 1 lst_new(1 esz, 1 cap) {
   var 1 l = alloc(LST_SIZE);
@@ -64,6 +67,9 @@ fun 1 lst_push(1 l, 1 esz) {
 
 fun 1 bal_init() {
   bal_accounts = htab_new(20, 64);
+  bal_idx_accts = htab_new(28, 64);
+  bal_idx_stor = htab_new(60, 64);
+  bal_key_buf = alloc(64);
   bal_index = 0;
   return 0;
 }
@@ -193,6 +199,101 @@ fun {1,1,1,1} get_pre_tx_storage(1 addr, 1 key) {
   return r;
 }
 
+/* _index_start_account: the account as it was when the current block access
+   index began, captured on first use. Record: +0 exists, +8 nonce,
+   +16 balance (4 limbs), +48 code hash (32 bytes). */
+fun 1 idx_start_account(1 addr) {
+  var 1 kb = bal_key_buf;
+  st_le64(kb, bal_index);
+  memcpy(kb + 8, addr, 20);
+  var {1,1} m = htab_get(bal_idx_accts, kb);
+  if m.0 != 0 {
+    return m.1;
+  }
+  var 1 pre = get_pre_tx_account(addr);
+  var 1 rec = alloc(80);
+  memzero(rec, 80);
+  memcpy(rec + 48, empty_code_hash, 32);
+  if pre != ACCT_NONE {
+    st rec, 1;
+    st rec + 8, lds 1 (pre + ACCT_NONCE);
+    st rec + 16, lds {1,1,1,1} (pre + ACCT_BALANCE);
+    memcpy(rec + 48, lds 1 (pre + ACCT_CODE_HASH), 32);
+  }
+  st_le64(kb, bal_index);
+  memcpy(kb + 8, addr, 20);
+  htab_set(bal_idx_accts, kb, rec);
+  return rec;
+}
+
+/* _index_start_storage: a storage value as of the start of the current index. */
+fun {1,1,1,1} idx_start_storage(1 addr, 1 key) {
+  var 1 kb = bal_key_buf;
+  st_le64(kb, bal_index);
+  memcpy(kb + 8, addr, 20);
+  memcpy(kb + 28, key, 32);
+  var {1,1} m = htab_get(bal_idx_stor, kb);
+  if m.0 != 0 {
+    return lds {1,1,1,1} (m.1);
+  }
+  var {1,1,1,1} v = get_pre_tx_storage(addr, key);
+  var 1 rec = alloc(32);
+  st rec, v;
+  st_le64(kb, bal_index);
+  memcpy(kb + 8, addr, 20);
+  memcpy(kb + 28, key, 32);
+  htab_set(bal_idx_stor, kb, rec);
+  return v;
+}
+
+/* Drop the entry recorded at idx from a change list (order is irrelevant: the
+   build step sorts by index). */
+fun 1 bal_list_remove_idx(1 l, 1 esz, 1 idx) {
+  var n = lds 1 (l + LST_N);
+  var p = lds 1 (l + LST_PTR);
+  var i = 0;
+  while i < n {
+    if (lds 1 (p + i * esz)) == idx {
+      if i != (n - 1) {
+        memcpy(p + i * esz, p + (n - 1) * esz, esz);
+      }
+      st l + LST_N, n - 1;
+      return 0;
+    }
+    i = i + 1;
+  }
+  return 0;
+}
+
+/* remove_{balance,nonce,code}_change / remove_storage_write: no-ops when the
+   account (or slot) is not in the builder. which: AD_BAL_CHANGES (40-byte
+   entries), AD_NONCE_CHANGES (16), AD_CODE_CHANGES (24). */
+fun 1 bal_remove_change(1 addr, 1 which, 1 esz, 1 idx) {
+  var {1,1} m = htab_get(bal_accounts, addr);
+  if m.0 == 0 {
+    return 0;
+  }
+  bal_list_remove_idx(lds 1 (m.1 + which), esz, idx);
+  return 0;
+}
+
+fun 1 remove_storage_write(1 addr, 1 slot, 1 idx) {
+  var {1,1} m = htab_get(bal_accounts, addr);
+  if m.0 == 0 {
+    return 0;
+  }
+  var t = lds 1 (m.1 + AD_STOR_CHANGES);
+  var {1,1} sl = htab_get(t, slot);
+  if sl.0 == 0 {
+    return 0;
+  }
+  bal_list_remove_idx(sl.1, 40, idx);
+  if (lds 1 (sl.1 + LST_N)) == 0 {
+    htab_del(t, slot);
+  }
+  return 0;
+}
+
 fun 1 update_builder_from_tx() {
   var idx = bal_index;
   var aw = lds 1 (ts + TS_ACCT_WRITES);
@@ -203,15 +304,10 @@ fun 1 update_builder_from_tx() {
     if s.0 != 0 {
       var addr = s.1;
       var post = s.2;
-      var 1 pre = get_pre_tx_account(addr);
-      var {1,1,1,1} pre_bal = <0, 0, 0, 0>;
-      var pre_nonce = 0;
-      var pre_ch = empty_code_hash;
-      if pre != ACCT_NONE {
-        pre_bal = lds {1,1,1,1} (pre + ACCT_BALANCE);
-        pre_nonce = lds 1 (pre + ACCT_NONCE);
-        pre_ch = lds 1 (pre + ACCT_CODE_HASH);
-      }
+      var 1 pre = idx_start_account(addr);
+      var {1,1,1,1} pre_bal = lds {1,1,1,1} (pre + 16);
+      var pre_nonce = lds 1 (pre + 8);
+      var pre_ch = pre + 48;
       var {1,1,1,1} post_bal = <0, 0, 0, 0>;
       var post_nonce = 0;
       var post_ch = empty_code_hash;
@@ -223,14 +319,20 @@ fun 1 update_builder_from_tx() {
       var 1 eq = u256_eq(pre_bal, post_bal);
       if eq == 0 {
         add_balance_change(addr, idx, post_bal);
+      } else {
+        bal_remove_change(addr, AD_BAL_CHANGES, 40, idx);
       }
       if pre_nonce != post_nonce {
         add_nonce_change(addr, idx, post_nonce);
+      } else {
+        bal_remove_change(addr, AD_NONCE_CHANGES, 16, idx);
       }
       eq = memeq(pre_ch, post_ch, 32);
       if eq == 0 {
         var {1,1} code = get_code(post_ch, addr);
         add_code_change(addr, idx, code.0, code.1);
+      } else {
+        bal_remove_change(addr, AD_CODE_CHANGES, 24, idx);
       }
     }
     i = i + 1;
@@ -247,11 +349,13 @@ fun 1 update_builder_from_tx() {
       while j < icap {
         var {1,1,1} e = htab_item(inner, j);
         if e.0 != 0 {
-          var {1,1,1,1} pre_v = get_pre_tx_storage(s2.1, e.1);
+          var {1,1,1,1} pre_v = idx_start_storage(s2.1, e.1);
           var {1,1,1,1} post_v = lds {1,1,1,1} (e.2);
           var 1 eq2 = u256_eq(pre_v, post_v);
           if eq2 == 0 {
             add_storage_write(s2.1, e.1, idx, post_v);
+          } else {
+            remove_storage_write(s2.1, e.1, idx);
           }
         }
         j = j + 1;

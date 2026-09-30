@@ -168,7 +168,12 @@ fun 1 block_rlp_length(1 hdr, 1 pl) {
     if n != 0 {
       fb = ld8 (SLICE_PTR(txs, i));
     }
-    var 1 el = rlp_bytes_encoded_len(fb, n);
+    /* a legacy transaction (RLP list) is embedded raw in the block's
+       transaction list; typed transactions are wrapped as byte strings */
+    var 1 el = n;
+    if (n == 0) || (fb <+ 192) {
+      el = rlp_bytes_encoded_len(fb, n);
+    }
     tl = tl + el;
     i = i + 1;
   }
@@ -447,7 +452,7 @@ fun {1,1,1,1} check_transaction(1 tx, 1 sender) {
 
 /* ---- process_transaction (Fork.lean) --------------------------------------------- */
 
-fun 1 process_transaction(1 tx, 1 index, 1 pubkey) {
+fun 1 process_transaction(1 tx, 1 index) {
   state_fresh_tx();
   bal_index = index + 1;
   var {1,1} enc = encode_transaction(tx);
@@ -461,7 +466,7 @@ fun 1 process_transaction(1 tx, 1 index, 1 pubkey) {
     }
   }
   var 1 sender = alloc(24);
-  recover_sender_from_public_key(tx, lds 1 (be + BE_CHAIN_ID), pubkey, sender);
+  recover_sender_with_chain_id(tx, lds 1 (be + BE_CHAIN_ID), sender);
   DBG(31);
   var {1,1,1} intrinsic = validate_transaction(tx, sender);
   DBG(32);
@@ -822,7 +827,7 @@ fun 1 execute_block(1 si, 1 hdr) {
   while i < ntx {
     var 1 tx = decode_transaction(SLICE_PTR(ptxs, i), SLICE_LEN(ptxs, i));
     DBG(22);
-    process_transaction(tx, i, (lds 1 (si + SI_PK)) + i * PUBKEY_SIZE);
+    process_transaction(tx, i);
     DBG(23);
     i = i + 1;
   }
@@ -893,20 +898,6 @@ fun 1 execute_block(1 si, 1 hdr) {
 
 fun 1 run_attempt(1 si) {
   var pl = lds 1 (si + SI_PL);
-  /* validate_chain_config */
-  if ((lds 1 (si + SI_BN_SOME)) == 0) && ((lds 1 (si + SI_TS_SOME)) == 0) {
-    throw BlockErr 1;   /* forkActivationMissing */
-  }
-  if (lds 1 (si + SI_BN_SOME)) != 0 {
-    if (lds 1 (pl + PL_NUMBER)) <+ (lds 1 (si + SI_BN)) {
-      throw BlockErr 2;   /* inactiveForkConfig */
-    }
-  }
-  if (lds 1 (si + SI_TS_SOME)) != 0 {
-    if (lds 1 (pl + PL_TIMESTAMP)) <+ (lds 1 (si + SI_TS)) {
-      throw BlockErr 2;
-    }
-  }
   DBG(10);
   /* validate_headers */
   var {1,1} vh = validate_headers(lds 1 (si + SI_HEADERS), lds 1 (si + SI_HEADERS_N));
@@ -952,9 +943,6 @@ fun 1 run_attempt(1 si) {
   if bl >+ MAX_RLP_BLOCK_SIZE {
     throw BlockErr 7;
   }
-  if (lds 1 (si + SI_PK_N)) != ntx {
-    throw BlockErr 8;   /* public key count mismatch */
-  }
   DBG(17);
   validate_header(parent, hdr);
   DBG(18);
@@ -973,8 +961,6 @@ fun 1 run_attempt(1 si) {
   st be + BE_EXCESS_BLOB_GAS, lds 1 (hdr + HDR_EXCESS_BLOB_GAS);
   st be + BE_PBBR, lds 1 (hdr + HDR_PBBR);
   st be + BE_SLOT, lds 1 (hdr + HDR_SLOT);
-  st be + BE_PUBKEYS, lds 1 (si + SI_PK);
-  st be + BE_PUBKEYS_N, lds 1 (si + SI_PK_N);
   DBG(19);
   execute_block(si, hdr);
   DBG(40);

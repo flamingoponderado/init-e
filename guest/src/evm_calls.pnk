@@ -882,6 +882,14 @@ fun 1 incorporate_child_on_error(1 child) {
 fun 1 incorporate_child_on_success(1 child) {
   incorporate_child_on_error(child);
   st ev + EV_STATE_GAS_SPILLED, (lds 1 (ev + EV_STATE_GAS_SPILLED)) + (lds 1 (child + EV_STATE_GAS_SPILLED));
+  /* repay_state_gas_spill: the reservoir repays any outstanding spill into gas_left */
+  var rep = lds 1 (ev + EV_STATE_GAS_LEFT);
+  if (lds 1 (ev + EV_STATE_GAS_SPILLED)) <+ rep {
+    rep = lds 1 (ev + EV_STATE_GAS_SPILLED);
+  }
+  st ev + EV_GAS_LEFT, (lds 1 (ev + EV_GAS_LEFT)) + rep;
+  st ev + EV_STATE_GAS_LEFT, (lds 1 (ev + EV_STATE_GAS_LEFT)) - rep;
+  st ev + EV_STATE_GAS_SPILLED, (lds 1 (ev + EV_STATE_GAS_SPILLED)) - rep;
   var cl = lds 1 (child + EV_LOGS);
   var n = lds 1 (cl + LST_N);
   var p = lds 1 (cl + LST_PTR);

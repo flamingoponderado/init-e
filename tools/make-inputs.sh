@@ -6,7 +6,9 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
-TAG="$(cat "$ROOT/evm-asm/scripts/eest-fixture-tag.txt")"
+# The fixture tag is pinned by this repo (eest-fixture-tag.txt), not by the evm-asm
+# submodule, whose own pin tracks an older schema.
+TAG="$(tr -d '[:space:]' < "$ROOT/eest-fixture-tag.txt")"
 FX="${EEST_FIXTURES_DIR:-$ROOT/evm-asm/gen-out/eest-fixtures/$TAG/fixtures/fixtures}"
 
 ensure_fixtures() {

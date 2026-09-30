@@ -8,7 +8,7 @@ declares, and needs it to be `none` exactly when the input does not decode.
 This module mirrors the guest's decoder for that purpose: `decode_payload`,
 `decode_requests`, `decode_bytes_list` and `decode_stateless_input` of
 `guest/src/ssz.pnk`, with their helpers `ssz_check_offsets`,
-`ssz_split_var_list`, `ssz_fixed_list_count` and `ssz_optional_u64`, and the
+`ssz_split_var_list` and `ssz_fixed_list_count`, and the
 field offsets and list limits of `guest/src/types.h`. Every `ssz_fail` site
 becomes `none`, in the guest's own order, so `decodeStatelessInput` is `some`
 on exactly the inputs on which `decode_stateless_input` returns instead of
@@ -70,31 +70,19 @@ def le64 (input : InputBlob) (i : Nat) : Nat :=
 /-- `PLO_SLOT`. -/ def ploSlot : Nat := 532
 
 /-- `WITHDRAWAL_SIZE`. -/ def withdrawalSize : Nat := 44
-/-- `PUBKEY_SIZE`. -/ def pubkeySize : Nat := 65
 /-- `DEPOSIT_SIZE`. -/ def depositSize : Nat := 192
 /-- `WDREQ_SIZE`. -/ def wdreqSize : Nat := 76
 /-- `CONS_SIZE`. -/ def consSize : Nat := 116
 /-- `BDEP_SIZE`. -/ def bdepSize : Nat := 184
 /-- `BEXIT_SIZE`. -/ def bexitSize : Nat := 68
 
+/-- `SSZ_UNBOUNDED`: the stand-in limit of a progressive list or byte list,
+which has none. -/ def sszUnbounded : Nat := 9223372036854775807
 /-- `MAX_EXTRA_DATA_BYTES`. -/ def maxExtraDataBytes : Nat := 32
-/-- `MAX_BYTES_PER_TRANSACTION`. -/ def maxBytesPerTransaction : Nat := 1073741824
-/-- `MAX_TRANSACTIONS_PER_PAYLOAD`. -/ def maxTransactionsPerPayload : Nat := 1048576
-/-- `MAX_WITHDRAWALS_PER_PAYLOAD`. -/ def maxWithdrawalsPerPayload : Nat := 16
-/-- `MAX_BLOB_COMMITMENTS_PER_BLOCK`. -/ def maxBlobCommitmentsPerBlock : Nat := 4096
-/-- `MAX_DEPOSIT_REQUESTS_PER_PAYLOAD`. -/ def maxDepositRequests : Nat := 8192
-/-- `MAX_WITHDRAWAL_REQUESTS_PER_PAYLOAD`. -/ def maxWithdrawalRequests : Nat := 16
-/-- `MAX_CONSOLIDATION_REQUESTS_PER_PAYLOAD`. -/ def maxConsolidationRequests : Nat := 2
-/-- `MAX_BUILDER_DEPOSIT_REQUESTS_PER_PAYLOAD`. -/ def maxBuilderDepositRequests : Nat := 64
-/-- `MAX_BUILDER_EXIT_REQUESTS_PER_PAYLOAD`. -/ def maxBuilderExitRequests : Nat := 16
-/-- `MAX_BLOCK_ACCESS_LIST_BYTES`. -/ def maxBlockAccessListBytes : Nat := 1073741824
-/-- `MAX_WITNESS_NODES`. -/ def maxWitnessNodes : Nat := 4194304
-/-- `MAX_WITNESS_CODES`. -/ def maxWitnessCodes : Nat := 262144
 /-- `MAX_WITNESS_HEADERS`. -/ def maxWitnessHeaders : Nat := 256
 /-- `MAX_BYTES_PER_WITNESS_NODE`. -/ def maxBytesPerWitnessNode : Nat := 1024
 /-- `MAX_BYTES_PER_CODE`. -/ def maxBytesPerCode : Nat := 65536
 /-- `MAX_BYTES_PER_HEADER`. -/ def maxBytesPerHeader : Nat := 1024
-/-- `MAX_PUBLIC_KEYS`. -/ def maxPublicKeys : Nat := 32768
 
 /-! ### The decode helpers of `guest/src/ssz.pnk`
 
@@ -152,12 +140,6 @@ def fixedListCount (len size lim : Nat) : Option Nat := do
   guard (count ≤ lim)
   some count
 
-/-- `ssz_optional_u64`: `List[uint64, 1]`, as `(present, value)`. -/
-def optionalU64 (input : InputBlob) (p len : Nat) : Option (Bool × Nat) :=
-  if len = 0 then some (false, 0)
-  else if len ≠ 8 then none
-  else some (true, le64 input p)
-
 /-- `decode_bytes_list`: a `List[ByteList[maxBytes], lim]`. -/
 def decodeBytesList (input : InputBlob) (p len lim maxBytes : Nat) :
     Option (List (Nat × Nat)) := do
@@ -208,9 +190,6 @@ structure StatelessInput where
   /-- `SI_CODES`, `SI_CODES_N`. -/ witnessCodes : List (Nat × Nat)
   /-- `SI_HEADERS`, `SI_HEADERS_N`. -/ witnessHeaders : List (Nat × Nat)
   /-- `SI_CHAIN_ID`. -/ chainId : Nat
-  /-- `SI_BN_SOME`, `SI_BN`. -/ blockNumberActivation : Bool × Nat
-  /-- `SI_TS_SOME`, `SI_TS`. -/ timestampActivation : Bool × Nat
-  /-- `SI_PK_N`. -/ publicKeyCount : Nat
   deriving Repr, DecidableEq
 
 /-! ### The decoders -/
@@ -225,11 +204,9 @@ def decodePayload (input : InputBlob) (p len : Nat) : Option Payload := do
   let _ ← checkOffsets [extraOffset, txsOffset, withdrawalsOffset, balOffset] plFixed len
   guard (txsOffset - extraOffset ≤ maxExtraDataBytes)
   let transactions ← splitVarList input (p + txsOffset)
-    (withdrawalsOffset - txsOffset) maxTransactionsPerPayload
-  guard (transactions.all fun slice => Nat.ble slice.2 maxBytesPerTransaction)
+    (withdrawalsOffset - txsOffset) sszUnbounded
   let withdrawalCount ← fixedListCount (balOffset - withdrawalsOffset)
-    withdrawalSize maxWithdrawalsPerPayload
-  guard (len - balOffset ≤ maxBlockAccessListBytes)
+    withdrawalSize sszUnbounded
   some
     { raw := (p, len)
       extraData := (p + extraOffset, txsOffset - extraOffset)
@@ -254,15 +231,17 @@ def decodeRequests (input : InputBlob) (p len : Nat) : Option Requests := do
   let o2 := offsets[2]!
   let o3 := offsets[3]!
   let o4 := offsets[4]!
-  let deposits ← fixedListCount (o1 - o0) depositSize maxDepositRequests
-  let withdrawals ← fixedListCount (o2 - o1) wdreqSize maxWithdrawalRequests
-  let consolidations ← fixedListCount (o3 - o2) consSize maxConsolidationRequests
-  let builderDeposits ← fixedListCount (o4 - o3) bdepSize maxBuilderDepositRequests
-  let builderExits ← fixedListCount (len - o4) bexitSize maxBuilderExitRequests
+  let deposits ← fixedListCount (o1 - o0) depositSize sszUnbounded
+  let withdrawals ← fixedListCount (o2 - o1) wdreqSize sszUnbounded
+  let consolidations ← fixedListCount (o3 - o2) consSize sszUnbounded
+  let builderDeposits ← fixedListCount (o4 - o3) bdepSize sszUnbounded
+  let builderExits ← fixedListCount (len - o4) bexitSize sszUnbounded
   some { deposits, withdrawals, consolidations, builderDeposits, builderExits }
 
-/-- `decode_stateless_input`: the schema id, then the SSZ body. `none` on
-exactly the inputs for which the guest raises `SszErr` instead of returning. -/
+/-- `decode_stateless_input`: the schema id, then the SSZ body
+(`StatelessInput = Container[new_payload_request, witness, chain_id: uint64]`).
+`none` on exactly the inputs for which the guest raises `SszErr` instead of
+returning. -/
 def decodeStatelessInput (input : InputBlob) : Option StatelessInput := do
   guard (2 ≤ input.length)
   guard (byteAt input 0 = 21 ∧ byteAt input 1 = 1)
@@ -270,12 +249,11 @@ def decodeStatelessInput (input : InputBlob) : Option StatelessInput := do
   let p := 2
   let len := input.length - 2
   guard (siFixed ≤ len)
-  let offsets := (List.range 4).map fun index => le32 input (p + index * 4)
+  let offsets := [le32 input p, le32 input (p + 4)]
   let _ ← checkOffsets offsets siFixed len
   let nprOffset := offsets[0]!
   let witnessOffset := offsets[1]!
-  let chainConfigOffset := offsets[2]!
-  let publicKeysOffset := offsets[3]!
+  let chainId := le64 input (p + 8)
   -- NewPayloadRequest
   let np := p + nprOffset
   let nlen := witnessOffset - nprOffset
@@ -287,11 +265,11 @@ def decodeStatelessInput (input : InputBlob) : Option StatelessInput := do
   let payload ← decodePayload input (np + payloadOffset)
     (versionedHashesOffset - payloadOffset)
   let versionedHashCount ← fixedListCount (requestsOffset - versionedHashesOffset) 32
-    maxBlobCommitmentsPerBlock
+    sszUnbounded
   let requests ← decodeRequests input (np + requestsOffset) (nlen - requestsOffset)
   -- ExecutionWitness
   let wp := p + witnessOffset
-  let wlen := chainConfigOffset - witnessOffset
+  let wlen := len - witnessOffset
   guard (12 ≤ wlen)
   let witnessOffsets := (List.range 3).map fun index => le32 input (wp + index * 4)
   let _ ← checkOffsets witnessOffsets 12 wlen
@@ -299,34 +277,11 @@ def decodeStatelessInput (input : InputBlob) : Option StatelessInput := do
   let w1 := witnessOffsets[1]!
   let w2 := witnessOffsets[2]!
   let witnessState ← decodeBytesList input (wp + w0) (w1 - w0)
-    maxWitnessNodes maxBytesPerWitnessNode
+    sszUnbounded maxBytesPerWitnessNode
   let witnessCodes ← decodeBytesList input (wp + w1) (w2 - w1)
-    maxWitnessCodes maxBytesPerCode
+    sszUnbounded maxBytesPerCode
   let witnessHeaders ← decodeBytesList input (wp + w2) (wlen - w2)
     maxWitnessHeaders maxBytesPerHeader
-  -- ChainConfig: [uint64 chain_id, ForkConfig]
-  let cp := p + chainConfigOffset
-  let clen := publicKeysOffset - chainConfigOffset
-  guard (12 ≤ clen)
-  let chainId := le64 input cp
-  let _ ← checkOffsets [le32 input (cp + 8)] 12 clen
-  -- ForkConfig: [ForkActivation]
-  let fp := cp + 12
-  let flen := clen - 12
-  guard (4 ≤ flen)
-  let _ ← checkOffsets [le32 input fp] 4 flen
-  -- ForkActivation: [List[uint64, 1], List[uint64, 1]]
-  let ap := fp + 4
-  let alen := flen - 4
-  guard (8 ≤ alen)
-  let activationOffsets := [le32 input ap, le32 input (ap + 4)]
-  let _ ← checkOffsets activationOffsets 8 alen
-  let a0 := activationOffsets[0]!
-  let a1 := activationOffsets[1]!
-  let blockNumberActivation ← optionalU64 input (ap + a0) (a1 - a0)
-  let timestampActivation ← optionalU64 input (ap + a1) (alen - a1)
-  -- public keys: List[ByteVector[65], 2^15]
-  let publicKeyCount ← fixedListCount (len - publicKeysOffset) pubkeySize maxPublicKeys
   some
     { payload
       versionedHashCount
@@ -334,10 +289,7 @@ def decodeStatelessInput (input : InputBlob) : Option StatelessInput := do
       witnessState
       witnessCodes
       witnessHeaders
-      chainId
-      blockNumberActivation
-      timestampActivation
-      publicKeyCount }
+      chainId }
 
 /-- The declared block gas limit: the payload's `gas_limit` field, `none` when
 the input does not decode. `Guest.declaredBlockGasLimit` is exactly this; it
