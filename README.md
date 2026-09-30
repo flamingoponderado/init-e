@@ -175,6 +175,10 @@ Next steps:
 * For the same pipeline against a real chain block (the devnet-7 block from
   issue #54), see
   [docs/ZISK-PROVE-BLOCK-FLAPJACK.md](docs/ZISK-PROVE-BLOCK-FLAPJACK.md).
+* For a ZisK step/cost comparison of this guest against the reth and ethrex
+  guests on real devnet-7 blocks (and on current-spec stress blocks), with
+  the reproducing commands, see
+  [docs/CLIENT-COMPARISON.md](docs/CLIENT-COMPARISON.md).
 * For the correctness comparison against the guest's original toolchain,
   see [docs/FLAPJACK-CORRECTNESS.md](docs/FLAPJACK-CORRECTNESS.md).
 
