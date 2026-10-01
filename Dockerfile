@@ -39,6 +39,18 @@ ENV PATH="/root/.cargo/bin:$PATH"
 RUN git clone --depth 1 --branch "${ZISK_TAG}" \
     https://github.com/0xPolygonHermez/zisk /zisk
 WORKDIR /zisk
+# proofman-starks-src's Makefile greps /proc/cpuinfo at build time and adds
+# -mavx512f when the *build* machine has AVX-512. GitHub's runner pool mixes
+# CPUs with and without it, so the published ziskemu died with SIGILL
+# ("Illegal instruction") on any host lacking AVX-512 whenever the image
+# happened to be built on an AVX-512 runner. Blank that detection so the C++
+# side is built for the same portable baseline on every runner (AVX2 is still
+# detected; zisk's own .cargo/config.toml already pins bmi2+adx, a
+# Broadwell/Zen1 floor).
+RUN cargo fetch \
+    && mk="$(ls -d /root/.cargo/registry/src/*/proofman-starks-src-*)/Makefile" \
+    && sed -i 's/^\([[:space:]]*AVX512_SUPPORTED := \).*/\1/' "$mk" \
+    && grep -n 'AVX512_SUPPORTED :=' "$mk"
 RUN cargo build --release -p ziskemu
 
 # Collect zisk project licenses (dual MIT/Apache-2.0) and a per-crate license inventory
