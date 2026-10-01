@@ -285,10 +285,12 @@ new main baseline, regenerate it with the same `bench.py` command using
 ## Plan
 
 1. Port the Pancake compiler, formally verified in HOL, to Lean (flapjack).
-2. Prove a more useful version of "source terminates ⇒ RISC-V terminates," aware of step counts.
-3. Bound the number of source steps under 200M gas.
-4. Bound memory usage under 200M gas.
-5. Combine these into an autoresearch-ready theorem.
+2. Combine this with the guest into an autoresearch-ready theorem.
+
+Step and memory accounting (source-step and memory bounds under 200M gas, and
+a step-count-aware "source terminates ⇒ RISC-V terminates") are not
+prerequisites for starting step 2, so they are no longer separate plan steps.
+Existing work on them stays in [docs/STEP-BOUND.md](docs/STEP-BOUND.md).
 
 See `PLAN.md` for the detailed milestone log. Deliberate numeric-width and
 saturation boundaries are documented in [docs/ENVELOPE.md](docs/ENVELOPE.md),
