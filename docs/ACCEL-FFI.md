@@ -75,22 +75,24 @@ falls back to the ordinary path when the memory handler declines.
   8,835,587 to 8,836,255 (+0.008%), and the largest case from 12,276,776,458 to
   12,290,475,154 (+0.11%), from the extra 64-byte block copy in `sha256_block`.
 
-## Running it in Lean: a limit of flapjack's byte writes
+## How the calls are tested
 
-The Lean semantics accepts these calls (the foreign call goes through
-`panValueFfiExtCall` and `Guest.guestOracle`), but **executing** a program that reads
-memory after such a call does not finish in practice. Flapjack writes the returned array
-with `panValueFfiWriteBytes`, which builds the new memory byte by byte from the end and
-takes time exponential in the array length (measured: about 1.3 times per extra byte,
-5 ms at 28 bytes, 76 ms at 38 bytes; the 200-byte keccak array and the 96-byte sha256
-array are out of reach). The same code is on flapjack main. Proofs that reason about
-the semantics symbolically are not affected, but `lake exe run-guest` and
-`lake exe run-program` (a runner for any cpp-expanded program, such as the smoke test)
-cannot execute past the call. A forward, one-pass write in flapjack would remove the
-limit; nothing in this repository depends on how it is fixed.
+Through compilation: the Pancake program is compiled and run, and the foreign calls are
+exercised on the compiled code against `ziskemu`'s real accelerator CSRs. The Lean
+semantics is not executed on programs for this. Running the guest in it was already
+impractical, and a program that reads memory after a foreign call with a large array
+does not finish at all, because flapjack's `panValueFfiWriteBytes` (a port of CakeML's
+`write_bytearray`) takes time exponential in the array length. Symbolic proofs are not
+affected.
+
+When flapjack's compiler correctness theorem is available, the byte-level
+specifications here are what it is instantiated with: each accelerator call is a foreign
+call whose result is a function of its configuration and array bytes, and the stub
+satisfying that function is the platform assumption. Until then the compiled-code tests
+above are the evidence.
 
 Before this change the accelerators went through the memory-effect handler, which
-writes whole words and does not have the problem.
+writes whole words and does not have the exponential write.
 
 ## What it does not show
 

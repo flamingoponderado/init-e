@@ -65,9 +65,3 @@ root = "Tools.OpcodeCensus"
 name = "accel-ffi-check"
 root = "Tools.AccelFfiCheck"
 
-# `lake exe run-program PROGRAM.pp.pnk [input] [fuel] [bytes]` runs any cpp-expanded
-# Pancake program (for example a unit test) under the guest's stepped semantics.
-[[lean_exe]]
-name = "run-program"
-root = "Tools.RunProgram"
-
