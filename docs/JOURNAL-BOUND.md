@@ -65,7 +65,7 @@ Largest scope: 30,000,000 / 100 = 300,000 records, plus the constant.
 * `process_withdrawals` resets `journal_n` after each withdrawal. Nothing rolls a
   withdrawal back and no snapshot is outstanding, so the 8 MiB-bounded withdrawal
   count cannot fill the journal. (Withdrawals still allocate heap per account; that
-  is Open item 1 in ALLOC-AUDIT.md.)
+  is item 1 in ALLOC-AUDIT.md.)
 
 ## Assumptions to re-check when the code changes
 
