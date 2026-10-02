@@ -65,7 +65,7 @@ Largest scope: 30,000,000 / 100 = 300,000 records, plus the constant.
 * `process_withdrawals` resets `journal_n` after each withdrawal. Nothing rolls a
   withdrawal back and no snapshot is outstanding, so the 8 MiB-bounded withdrawal
   count cannot fill the journal. (Withdrawals still allocate heap per account; that
-  is Open item 9 in ALLOC-AUDIT.md.)
+  is item 1 in ALLOC-AUDIT.md.)
 
 ## Assumptions to re-check when the code changes
 
@@ -80,4 +80,4 @@ Largest scope: 30,000,000 / 100 = 300,000 records, plus the constant.
 
 The journal itself is allocated once (`state_init`) at 16 MiB instead of 8 MiB of
 the 240 MiB heap. Each record also keeps a heap copy of its key (24 to 56 bytes) that
-is never released, which is part of the open per-gas heap growth in ALLOC-AUDIT.md.
+is never released, which is part of the open per-gas heap growth in ALLOC-AUDIT.md (items 6 and 8).
