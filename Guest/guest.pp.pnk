@@ -18,6 +18,9 @@ fun 1 mem_init() {
 }
 fun 1 alloc(1 n) {
   var p = heap_ptr;
+  if n >+ 2952790016 - p {
+    trap_with(1);
+  }
   var q = (p + n + 7) & (0 - 8);
   if q >+ 2952790016 {
     trap_with(1);
@@ -34,6 +37,9 @@ fun 1 heap_release(1 m) {
 }
 fun 1 frame_mem_alloc(1 n) {
   var p = frame_mem_ptr;
+  if n >+ scratch_ptr - p {
+    trap_with(6);
+  }
   var q = (p + n + 7) & (0 - 8);
   if q >+ scratch_ptr {
     trap_with(6);
@@ -50,6 +56,9 @@ fun 1 frame_mem_release(1 m) {
 }
 fun 1 scratch_alloc(1 n) {
   var p = scratch_ptr;
+  if n >+ p - frame_mem_ptr {
+    trap_with(7);
+  }
   var q = (p - n) & (0 - 8);
   if q <+ frame_mem_ptr {
     trap_with(7);
@@ -6748,6 +6757,8 @@ fun 1 validate_block_access_list_gas_limit(1 block_gas_limit) {
 exception EvmErr : 1;
 var 1 ev = 0;
 var 1 evm_empty = 0;
+var 1 pre_hdr_buf = 0;
+var 1 evm_key_buf = 0;
 fun 1 sat_word({1,1,1,1} v) {
   if (v.1 | v.2 | v.3) != 0 {
     return 18446744073709551615;
@@ -7091,8 +7102,13 @@ fun 1 access_gas_cost(1 addr) {
   if w != 0 {
     return 100;
   }
-  warm_address(addr);
   return 3000;
+}
+fun 1 warm_after_charge(1 addr, 1 c) {
+  if c == 3000 {
+    warm_address(addr);
+  }
+  return 0;
 }
 fun 1 op_add() {
   var {1,1,1,1} x = stack_pop();
@@ -7575,12 +7591,8 @@ fun 1 log_append(1 e, 1 log) {
 fun 1 op_log(1 ntopics) {
   var {1,1,1,1} start = stack_pop();
   var {1,1,1,1} size = stack_pop();
-  var 1 topics = alloc(ntopics * 32 + 8);
-  var i = 0;
-  while i < ntopics {
-    var {1,1,1,1} t = stack_pop();
-    u256_to_be32(t, topics + i * 32);
-    i = i + 1;
+  if (lds 1 (ev + 16)) <+ ntopics {
+    throw EvmErr 2;
   }
   var 1 n = sat_word(size);
   var {1,1} x = extend_memory_cost1(start, size);
@@ -7592,6 +7604,13 @@ fun 1 op_log(1 ntopics) {
     cost = add_sat(cost, dc.0);
   }
   charge_gas(cost);
+  var 1 topics = alloc(ntopics * 32 + 8);
+  var i = 0;
+  while i < ntopics {
+    var {1,1,1,1} t = stack_pop();
+    u256_to_be32(t, topics + i * 32);
+    i = i + 1;
+  }
   extend_memory(x.1);
   require_not_static();
   var 1 log = alloc(40);
@@ -7621,15 +7640,15 @@ fun 1 warm_storage_key(1 addr, 1 key) {
 }
 fun 1 op_sload() {
   var {1,1,1,1} kv = stack_pop();
-  var 1 key = alloc(32);
+  var 1 key = evm_key_buf;
   u256_to_be32(kv, key);
   var target = lds 1 ((lds 1 (ev + 112)) + 32);
   var 1 warm = is_warm_storage_key(target, key);
   if warm != 0 {
     charge_gas(100);
   } else {
-    warm_storage_key(target, key);
     charge_gas(2100);
+    warm_storage_key(target, key);
   }
   var {1,1,1,1} v = get_storage(target, key);
   stack_push(v);
@@ -7640,7 +7659,7 @@ fun 1 op_sstore() {
   require_not_static();
   var {1,1,1,1} kv = stack_pop();
   var {1,1,1,1} new_value = stack_pop();
-  var 1 key = alloc(32);
+  var 1 key = evm_key_buf;
   u256_to_be32(kv, key);
   var target = lds 1 ((lds 1 (ev + 112)) + 32);
   var 1 warm = is_warm_storage_key(target, key);
@@ -7650,6 +7669,7 @@ fun 1 op_sstore() {
   }
   var 1 mx = max(access_cost, 2300 + 1);
   check_gas(mx);
+  charge_gas(access_cost);
   if warm == 0 {
     warm_storage_key(target, key);
   }
@@ -7683,7 +7703,7 @@ fun 1 op_sstore() {
   if (cn == 0) && (on != 0) && (oz != 0) {
     credit_state_gas_refund(97920);
   }
-  charge_gas(gas_cost);
+  charge_gas(gas_cost - access_cost);
   charge_state_gas(state_gas);
   set_storage(target, key, new_value);
   pc_add(1);
@@ -7692,7 +7712,7 @@ fun 1 op_sstore() {
 fun 1 op_tload() {
   var {1,1,1,1} kv = stack_pop();
   charge_gas(100);
-  var 1 key = alloc(32);
+  var 1 key = evm_key_buf;
   u256_to_be32(kv, key);
   var target = lds 1 ((lds 1 (ev + 112)) + 32);
   var {1,1,1,1} v = get_transient_storage(target, key);
@@ -7705,7 +7725,7 @@ fun 1 op_tstore() {
   var {1,1,1,1} kv = stack_pop();
   var {1,1,1,1} v = stack_pop();
   charge_gas(100);
-  var 1 key = alloc(32);
+  var 1 key = evm_key_buf;
   u256_to_be32(kv, key);
   var target = lds 1 ((lds 1 (ev + 112)) + 32);
   set_transient_storage(target, key, v);
@@ -7724,6 +7744,7 @@ fun 1 op_balance() {
   var 1 addr = to_address_masked(av);
   var 1 c = access_gas_cost(addr);
   charge_gas(c);
+  warm_after_charge(addr, c);
   var 1 a = get_account(addr);
   stack_push(lds {1,1,1,1} (a + 8));
   pc_add(1);
@@ -7820,6 +7841,7 @@ fun 1 op_extcodesize() {
   var 1 addr = to_address_masked(av);
   var 1 c = access_gas_cost(addr);
   charge_gas(c + 100);
+  warm_after_charge(addr, c);
   var {1,1} code = ext_code_of(addr);
   stack_push_word(code.1);
   pc_add(1);
@@ -7837,6 +7859,7 @@ fun 1 op_extcodecopy() {
   var 1 acc = access_gas_cost(addr);
   var 1 cost = add_sat(acc + 100 + 3 * w, x.0);
   charge_gas(cost);
+  warm_after_charge(addr, acc);
   extend_memory(x.1);
   var {1,1} code = ext_code_of(addr);
   if n != 0 {
@@ -7880,6 +7903,7 @@ fun 1 op_extcodehash() {
   var 1 addr = to_address_masked(av);
   var 1 c = access_gas_cost(addr);
   charge_gas(c);
+  warm_after_charge(addr, c);
   var 1 a = get_account(addr);
   var 1 e = acct_is_empty(a);
   if e != 0 {
@@ -8031,6 +8055,8 @@ fun 1 evm_init() {
   memzero(null_address, 24);
   evm_empty = alloc(8);
   memzero(evm_empty, 8);
+  evm_key_buf = alloc(32);
+  pre_hdr_buf = alloc(96);
   return 0;
 }
 fun 1 emit_transfer_log(1 sender, 1 recipient, {1,1,1,1} amount) {
@@ -8090,7 +8116,7 @@ fun 1 op_selfdestruct() {
   if warm == 0 {
     gas_cost = gas_cost + 3000;
   }
-  check_gas(gas_cost);
+  charge_gas(gas_cost);
   if warm == 0 {
     warm_address(beneficiary);
   }
@@ -8104,7 +8130,7 @@ fun 1 op_selfdestruct() {
     state_gas = 183600;
     aw = 9000;
   }
-  charge_gas(gas_cost + aw);
+  charge_gas(aw);
   charge_state_gas(state_gas);
   oa = get_account(originator);
   var {1,1,1,1} bal = lds {1,1,1,1} (oa + 8);
@@ -8921,13 +8947,13 @@ fun 1 op_create2() {
   var {1,1,1,1} mstart = stack_pop();
   var {1,1,1,1} msize = stack_pop();
   var {1,1,1,1} saltv = stack_pop();
-  var 1 salt = alloc(32);
-  u256_to_be32(saltv, salt);
   var 1 n = sat_word(msize);
   var {1,1} x = extend_memory_cost1(mstart, msize);
   var 1 w = words_of(n);
   var 1 cost = add_sat(12000 + 6 * w + 2 * w, x.0);
   charge_gas(cost);
+  var 1 salt = alloc(32);
+  u256_to_be32(saltv, salt);
   extend_memory(x.1);
   var msg = lds 1 (ev + 112);
   var 1 s = sat_word(mstart);
@@ -9007,21 +9033,17 @@ fun 1 op_call() {
     transfer_cost = 11300;
   }
   var 1 need = add_sat(access_cost + transfer_cost, x.0);
-  check_gas(need);
+  charge_gas(need);
   if warm == 0 {
     warm_address(to);
   }
-  var extra_gas = access_cost + transfer_cost;
   var {1,1,1} dl = calculate_delegation_cost(to);
   var code_address = dl.1;
   if dl.0 != 0 {
-    extra_gas = extra_gas + dl.2;
-    need = add_sat(extra_gas, x.0);
-    check_gas(need);
+    charge_gas(dl.2);
     warm_address(code_address);
   }
   var {1,1} code = ext_code_of(code_address);
-  charge_gas(need);
   var new_account_charged = 0;
   if vz == 0 {
     var 1 alive = is_account_alive(to);
@@ -9085,24 +9107,20 @@ fun 1 op_callcode() {
     transfer_cost = 11300;
   }
   var 1 need = add_sat(access_cost + transfer_cost, x.0);
-  check_gas(need);
+  charge_gas(need);
   if warm == 0 {
     warm_address(code_address0);
   }
-  var extra_gas = access_cost + transfer_cost;
   var {1,1,1} dl = calculate_delegation_cost(code_address0);
   var code_address = dl.1;
   if dl.0 != 0 {
-    extra_gas = extra_gas + dl.2;
-    need = add_sat(extra_gas, x.0);
-    check_gas(need);
+    charge_gas(dl.2);
     warm_address(code_address);
   }
   var {1,1} code = ext_code_of(code_address);
   var 1 gw = sat_word(gasv);
-  var {1,1} mcg = calculate_message_call_gas(value, gw, lds 1 (ev + 64), x.0, extra_gas);
-  var 1 tot = add_sat(mcg.0, x.0);
-  charge_gas(tot);
+  var {1,1} mcg = calculate_message_call_gas(value, gw, lds 1 (ev + 64), 0, 0);
+  charge_gas(mcg.0);
   st ev + 184, (lds 1 (ev + 184)) - mcg.1;
   extend_memory(x.1);
   var reservoir = lds 1 (ev + 72);
@@ -9145,24 +9163,20 @@ fun 1 op_delegatecall() {
     access_cost = 3000;
   }
   var 1 need = add_sat(access_cost, x.0);
-  check_gas(need);
+  charge_gas(need);
   if warm == 0 {
     warm_address(code_address0);
   }
-  var extra_gas = access_cost;
   var {1,1,1} dl = calculate_delegation_cost(code_address0);
   var code_address = dl.1;
   if dl.0 != 0 {
-    extra_gas = extra_gas + dl.2;
-    need = add_sat(extra_gas, x.0);
-    check_gas(need);
+    charge_gas(dl.2);
     warm_address(code_address);
   }
   var {1,1} code = ext_code_of(code_address);
   var 1 gw = sat_word(gasv);
-  var {1,1} mcg = calculate_message_call_gas(<0, 0, 0, 0>, gw, lds 1 (ev + 64), x.0, extra_gas);
-  var 1 tot = add_sat(mcg.0, x.0);
-  charge_gas(tot);
+  var {1,1} mcg = calculate_message_call_gas(<0, 0, 0, 0>, gw, lds 1 (ev + 64), 0, 0);
+  charge_gas(mcg.0);
   st ev + 184, (lds 1 (ev + 184)) - mcg.1;
   extend_memory(x.1);
   var reservoir = lds 1 (ev + 72);
@@ -9194,24 +9208,20 @@ fun 1 op_staticcall() {
     access_cost = 3000;
   }
   var 1 need = add_sat(access_cost, x.0);
-  check_gas(need);
+  charge_gas(need);
   if warm == 0 {
     warm_address(to);
   }
-  var extra_gas = access_cost;
   var {1,1,1} dl = calculate_delegation_cost(to);
   var code_address = dl.1;
   if dl.0 != 0 {
-    extra_gas = extra_gas + dl.2;
-    need = add_sat(extra_gas, x.0);
-    check_gas(need);
+    charge_gas(dl.2);
     warm_address(code_address);
   }
   var {1,1} code = ext_code_of(code_address);
   var 1 gw = sat_word(gasv);
-  var {1,1} mcg = calculate_message_call_gas(<0, 0, 0, 0>, gw, lds 1 (ev + 64), x.0, extra_gas);
-  var 1 tot = add_sat(mcg.0, x.0);
-  charge_gas(tot);
+  var {1,1} mcg = calculate_message_call_gas(<0, 0, 0, 0>, gw, lds 1 (ev + 64), 0, 0);
+  charge_gas(mcg.0);
   st ev + 184, (lds 1 (ev + 184)) - mcg.1;
   extend_memory(x.1);
   var reservoir = lds 1 (ev + 72);
@@ -14553,8 +14563,7 @@ fun 1 pre_modexp() {
   var msg = lds 1 (ev + 112);
   var data = lds 1 (msg + 88);
   var n = lds 1 (msg + 96);
-  var 1 mark0 = heap_mark();
-  var 1 hdr = alloc(96);
+  var 1 hdr = pre_hdr_buf;
   buffer_read(data, n, 0, 96, hdr);
   var {1,1,1,1} bl = u256_from_be(hdr, 32);
   var 1 blen = sat_word(bl);
@@ -14577,7 +14586,6 @@ fun 1 pre_modexp() {
   var {1,1,1,1} head = u256_from_be(hdr, hlen);
   var 1 cost = modexp_gas(blen, mlen, elen, head);
   charge_gas(cost);
-  heap_release(mark0);
   if (blen == 0) && (mlen == 0) {
     var 1 empty = alloc(8);
     st ev + 120, empty;

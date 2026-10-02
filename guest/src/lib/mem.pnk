@@ -34,6 +34,9 @@ fun 1 mem_init() {
 /* Allocate n bytes, 8-byte aligned. Traps (deterministic halt) on OOM. */
 fun 1 alloc(1 n) {
   var p = heap_ptr;
+  if n >+ HEAP_END - p {
+    trap_with(1);              /* also rejects n that would wrap p + n */
+  }
   var q = (p + n + 7) & (0 - 8);
   if q >+ HEAP_END {
     trap_with(1);              /* allocation exhausted */
@@ -56,6 +59,9 @@ fun 1 heap_release(1 m) {
    child call releases its own arena slice. */
 fun 1 frame_mem_alloc(1 n) {
   var p = frame_mem_ptr;
+  if n >+ scratch_ptr - p {
+    trap_with(6);
+  }
   var q = (p + n + 7) & (0 - 8);
   if q >+ scratch_ptr {
     trap_with(6);              /* frame memory arena exhausted */
@@ -77,6 +83,9 @@ fun 1 frame_mem_release(1 m) {
    A child frame can release its scratch without invalidating state records. */
 fun 1 scratch_alloc(1 n) {
   var p = scratch_ptr;
+  if n >+ p - frame_mem_ptr {
+    trap_with(7);
+  }
   var q = (p - n) & (0 - 8);
   if q <+ frame_mem_ptr {
     trap_with(7);              /* frame scratch arena exhausted */

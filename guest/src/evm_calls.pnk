@@ -62,6 +62,8 @@ fun 1 evm_init() {
   memzero(null_address, 24);
   evm_empty = alloc(8);
   memzero(evm_empty, 8);
+  evm_key_buf = alloc(32);
+  pre_hdr_buf = alloc(96);
   return 0;
 }
 
@@ -132,7 +134,7 @@ fun 1 op_selfdestruct() {
   if warm == 0 {
     gas_cost = gas_cost + G_COLD_ACCOUNT_ACCESS;
   }
-  check_gas(gas_cost);
+  charge_gas(gas_cost);
   if warm == 0 {
     warm_address(beneficiary);
   }
@@ -146,7 +148,7 @@ fun 1 op_selfdestruct() {
     state_gas = SG_NEW_ACCOUNT;
     aw = G_ACCOUNT_WRITE;
   }
-  charge_gas(gas_cost + aw);
+  charge_gas(aw);
   charge_state_gas(state_gas);
   oa = get_account(originator);
   var {1,1,1,1} bal = lds {1,1,1,1} (oa + ACCT_BALANCE);
@@ -1075,13 +1077,13 @@ fun 1 op_create2() {
   var {1,1,1,1} mstart = stack_pop();
   var {1,1,1,1} msize = stack_pop();
   var {1,1,1,1} saltv = stack_pop();
-  var 1 salt = alloc(32);
-  u256_to_be32(saltv, salt);
   var 1 n = sat_word(msize);
   var {1,1} x = extend_memory_cost1(mstart, msize);
   var 1 w = words_of(n);
   var 1 cost = add_sat(G_CREATE_ACCESS + G_KECCAK256_PER_WORD * w + G_CODE_INIT_PER_WORD * w, x.0);
   charge_gas(cost);
+  var 1 salt = alloc(32);
+  u256_to_be32(saltv, salt);
   extend_memory(x.1);
   var msg = lds 1 (ev + EV_MSG);
   var 1 s = sat_word(mstart);
@@ -1174,21 +1176,17 @@ fun 1 op_call() {
     transfer_cost = G_CALL_VALUE;
   }
   var 1 need = add_sat(access_cost + transfer_cost, x.0);
-  check_gas(need);
+  charge_gas(need);
   if warm == 0 {
     warm_address(to);
   }
-  var extra_gas = access_cost + transfer_cost;
   var {1,1,1} dl = calculate_delegation_cost(to);
   var code_address = dl.1;
   if dl.0 != 0 {
-    extra_gas = extra_gas + dl.2;
-    need = add_sat(extra_gas, x.0);
-    check_gas(need);
+    charge_gas(dl.2);
     warm_address(code_address);
   }
   var {1,1} code = ext_code_of(code_address);
-  charge_gas(need);
   var new_account_charged = 0;
   if vz == 0 {
     var 1 alive = is_account_alive(to);
@@ -1253,24 +1251,20 @@ fun 1 op_callcode() {
     transfer_cost = G_CALL_VALUE;
   }
   var 1 need = add_sat(access_cost + transfer_cost, x.0);
-  check_gas(need);
+  charge_gas(need);
   if warm == 0 {
     warm_address(code_address0);
   }
-  var extra_gas = access_cost + transfer_cost;
   var {1,1,1} dl = calculate_delegation_cost(code_address0);
   var code_address = dl.1;
   if dl.0 != 0 {
-    extra_gas = extra_gas + dl.2;
-    need = add_sat(extra_gas, x.0);
-    check_gas(need);
+    charge_gas(dl.2);
     warm_address(code_address);
   }
   var {1,1} code = ext_code_of(code_address);
   var 1 gw = sat_word(gasv);
-  var {1,1} mcg = calculate_message_call_gas(value, gw, lds 1 (ev + EV_GAS_LEFT), x.0, extra_gas);
-  var 1 tot = add_sat(mcg.0, x.0);
-  charge_gas(tot);
+  var {1,1} mcg = calculate_message_call_gas(value, gw, lds 1 (ev + EV_GAS_LEFT), 0, 0);
+  charge_gas(mcg.0);
   st ev + EV_REGULAR_GAS_USED, (lds 1 (ev + EV_REGULAR_GAS_USED)) - mcg.1;
   extend_memory(x.1);
   var reservoir = lds 1 (ev + EV_STATE_GAS_LEFT);
@@ -1314,24 +1308,20 @@ fun 1 op_delegatecall() {
     access_cost = G_COLD_ACCOUNT_ACCESS;
   }
   var 1 need = add_sat(access_cost, x.0);
-  check_gas(need);
+  charge_gas(need);
   if warm == 0 {
     warm_address(code_address0);
   }
-  var extra_gas = access_cost;
   var {1,1,1} dl = calculate_delegation_cost(code_address0);
   var code_address = dl.1;
   if dl.0 != 0 {
-    extra_gas = extra_gas + dl.2;
-    need = add_sat(extra_gas, x.0);
-    check_gas(need);
+    charge_gas(dl.2);
     warm_address(code_address);
   }
   var {1,1} code = ext_code_of(code_address);
   var 1 gw = sat_word(gasv);
-  var {1,1} mcg = calculate_message_call_gas(<0, 0, 0, 0>, gw, lds 1 (ev + EV_GAS_LEFT), x.0, extra_gas);
-  var 1 tot = add_sat(mcg.0, x.0);
-  charge_gas(tot);
+  var {1,1} mcg = calculate_message_call_gas(<0, 0, 0, 0>, gw, lds 1 (ev + EV_GAS_LEFT), 0, 0);
+  charge_gas(mcg.0);
   st ev + EV_REGULAR_GAS_USED, (lds 1 (ev + EV_REGULAR_GAS_USED)) - mcg.1;
   extend_memory(x.1);
   var reservoir = lds 1 (ev + EV_STATE_GAS_LEFT);
@@ -1364,24 +1354,20 @@ fun 1 op_staticcall() {
     access_cost = G_COLD_ACCOUNT_ACCESS;
   }
   var 1 need = add_sat(access_cost, x.0);
-  check_gas(need);
+  charge_gas(need);
   if warm == 0 {
     warm_address(to);
   }
-  var extra_gas = access_cost;
   var {1,1,1} dl = calculate_delegation_cost(to);
   var code_address = dl.1;
   if dl.0 != 0 {
-    extra_gas = extra_gas + dl.2;
-    need = add_sat(extra_gas, x.0);
-    check_gas(need);
+    charge_gas(dl.2);
     warm_address(code_address);
   }
   var {1,1} code = ext_code_of(code_address);
   var 1 gw = sat_word(gasv);
-  var {1,1} mcg = calculate_message_call_gas(<0, 0, 0, 0>, gw, lds 1 (ev + EV_GAS_LEFT), x.0, extra_gas);
-  var 1 tot = add_sat(mcg.0, x.0);
-  charge_gas(tot);
+  var {1,1} mcg = calculate_message_call_gas(<0, 0, 0, 0>, gw, lds 1 (ev + EV_GAS_LEFT), 0, 0);
+  charge_gas(mcg.0);
   st ev + EV_REGULAR_GAS_USED, (lds 1 (ev + EV_REGULAR_GAS_USED)) - mcg.1;
   extend_memory(x.1);
   var reservoir = lds 1 (ev + EV_STATE_GAS_LEFT);
