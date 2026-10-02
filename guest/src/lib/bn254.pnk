@@ -9,16 +9,11 @@
    which is what execution-specs alt_bn128.py runs.
 
    Representations
-   * Fq (= F_p, p the 254-bit BN254 prime): the software build holds U256
-     values in MONTGOMERY form (x is stored as x * 2^256 mod p).  Its fq_mul
-     is a Montgomery product on 32-bit digits (product-scanning / FIPS: one
-     pass computes the column sums of a*b and of m*p and drops the low 256
-     bits), so every multiply is division free.  ZISK_ACCEL uses canonical
-     residues directly so arith256_mod can be used without a conversion.
-     Additions, subtractions, comparisons and zero tests are representation
-     independent; small constant factors (2, 3, 4, 8, 9, 18, 82) are computed
-     by doubling chains (fq_mul_small).  Inputs enter via fq_to_mont and leave
-     via fq_from_mont, which are identity functions in ZISK_ACCEL.
+   * Fq (= F_p, p the 254-bit BN254 prime): U256 values hold canonical
+     residues, so arith256_mod is used without a conversion.  Small constant
+     factors (2, 3, 4, 8, 9, 18, 82) are computed by doubling chains
+     (fq_mul_small).  Inputs enter via fq_to_mont and leave via fq_from_mont,
+     which are identity functions (the names are historical).
    * Fq2 = Fq[i]/(i^2 + 1): 2 U256 in memory (re at +0, im at +32).
    * Fq12 = Fq[w]/(w^12 - 18 w^6 + 82): 12 U256 in memory (coefficient k at
      +32k), exactly py_ecc's FQ12 polynomial basis, so coefficients agree with
@@ -45,7 +40,7 @@
    boolean equals the reference's `result == FQ12.one()`.  bn254_pairing
    (per pair, with its own final exponentiation) is kept for tests.
 
-   ZISK_ACCEL reserves persistent arith256, Fp2, and G1 affine parameter
+   bn254_accel_init reserves persistent arith256, Fp2, and G1 affine parameter
    arenas in bn254_accel_init before pairing scratch marks are taken.  The
    arith256 arena is {a,b,c,m,d} pointers followed by five 32-byte operands;
    the Fp2 and G1 arenas each contain two operands and a two-pointer block.
@@ -57,7 +52,7 @@
 #define BN_P <4332616871279656263, -7529619929231668595, -5165552122434856867, 3486998266802970665>
 /* r = 21888242871839275222246405745257275088548364400416034343698204186575808495617 */
 #define BN_R <4891460686036598785, 2896914383306846353, -5165552122434856867, 3486998266802970665>
-/* Montgomery constants: R = 2^256; FQ_ONE = R mod p, FQ_R2 = R^2 mod p, FQ_R3 = R^3 mod p */
+/* Constants: FQ_R2 = R^2 mod p, FQ_R3 = R^3 mod p for R = 2^256; FQ_ONE is 1 (canonical) */
 #define FQ_R2 <-924086354343953783, -5339271268858002949, 5164255478447964150, 493319470278259999>
 #define FQ_R3 <-5634726956725096225, 7129779742913871286, -1189219630252946693, 2377177743836652868>
 #define FQ_ONE <1, 0, 0, 0>
@@ -176,8 +171,8 @@ fun 1 bn254_accel_fp2_mul(1 d, 1 a, 1 b) {
 }
 
 /* gamma = (9 + i)^((p - 1) / 6), then gamma^0 .. gamma^5.  Computing these
-   five constants once keeps the accelerated source free of hand-transcribed
-   Montgomery literals while leaving the software constants unchanged. */
+   five constants once keeps the source free of hand-transcribed
+   literals. */
 fun 1 bn254_accel_fill_gamma(1 dst) {
   var 1 base = alloc(64);
   var 1 acc = alloc(64);
@@ -331,8 +326,7 @@ fun U256 fq_from_mont(U256 x) {
 }
 
 /* a^-1 in the internal representation (0 for 0, like py_ecc
-   prime_field_inv).  The software representation needs the final Montgomery
-   conversion; the accelerator representation does not. */
+   prime_field_inv). */
 fun U256 fq_inv(U256 a) {
   return modinv_bin(a, BN_P);
 }

@@ -5,8 +5,8 @@
    iso_map_G1/G2, clear cofactor = multiply by H_EFF) and PrecompilesKzg.lean
    (decompress_G1, validate_kzg_g1, verify_kzg_proof_impl, pairing_check).
 
-   Representation (everything lives in heap memory; software Fp values are
-   Montgomery and ZISK_ACCEL Fp values are canonical, see lib/fp384.pnk):
+   Representation (everything lives in heap memory; Fp values are canonical,
+   see lib/fp384.pnk):
      Fp2   96 bytes: c0 at +0, c1 at +48            (u^2 = -1)
      Fp6  288 bytes: c0, c1, c2 (Fp2 each)          (v^3 = xi = 1 + u)
      Fp12 576 bytes: a0, a1 (Fp6 each)              (w^2 = v)
@@ -1373,7 +1373,7 @@ fun 1 iso_map_g1(1 r, 1 p) {
   return 0;
 }
 
-/* map_to_curve_G1 + clear_cofactor_G1: field element (Montgomery) t -> projective r */
+/* map_to_curve_G1 + clear_cofactor_G1: field element t -> projective r */
 fun 1 map_fp_to_g1(1 r, FP t) {
   var mark = heap_mark();
   var p = alloc(G1_BYTES);
@@ -1541,7 +1541,7 @@ fun 1 iso_map_g2(1 r, 1 p) {
   return 0;
 }
 
-/* map_to_curve_G2 + clear_cofactor_G2: Fp2 (Montgomery) at t -> projective r */
+/* map_to_curve_G2 + clear_cofactor_G2: Fp2 at t -> projective r */
 fun 1 map_fp2_to_g2(1 r, 1 t) {
   var mark = heap_mark();
   var p = alloc(G2_BYTES);

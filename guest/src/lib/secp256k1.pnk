@@ -23,8 +23,7 @@
    Field multiplication: reference fp_mul is a 32-bit-digit comba product whose
    512-bit result is reduced by two folds with 2^32 + 977 (p = 2^256 - 2^32 - 977).
    -DSECP_SIMPLE_MUL selects u256_mulmod instead, -DSECP_FOLD64_MUL the same
-   folds on u256_mul_full 64-bit limbs (both for cross-checking).  With
-   ZISK_ACCEL, fp_mul/fp_sqr and scalar products use the arith256_mod CSR.
+   folds on u256_mul_full 64-bit limbs (both for cross-checking).  fp_mul/fp_sqr and scalar products use the arith256_mod CSR.
    Inversion mod p and mod n is the binary extended Euclid (modinv_bin);
    -DSECP_FERMAT_INV selects the Fermat ladders a^(p-2) / a^(n-2) the Lean
    spec is written with (same values: Crypto/Fermat.lean).  Q = u1*G + u2*R
