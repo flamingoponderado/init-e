@@ -97,7 +97,12 @@ BLAKE2b row of 10 or more) ends the run in the model as a final FFI event,
   the byte-level specifications to the hardware behaviour for those vectors.
 * `lake build Guest` (also in `check_all`, so the Lean library stays in step with the
   guest sources).
-* The whole `tests-zkevm@v21.0.1` corpus on `ziskemu` with the accelerated guest.
+* The whole `tests-zkevm@v21.0.1` corpus on `ziskemu` with the accelerated guest:
+  33,614 of 33,614. Counting real ZisK steps (the stubs' instructions are executed, though
+  the formal model counts a foreign call as one step), mean steps over the passing cases
+  went from 8,835,587 before the conversion to 8,935,499 (+1.1%), almost all of it the
+  stubs building their pointer blocks, and the largest case from 12,276,776,458 to
+  12,287,352,867 (+0.09%).
 
 ## How the calls are tested
 
