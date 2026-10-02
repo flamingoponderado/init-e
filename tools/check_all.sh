@@ -64,6 +64,10 @@ fi
 # Build both fixed-path main guests before running the end-to-end checks.
 run_check "build software and accelerated guests" "$ROOT/tools/build_both.sh"
 
+# The Lean side: the Guest library (generated ASTs, step-bound proofs) must build
+# against the current guest sources.
+run_check "lean: lake build Guest" lake build Guest
+
 run_unit_variant() {
   local variant="$1"
   if [[ "$variant" == "accelerated" ]]; then

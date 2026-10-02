@@ -885,10 +885,12 @@ disjunction they come from --- both halves `access_plus_warm_pos` and
 so a caller can hand either bound straight to them instead of re-deriving it
 from `access_gas_cost_runs_warm` / `_runs_cold` by hand.
 
-The two callees remain hypotheses --- `is_warm_address` and `warm_address` are
-`htab` probes, which need the load-factor invariant `2*count <= cap` first.
-What is settled is that **nothing between them can make the charge zero**,
-which is the part that had to be read off the AST rather than off the source.
+The one callee, `is_warm_address`, remains a hypothesis: it is an `htab` probe,
+which needs the load-factor invariant `2*count <= cap` first. What is settled is
+that **nothing after it can make the charge zero**, which is the part that had to
+be read off the AST rather than off the source. (`access_gas_cost` used to call
+`warm_address` itself; since the gas-before-allocation change the caller warms the
+address after charging, so that call, and its hypothesis, are gone.)
 
 This is also the first guest function proved whose branch hypothesis is about a
 *callee's return value* rather than about memory or a local, so it is the shape
