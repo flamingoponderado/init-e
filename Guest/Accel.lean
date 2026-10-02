@@ -132,6 +132,13 @@ def acceleratorEffect (name : FunName) (p : Word) (memory : Memory) : Option Mem
   | "blake2bround" => blake2bEffect memory p
   | _ => none
 
+/-- The accelerators whose Pancake calls follow the foreign-call convention
+(`docs/ACCEL-FFI.md`). They are specified by `Guest.acceleratorBytes` and go through the
+ordinary FFI path; the memory-effect handler below declines them. `acceleratorEffect`
+stays as the reference they are checked against (`lake exe accel-ffi-check`). -/
+def convertedAccelerators : List String :=
+  ["arith256mod", "bn_arith256", "bls_arith384"]
+
 /-- The memory-effect FFI handler of the accelerated guest: `@halt` and `@trap`
 leave memory alone (see `Guest.Model` for the fact that on the machine neither
 returns, and for how the guest's own `throw TrapErr` makes `@trap` terminal
@@ -140,6 +147,7 @@ unmodelled. The four arguments are the `ExtCall` operands. -/
 def guestMemoryFfi (function : FunName) (configuration _configurationLength _array _arrayLength : Word)
     (memory : Memory) : Option Memory :=
   if function == "halt" || function == "trap" then some memory
+  else if convertedAccelerators.contains function then none
   else acceleratorEffect function configuration memory
 
 end Guest

@@ -62,12 +62,16 @@
 #define SECP_ACCEL_PC 16
 #define SECP_ACCEL_PM 24
 #define SECP_ACCEL_PD 32
-#define SECP_ACCEL_A 40
-#define SECP_ACCEL_B 72
-#define SECP_ACCEL_C 104
-#define SECP_ACCEL_M 136
-#define SECP_ACCEL_D 168
-#define SECP_ACCEL_BLOCK 200
+/* Foreign-call convention (docs/ACCEL-FFI.md): the block is the array, and its first
+   48 bytes -- the CSR's five pointers plus this word, the block's own address -- are the
+   configuration. */
+#define SECP_ACCEL_BASE 40
+#define SECP_ACCEL_A 48
+#define SECP_ACCEL_B 80
+#define SECP_ACCEL_C 112
+#define SECP_ACCEL_M 144
+#define SECP_ACCEL_D 176
+#define SECP_ACCEL_BLOCK 208
 #define SECP_ACCEL_PBASE 0
 #define SECP_ACCEL_NBASE SECP_ACCEL_BLOCK
 #define SECP_ACCEL_POINT2 (2 * SECP_ACCEL_BLOCK)
@@ -83,6 +87,7 @@ fun 1 secp_accel_init_block(1 base, U256 modulus) {
   st base + SECP_ACCEL_PC, base + SECP_ACCEL_C;
   st base + SECP_ACCEL_PM, base + SECP_ACCEL_M;
   st base + SECP_ACCEL_PD, base + SECP_ACCEL_D;
+  st base + SECP_ACCEL_BASE, base;
   st base + SECP_ACCEL_C, U256_ZERO;
   st base + SECP_ACCEL_M, modulus;
   return 0;
@@ -105,7 +110,7 @@ fun 1 secp256k1_init() {
 fun U256 secp_accel_modmul_at(1 base, U256 a, U256 b) {
   st base + SECP_ACCEL_A, a;
   st base + SECP_ACCEL_B, b;
-  @arith256mod(base, 0, 0, 0);
+  @arith256mod(base, SECP_ACCEL_A, base, SECP_ACCEL_BLOCK);
   return lds U256 (base + SECP_ACCEL_D);
 }
 
@@ -113,7 +118,7 @@ fun U256 secp_accel_modmul_p(U256 a, U256 b) {
   var 1 base = secp_accel_scratch + SECP_ACCEL_PBASE;
   st base + SECP_ACCEL_A, a;
   st base + SECP_ACCEL_B, b;
-  @arith256mod(base, 0, 0, 0);
+  @arith256mod(base, SECP_ACCEL_A, base, SECP_ACCEL_BLOCK);
   return lds U256 (base + SECP_ACCEL_D);
 }
 
@@ -121,7 +126,7 @@ fun U256 secp_accel_modmul_n(U256 a, U256 b) {
   var 1 base = secp_accel_scratch + SECP_ACCEL_NBASE;
   st base + SECP_ACCEL_A, a;
   st base + SECP_ACCEL_B, b;
-  @arith256mod(base, 0, 0, 0);
+  @arith256mod(base, SECP_ACCEL_A, base, SECP_ACCEL_BLOCK);
   return lds U256 (base + SECP_ACCEL_D);
 }
 #endif

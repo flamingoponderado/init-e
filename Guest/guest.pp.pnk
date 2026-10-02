@@ -1985,43 +1985,44 @@ fun 1 htab_copy_scratch(1 t) {
 }
 var 1 secp_accel_scratch = 0;
 fun 1 secp_accel_init_block(1 base, {1,1,1,1} modulus) {
-  st base + 0, base + 40;
-  st base + 8, base + 72;
-  st base + 16, base + 104;
-  st base + 24, base + 136;
-  st base + 32, base + 168;
-  st base + 104, <0, 0, 0, 0>;
-  st base + 136, modulus;
+  st base + 0, base + 48;
+  st base + 8, base + 80;
+  st base + 16, base + 112;
+  st base + 24, base + 144;
+  st base + 32, base + 176;
+  st base + 40, base;
+  st base + 112, <0, 0, 0, 0>;
+  st base + 144, modulus;
   return 0;
 }
 fun 1 secp256k1_init() {
   if secp_accel_scratch != 0 {
     return 0;
   }
-  secp_accel_scratch = alloc((2 * 200 + 80));
+  secp_accel_scratch = alloc((2 * 208 + 80));
   secp_accel_init_block(secp_accel_scratch + 0, <-4294968273, -1, -1, -1>);
-  secp_accel_init_block(secp_accel_scratch + 200, <-4624529908474429119, -4994812053365940165, -2, -1>);
+  secp_accel_init_block(secp_accel_scratch + 208, <-4624529908474429119, -4994812053365940165, -2, -1>);
   return 0;
 }
 fun {1,1,1,1} secp_accel_modmul_at(1 base, {1,1,1,1} a, {1,1,1,1} b) {
-  st base + 40, a;
-  st base + 72, b;
-  @arith256mod(base, 0, 0, 0);
-  return lds {1,1,1,1} (base + 168);
+  st base + 48, a;
+  st base + 80, b;
+  @arith256mod(base, 48, base, 208);
+  return lds {1,1,1,1} (base + 176);
 }
 fun {1,1,1,1} secp_accel_modmul_p({1,1,1,1} a, {1,1,1,1} b) {
   var 1 base = secp_accel_scratch + 0;
-  st base + 40, a;
-  st base + 72, b;
-  @arith256mod(base, 0, 0, 0);
-  return lds {1,1,1,1} (base + 168);
+  st base + 48, a;
+  st base + 80, b;
+  @arith256mod(base, 48, base, 208);
+  return lds {1,1,1,1} (base + 176);
 }
 fun {1,1,1,1} secp_accel_modmul_n({1,1,1,1} a, {1,1,1,1} b) {
-  var 1 base = secp_accel_scratch + 200;
-  st base + 40, a;
-  st base + 72, b;
-  @arith256mod(base, 0, 0, 0);
-  return lds {1,1,1,1} (base + 168);
+  var 1 base = secp_accel_scratch + 208;
+  st base + 48, a;
+  st base + 80, b;
+  @arith256mod(base, 48, base, 208);
+  return lds {1,1,1,1} (base + 176);
 }
 fun {1,1,1,1} fp_add({1,1,1,1} a, {1,1,1,1} b) {
   var {1,1,1,1,1} s = u256_add_carry(a, b);
@@ -2307,12 +2308,12 @@ fun 1 ec_add_affine(1 pt, {1,1,1,1} ax, {1,1,1,1} ay) {
     return 0;
   }
   secp256k1_init();
-  st secp_accel_scratch + (2 * 200), ax;
-  st secp_accel_scratch + (2 * 200) + 32, ay;
-  st secp_accel_scratch + ((2 * 200) + 64), pt;
-  st secp_accel_scratch + ((2 * 200) + 64) + 8,
-      secp_accel_scratch + (2 * 200);
-  @secpadd(secp_accel_scratch + ((2 * 200) + 64), 0, 0, 0);
+  st secp_accel_scratch + (2 * 208), ax;
+  st secp_accel_scratch + (2 * 208) + 32, ay;
+  st secp_accel_scratch + ((2 * 208) + 64), pt;
+  st secp_accel_scratch + ((2 * 208) + 64) + 8,
+      secp_accel_scratch + (2 * 208);
+  @secpadd(secp_accel_scratch + ((2 * 208) + 64), 0, 0, 0);
   st ((pt) + 64), <1, 0, 0, 0>;
   return 0;
 }
@@ -10104,12 +10105,12 @@ fun 1 bn254_accel_init() {
   if bn_accel_params != 0 {
     return 0;
   }
-  bn_accel_a = alloc(32);
-  bn_accel_b = alloc(32);
-  bn_accel_zero = alloc(32);
-  bn_accel_m = alloc(32);
-  bn_accel_d = alloc(32);
-  bn_accel_params = alloc(40);
+  bn_accel_params = alloc(208);
+  bn_accel_a = bn_accel_params + 48;
+  bn_accel_b = bn_accel_params + 80;
+  bn_accel_zero = bn_accel_params + 112;
+  bn_accel_m = bn_accel_params + 144;
+  bn_accel_d = bn_accel_params + 176;
   st bn_accel_zero, <0, 0, 0, 0>;
   st bn_accel_m, <4332616871279656263, -7529619929231668595, -5165552122434856867, 3486998266802970665>;
   st bn_accel_params, bn_accel_a;
@@ -10117,6 +10118,7 @@ fun 1 bn254_accel_init() {
   st bn_accel_params + 16, bn_accel_zero;
   st bn_accel_params + 24, bn_accel_m;
   st bn_accel_params + 32, bn_accel_d;
+  st bn_accel_params + 40, bn_accel_params;
   bn_accel_fp2_f1 = alloc(64);
   bn_accel_fp2_f2 = alloc(64);
   bn_accel_fp2_params = alloc(16);
@@ -10133,7 +10135,7 @@ fun {1,1,1,1} bn254_accel_modmul({1,1,1,1} a, {1,1,1,1} b) {
   bn254_accel_init();
   st bn_accel_a, a;
   st bn_accel_b, b;
-  @bn_arith256(bn_accel_params, 0, 0, 0);
+  @bn_arith256(bn_accel_params, 48, bn_accel_params, 208);
   return lds {1,1,1,1} bn_accel_d;
 }
 fun 1 bn254_accel_fp2_add(1 d, 1 a, 1 b) {
@@ -12230,24 +12232,26 @@ fun 1 fp_accel_init() {
     return 0;
   }
   bls_consts_init();
-  fp_accel_a = alloc(48);
-  fp_accel_b = alloc(48);
-  fp_accel_d = alloc(48);
-  fp_accel_zero = alloc(48);
-  fp_accel_params = alloc(40);
+  fp_accel_params = alloc(288);
+  fp_accel_a = fp_accel_params + 48;
+  fp_accel_b = fp_accel_params + 96;
+  fp_accel_zero = fp_accel_params + 144;
+  fp_accel_d = fp_accel_params + 240;
   memzero(fp_accel_zero, 48);
+  memcpy(fp_accel_params + 192, (bls_c + 48), 48);
   st fp_accel_params, fp_accel_a;
   st fp_accel_params + 8, fp_accel_b;
   st fp_accel_params + 16, fp_accel_zero;
-  st fp_accel_params + 24, (bls_c + 48);
+  st fp_accel_params + 24, fp_accel_params + 192;
   st fp_accel_params + 32, fp_accel_d;
+  st fp_accel_params + 40, fp_accel_params;
   return 0;
 }
 fun {1,1,1,1,1,1} bls_fp_mul({1,1,1,1,1,1} a, {1,1,1,1,1,1} b) {
   fp_accel_init();
   st fp_accel_a, a;
   st fp_accel_b, b;
-  @bls_arith384(fp_accel_params, 0, 0, 0);
+  @bls_arith384(fp_accel_params, 48, fp_accel_params, 288);
   return lds {1,1,1,1,1,1} fp_accel_d;
 }
 fun {1,1,1,1,1,1} bls_fp_sqr({1,1,1,1,1,1} a) {

@@ -4057,20 +4057,22 @@ def guestFn_secp_accel_init_block : Decl (BitVec 64) :=
       params := [("base", Shape.one), ("modulus", (Shape.comb [Shape.one, Shape.one, Shape.one, Shape.one]))]
       body :=
         (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 0))]) (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 40))]))
+          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 0))]) (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 48))]))
           (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 8))]) (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 72))]))
+          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 8))]) (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 80))]))
           (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 16))]) (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 104))]))
+          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 16))]) (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 112))]))
           (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 24))]) (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 136))]))
+          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 24))]) (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 144))]))
           (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 32))]) (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 168))]))
+          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 32))]) (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 176))]))
           (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 104))]) (Exp.rStruct [(Exp.const (BitVec.ofNat 64 0)), (Exp.const (BitVec.ofNat 64 0)), (Exp.const (BitVec.ofNat 64 0)), (Exp.const (BitVec.ofNat 64 0))]))
+          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 40))]) (Exp.var VarKind.local "base"))
           (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 136))]) (Exp.var VarKind.local "modulus"))
-          (Prog.return (Exp.const (BitVec.ofNat 64 0))))))))))
+          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 112))]) (Exp.rStruct [(Exp.const (BitVec.ofNat 64 0)), (Exp.const (BitVec.ofNat 64 0)), (Exp.const (BitVec.ofNat 64 0)), (Exp.const (BitVec.ofNat 64 0))]))
+          (Prog.seq
+          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 144))]) (Exp.var VarKind.local "modulus"))
+          (Prog.return (Exp.const (BitVec.ofNat 64 0)))))))))))
       returnShape := Shape.one }
 
 def guestFn_secp256k1_init : Decl (BitVec 64) :=
@@ -4085,11 +4087,11 @@ def guestFn_secp256k1_init : Decl (BitVec 64) :=
             (Prog.return (Exp.const (BitVec.ofNat 64 0)))
             Prog.skip)
           (Prog.seq
-          (Prog.call (some ((some (VarKind.global, "secp_accel_scratch")), none)) "alloc" [(Exp.op BinOp.add [(Exp.panOp PanOp.mul [(Exp.const (BitVec.ofNat 64 2)), (Exp.const (BitVec.ofNat 64 200))]), (Exp.const (BitVec.ofNat 64 80))])])
+          (Prog.call (some ((some (VarKind.global, "secp_accel_scratch")), none)) "alloc" [(Exp.op BinOp.add [(Exp.panOp PanOp.mul [(Exp.const (BitVec.ofNat 64 2)), (Exp.const (BitVec.ofNat 64 208))]), (Exp.const (BitVec.ofNat 64 80))])])
           (Prog.seq
           (Prog.call (some (none, none)) "secp_accel_init_block" [(Exp.op BinOp.add [(Exp.var VarKind.global "secp_accel_scratch"), (Exp.const (BitVec.ofNat 64 0))]), (Exp.rStruct [(Exp.const (BitVec.ofNat 64 18446744069414583343)), (Exp.const (BitVec.ofNat 64 18446744073709551615)), (Exp.const (BitVec.ofNat 64 18446744073709551615)), (Exp.const (BitVec.ofNat 64 18446744073709551615))])])
           (Prog.seq
-          (Prog.call (some (none, none)) "secp_accel_init_block" [(Exp.op BinOp.add [(Exp.var VarKind.global "secp_accel_scratch"), (Exp.const (BitVec.ofNat 64 200))]), (Exp.rStruct [(Exp.const (BitVec.ofNat 64 13822214165235122497)), (Exp.const (BitVec.ofNat 64 13451932020343611451)), (Exp.const (BitVec.ofNat 64 18446744073709551614)), (Exp.const (BitVec.ofNat 64 18446744073709551615))])])
+          (Prog.call (some (none, none)) "secp_accel_init_block" [(Exp.op BinOp.add [(Exp.var VarKind.global "secp_accel_scratch"), (Exp.const (BitVec.ofNat 64 208))]), (Exp.rStruct [(Exp.const (BitVec.ofNat 64 13822214165235122497)), (Exp.const (BitVec.ofNat 64 13451932020343611451)), (Exp.const (BitVec.ofNat 64 18446744073709551614)), (Exp.const (BitVec.ofNat 64 18446744073709551615))])])
           (Prog.return (Exp.const (BitVec.ofNat 64 0)))))))
       returnShape := Shape.one }
 
@@ -4101,12 +4103,12 @@ def guestFn_secp_accel_modmul_at : Decl (BitVec 64) :=
       params := [("base", Shape.one), ("a", (Shape.comb [Shape.one, Shape.one, Shape.one, Shape.one])), ("b", (Shape.comb [Shape.one, Shape.one, Shape.one, Shape.one]))]
       body :=
         (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 40))]) (Exp.var VarKind.local "a"))
+          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 48))]) (Exp.var VarKind.local "a"))
           (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 72))]) (Exp.var VarKind.local "b"))
+          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 80))]) (Exp.var VarKind.local "b"))
           (Prog.seq
-          (Prog.extCall "arith256mod" (Exp.var VarKind.local "base") (Exp.const (BitVec.ofNat 64 0)) (Exp.const (BitVec.ofNat 64 0)) (Exp.const (BitVec.ofNat 64 0)))
-          (Prog.return (Exp.load (Shape.comb [Shape.one, Shape.one, Shape.one, Shape.one]) (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 168))]))))))
+          (Prog.extCall "arith256mod" (Exp.var VarKind.local "base") (Exp.const (BitVec.ofNat 64 48)) (Exp.var VarKind.local "base") (Exp.const (BitVec.ofNat 64 208)))
+          (Prog.return (Exp.load (Shape.comb [Shape.one, Shape.one, Shape.one, Shape.one]) (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 176))]))))))
       returnShape := (Shape.comb [Shape.one, Shape.one, Shape.one, Shape.one]) }
 
 def guestFn_secp_accel_modmul_p : Decl (BitVec 64) :=
@@ -4118,12 +4120,12 @@ def guestFn_secp_accel_modmul_p : Decl (BitVec 64) :=
       body :=
         (Prog.dec "base" Shape.one (Exp.op BinOp.add [(Exp.var VarKind.global "secp_accel_scratch"), (Exp.const (BitVec.ofNat 64 0))])
           (Prog.seq
-            (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 40))]) (Exp.var VarKind.local "a"))
+            (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 48))]) (Exp.var VarKind.local "a"))
             (Prog.seq
-            (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 72))]) (Exp.var VarKind.local "b"))
+            (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 80))]) (Exp.var VarKind.local "b"))
             (Prog.seq
-            (Prog.extCall "arith256mod" (Exp.var VarKind.local "base") (Exp.const (BitVec.ofNat 64 0)) (Exp.const (BitVec.ofNat 64 0)) (Exp.const (BitVec.ofNat 64 0)))
-            (Prog.return (Exp.load (Shape.comb [Shape.one, Shape.one, Shape.one, Shape.one]) (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 168))])))))))
+            (Prog.extCall "arith256mod" (Exp.var VarKind.local "base") (Exp.const (BitVec.ofNat 64 48)) (Exp.var VarKind.local "base") (Exp.const (BitVec.ofNat 64 208)))
+            (Prog.return (Exp.load (Shape.comb [Shape.one, Shape.one, Shape.one, Shape.one]) (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 176))])))))))
       returnShape := (Shape.comb [Shape.one, Shape.one, Shape.one, Shape.one]) }
 
 def guestFn_secp_accel_modmul_n : Decl (BitVec 64) :=
@@ -4133,14 +4135,14 @@ def guestFn_secp_accel_modmul_n : Decl (BitVec 64) :=
       exported := false
       params := [("a", (Shape.comb [Shape.one, Shape.one, Shape.one, Shape.one])), ("b", (Shape.comb [Shape.one, Shape.one, Shape.one, Shape.one]))]
       body :=
-        (Prog.dec "base" Shape.one (Exp.op BinOp.add [(Exp.var VarKind.global "secp_accel_scratch"), (Exp.const (BitVec.ofNat 64 200))])
+        (Prog.dec "base" Shape.one (Exp.op BinOp.add [(Exp.var VarKind.global "secp_accel_scratch"), (Exp.const (BitVec.ofNat 64 208))])
           (Prog.seq
-            (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 40))]) (Exp.var VarKind.local "a"))
+            (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 48))]) (Exp.var VarKind.local "a"))
             (Prog.seq
-            (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 72))]) (Exp.var VarKind.local "b"))
+            (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 80))]) (Exp.var VarKind.local "b"))
             (Prog.seq
-            (Prog.extCall "arith256mod" (Exp.var VarKind.local "base") (Exp.const (BitVec.ofNat 64 0)) (Exp.const (BitVec.ofNat 64 0)) (Exp.const (BitVec.ofNat 64 0)))
-            (Prog.return (Exp.load (Shape.comb [Shape.one, Shape.one, Shape.one, Shape.one]) (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 168))])))))))
+            (Prog.extCall "arith256mod" (Exp.var VarKind.local "base") (Exp.const (BitVec.ofNat 64 48)) (Exp.var VarKind.local "base") (Exp.const (BitVec.ofNat 64 208)))
+            (Prog.return (Exp.load (Shape.comb [Shape.one, Shape.one, Shape.one, Shape.one]) (Exp.op BinOp.add [(Exp.var VarKind.local "base"), (Exp.const (BitVec.ofNat 64 176))])))))))
       returnShape := (Shape.comb [Shape.one, Shape.one, Shape.one, Shape.one]) }
 
 def guestFn_fp_add : Decl (BitVec 64) :=
@@ -4690,15 +4692,15 @@ def guestFn_ec_add_affine : Decl (BitVec 64) :=
                           (Prog.seq
                           (Prog.call (some (none, none)) "secp256k1_init" [])
                           (Prog.seq
-                          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "secp_accel_scratch"), (Exp.panOp PanOp.mul [(Exp.const (BitVec.ofNat 64 2)), (Exp.const (BitVec.ofNat 64 200))])]) (Exp.var VarKind.local "ax"))
+                          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "secp_accel_scratch"), (Exp.panOp PanOp.mul [(Exp.const (BitVec.ofNat 64 2)), (Exp.const (BitVec.ofNat 64 208))])]) (Exp.var VarKind.local "ax"))
                           (Prog.seq
-                          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "secp_accel_scratch"), (Exp.panOp PanOp.mul [(Exp.const (BitVec.ofNat 64 2)), (Exp.const (BitVec.ofNat 64 200))]), (Exp.const (BitVec.ofNat 64 32))]) (Exp.var VarKind.local "ay"))
+                          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "secp_accel_scratch"), (Exp.panOp PanOp.mul [(Exp.const (BitVec.ofNat 64 2)), (Exp.const (BitVec.ofNat 64 208))]), (Exp.const (BitVec.ofNat 64 32))]) (Exp.var VarKind.local "ay"))
                           (Prog.seq
-                          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "secp_accel_scratch"), (Exp.op BinOp.add [(Exp.panOp PanOp.mul [(Exp.const (BitVec.ofNat 64 2)), (Exp.const (BitVec.ofNat 64 200))]), (Exp.const (BitVec.ofNat 64 64))])]) (Exp.var VarKind.local "pt"))
+                          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "secp_accel_scratch"), (Exp.op BinOp.add [(Exp.panOp PanOp.mul [(Exp.const (BitVec.ofNat 64 2)), (Exp.const (BitVec.ofNat 64 208))]), (Exp.const (BitVec.ofNat 64 64))])]) (Exp.var VarKind.local "pt"))
                           (Prog.seq
-                          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "secp_accel_scratch"), (Exp.op BinOp.add [(Exp.panOp PanOp.mul [(Exp.const (BitVec.ofNat 64 2)), (Exp.const (BitVec.ofNat 64 200))]), (Exp.const (BitVec.ofNat 64 64))]), (Exp.const (BitVec.ofNat 64 8))]) (Exp.op BinOp.add [(Exp.var VarKind.global "secp_accel_scratch"), (Exp.panOp PanOp.mul [(Exp.const (BitVec.ofNat 64 2)), (Exp.const (BitVec.ofNat 64 200))])]))
+                          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "secp_accel_scratch"), (Exp.op BinOp.add [(Exp.panOp PanOp.mul [(Exp.const (BitVec.ofNat 64 2)), (Exp.const (BitVec.ofNat 64 208))]), (Exp.const (BitVec.ofNat 64 64))]), (Exp.const (BitVec.ofNat 64 8))]) (Exp.op BinOp.add [(Exp.var VarKind.global "secp_accel_scratch"), (Exp.panOp PanOp.mul [(Exp.const (BitVec.ofNat 64 2)), (Exp.const (BitVec.ofNat 64 208))])]))
                           (Prog.seq
-                          (Prog.extCall "secpadd" (Exp.op BinOp.add [(Exp.var VarKind.global "secp_accel_scratch"), (Exp.op BinOp.add [(Exp.panOp PanOp.mul [(Exp.const (BitVec.ofNat 64 2)), (Exp.const (BitVec.ofNat 64 200))]), (Exp.const (BitVec.ofNat 64 64))])]) (Exp.const (BitVec.ofNat 64 0)) (Exp.const (BitVec.ofNat 64 0)) (Exp.const (BitVec.ofNat 64 0)))
+                          (Prog.extCall "secpadd" (Exp.op BinOp.add [(Exp.var VarKind.global "secp_accel_scratch"), (Exp.op BinOp.add [(Exp.panOp PanOp.mul [(Exp.const (BitVec.ofNat 64 2)), (Exp.const (BitVec.ofNat 64 208))]), (Exp.const (BitVec.ofNat 64 64))])]) (Exp.const (BitVec.ofNat 64 0)) (Exp.const (BitVec.ofNat 64 0)) (Exp.const (BitVec.ofNat 64 0)))
                           (Prog.seq
                           (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "pt"), (Exp.const (BitVec.ofNat 64 64))]) (Exp.rStruct [(Exp.const (BitVec.ofNat 64 1)), (Exp.const (BitVec.ofNat 64 0)), (Exp.const (BitVec.ofNat 64 0)), (Exp.const (BitVec.ofNat 64 0))]))
                           (Prog.return (Exp.const (BitVec.ofNat 64 0)))))))))))))))))))
@@ -19715,17 +19717,17 @@ def guestFn_bn254_accel_init : Decl (BitVec 64) :=
             (Prog.return (Exp.const (BitVec.ofNat 64 0)))
             Prog.skip)
           (Prog.seq
-          (Prog.call (some ((some (VarKind.global, "bn_accel_a")), none)) "alloc" [(Exp.const (BitVec.ofNat 64 32))])
+          (Prog.call (some ((some (VarKind.global, "bn_accel_params")), none)) "alloc" [(Exp.const (BitVec.ofNat 64 208))])
           (Prog.seq
-          (Prog.call (some ((some (VarKind.global, "bn_accel_b")), none)) "alloc" [(Exp.const (BitVec.ofNat 64 32))])
+          (Prog.assign VarKind.global "bn_accel_a" (Exp.op BinOp.add [(Exp.var VarKind.global "bn_accel_params"), (Exp.const (BitVec.ofNat 64 48))]))
           (Prog.seq
-          (Prog.call (some ((some (VarKind.global, "bn_accel_zero")), none)) "alloc" [(Exp.const (BitVec.ofNat 64 32))])
+          (Prog.assign VarKind.global "bn_accel_b" (Exp.op BinOp.add [(Exp.var VarKind.global "bn_accel_params"), (Exp.const (BitVec.ofNat 64 80))]))
           (Prog.seq
-          (Prog.call (some ((some (VarKind.global, "bn_accel_m")), none)) "alloc" [(Exp.const (BitVec.ofNat 64 32))])
+          (Prog.assign VarKind.global "bn_accel_zero" (Exp.op BinOp.add [(Exp.var VarKind.global "bn_accel_params"), (Exp.const (BitVec.ofNat 64 112))]))
           (Prog.seq
-          (Prog.call (some ((some (VarKind.global, "bn_accel_d")), none)) "alloc" [(Exp.const (BitVec.ofNat 64 32))])
+          (Prog.assign VarKind.global "bn_accel_m" (Exp.op BinOp.add [(Exp.var VarKind.global "bn_accel_params"), (Exp.const (BitVec.ofNat 64 144))]))
           (Prog.seq
-          (Prog.call (some ((some (VarKind.global, "bn_accel_params")), none)) "alloc" [(Exp.const (BitVec.ofNat 64 40))])
+          (Prog.assign VarKind.global "bn_accel_d" (Exp.op BinOp.add [(Exp.var VarKind.global "bn_accel_params"), (Exp.const (BitVec.ofNat 64 176))]))
           (Prog.seq
           (Prog.store (Exp.var VarKind.global "bn_accel_zero") (Exp.rStruct [(Exp.const (BitVec.ofNat 64 0)), (Exp.const (BitVec.ofNat 64 0)), (Exp.const (BitVec.ofNat 64 0)), (Exp.const (BitVec.ofNat 64 0))]))
           (Prog.seq
@@ -19740,6 +19742,8 @@ def guestFn_bn254_accel_init : Decl (BitVec 64) :=
           (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "bn_accel_params"), (Exp.const (BitVec.ofNat 64 24))]) (Exp.var VarKind.global "bn_accel_m"))
           (Prog.seq
           (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "bn_accel_params"), (Exp.const (BitVec.ofNat 64 32))]) (Exp.var VarKind.global "bn_accel_d"))
+          (Prog.seq
+          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "bn_accel_params"), (Exp.const (BitVec.ofNat 64 40))]) (Exp.var VarKind.global "bn_accel_params"))
           (Prog.seq
           (Prog.call (some ((some (VarKind.global, "bn_accel_fp2_f1")), none)) "alloc" [(Exp.const (BitVec.ofNat 64 64))])
           (Prog.seq
@@ -19760,7 +19764,7 @@ def guestFn_bn254_accel_init : Decl (BitVec 64) :=
           (Prog.store (Exp.var VarKind.global "bn_accel_g1_params") (Exp.var VarKind.global "bn_accel_g1_p1"))
           (Prog.seq
           (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "bn_accel_g1_params"), (Exp.const (BitVec.ofNat 64 8))]) (Exp.var VarKind.global "bn_accel_g1_p2"))
-          (Prog.return (Exp.const (BitVec.ofNat 64 0)))))))))))))))))))))))))))
+          (Prog.return (Exp.const (BitVec.ofNat 64 0))))))))))))))))))))))))))))
       returnShape := Shape.one }
 
 def guestFn_bn254_accel_modmul : Decl (BitVec 64) :=
@@ -19777,7 +19781,7 @@ def guestFn_bn254_accel_modmul : Decl (BitVec 64) :=
           (Prog.seq
           (Prog.store (Exp.var VarKind.global "bn_accel_b") (Exp.var VarKind.local "b"))
           (Prog.seq
-          (Prog.extCall "bn_arith256" (Exp.var VarKind.global "bn_accel_params") (Exp.const (BitVec.ofNat 64 0)) (Exp.const (BitVec.ofNat 64 0)) (Exp.const (BitVec.ofNat 64 0)))
+          (Prog.extCall "bn_arith256" (Exp.var VarKind.global "bn_accel_params") (Exp.const (BitVec.ofNat 64 48)) (Exp.var VarKind.global "bn_accel_params") (Exp.const (BitVec.ofNat 64 208)))
           (Prog.return (Exp.load (Shape.comb [Shape.one, Shape.one, Shape.one, Shape.one]) (Exp.var VarKind.global "bn_accel_d")))))))
       returnShape := (Shape.comb [Shape.one, Shape.one, Shape.one, Shape.one]) }
 
@@ -23766,17 +23770,19 @@ def guestFn_fp_accel_init : Decl (BitVec 64) :=
           (Prog.seq
           (Prog.call (some (none, none)) "bls_consts_init" [])
           (Prog.seq
-          (Prog.call (some ((some (VarKind.global, "fp_accel_a")), none)) "alloc" [(Exp.const (BitVec.ofNat 64 48))])
+          (Prog.call (some ((some (VarKind.global, "fp_accel_params")), none)) "alloc" [(Exp.const (BitVec.ofNat 64 288))])
           (Prog.seq
-          (Prog.call (some ((some (VarKind.global, "fp_accel_b")), none)) "alloc" [(Exp.const (BitVec.ofNat 64 48))])
+          (Prog.assign VarKind.global "fp_accel_a" (Exp.op BinOp.add [(Exp.var VarKind.global "fp_accel_params"), (Exp.const (BitVec.ofNat 64 48))]))
           (Prog.seq
-          (Prog.call (some ((some (VarKind.global, "fp_accel_d")), none)) "alloc" [(Exp.const (BitVec.ofNat 64 48))])
+          (Prog.assign VarKind.global "fp_accel_b" (Exp.op BinOp.add [(Exp.var VarKind.global "fp_accel_params"), (Exp.const (BitVec.ofNat 64 96))]))
           (Prog.seq
-          (Prog.call (some ((some (VarKind.global, "fp_accel_zero")), none)) "alloc" [(Exp.const (BitVec.ofNat 64 48))])
+          (Prog.assign VarKind.global "fp_accel_zero" (Exp.op BinOp.add [(Exp.var VarKind.global "fp_accel_params"), (Exp.const (BitVec.ofNat 64 144))]))
           (Prog.seq
-          (Prog.call (some ((some (VarKind.global, "fp_accel_params")), none)) "alloc" [(Exp.const (BitVec.ofNat 64 40))])
+          (Prog.assign VarKind.global "fp_accel_d" (Exp.op BinOp.add [(Exp.var VarKind.global "fp_accel_params"), (Exp.const (BitVec.ofNat 64 240))]))
           (Prog.seq
           (Prog.call (some (none, none)) "memzero" [(Exp.var VarKind.global "fp_accel_zero"), (Exp.const (BitVec.ofNat 64 48))])
+          (Prog.seq
+          (Prog.call (some (none, none)) "memcpy" [(Exp.op BinOp.add [(Exp.var VarKind.global "fp_accel_params"), (Exp.const (BitVec.ofNat 64 192))]), (Exp.op BinOp.add [(Exp.var VarKind.global "bls_c"), (Exp.const (BitVec.ofNat 64 48))]), (Exp.const (BitVec.ofNat 64 48))])
           (Prog.seq
           (Prog.store (Exp.var VarKind.global "fp_accel_params") (Exp.var VarKind.global "fp_accel_a"))
           (Prog.seq
@@ -23784,10 +23790,12 @@ def guestFn_fp_accel_init : Decl (BitVec 64) :=
           (Prog.seq
           (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "fp_accel_params"), (Exp.const (BitVec.ofNat 64 16))]) (Exp.var VarKind.global "fp_accel_zero"))
           (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "fp_accel_params"), (Exp.const (BitVec.ofNat 64 24))]) (Exp.op BinOp.add [(Exp.var VarKind.global "bls_c"), (Exp.const (BitVec.ofNat 64 48))]))
+          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "fp_accel_params"), (Exp.const (BitVec.ofNat 64 24))]) (Exp.op BinOp.add [(Exp.var VarKind.global "fp_accel_params"), (Exp.const (BitVec.ofNat 64 192))]))
           (Prog.seq
           (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "fp_accel_params"), (Exp.const (BitVec.ofNat 64 32))]) (Exp.var VarKind.global "fp_accel_d"))
-          (Prog.return (Exp.const (BitVec.ofNat 64 0))))))))))))))))
+          (Prog.seq
+          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "fp_accel_params"), (Exp.const (BitVec.ofNat 64 40))]) (Exp.var VarKind.global "fp_accel_params"))
+          (Prog.return (Exp.const (BitVec.ofNat 64 0))))))))))))))))))
       returnShape := Shape.one }
 
 def guestFn_bls_fp_mul : Decl (BitVec 64) :=
@@ -23804,7 +23812,7 @@ def guestFn_bls_fp_mul : Decl (BitVec 64) :=
           (Prog.seq
           (Prog.store (Exp.var VarKind.global "fp_accel_b") (Exp.var VarKind.local "b"))
           (Prog.seq
-          (Prog.extCall "bls_arith384" (Exp.var VarKind.global "fp_accel_params") (Exp.const (BitVec.ofNat 64 0)) (Exp.const (BitVec.ofNat 64 0)) (Exp.const (BitVec.ofNat 64 0)))
+          (Prog.extCall "bls_arith384" (Exp.var VarKind.global "fp_accel_params") (Exp.const (BitVec.ofNat 64 48)) (Exp.var VarKind.global "fp_accel_params") (Exp.const (BitVec.ofNat 64 288)))
           (Prog.return (Exp.load (Shape.comb [Shape.one, Shape.one, Shape.one, Shape.one, Shape.one, Shape.one]) (Exp.var VarKind.global "fp_accel_d")))))))
       returnShape := (Shape.comb [Shape.one, Shape.one, Shape.one, Shape.one, Shape.one, Shape.one]) }
 
