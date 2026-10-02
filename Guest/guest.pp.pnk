@@ -5582,7 +5582,7 @@ fun 1 state_init(1 nodedb, 1 state_root, 1 codedb) {
   t = htab_new(20, 256);
   st bs + 72, t;
   sk_buf = alloc(64);
-  journal_cap = 262144;
+  journal_cap = 524288;
   journal = alloc(journal_cap * 32);
   journal_n = 0;
   ts = 0;
@@ -15595,6 +15595,7 @@ fun 1 process_withdrawals(1 pl) {
     var {1,1,1,1} amt = <(((ld8 (w + 36)) | ((ld8 ((w + 36) + 1)) << 8) | ((ld8 ((w + 36) + 2)) << 16) | ((ld8 ((w + 36) + 3)) << 24)) | (((ld8 ((w + 36) + 4)) | ((ld8 (((w + 36) + 4) + 1)) << 8) | ((ld8 (((w + 36) + 4) + 2)) << 16) | ((ld8 (((w + 36) + 4) + 3)) << 24)) << 32)), 0, 0, 0>;
     var {1,1,1,1} wei = u256_mul(amt, <1000000000, 0, 0, 0>);
     create_ether(w + 16, wei);
+    journal_n = 0;
     i = i + 1;
   }
   incorporate_tx_into_block();

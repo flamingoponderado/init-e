@@ -10266,7 +10266,7 @@ def guestFn_state_init : Decl (BitVec 64) :=
                   (Prog.seq
                   (Prog.call (some ((some (VarKind.global, "sk_buf")), none)) "alloc" [(Exp.const (BitVec.ofNat 64 64))])
                   (Prog.seq
-                  (Prog.assign VarKind.global "journal_cap" (Exp.const (BitVec.ofNat 64 262144)))
+                  (Prog.assign VarKind.global "journal_cap" (Exp.const (BitVec.ofNat 64 524288)))
                   (Prog.seq
                   (Prog.call (some ((some (VarKind.global, "journal")), none)) "alloc" [(Exp.panOp PanOp.mul [(Exp.var VarKind.global "journal_cap"), (Exp.const (BitVec.ofNat 64 32))])])
                   (Prog.seq
@@ -29859,7 +29859,9 @@ def guestFn_process_withdrawals : Decl (BitVec 64) :=
                         (Prog.decCall "wei" (Shape.comb [Shape.one, Shape.one, Shape.one, Shape.one]) "u256_mul" [(Exp.var VarKind.local "amt"), (Exp.rStruct [(Exp.const (BitVec.ofNat 64 1000000000)), (Exp.const (BitVec.ofNat 64 0)), (Exp.const (BitVec.ofNat 64 0)), (Exp.const (BitVec.ofNat 64 0))])]
                           (Prog.seq
                             (Prog.call (some (none, none)) "create_ether" [(Exp.op BinOp.add [(Exp.var VarKind.local "w"), (Exp.const (BitVec.ofNat 64 16))]), (Exp.var VarKind.local "wei")])
-                            (Prog.assign VarKind.local "i" (Exp.op BinOp.add [(Exp.var VarKind.local "i"), (Exp.const (BitVec.ofNat 64 1))])))))))
+                            (Prog.seq
+                            (Prog.assign VarKind.global "journal_n" (Exp.const (BitVec.ofNat 64 0)))
+                            (Prog.assign VarKind.local "i" (Exp.op BinOp.add [(Exp.var VarKind.local "i"), (Exp.const (BitVec.ofNat 64 1))]))))))))
                   (Prog.seq
                   (Prog.call (some (none, none)) "incorporate_tx_into_block" [])
                   (Prog.return (Exp.const (BitVec.ofNat 64 0)))))))))

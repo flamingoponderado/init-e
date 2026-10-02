@@ -12,6 +12,14 @@
 #define HEAP_BASE        2701131776   /* 0xa1000000 (= @base) */
 #define HEAP_END         2952790016   /* 0xb0000000 */
 #define SCRATCH_END      2701127680   /* 0xa0fff000: below the Pancake heap */
+/* State journal (state.pnk): 32-byte undo records, reset at every state_fresh_tx.
+   Every journal-writing operation costs at least JOURNAL_MIN_GAS regular gas
+   (TSTORE, 100), so one transaction writes at most gas/JOURNAL_MIN_GAS records;
+   fork.pnk checks at compile time that JOURNAL_CAP covers the largest regular
+   gas any one state_fresh_tx scope can run. See docs/JOURNAL-BOUND.md. */
+#define JOURNAL_CAP      524288
+#define JOURNAL_MIN_GAS  100
+#define JOURNAL_SLACK    1024
 #define M32              4294967295
 #define WORD             8
 
