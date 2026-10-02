@@ -136,6 +136,17 @@ fun {1,1} encode_receipt(1 tx_type, 1 succeeded, 1 cumulative_gas, 1 logs) {
 /* ---- withdrawals ------------------------------------------------------------------- */
 
 /* rlp([index, validator_index, address, amount]) from a 44-byte SSZ withdrawal */
+/* Length of encode_withdrawal_rlp's result, computed without allocating, so the
+   block size can be checked before the withdrawals are encoded. */
+fun 1 withdrawal_rlp_len(1 wd) {
+  var 1 a = rlp_word_encoded_len(LD_LE64(wd));
+  var 1 b = rlp_word_encoded_len(LD_LE64(wd + 8));
+  var 1 c = rlp_word_encoded_len(LD_LE64(wd + 36));
+  var 1 payload = a + b + 21 + c;
+  var 1 hl = rlp_list_header_len(payload);
+  return payload + hl;
+}
+
 fun {1,1} encode_withdrawal_rlp(1 wd) {
   var 1 buf = alloc(64);
   var p = buf + 9;

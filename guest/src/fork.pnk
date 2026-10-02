@@ -104,68 +104,6 @@ fun 1 fork_init() {
 
 /* ---- _payload_header / _payload_block (SeamShell.lean) ---------------------- */
 
-var 1 wd_rlp_slices = 0;   /* encoded withdrawals of the payload */
-
-fun 1 payload_header(1 si) {
-  var pl = lds 1 (si + SI_PL);
-  var raw = lds 1 (pl + PL_RAW);
-  var 1 h = alloc(HDR_SIZE);
-  memzero(h, HDR_SIZE);
-  st h + HDR_IS_CURRENT, 1;
-  st h + HDR_PARENT_HASH, raw + PLO_PARENT_HASH;
-  var 1 oh = alloc(32);
-  var 1 tmp = alloc(8);
-  st8 tmp, 192;
-  keccak256(tmp, 1, oh);
-  st h + HDR_OMMERS_HASH, oh;
-  st h + HDR_COINBASE, raw + PLO_FEE_RECIPIENT;
-  st h + HDR_STATE_ROOT, raw + PLO_STATE_ROOT;
-  var 1 txr = alloc(32);
-  build_mpt_indexed(lds 1 (pl + PL_TXS), lds 1 (pl + PL_TXS_N), txr);
-  st h + HDR_TX_ROOT, txr;
-  st h + HDR_RECEIPT_ROOT, raw + PLO_RECEIPTS_ROOT;
-  st h + HDR_BLOOM, raw + PLO_LOGS_BLOOM;
-  st h + HDR_DIFFICULTY, <0, 0, 0, 0>;
-  st h + HDR_NUMBER, lds 1 (pl + PL_NUMBER);
-  st h + HDR_GAS_LIMIT, lds 1 (pl + PL_GAS_LIMIT);
-  st h + HDR_GAS_USED, lds 1 (pl + PL_GAS_USED);
-  st h + HDR_TIMESTAMP, lds 1 (pl + PL_TIMESTAMP);
-  st h + HDR_EXTRA, lds 1 (pl + PL_EXTRA);
-  st h + HDR_EXTRA_N, lds 1 (pl + PL_EXTRA_N);
-  st h + HDR_PREV_RANDAO, raw + PLO_PREV_RANDAO;
-  var 1 z8 = alloc(8);
-  memzero(z8, 8);
-  st h + HDR_NONCE, z8;
-  /* base fee: u256 little-endian in SSZ */
-  var {1,1,1,1} bf = <LD_LE64(raw + PLO_BASE_FEE), LD_LE64(raw + PLO_BASE_FEE + 8), LD_LE64(raw + PLO_BASE_FEE + 16), LD_LE64(raw + PLO_BASE_FEE + 24)>;
-  st h + HDR_BASE_FEE, bf;
-  /* withdrawals root */
-  var nwd = lds 1 (pl + PL_WD_N);
-  wd_rlp_slices = alloc(nwd * 16 + 16);
-  var i = 0;
-  while i < nwd {
-    var {1,1} e = encode_withdrawal_rlp((lds 1 (pl + PL_WD)) + i * WITHDRAWAL_SIZE);
-    st wd_rlp_slices + i * 16, e.0;
-    st wd_rlp_slices + i * 16 + 8, e.1;
-    i = i + 1;
-  }
-  var 1 wr = alloc(32);
-  build_mpt_indexed(wd_rlp_slices, nwd, wr);
-  st h + HDR_WITHDRAWALS_ROOT, wr;
-  st h + HDR_BLOB_GAS_USED, lds 1 (pl + PL_BLOB_GAS_USED);
-  st h + HDR_EXCESS_BLOB_GAS, lds 1 (pl + PL_EXCESS_BLOB_GAS);
-  st h + HDR_PBBR, lds 1 (si + SI_PBBR);
-  var {1,1} reqs = encode_execution_requests(lds 1 (si + SI_REQ));
-  var 1 rh = alloc(32);
-  compute_requests_hash(reqs.0, reqs.1, rh);
-  st h + HDR_REQUESTS_HASH, rh;
-  var 1 bh = alloc(32);
-  keccak256(lds 1 (pl + PL_BAL), lds 1 (pl + PL_BAL_N), bh);
-  st h + HDR_BAL_HASH, bh;
-  st h + HDR_SLOT, lds 1 (pl + PL_SLOT);
-  return h;
-}
-
 /* rlp.encode(block) length: [header, txs, ommers=[], withdrawals] */
 fun 1 block_rlp_length(1 hdr, 1 pl) {
   var 1 mark = heap_mark();
@@ -198,13 +136,83 @@ fun 1 block_rlp_length(1 hdr, 1 pl) {
   var wl = 0;
   i = 0;
   while i < nwd {
-    wl = wl + SLICE_LEN(wd_rlp_slices, i);
+    var 1 wlen = withdrawal_rlp_len((lds 1 (pl + PL_WD)) + i * WITHDRAWAL_SIZE);
+    wl = wl + wlen;
     i = i + 1;
   }
   hl = rlp_list_header_len(wl);
   total = total + hl + wl;
   hl = rlp_list_header_len(total);
   return total + hl;
+}
+
+var 1 wd_rlp_slices = 0;   /* encoded withdrawals of the payload */
+
+fun 1 payload_header(1 si) {
+  var pl = lds 1 (si + SI_PL);
+  var raw = lds 1 (pl + PL_RAW);
+  var 1 h = alloc(HDR_SIZE);
+  memzero(h, HDR_SIZE);
+  st h + HDR_IS_CURRENT, 1;
+  st h + HDR_PARENT_HASH, raw + PLO_PARENT_HASH;
+  var 1 oh = alloc(32);
+  var 1 tmp = alloc(8);
+  st8 tmp, 192;
+  keccak256(tmp, 1, oh);
+  st h + HDR_OMMERS_HASH, oh;
+  st h + HDR_COINBASE, raw + PLO_FEE_RECIPIENT;
+  st h + HDR_STATE_ROOT, raw + PLO_STATE_ROOT;
+  var 1 txr = alloc(32);   /* filled by build_mpt_indexed below, after the size check */
+  st h + HDR_TX_ROOT, txr;
+  st h + HDR_RECEIPT_ROOT, raw + PLO_RECEIPTS_ROOT;
+  st h + HDR_BLOOM, raw + PLO_LOGS_BLOOM;
+  st h + HDR_DIFFICULTY, <0, 0, 0, 0>;
+  st h + HDR_NUMBER, lds 1 (pl + PL_NUMBER);
+  st h + HDR_GAS_LIMIT, lds 1 (pl + PL_GAS_LIMIT);
+  st h + HDR_GAS_USED, lds 1 (pl + PL_GAS_USED);
+  st h + HDR_TIMESTAMP, lds 1 (pl + PL_TIMESTAMP);
+  st h + HDR_EXTRA, lds 1 (pl + PL_EXTRA);
+  st h + HDR_EXTRA_N, lds 1 (pl + PL_EXTRA_N);
+  st h + HDR_PREV_RANDAO, raw + PLO_PREV_RANDAO;
+  var 1 z8 = alloc(8);
+  memzero(z8, 8);
+  st h + HDR_NONCE, z8;
+  /* base fee: u256 little-endian in SSZ */
+  var {1,1,1,1} bf = <LD_LE64(raw + PLO_BASE_FEE), LD_LE64(raw + PLO_BASE_FEE + 8), LD_LE64(raw + PLO_BASE_FEE + 16), LD_LE64(raw + PLO_BASE_FEE + 24)>;
+  st h + HDR_BASE_FEE, bf;
+  var 1 wr = alloc(32);   /* withdrawals root, filled below */
+  st h + HDR_WITHDRAWALS_ROOT, wr;
+  st h + HDR_BLOB_GAS_USED, lds 1 (pl + PL_BLOB_GAS_USED);
+  st h + HDR_EXCESS_BLOB_GAS, lds 1 (pl + PL_EXCESS_BLOB_GAS);
+  st h + HDR_PBBR, lds 1 (si + SI_PBBR);
+  var 1 rh = alloc(32);   /* requests hash, filled below */
+  st h + HDR_REQUESTS_HASH, rh;
+  var 1 bh = alloc(32);   /* block access list hash, filled below */
+  st h + HDR_BAL_HASH, bh;
+  st h + HDR_SLOT, lds 1 (pl + PL_SLOT);
+  /* Reject an oversized block before building anything from its contents (the
+     transaction trie, the withdrawal encodings and their trie, the request and
+     BAL hashes). Every header field is set, and the four buffers above are
+     32-byte strings whatever they will hold, so the encoded length is final. */
+  var 1 bl = block_rlp_length(h, pl);
+  if bl >+ MAX_RLP_BLOCK_SIZE {
+    throw BlockErr 7;
+  }
+  build_mpt_indexed(lds 1 (pl + PL_TXS), lds 1 (pl + PL_TXS_N), txr);
+  var nwd = lds 1 (pl + PL_WD_N);
+  wd_rlp_slices = alloc(nwd * 16 + 16);
+  var i = 0;
+  while i < nwd {
+    var {1,1} e = encode_withdrawal_rlp((lds 1 (pl + PL_WD)) + i * WITHDRAWAL_SIZE);
+    st wd_rlp_slices + i * 16, e.0;
+    st wd_rlp_slices + i * 16 + 8, e.1;
+    i = i + 1;
+  }
+  build_mpt_indexed(wd_rlp_slices, nwd, wr);
+  var {1,1} reqs = encode_execution_requests(lds 1 (si + SI_REQ));
+  compute_requests_hash(reqs.0, reqs.1, rh);
+  keccak256(lds 1 (pl + PL_BAL), lds 1 (pl + PL_BAL_N), bh);
+  return h;
 }
 
 /* ---- transaction helpers ------------------------------------------------------- */
@@ -955,10 +963,6 @@ fun 1 run_attempt(1 si) {
   DBG(16);
   if vvh == 0 {
     throw BlockErr 6;
-  }
-  var 1 bl = block_rlp_length(hdr, pl);
-  if bl >+ MAX_RLP_BLOCK_SIZE {
-    throw BlockErr 7;
   }
   DBG(17);
   validate_header(parent, hdr);
