@@ -1,5 +1,4 @@
 import Guest.Ast
-import Guest.SoftwareAst
 
 /-!
 # Source-level stack frame estimate

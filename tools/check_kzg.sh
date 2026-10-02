@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # check_kzg.sh [--steps]
-# Generate execution-specs-backed KZG vectors and compare software and
-# accelerator builds under Spike.  --steps reports one Spike count per case.
+# Generate execution-specs-backed KZG vectors and check the guest's output under
+# Spike against them.  --steps reports one Spike count per case.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -21,10 +21,8 @@ fi
 "${PY[@]}" "$ROOT/tools/gen_kzg_vectors.py" "$W/kzg.in" "$W/kzg.expected"
 
 SPIKE_RUN="${SPIKE_RUN:-$ROOT/tools/spike/spike_run}"
-ELF_SW="$W/t_kzg_sw.elf"
-ELF_ACCEL="$W/t_kzg_accel.elf"
-"$ROOT/guest/build.sh" "$ROOT/guest/test/t_kzg.pnk" "$ELF_SW" >/dev/null
-ACCEL=1 "$ROOT/guest/build.sh" "$ROOT/guest/test/t_kzg.pnk" "$ELF_ACCEL" >/dev/null
+ELF="$W/t_kzg.elf"
+"$ROOT/guest/build.sh" "$ROOT/guest/test/t_kzg.pnk" "$ELF" >/dev/null
 
 run_one() {
   local name="$1" elf="$2"
@@ -39,10 +37,7 @@ run_one() {
   echo "PASS ($name)"
 }
 
-run_one sw "$ELF_SW"
-run_one accel "$ELF_ACCEL"
-cmp "$W/t_kzg_sw.actual" "$W/t_kzg_accel.actual"
-echo "PASS (software/accelerated Spike differential)"
+run_one guest "$ELF"
 
 if [ "${1:-}" = "--steps" ]; then
   python3 - "$W/kzg.in" "$W" <<'PY'
@@ -66,12 +61,10 @@ PY
   for case in 1 2 3 4 5 6 7; do
     input="$W/case_${case}.in"
     [ -f "$input" ] || continue
-    for variant in sw accel; do
-      log="$W/case_${case}_${variant}.steps.log"
-      SPIKE_OUTPUT_LEN=65536 "$SPIKE_RUN" "$W/t_kzg_${variant}.elf" "$input" \
-        "$W/case_${case}_${variant}.out" > /dev/null 2>"$log"
-      printf 'steps case %-2s %-6s ' "$case" "$variant"
-      tail -n 1 "$log"
-    done
+    log="$W/case_${case}.steps.log"
+    SPIKE_OUTPUT_LEN=65536 "$SPIKE_RUN" "$ELF" "$input" \
+      "$W/case_${case}.out" > /dev/null 2>"$log"
+    printf 'steps case %-2s ' "$case"
+    tail -n 1 "$log"
   done
 fi
