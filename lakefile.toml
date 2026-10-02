@@ -8,7 +8,7 @@ defaultTargets = ["Guest"]
 # compatibility) rather than tracking main unpinned.
 [[require]]
 name = "flapjack"
-git = "https://github.com/pirapira/flapjack"
+git = "https://github.com/flamingoponderado/flapjack"
 rev = "2732831e21be0a32e3135417f39563cc1124a8d4"
 
 # ZisK accelerator semantics (RiscvZkvm.Rv64.ZiskAccel: Keccak-f, SHA-256

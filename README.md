@@ -7,7 +7,7 @@
 
 Ethereum stateless guest in [Pancake](https://cakeml.org/pancake). Pancake is
 a programming language with a formally verified compiler (currently
-[being ported](https://github.com/pirapira/flapjack) to Lean).
+[being ported](https://github.com/flamingoponderado/flapjack) to Lean).
 
 ## Goal
 

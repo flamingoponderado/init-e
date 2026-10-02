@@ -20,7 +20,7 @@ applied to the model in `Guest.Model` (`Guest.runGuestStepped`); an accelerator
 call counts as one `ExtCall` step.
 
 Together with the step-preserving compilation theorem tracked in
-<https://github.com/pirapira/flapjack/issues/352> (a fixed linear relation
+<https://github.com/flamingoponderado/flapjack/issues/352> (a fixed linear relation
 between source steps and generated RISC-V instruction steps) this yields a
 RISC-V step bound for the compiled guest.
 
