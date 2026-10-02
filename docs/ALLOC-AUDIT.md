@@ -24,7 +24,7 @@ scratch arena is 11.9 MiB. Both are smaller than what 200M gas can fill:
 
 | Region | Current size | Needed for 200M gas | Where the number comes from |
 |---|---|---|---|
-| heap (`alloc`) | 251,658,240 B (240 MiB), of which the 16 MiB journal | about 1.5 GB from gas-priced use, plus about 0.57 GB that no gas pays for (withdrawals), plus the input and witness: **about 2.1 GB plus the input** | highest heap price, `set_retdata` at about 7.5 B/gas (item 5) over 200M gas is 1.5 GB; withdrawals are item 1 |
+| heap (`alloc`) | 251,658,240 B (240 MiB), of which the 16 MiB journal | about 1.5 GB from gas-priced use, plus about 1.0 GB that no gas pays for (withdrawals), plus the input and witness: **about 2.5 GB plus the input** | highest heap price, `set_retdata` at about 7.5 B/gas (item 5) over 200M gas is 1.5 GB; withdrawals are item 1, bounded only by the block and input size |
 | frame memory plus scratch arena | 12,509,184 B (11.9 MiB) | **about 52 MB per user transaction, about 68 MB per system transaction** (the arena is released after each transaction) | a model of nested frames, see "Frame arena bound" |
 
 The heap is never freed, so its need is the whole block's. The arena is released at
@@ -35,7 +35,8 @@ are not drawn from the same gas.
 Cheapest routes to a trap today (price, then gas to exhaust the region):
 
 * recursion over a 64 KiB contract with stacks and memory grown (items 2 to 4):
-  fills the 11.9 MiB arena within about 0.2M to 0.5M gas;
+  fills the 11.9 MiB arena within about 0.8M gas (the model gives 11.8 MB at 0.7M
+  gas and 12.9 MB at 0.85M);
 * calls returning increasing sizes (item 5): fills the heap in about 30M to 40M gas;
 * distinct `TSTORE` keys (item 6): about 35M to 65M gas;
 * a block of minimal transfers (item 7): about 9,500 of them, with the journal, is
@@ -106,20 +107,20 @@ The footprints that gas does not pay for, ordered by price, cheapest memory firs
 with the one item that costs no gas at the top. The highest price in each region
 sets the RAM in the table above.
 
-| # | Where | Problem | Price (bytes per gas) | Limit it reaches |
-|---|---|---|---|---|
-| 1 | `process_withdrawals` (`fork.pnk`), `decode_payload` (`ssz.pnk`) | The withdrawal count is bounded only by the 8 MiB block-size check, not by gas. Each withdrawal allocates about 3 KB (account copy, journal key copy, a BAL account of about 1.4 KB) | **not priced in gas**: about 3 KB each at 0 gas, so up to about 190k withdrawals is about 570 MB | heap, from the block size alone |
-| 2 | `frame_new`, `compute_jumpdests` (`evm.pnk`) | Every live call frame allocates about 2.9 KB of fixed setup (frame struct, 1 KiB stack, 1 KiB memory, message, continuation record, tables) plus a jumpdest bitmap of `code_n / 8` bytes, up to 8,200 B for 64 KiB code. The bitmap is rebuilt per frame, not cached. A warm CALL costs 100 gas and charges for none of it | about 110 B/gas (64 KiB code, about 11.1 KB per call at 100 gas); about 30 B/gas for small code | scratch arena. Depth is capped at 1,024 frames, about 11.4 MB, which is 91% of the arena; a few hundred more bytes per frame (for example 33 pushes, which doubles the stack) overruns it, within about 0.5M gas |
-| 3 | `stack_push` (`evm.pnk`) | The stack doubles from 32 to 1,024 words and keeps every old buffer until the frame exits: about 62 KB for a full stack, which 513 pushes reach (the 513th doubles the capacity to 1,024) | about 55 to 60 B/gas (513 `PUSH0` at 2 gas is 1,026 gas, plus a 100-gas CALL, for about 62 KB) | scratch arena, after about 170 frames with their other setup, within about 0.2M gas |
-| 4 | `extend_memory` (`evm.pnk`) | Paid EVM memory costs 3 gas per 32-byte word plus `w^2/512`, which is about 10 B/gas for small sizes, and the quadratic term is paid per frame, so splitting memory across live frames is cheaper than one large frame. **The way `extend_memory` grows the arena can double the consumption**: it doubles the capacity although the arena grows in place, so up to twice the paid size is taken (see below) | **about 20 B/gas** (the paid price is about 10 B/gas; the doubling roughly doubles the memory actually taken, for example 1,056 bytes costs 101 gas and takes 2,048) | frame-memory arena, within about 0.6M to 1.2M gas across live frames |
-| 5 | `set_retdata` (`evm_calls.pnk`) | Allocates `n + 8` bytes on the heap whenever a call returns more than the frame's retdata buffer holds, and never frees it. The callee paid memory for `n` once; the parent pays about 100 gas for the CALL. Calls that return increasing sizes leak each size | about 7.5 B/gas at the best size, so about 1.5 GB at 200M gas (a run of calls returning 32 B, 64 B, 96 B and so on; the ratio stays between 6.9 and 7.5 for sizes from 7 KB to 32 KB) | heap, after about 30M to 40M gas |
-| 6 | `TSTORE` (`evm.pnk`, `state.pnk` `set_transient_storage`, `jset`, `htab_grow`) | With distinct keys, 100 gas allocates the value, a journal key copy, and a transient-table slot of about 81 B; `htab_grow` doubles the table and abandons the old arrays | about 4 to 7 B/gas | heap, after about 35M to 65M gas |
-| 7 | per transaction: `state_fresh_tx` (`state.pnk`), `process_transaction` (`fork.pnk`) | Allocates the transaction's tables on the heap and never releases them; there is no `heap_release` in the transaction loop | about 1.15 B/gas: **measured** minimum of 24,232 B per transaction over 370 sampled cases with 1 to 16 transactions, against 21,000 gas for the cheapest transaction. 9,523 minimal transfers is about 231 MB, plus the 16.8 MB journal, close to the 251.7 MB heap before the input, witness and BAL | heap |
-| 8 | `SSTORE` rewrite of an existing slot, `TSTORE` of an existing key (`state.pnk` `set_storage`, `jset`) | Each write allocates a 32 B value and a 56 B journal key copy and never frees them | 0.9 B/gas (88 B per 100 gas), about 176 MB at 200M gas | heap |
-| 9 | BAL (`bal.pnk` `bal_ensure_account`) | About 1.4 KB per touched account, plus about 0.3 to 1 KB in the block-state tables. The EIP-7928 item limit is checked only after execution | about 0.55 to 1 B/gas (cold account access is 2,600 gas) | heap |
-| 10 | `htab_grow`, `lst_push` | Always allocate on the heap and abandon the old arrays, so a grown table costs about twice its final size. Accessed sets, transient storage, BAL and logs all grow this way | about 0.3 B/gas (a storage-key slot is about 81 B at 2 to 4 slots per entry, doubled for abandoned arrays, against 2,100 gas per cold key) | heap |
-| 11 | `compute_state_root` (`block.pnk`) | Re-decodes the witness storage trie per modified account, with no `heap_release` | about 0.2 to 0.5 B/gas (unverified) | heap |
-| 12 | `op_log`, receipts (`evm.pnk`, `block.pnk`) | Log records and receipt buffers persist. `LOG0` is 375 gas for about 150 B; the receipt buffer and bloom are about 650 B per transaction | about 0.4 B/gas for `LOG0`; about 0.03 B/gas for the receipt of a cheapest transaction | heap |
+| # | Where | Problem | Price (bytes per gas) | Upper limit at 200M declared block gas | Limit it reaches |
+|---|---|---|---|---|---|
+| 1 | `process_withdrawals` (`fork.pnk`), `decode_payload` (`ssz.pnk`) | The withdrawal count is bounded only by the 8 MiB block-size check, not by gas. Each withdrawal allocates about 3 KB (account copy, journal key copy, a BAL account of about 1.4 KB) | **not priced in gas**: about 3 KB each at 0 gas | **about 1.0 GB**: at most 335,544 withdrawals (8,388,608 B over the 25-byte minimum RLP encoding) at about 3 KB each. `payload_header` checks the block size before it encodes the withdrawals or builds any trie, so a larger block is rejected without allocating for them; only the 16-byte slices that the SSZ decode makes per transaction and per withdrawal come first | heap, from the block size or input size alone |
+| 2 | `frame_new`, `compute_jumpdests` (`evm.pnk`) | Every live call frame allocates about 2.9 KB of fixed setup (frame struct, 1 KiB stack, 1 KiB memory, message, continuation record, tables) plus a jumpdest bitmap of `code_n / 8` bytes, up to 8,200 B for 64 KiB code. The bitmap is rebuilt per frame, not cached. A warm CALL costs 100 gas and charges for none of it | about 110 B/gas (64 KiB code, about 11.1 KB per call at 100 gas); about 30 B/gas for small code | **5.3 MB** per user transaction (16.76M gas), **5.7 MB** per system transaction (30M gas); the arena is released after each transaction, so 200M gas does not multiply it. Modeled: depth stops near 480 frames because each CALL consumes gas and forwards 63/64 | scratch arena. On its own this stays under the arena (about 5 MB, see the upper limit), because each CALL consumes gas and forwards 63/64 so depth stops near 480 frames; combined with items 3 and 4 it overruns the arena |
+| 3 | `stack_push` (`evm.pnk`) | The stack doubles from 32 to 1,024 words and keeps every old buffer until the frame exits: about 62 KB for a full stack, which 513 pushes reach (the 513th doubles the capacity to 1,024) | about 55 to 60 B/gas (513 `PUSH0` at 2 gas is 1,026 gas, plus a 100-gas CALL, for about 62 KB) | **25.8 MB** per user transaction, **28.5 MB** per system transaction (includes the frame setup of item 2). Modeled | scratch arena, with items 2 and 4, within about 0.8M gas |
+| 4 | `extend_memory` (`evm.pnk`) | Paid EVM memory costs 3 gas per 32-byte word plus `w^2/512`, which is about 10 B/gas for small sizes, and the quadratic term is paid per frame, so splitting memory across live frames is cheaper than one large frame. **The way `extend_memory` grows the arena can double the consumption**: it doubles the capacity although the arena grows in place, so up to twice the paid size is taken (see below) | **about 20 B/gas** (the paid price is about 10 B/gas; the doubling roughly doubles the memory actually taken, for example 1,056 bytes costs 101 gas and takes 2,048) | **40.1 MB** per user transaction, **55.1 MB** per system transaction (includes the frame setup of item 2). Modeled, with the doubling slack counted at its worst. Items 2 to 4 combined: 51.6 MB and 67.6 MB | frame-memory arena, with items 2 and 3, within about 0.8M gas across live frames |
+| 5 | `set_retdata` (`evm_calls.pnk`) | Allocates `n + 8` bytes on the heap whenever a call returns more than the frame's retdata buffer holds, and never frees it. The callee paid memory for `n` once; the parent pays about 100 gas for the CALL. Calls that return increasing sizes leak each size | about 7.5 B/gas at the best size, so about 1.5 GB at 200M gas (a run of calls returning 32 B, 64 B, 96 B and so on; the ratio stays between 6.9 and 7.5 for sizes from 7 KB to 32 KB) | **about 1.5 GB** (7.5 B/gas over 200M gas) | heap, after about 30M to 40M gas |
+| 6 | `TSTORE` (`evm.pnk`, `state.pnk` `set_transient_storage`, `jset`, `htab_grow`) | With distinct keys, 100 gas allocates the value, a journal key copy, and a transient-table slot of about 81 B; `htab_grow` doubles the table and abandons the old arrays | about 4 to 7 B/gas | **about 1.5 GB** (7.4 B/gas at the worst point of the table doubling, over 200M gas); a 16.76M-gas transaction alone is about 100 MB | heap, after about 35M to 65M gas |
+| 7 | per transaction: `state_fresh_tx` (`state.pnk`), `process_transaction` (`fork.pnk`) | Allocates the transaction's tables on the heap and never releases them; there is no `heap_release` in the transaction loop | about 1.15 B/gas: **measured** minimum of 24,232 B per transaction over 370 sampled cases with 1 to 16 transactions, against 21,000 gas for the cheapest transaction. 9,523 minimal transfers is about 231 MB, plus the 16.8 MB journal, close to the 251.7 MB heap before the input, witness and BAL | **about 231 MB**: 9,523 transactions (200M / 21,000) at the measured 24,232 B each | heap |
+| 8 | `SSTORE` rewrite of an existing slot, `TSTORE` of an existing key (`state.pnk` `set_storage`, `jset`) | Each write allocates a 32 B value and a 56 B journal key copy and never frees them | 0.9 B/gas (88 B per 100 gas), about 176 MB at 200M gas | **about 176 MB** (200M / 100 gas writes, 88 B each) | heap |
+| 9 | BAL (`bal.pnk` `bal_ensure_account`) | About 1.4 KB per touched account, plus about 0.3 to 1 KB in the block-state tables. The EIP-7928 item limit is checked only after execution | about 0.55 to 1 B/gas (cold account access is 2,600 gas) | **about 190 MB**: 77,000 cold accounts (200M / 2,600 gas) at about 2.4 KB | heap |
+| 10 | `htab_grow`, `lst_push` | Always allocate on the heap and abandon the old arrays, so a grown table costs about twice its final size. Accessed sets, transient storage, BAL and logs all grow this way | about 0.3 B/gas (a storage-key slot is about 81 B at 2 to 4 slots per entry, doubled for abandoned arrays, against 2,100 gas per cold key) | **about 60 MB** | heap |
+| 11 | `compute_state_root` (`block.pnk`) | Re-decodes the witness storage trie per modified account, with no `heap_release` | about 0.2 to 0.5 B/gas (unverified) | **about 40 to 100 MB** (unverified) | heap |
+| 12 | `op_log`, receipts (`evm.pnk`, `block.pnk`) | Log records and receipt buffers persist. `LOG0` is 375 gas for about 150 B; the receipt buffer and bloom are about 650 B per transaction | about 0.4 B/gas for `LOG0`; about 0.03 B/gas for the receipt of a cheapest transaction | **about 80 MB** for `LOG0` (533,000 logs at about 150 B), plus about 6 MB of receipts for 9,523 transactions | heap |
 
 Accepted: precompile output buffers are never released (blake2f with 0 rounds is
 the worst, about 100 MB at 200M gas, about 0.5 B/gas). That cost is paid for in gas.
@@ -142,6 +143,17 @@ base size is 11,134 B (2,934 B of setup and an 8,200 B bitmap for 64 KiB code).
 | 5,000,000 | 29.4 MB |
 | 1,000,000 | 14.0 MB |
 | 200,000 | 6.2 MB |
+
+Restricting what a frame may pay for gives the per-item limits used in the table
+above (`tools/arena-bound.py --items base|stack|mem|all`), user transaction then
+system transaction:
+
+| Frames may pay for | User tx | System tx |
+|---|---|---|
+| nothing extra (item 2) | 5.3 MB | 5.7 MB |
+| stack growth (items 2 and 3) | 25.8 MB | 28.5 MB |
+| EVM memory growth (items 2 and 4) | 40.1 MB | 55.1 MB |
+| all of them | 51.6 MB | 67.6 MB |
 
 Even a 1M-gas transaction models at 14 MB, over the 11.9 MiB arena. The model is
 not a measurement: it assumes the pre-state holds a 64 KiB contract that calls
