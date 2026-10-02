@@ -15237,6 +15237,14 @@ fun {1,1} encode_receipt(1 tx_type, 1 succeeded, 1 cumulative_gas, 1 logs) {
   }
   return <start, w>;
 }
+fun 1 withdrawal_rlp_len(1 wd) {
+  var 1 a = rlp_word_encoded_len((((ld8 (wd)) | ((ld8 ((wd) + 1)) << 8) | ((ld8 ((wd) + 2)) << 16) | ((ld8 ((wd) + 3)) << 24)) | (((ld8 ((wd) + 4)) | ((ld8 (((wd) + 4) + 1)) << 8) | ((ld8 (((wd) + 4) + 2)) << 16) | ((ld8 (((wd) + 4) + 3)) << 24)) << 32)));
+  var 1 b = rlp_word_encoded_len((((ld8 (wd + 8)) | ((ld8 ((wd + 8) + 1)) << 8) | ((ld8 ((wd + 8) + 2)) << 16) | ((ld8 ((wd + 8) + 3)) << 24)) | (((ld8 ((wd + 8) + 4)) | ((ld8 (((wd + 8) + 4) + 1)) << 8) | ((ld8 (((wd + 8) + 4) + 2)) << 16) | ((ld8 (((wd + 8) + 4) + 3)) << 24)) << 32)));
+  var 1 c = rlp_word_encoded_len((((ld8 (wd + 36)) | ((ld8 ((wd + 36) + 1)) << 8) | ((ld8 ((wd + 36) + 2)) << 16) | ((ld8 ((wd + 36) + 3)) << 24)) | (((ld8 ((wd + 36) + 4)) | ((ld8 (((wd + 36) + 4) + 1)) << 8) | ((ld8 (((wd + 36) + 4) + 2)) << 16) | ((ld8 (((wd + 36) + 4) + 3)) << 24)) << 32)));
+  var 1 payload = a + b + 21 + c;
+  var 1 hl = rlp_list_header_len(payload);
+  return payload + hl;
+}
 fun {1,1} encode_withdrawal_rlp(1 wd) {
   var 1 buf = alloc(64);
   var p = buf + 9;
@@ -15498,64 +15506,6 @@ fun 1 fork_init() {
   st_be64(deposit_event_signature_hash + 24, -6372452478019946299);
   return 0;
 }
-var 1 wd_rlp_slices = 0;
-fun 1 payload_header(1 si) {
-  var pl = lds 1 (si + 0);
-  var raw = lds 1 (pl + 0);
-  var 1 h = alloc(248);
-  memzero(h, 248);
-  st h + 0, 1;
-  st h + 8, raw + 0;
-  var 1 oh = alloc(32);
-  var 1 tmp = alloc(8);
-  st8 tmp, 192;
-  keccak256(tmp, 1, oh);
-  st h + 16, oh;
-  st h + 24, raw + 32;
-  st h + 32, raw + 52;
-  var 1 txr = alloc(32);
-  build_mpt_indexed(lds 1 (pl + 32), lds 1 (pl + 40), txr);
-  st h + 40, txr;
-  st h + 48, raw + 84;
-  st h + 56, raw + 116;
-  st h + 64, <0, 0, 0, 0>;
-  st h + 96, lds 1 (pl + 80);
-  st h + 104, lds 1 (pl + 88);
-  st h + 112, lds 1 (pl + 96);
-  st h + 120, lds 1 (pl + 104);
-  st h + 128, lds 1 (pl + 16);
-  st h + 136, lds 1 (pl + 24);
-  st h + 144, raw + 372;
-  var 1 z8 = alloc(8);
-  memzero(z8, 8);
-  st h + 152, z8;
-  var {1,1,1,1} bf = <(((ld8 (raw + 440)) | ((ld8 ((raw + 440) + 1)) << 8) | ((ld8 ((raw + 440) + 2)) << 16) | ((ld8 ((raw + 440) + 3)) << 24)) | (((ld8 ((raw + 440) + 4)) | ((ld8 (((raw + 440) + 4) + 1)) << 8) | ((ld8 (((raw + 440) + 4) + 2)) << 16) | ((ld8 (((raw + 440) + 4) + 3)) << 24)) << 32)), (((ld8 (raw + 440 + 8)) | ((ld8 ((raw + 440 + 8) + 1)) << 8) | ((ld8 ((raw + 440 + 8) + 2)) << 16) | ((ld8 ((raw + 440 + 8) + 3)) << 24)) | (((ld8 ((raw + 440 + 8) + 4)) | ((ld8 (((raw + 440 + 8) + 4) + 1)) << 8) | ((ld8 (((raw + 440 + 8) + 4) + 2)) << 16) | ((ld8 (((raw + 440 + 8) + 4) + 3)) << 24)) << 32)), (((ld8 (raw + 440 + 16)) | ((ld8 ((raw + 440 + 16) + 1)) << 8) | ((ld8 ((raw + 440 + 16) + 2)) << 16) | ((ld8 ((raw + 440 + 16) + 3)) << 24)) | (((ld8 ((raw + 440 + 16) + 4)) | ((ld8 (((raw + 440 + 16) + 4) + 1)) << 8) | ((ld8 (((raw + 440 + 16) + 4) + 2)) << 16) | ((ld8 (((raw + 440 + 16) + 4) + 3)) << 24)) << 32)), (((ld8 (raw + 440 + 24)) | ((ld8 ((raw + 440 + 24) + 1)) << 8) | ((ld8 ((raw + 440 + 24) + 2)) << 16) | ((ld8 ((raw + 440 + 24) + 3)) << 24)) | (((ld8 ((raw + 440 + 24) + 4)) | ((ld8 (((raw + 440 + 24) + 4) + 1)) << 8) | ((ld8 (((raw + 440 + 24) + 4) + 2)) << 16) | ((ld8 (((raw + 440 + 24) + 4) + 3)) << 24)) << 32))>;
-  st h + 160, bf;
-  var nwd = lds 1 (pl + 56);
-  wd_rlp_slices = alloc(nwd * 16 + 16);
-  var i = 0;
-  while i < nwd {
-    var {1,1} e = encode_withdrawal_rlp((lds 1 (pl + 48)) + i * 44);
-    st wd_rlp_slices + i * 16, e.0;
-    st wd_rlp_slices + i * 16 + 8, e.1;
-    i = i + 1;
-  }
-  var 1 wr = alloc(32);
-  build_mpt_indexed(wd_rlp_slices, nwd, wr);
-  st h + 192, wr;
-  st h + 200, lds 1 (pl + 112);
-  st h + 208, lds 1 (pl + 120);
-  st h + 216, lds 1 (si + 24);
-  var {1,1} reqs = encode_execution_requests(lds 1 (si + 32));
-  var 1 rh = alloc(32);
-  compute_requests_hash(reqs.0, reqs.1, rh);
-  st h + 224, rh;
-  var 1 bh = alloc(32);
-  keccak256(lds 1 (pl + 64), lds 1 (pl + 72), bh);
-  st h + 232, bh;
-  st h + 240, lds 1 (pl + 128);
-  return h;
-}
 fun 1 block_rlp_length(1 hdr, 1 pl) {
   var 1 mark = heap_mark();
   var {1,1} he = encode_header(hdr);
@@ -15585,13 +15535,76 @@ fun 1 block_rlp_length(1 hdr, 1 pl) {
   var wl = 0;
   i = 0;
   while i < nwd {
-    wl = wl + (lds 1 ((wd_rlp_slices) + (i) * 16 + 8));
+    var 1 wlen = withdrawal_rlp_len((lds 1 (pl + 48)) + i * 44);
+    wl = wl + wlen;
     i = i + 1;
   }
   hl = rlp_list_header_len(wl);
   total = total + hl + wl;
   hl = rlp_list_header_len(total);
   return total + hl;
+}
+var 1 wd_rlp_slices = 0;
+fun 1 payload_header(1 si) {
+  var pl = lds 1 (si + 0);
+  var raw = lds 1 (pl + 0);
+  var 1 h = alloc(248);
+  memzero(h, 248);
+  st h + 0, 1;
+  st h + 8, raw + 0;
+  var 1 oh = alloc(32);
+  var 1 tmp = alloc(8);
+  st8 tmp, 192;
+  keccak256(tmp, 1, oh);
+  st h + 16, oh;
+  st h + 24, raw + 32;
+  st h + 32, raw + 52;
+  var 1 txr = alloc(32);
+  st h + 40, txr;
+  st h + 48, raw + 84;
+  st h + 56, raw + 116;
+  st h + 64, <0, 0, 0, 0>;
+  st h + 96, lds 1 (pl + 80);
+  st h + 104, lds 1 (pl + 88);
+  st h + 112, lds 1 (pl + 96);
+  st h + 120, lds 1 (pl + 104);
+  st h + 128, lds 1 (pl + 16);
+  st h + 136, lds 1 (pl + 24);
+  st h + 144, raw + 372;
+  var 1 z8 = alloc(8);
+  memzero(z8, 8);
+  st h + 152, z8;
+  var {1,1,1,1} bf = <(((ld8 (raw + 440)) | ((ld8 ((raw + 440) + 1)) << 8) | ((ld8 ((raw + 440) + 2)) << 16) | ((ld8 ((raw + 440) + 3)) << 24)) | (((ld8 ((raw + 440) + 4)) | ((ld8 (((raw + 440) + 4) + 1)) << 8) | ((ld8 (((raw + 440) + 4) + 2)) << 16) | ((ld8 (((raw + 440) + 4) + 3)) << 24)) << 32)), (((ld8 (raw + 440 + 8)) | ((ld8 ((raw + 440 + 8) + 1)) << 8) | ((ld8 ((raw + 440 + 8) + 2)) << 16) | ((ld8 ((raw + 440 + 8) + 3)) << 24)) | (((ld8 ((raw + 440 + 8) + 4)) | ((ld8 (((raw + 440 + 8) + 4) + 1)) << 8) | ((ld8 (((raw + 440 + 8) + 4) + 2)) << 16) | ((ld8 (((raw + 440 + 8) + 4) + 3)) << 24)) << 32)), (((ld8 (raw + 440 + 16)) | ((ld8 ((raw + 440 + 16) + 1)) << 8) | ((ld8 ((raw + 440 + 16) + 2)) << 16) | ((ld8 ((raw + 440 + 16) + 3)) << 24)) | (((ld8 ((raw + 440 + 16) + 4)) | ((ld8 (((raw + 440 + 16) + 4) + 1)) << 8) | ((ld8 (((raw + 440 + 16) + 4) + 2)) << 16) | ((ld8 (((raw + 440 + 16) + 4) + 3)) << 24)) << 32)), (((ld8 (raw + 440 + 24)) | ((ld8 ((raw + 440 + 24) + 1)) << 8) | ((ld8 ((raw + 440 + 24) + 2)) << 16) | ((ld8 ((raw + 440 + 24) + 3)) << 24)) | (((ld8 ((raw + 440 + 24) + 4)) | ((ld8 (((raw + 440 + 24) + 4) + 1)) << 8) | ((ld8 (((raw + 440 + 24) + 4) + 2)) << 16) | ((ld8 (((raw + 440 + 24) + 4) + 3)) << 24)) << 32))>;
+  st h + 160, bf;
+  var 1 wr = alloc(32);
+  st h + 192, wr;
+  st h + 200, lds 1 (pl + 112);
+  st h + 208, lds 1 (pl + 120);
+  st h + 216, lds 1 (si + 24);
+  var 1 rh = alloc(32);
+  st h + 224, rh;
+  var 1 bh = alloc(32);
+  st h + 232, bh;
+  st h + 240, lds 1 (pl + 128);
+  var 1 bl = block_rlp_length(h, pl);
+  if bl >+ 8388608 {
+    throw BlockErr 7;
+  }
+  build_mpt_indexed(lds 1 (pl + 32), lds 1 (pl + 40), txr);
+  var nwd = lds 1 (pl + 56);
+  wd_rlp_slices = alloc(nwd * 16 + 16);
+  var i = 0;
+  while i < nwd {
+    var {1,1} e = encode_withdrawal_rlp((lds 1 (pl + 48)) + i * 44);
+    st wd_rlp_slices + i * 16, e.0;
+    st wd_rlp_slices + i * 16 + 8, e.1;
+    i = i + 1;
+  }
+  build_mpt_indexed(wd_rlp_slices, nwd, wr);
+  var {1,1} reqs = encode_execution_requests(lds 1 (si + 32));
+  compute_requests_hash(reqs.0, reqs.1, rh);
+  keccak256(lds 1 (pl + 64), lds 1 (pl + 72), bh);
+  return h;
 }
 fun 1 tx_is_blob(1 tx) {
   if (lds 1 (tx + 0)) == 3 {
@@ -16284,10 +16297,6 @@ fun 1 run_attempt(1 si) {
   skip;
   if vvh == 0 {
     throw BlockErr 6;
-  }
-  var 1 bl = block_rlp_length(hdr, pl);
-  if bl >+ 8388608 {
-    throw BlockErr 7;
   }
   skip;
   validate_header(parent, hdr);
