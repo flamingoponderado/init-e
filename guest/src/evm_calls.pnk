@@ -636,6 +636,7 @@ fun 1 finish_child() {
   if kind == 2 {
     var 1 empty = evm_empty;
     if (lds 1 (child + EV_ERROR)) != 0 {
+      rollback_child_access(child);
       incorporate_child_on_error(child);
       if new_account_charged != 0 {
         credit_state_gas_refund(SG_NEW_ACCOUNT);
@@ -650,6 +651,7 @@ fun 1 finish_child() {
     }
   } else {
     if (lds 1 (child + EV_ERROR)) != 0 {
+      rollback_child_access(child);
       incorporate_child_on_error(child);
       if new_account_charged != 0 {
         credit_state_gas_refund(SG_NEW_ACCOUNT);
@@ -902,8 +904,14 @@ fun 1 incorporate_child_on_success(1 child) {
   }
   st ev + EV_REFUND, (lds 1 (ev + EV_REFUND)) + (lds 1 (child + EV_REFUND));
   htab_union_into(lds 1 (ev + EV_DELETE), lds 1 (child + EV_DELETE));
-  htab_union_into(lds 1 (ev + EV_ACC_ADDRS), lds 1 (child + EV_ACC_ADDRS));
-  htab_union_into(lds 1 (ev + EV_ACC_KEYS), lds 1 (child + EV_ACC_KEYS));
+  return 0;
+}
+
+/* A failed child discards its accessed-set insertions. The sets are shared
+   across frames, so remove the entries added since the child started. */
+fun 1 rollback_child_access(1 child) {
+  htab_truncate(lds 1 (child + EV_ACC_ADDRS), lds 1 (child + EV_ACC_ADDRS_N));
+  htab_truncate(lds 1 (child + EV_ACC_KEYS), lds 1 (child + EV_ACC_KEYS_N));
   return 0;
 }
 
@@ -932,10 +940,8 @@ fun 1 child_message(1 caller, 1 target, 1 current_target, 1 gas, 1 reservoir, {1
     stat = 1;
   }
   st m + MSG_IS_STATIC, stat;
-  var 1 aa = htab_copy_scratch(lds 1 (ev + EV_ACC_ADDRS));
-  st m + MSG_ACC_ADDRS, aa;
-  var 1 ak = htab_copy_scratch(lds 1 (ev + EV_ACC_KEYS));
-  st m + MSG_ACC_KEYS, ak;
+  st m + MSG_ACC_ADDRS, lds 1 (ev + EV_ACC_ADDRS);
+  st m + MSG_ACC_KEYS, lds 1 (ev + EV_ACC_KEYS);
   st m + MSG_DISABLE_PRECOMPILES, disable_pre;
   return m;
 }

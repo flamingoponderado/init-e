@@ -9,9 +9,11 @@ even on a maliciously crafted block. This needs two properties:
    late.
 2. **Footprint.** Total memory in use is bounded by what the gas pays for.
 
-**Status.** This PR establishes (1) for the EVM opcode paths listed below. It
-does **not** establish (2): the audit found several footprints that gas does not
-pay for, so the goal is **not met yet**. They are listed under "Open".
+**Status.** This PR establishes (1) for the EVM opcode paths listed below, and it
+removes two footprints: the per-call accessed-set copies (items 4 and 6 below) and
+the journal-full traps (item 13, see [JOURNAL-BOUND.md](JOURNAL-BOUND.md)). It does
+**not** establish (2) overall: the remaining items under "Open" are footprints that
+gas does not pay for, so the goal is **not met yet**.
 
 The audit was static (three read-only reviews of `guest/src/*.pnk`). Byte
 figures are hand arithmetic from struct and hash-table sizes. Nothing was
@@ -87,6 +89,27 @@ All of these keep the total gas charged unchanged; only the order differs.
 | `pre_modexp` header | `alloc(96)` before the gas is known | preallocated header buffer |
 | `alloc`, `frame_mem_alloc`, `scratch_alloc` | `p + n` could wrap | explicit overflow check before the add |
 
+## Fixed in this PR (accessed-set copies)
+
+Before, every CALL/CREATE copied both accessed sets (addresses and storage keys)
+into scratch, sized by table capacity, and a successful child merged its whole copy
+back with `htab_union_into`. Now there is one pair of tables per transaction, shared
+by all frames (`child_message` passes the pointers on):
+
+* `frame_new` records the entry count of each table when a frame starts
+  (`EV_ACC_ADDRS_N`, `EV_ACC_KEYS_N`).
+* A failed child calls `rollback_child_access`, which `htab_truncate`s each table
+  back to that count. Insertion only appends to a table's iteration order and
+  nothing else deletes from a table in use, so the entries added since the mark are
+  exactly the tail of the order. No separate undo log is needed.
+* A successful child leaves its entries in place, so the parent's own rollback
+  covers them. The merge is gone.
+
+Memory in use is now one table per transaction, whose entries are each paid for
+(a cold access costs at least 1,900-2,600 gas). A table that has grown keeps its
+capacity after a rollback, so warm-then-revert no longer regrows it on each call.
+Per-call cost no longer depends on how large the accessed sets are.
+
 The preallocated buffers (`evm_key_buf`, `pre_hdr_buf`) are safe to reuse: every
 callee that keeps a key copies it (`jset`, `htab_set`).
 
@@ -97,23 +120,22 @@ read, so the read cannot move. Those reads allocate small cached records only.
 
 ## Open: footprints that gas does not pay for
 
-Ranked by severity. None is addressed by this PR.
+Ranked by severity. Item 4 (accessed-set copies) is removed from the table because this PR fixes it; item 6 is partly addressed and item 13 is resolved. The rest are not addressed by this PR.
 
 | # | Where | Problem | Estimate (unverified) |
 |---|---|---|---|
 | 1 | per transaction: `state_fresh_tx` (`state.pnk`), `process_transaction` (`fork.pnk`) | about 25 KB of tables allocated per transaction on the heap and never released; there is no `heap_release` in the transaction loop | 9,523 minimal transfers is about 243 MB, over the 240 MiB heap, before 200M gas is spent |
 | 2 | `TSTORE` (`evm.pnk`, `state.pnk` `set_transient_storage`, `jset`, `htab_grow`) | 100 gas allocates key, value, journal key copy and a table slot; `htab_grow` abandons the old arrays | about 6 B/gas, about 100 MB per 16.7M-gas transaction |
 | 3 | `SSTORE` rewrites | 120 B per write at 100 gas, never released | about 1.2 B/gas, about 240 MB at 200M gas |
-| 4 | `child_message` (`evm_calls.pnk`) | every CALL/CREATE copies both accessed sets into scratch, sized by table capacity, not by gas | 1000 warm keys is about 166 KB per frame; about 75 nested calls (about 100 gas each) fill the 11.9 MiB arena (trap 7) |
 | 5 | `frame_new` (`evm.pnk`), `stack_push` growth | about 3 KB per live frame plus the stack, which doubles and keeps every old buffer until the frame exits (about 63 KB for a full stack); CALL does not charge for any of it | about 190 frames with full stacks fill the arena for under 1M gas |
-| 6 | `htab_grow`, `lst_push` | always allocate on the heap, even for scratch-resident tables, and never free the old arrays | repeated warm-then-revert in a child can grow the heap without bound relative to gas |
+| 6 | `htab_grow`, `lst_push` | always allocate on the heap and never free the old arrays; the warm-then-revert repetition is gone (see above), but tables that grow still abandon their old arrays (about 2x the final size) | bounded by about twice the final table size |
 | 7 | `set_retdata` | allocates `n + 8` on the heap per CALL whose output outgrows the buffer; the parent pays about 100 gas | about 3-6 B/gas |
 | 8 | BAL (`bal_ensure_account`) | about 1.4 KB per touched account; the EIP-7928 item limit is checked only after execution | about 0.55-1 B/gas |
 | 9 | `process_withdrawals`, `decode_payload` | the withdrawal count is bounded only by the 8 MiB block size, not by gas | up to about 190k withdrawals |
 | 10 | `extend_memory` | doubles capacity although the arena grows in place, inflating the footprint up to 2x | |
 | 11 | `compute_state_root` (`block.pnk`) | re-decodes the witness storage trie per modified account; no `heap_release` | about 0.2-0.5 B/gas |
 | 12 | `op_log`, receipts | log records and receipt buffers persist | about 0.3 B/gas |
-| 13 | journal (`state.pnk`) | fixed 262,144 entries; one transaction can journal about 167,772 at the 16.7M regular-gas cap | only about 1.5x margin; breaks if the cap rises |
+| 13 | journal (`state.pnk`) | resolved: see [JOURNAL-BOUND.md](JOURNAL-BOUND.md) (cap raised to 524,288, compile-time check, per-withdrawal reset) | |
 
 Accepted: precompile output buffers are never released (blake2f with 0 rounds is
 the worst, about 100 MB at 200M gas). That cost is paid for in gas.
@@ -125,8 +147,6 @@ the worst, about 100 MB at 200M gas). That cost is paid for in gas.
 * A transaction-scoped arena, reset in `state_fresh_tx`, for objects that live no
   longer than the transaction: journal key copies, TSTORE values, tables
   (items 1-3, 6, 7).
-* One accessed set per transaction with an undo log keyed by snapshot, instead of
-  copying it on every call (item 4).
 * Preallocate stacks at a fixed `STACK_DEPTH_LIMIT * 32 KiB` region, or charge for
   frame footprint, and size the frame arena for the worst case (items 5, 10).
 * Count BAL items and withdrawals before allocating (items 8, 9).

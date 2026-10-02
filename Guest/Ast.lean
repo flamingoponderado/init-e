@@ -3880,6 +3880,22 @@ def guestFn_htab_del : Decl (BitVec 64) :=
                                         (Prog.return (Exp.const (BitVec.ofNat 64 1)))))))))))))))))))))
       returnShape := Shape.one }
 
+def guestFn_htab_truncate : Decl (BitVec 64) :=
+  Decl.function
+    { name := "htab_truncate"
+      inline := false
+      exported := false
+      params := [("t", Shape.one), ("n", Shape.one)]
+      body :=
+        (Prog.dec "stride" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "t"), (Exp.const (BitVec.ofNat 64 8))]))
+          (Prog.seq
+            (Prog.while (Exp.cmp Cmp.lower (Exp.var VarKind.local "n") (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "t"), (Exp.const (BitVec.ofNat 64 24))])))
+              (Prog.dec "pos" Shape.one (Exp.op BinOp.sub [(Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "t"), (Exp.const (BitVec.ofNat 64 24))])), (Exp.const (BitVec.ofNat 64 1))])
+                (Prog.dec "slot" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "t"), (Exp.const (BitVec.ofNat 64 56))])), (Exp.panOp PanOp.mul [(Exp.var VarKind.local "pos"), (Exp.const (BitVec.ofNat 64 8))])]))
+                  (Prog.call (some (none, none)) "htab_del" [(Exp.var VarKind.local "t"), (Exp.op BinOp.add [(Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "t"), (Exp.const (BitVec.ofNat 64 32))])), (Exp.panOp PanOp.mul [(Exp.var VarKind.local "slot"), (Exp.var VarKind.local "stride")])])]))))
+            (Prog.return (Exp.const (BitVec.ofNat 64 0)))))
+      returnShape := Shape.one }
+
 def guestFn_htab_count : Decl (BitVec 64) :=
   Decl.function
     { name := "htab_count"
@@ -12861,9 +12877,9 @@ def guestFn_frame_new : Decl (BitVec 64) :=
       body :=
         (Prog.decCall "stack_mark" Shape.one "scratch_mark" []
           (Prog.decCall "mem_mark" Shape.one "frame_mem_mark" []
-            (Prog.decCall "e" Shape.one "scratch_alloc" [(Exp.const (BitVec.ofNat 64 264))]
+            (Prog.decCall "e" Shape.one "scratch_alloc" [(Exp.const (BitVec.ofNat 64 280))]
               (Prog.seq
-                (Prog.call (some (none, none)) "memzero" [(Exp.var VarKind.local "e"), (Exp.const (BitVec.ofNat 64 264))])
+                (Prog.call (some (none, none)) "memzero" [(Exp.var VarKind.local "e"), (Exp.const (BitVec.ofNat 64 280))])
                 (Prog.decCall "stk" Shape.one "scratch_alloc" [(Exp.panOp PanOp.mul [(Exp.const (BitVec.ofNat 64 32)), (Exp.const (BitVec.ofNat 64 32))])]
                   (Prog.seq
                     (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "e"), (Exp.const (BitVec.ofNat 64 208))]) (Exp.var VarKind.local "stack_mark"))
@@ -12903,13 +12919,20 @@ def guestFn_frame_new : Decl (BitVec 64) :=
                                     (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "e"), (Exp.const (BitVec.ofNat 64 168))]) (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "msg"), (Exp.const (BitVec.ofNat 64 152))])))
                                     (Prog.seq
                                     (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "e"), (Exp.const (BitVec.ofNat 64 176))]) (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "msg"), (Exp.const (BitVec.ofNat 64 160))])))
-                                    (Prog.seq
-                                    (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "e"), (Exp.const (BitVec.ofNat 64 120))]) (Exp.var VarKind.global "evm_empty"))
-                                    (Prog.seq
-                                    (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "e"), (Exp.const (BitVec.ofNat 64 144))]) (Exp.var VarKind.global "evm_empty"))
-                                    (Prog.seq
-                                    (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "e"), (Exp.const (BitVec.ofNat 64 216))]) (Exp.const (BitVec.ofNat 64 0)))
-                                    (Prog.return (Exp.var VarKind.local "e")))))))))))))))))))))))))))))))
+                                    (Prog.decCall "acc_n" Shape.one "htab_count" [(Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "msg"), (Exp.const (BitVec.ofNat 64 152))]))]
+                                      (Prog.seq
+                                        (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "e"), (Exp.const (BitVec.ofNat 64 264))]) (Exp.var VarKind.local "acc_n"))
+                                        (Prog.seq
+                                        (Prog.call (some ((some (VarKind.local, "acc_n")), none)) "htab_count" [(Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "msg"), (Exp.const (BitVec.ofNat 64 160))]))])
+                                        (Prog.seq
+                                        (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "e"), (Exp.const (BitVec.ofNat 64 272))]) (Exp.var VarKind.local "acc_n"))
+                                        (Prog.seq
+                                        (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "e"), (Exp.const (BitVec.ofNat 64 120))]) (Exp.var VarKind.global "evm_empty"))
+                                        (Prog.seq
+                                        (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "e"), (Exp.const (BitVec.ofNat 64 144))]) (Exp.var VarKind.global "evm_empty"))
+                                        (Prog.seq
+                                        (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "e"), (Exp.const (BitVec.ofNat 64 216))]) (Exp.const (BitVec.ofNat 64 0)))
+                                        (Prog.return (Exp.var VarKind.local "e")))))))))))))))))))))))))))))))))))
       returnShape := Shape.one }
 
 def guestFn_pc_add : Decl (BitVec 64) :=
@@ -16091,6 +16114,8 @@ def guestFn_finish_child : Decl (BitVec 64) :=
                                   (Prog.dec "empty" Shape.one (Exp.var VarKind.global "evm_empty")
                                     (Prog.ite (Exp.cmp Cmp.notEqual (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "child"), (Exp.const (BitVec.ofNat 64 160))])) (Exp.const (BitVec.ofNat 64 0)))
                                       (Prog.seq
+                                        (Prog.call (some (none, none)) "rollback_child_access" [(Exp.var VarKind.local "child")])
+                                        (Prog.seq
                                         (Prog.call (some (none, none)) "incorporate_child_on_error" [(Exp.var VarKind.local "child")])
                                         (Prog.seq
                                         (Prog.ite (Exp.cmp Cmp.notEqual (Exp.var VarKind.local "new_account_charged") (Exp.const (BitVec.ofNat 64 0)))
@@ -16098,7 +16123,7 @@ def guestFn_finish_child : Decl (BitVec 64) :=
                                           Prog.skip)
                                         (Prog.seq
                                         (Prog.call (some (none, none)) "set_retdata" [(Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "child"), (Exp.const (BitVec.ofNat 64 120))])), (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "child"), (Exp.const (BitVec.ofNat 64 128))]))])
-                                        (Prog.call (some (none, none)) "stack_push" [(Exp.rStruct [(Exp.const (BitVec.ofNat 64 0)), (Exp.const (BitVec.ofNat 64 0)), (Exp.const (BitVec.ofNat 64 0)), (Exp.const (BitVec.ofNat 64 0))])]))))
+                                        (Prog.call (some (none, none)) "stack_push" [(Exp.rStruct [(Exp.const (BitVec.ofNat 64 0)), (Exp.const (BitVec.ofNat 64 0)), (Exp.const (BitVec.ofNat 64 0)), (Exp.const (BitVec.ofNat 64 0))])])))))
                                       (Prog.seq
                                         (Prog.call (some (none, none)) "incorporate_child_on_success" [(Exp.var VarKind.local "child")])
                                         (Prog.seq
@@ -16108,6 +16133,8 @@ def guestFn_finish_child : Decl (BitVec 64) :=
                                   (Prog.seq
                                     (Prog.ite (Exp.cmp Cmp.notEqual (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "child"), (Exp.const (BitVec.ofNat 64 160))])) (Exp.const (BitVec.ofNat 64 0)))
                                       (Prog.seq
+                                        (Prog.call (some (none, none)) "rollback_child_access" [(Exp.var VarKind.local "child")])
+                                        (Prog.seq
                                         (Prog.call (some (none, none)) "incorporate_child_on_error" [(Exp.var VarKind.local "child")])
                                         (Prog.seq
                                         (Prog.ite (Exp.cmp Cmp.notEqual (Exp.var VarKind.local "new_account_charged") (Exp.const (BitVec.ofNat 64 0)))
@@ -16115,7 +16142,7 @@ def guestFn_finish_child : Decl (BitVec 64) :=
                                           Prog.skip)
                                         (Prog.seq
                                         (Prog.call (some (none, none)) "set_retdata" [(Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "child"), (Exp.const (BitVec.ofNat 64 120))])), (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "child"), (Exp.const (BitVec.ofNat 64 128))]))])
-                                        (Prog.call (some (none, none)) "stack_push" [(Exp.rStruct [(Exp.const (BitVec.ofNat 64 0)), (Exp.const (BitVec.ofNat 64 0)), (Exp.const (BitVec.ofNat 64 0)), (Exp.const (BitVec.ofNat 64 0))])]))))
+                                        (Prog.call (some (none, none)) "stack_push" [(Exp.rStruct [(Exp.const (BitVec.ofNat 64 0)), (Exp.const (BitVec.ofNat 64 0)), (Exp.const (BitVec.ofNat 64 0)), (Exp.const (BitVec.ofNat 64 0))])])))))
                                       (Prog.seq
                                         (Prog.call (some (none, none)) "incorporate_child_on_success" [(Exp.var VarKind.local "child")])
                                         (Prog.seq
@@ -16463,11 +16490,21 @@ def guestFn_incorporate_child_on_success : Decl (BitVec 64) :=
                         (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "ev"), (Exp.const (BitVec.ofNat 64 96))]) (Exp.op BinOp.add [(Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.global "ev"), (Exp.const (BitVec.ofNat 64 96))])), (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "child"), (Exp.const (BitVec.ofNat 64 96))]))]))
                         (Prog.seq
                         (Prog.call (some (none, none)) "htab_union_into" [(Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.global "ev"), (Exp.const (BitVec.ofNat 64 136))])), (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "child"), (Exp.const (BitVec.ofNat 64 136))]))])
-                        (Prog.seq
-                        (Prog.call (some (none, none)) "htab_union_into" [(Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.global "ev"), (Exp.const (BitVec.ofNat 64 168))])), (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "child"), (Exp.const (BitVec.ofNat 64 168))]))])
-                        (Prog.seq
-                        (Prog.call (some (none, none)) "htab_union_into" [(Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.global "ev"), (Exp.const (BitVec.ofNat 64 176))])), (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "child"), (Exp.const (BitVec.ofNat 64 176))]))])
-                        (Prog.return (Exp.const (BitVec.ofNat 64 0)))))))))))))))))))
+                        (Prog.return (Exp.const (BitVec.ofNat 64 0)))))))))))))))))
+      returnShape := Shape.one }
+
+def guestFn_rollback_child_access : Decl (BitVec 64) :=
+  Decl.function
+    { name := "rollback_child_access"
+      inline := false
+      exported := false
+      params := [("child", Shape.one)]
+      body :=
+        (Prog.seq
+          (Prog.call (some (none, none)) "htab_truncate" [(Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "child"), (Exp.const (BitVec.ofNat 64 168))])), (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "child"), (Exp.const (BitVec.ofNat 64 264))]))])
+          (Prog.seq
+          (Prog.call (some (none, none)) "htab_truncate" [(Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "child"), (Exp.const (BitVec.ofNat 64 176))])), (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "child"), (Exp.const (BitVec.ofNat 64 272))]))])
+          (Prog.return (Exp.const (BitVec.ofNat 64 0)))))
       returnShape := Shape.one }
 
 def guestFn_child_message : Decl (BitVec 64) :=
@@ -16516,15 +16553,13 @@ def guestFn_child_message : Decl (BitVec 64) :=
                     Prog.skip)
                   (Prog.seq
                   (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "m"), (Exp.const (BitVec.ofNat 64 144))]) (Exp.var VarKind.local "stat"))
-                  (Prog.decCall "aa" Shape.one "htab_copy_scratch" [(Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.global "ev"), (Exp.const (BitVec.ofNat 64 168))]))]
-                    (Prog.seq
-                      (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "m"), (Exp.const (BitVec.ofNat 64 152))]) (Exp.var VarKind.local "aa"))
-                      (Prog.decCall "ak" Shape.one "htab_copy_scratch" [(Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.global "ev"), (Exp.const (BitVec.ofNat 64 176))]))]
-                        (Prog.seq
-                          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "m"), (Exp.const (BitVec.ofNat 64 160))]) (Exp.var VarKind.local "ak"))
-                          (Prog.seq
-                          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "m"), (Exp.const (BitVec.ofNat 64 168))]) (Exp.var VarKind.local "disable_pre"))
-                          (Prog.return (Exp.var VarKind.local "m")))))))))))))))))))))))))))
+                  (Prog.seq
+                  (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "m"), (Exp.const (BitVec.ofNat 64 152))]) (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.global "ev"), (Exp.const (BitVec.ofNat 64 168))])))
+                  (Prog.seq
+                  (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "m"), (Exp.const (BitVec.ofNat 64 160))]) (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.global "ev"), (Exp.const (BitVec.ofNat 64 176))])))
+                  (Prog.seq
+                  (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "m"), (Exp.const (BitVec.ofNat 64 168))]) (Exp.var VarKind.local "disable_pre"))
+                  (Prog.return (Exp.var VarKind.local "m")))))))))))))))))))))))))
       returnShape := Shape.one }
 
 def guestFn_set_retdata : Decl (BitVec 64) :=
@@ -30527,6 +30562,7 @@ def guestAst : List (Decl (BitVec 64)) :=
     guestFn_htab_grow,
     guestFn_htab_set,
     guestFn_htab_del,
+    guestFn_htab_truncate,
     guestFn_htab_count,
     guestFn_htab_cap,
     guestFn_htab_slot,
@@ -30983,6 +31019,7 @@ def guestAst : List (Decl (BitVec 64)) :=
     guestFn_process_create_message,
     guestFn_incorporate_child_on_error,
     guestFn_incorporate_child_on_success,
+    guestFn_rollback_child_access,
     guestFn_child_message,
     guestFn_set_retdata,
     guestFn_compute_contract_address,

@@ -112,7 +112,9 @@ exception EvmErr : 1;
 #define EV_MEM_MARK 224
 #define EV_STACK_CAP 232
 #define EV_ADDR_TMP 240        /* 24-byte frame-local address slot */
-#define EV_SIZE 264
+#define EV_ACC_ADDRS_N 264     /* entries in the shared accessed-address set when the frame started */
+#define EV_ACC_KEYS_N 272      /* same for the accessed storage keys */
+#define EV_SIZE 280
 
 /* Log record */
 #define LOG_ADDRESS 0
@@ -535,8 +537,15 @@ fun 1 frame_new(1 msg) {
   st e + EV_MSG, msg;
   var 1 del = htab_new_scratch(20, 4);
   st e + EV_DELETE, del;
+  /* The accessed sets are shared by every frame of the transaction. A frame
+     that fails removes what it inserted by truncating back to these counts
+     (rollback_child_access); one that succeeds just leaves its entries. */
   st e + EV_ACC_ADDRS, lds 1 (msg + MSG_ACC_ADDRS);
   st e + EV_ACC_KEYS, lds 1 (msg + MSG_ACC_KEYS);
+  var 1 acc_n = htab_count(lds 1 (msg + MSG_ACC_ADDRS));
+  st e + EV_ACC_ADDRS_N, acc_n;
+  acc_n = htab_count(lds 1 (msg + MSG_ACC_KEYS));
+  st e + EV_ACC_KEYS_N, acc_n;
   st e + EV_OUTPUT, evm_empty;
   st e + EV_RETDATA, evm_empty;
   st e + EV_RETDATA_CAP, 0;

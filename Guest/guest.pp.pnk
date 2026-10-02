@@ -1900,6 +1900,15 @@ fun 1 htab_del(1 t, 1 key) {
   st t + 24, last_pos;
   return 1;
 }
+fun 1 htab_truncate(1 t, 1 n) {
+  var stride = lds 1 (t + 8);
+  while (lds 1 (t + 24)) >+ n {
+    var 1 pos = (lds 1 (t + 24)) - 1;
+    var 1 slot = lds 1 ((lds 1 (t + 56)) + pos * 8);
+    htab_del(t, (lds 1 (t + 32)) + slot * stride);
+  }
+  return 0;
+}
 fun 1 htab_count(1 t) {
   return lds 1 (t + 24);
 }
@@ -7047,8 +7056,8 @@ fun 1 msg_new_scratch() {
 fun 1 frame_new(1 msg) {
   var 1 stack_mark = scratch_mark();
   var 1 mem_mark = frame_mem_mark();
-  var 1 e = scratch_alloc(264);
-  memzero(e, 264);
+  var 1 e = scratch_alloc(280);
+  memzero(e, 280);
   var 1 stk = scratch_alloc(32 * 32);
   st e + 208, stack_mark;
   st e + 8, stk;
@@ -7071,6 +7080,10 @@ fun 1 frame_new(1 msg) {
   st e + 136, del;
   st e + 168, lds 1 (msg + 152);
   st e + 176, lds 1 (msg + 160);
+  var 1 acc_n = htab_count(lds 1 (msg + 152));
+  st e + 264, acc_n;
+  acc_n = htab_count(lds 1 (msg + 160));
+  st e + 272, acc_n;
   st e + 120, evm_empty;
   st e + 144, evm_empty;
   st e + 216, 0;
@@ -8556,6 +8569,7 @@ fun 1 finish_child() {
   if kind == 2 {
     var 1 empty = evm_empty;
     if (lds 1 (child + 160)) != 0 {
+      rollback_child_access(child);
       incorporate_child_on_error(child);
       if new_account_charged != 0 {
         credit_state_gas_refund(183600);
@@ -8570,6 +8584,7 @@ fun 1 finish_child() {
     }
   } else {
     if (lds 1 (child + 160)) != 0 {
+      rollback_child_access(child);
       incorporate_child_on_error(child);
       if new_account_charged != 0 {
         credit_state_gas_refund(183600);
@@ -8791,8 +8806,11 @@ fun 1 incorporate_child_on_success(1 child) {
   }
   st ev + 96, (lds 1 (ev + 96)) + (lds 1 (child + 96));
   htab_union_into(lds 1 (ev + 136), lds 1 (child + 136));
-  htab_union_into(lds 1 (ev + 168), lds 1 (child + 168));
-  htab_union_into(lds 1 (ev + 176), lds 1 (child + 176));
+  return 0;
+}
+fun 1 rollback_child_access(1 child) {
+  htab_truncate(lds 1 (child + 168), lds 1 (child + 264));
+  htab_truncate(lds 1 (child + 176), lds 1 (child + 272));
   return 0;
 }
 fun 1 child_message(1 caller, 1 target, 1 current_target, 1 gas, 1 reservoir, {1,1,1,1} value,
@@ -8819,10 +8837,8 @@ fun 1 child_message(1 caller, 1 target, 1 current_target, 1 gas, 1 reservoir, {1
     stat = 1;
   }
   st m + 144, stat;
-  var 1 aa = htab_copy_scratch(lds 1 (ev + 168));
-  st m + 152, aa;
-  var 1 ak = htab_copy_scratch(lds 1 (ev + 176));
-  st m + 160, ak;
+  st m + 152, lds 1 (ev + 168);
+  st m + 160, lds 1 (ev + 176);
   st m + 168, disable_pre;
   return m;
 }
