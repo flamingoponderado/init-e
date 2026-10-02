@@ -17552,15 +17552,17 @@ def guestFn_blake2_init : Decl (BitVec 64) :=
           (Prog.seq
           (Prog.call (some ((some (VarKind.global, "b2_iv")), none)) "alloc" [(Exp.const (BitVec.ofNat 64 64))])
           (Prog.seq
-          (Prog.call (some ((some (VarKind.global, "b2_v")), none)) "alloc" [(Exp.const (BitVec.ofNat 64 128))])
+          (Prog.call (some ((some (VarKind.global, "b2_round")), none)) "alloc" [(Exp.const (BitVec.ofNat 64 288))])
           (Prog.seq
-          (Prog.call (some ((some (VarKind.global, "b2_m")), none)) "alloc" [(Exp.const (BitVec.ofNat 64 128))])
+          (Prog.assign VarKind.global "b2_v" (Exp.op BinOp.add [(Exp.var VarKind.global "b2_round"), (Exp.const (BitVec.ofNat 64 32))]))
           (Prog.seq
-          (Prog.call (some ((some (VarKind.global, "b2_round")), none)) "alloc" [(Exp.const (BitVec.ofNat 64 24))])
+          (Prog.assign VarKind.global "b2_m" (Exp.op BinOp.add [(Exp.var VarKind.global "b2_round"), (Exp.const (BitVec.ofNat 64 160))]))
           (Prog.seq
           (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "b2_round"), (Exp.const (BitVec.ofNat 64 8))]) (Exp.var VarKind.global "b2_v"))
           (Prog.seq
           (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "b2_round"), (Exp.const (BitVec.ofNat 64 16))]) (Exp.var VarKind.global "b2_m"))
+          (Prog.seq
+          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "b2_round"), (Exp.const (BitVec.ofNat 64 24))]) (Exp.var VarKind.global "b2_round"))
           (Prog.seq
           (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "b2_sigma"), (Exp.const (BitVec.ofNat 64 0))]) (Exp.const (BitVec.ofNat 64 18364758544493064720)))
           (Prog.seq
@@ -17597,7 +17599,7 @@ def guestFn_blake2_init : Decl (BitVec 64) :=
           (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "b2_iv"), (Exp.const (BitVec.ofNat 64 48))]) (Exp.const (BitVec.ofNat 64 2270897969802886507)))
           (Prog.seq
           (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "b2_iv"), (Exp.const (BitVec.ofNat 64 56))]) (Exp.const (BitVec.ofNat 64 6620516959819538809)))
-          (Prog.return (Exp.const (BitVec.ofNat 64 0)))))))))))))))))))))))))))))
+          (Prog.return (Exp.const (BitVec.ofNat 64 0))))))))))))))))))))))))))))))
       returnShape := Shape.one }
 
 def guestFn_blake2_g : Decl (BitVec 64) :=
@@ -17670,7 +17672,7 @@ def guestFn_blake2b_f : Decl (BitVec 64) :=
                   (Prog.seq
                     (Prog.store (Exp.var VarKind.global "b2_round") (Exp.var VarKind.local "row"))
                     (Prog.seq
-                    (Prog.extCall "blake2bround" (Exp.var VarKind.global "b2_round") (Exp.const (BitVec.ofNat 64 0)) (Exp.const (BitVec.ofNat 64 0)) (Exp.const (BitVec.ofNat 64 0)))
+                    (Prog.extCall "blake2bround" (Exp.var VarKind.global "b2_round") (Exp.const (BitVec.ofNat 64 32)) (Exp.var VarKind.global "b2_round") (Exp.const (BitVec.ofNat 64 288)))
                     (Prog.seq
                     (Prog.assign VarKind.local "r" (Exp.op BinOp.add [(Exp.var VarKind.local "r"), (Exp.const (BitVec.ofNat 64 1))]))
                     (Prog.seq

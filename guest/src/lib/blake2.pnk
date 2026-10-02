@@ -21,12 +21,18 @@ fun 1 blake2_init() {
   }
   b2_sigma = alloc(80);
   b2_iv = alloc(64);
-  b2_v = alloc(128);
 #ifdef ZISK_ACCEL
-  b2_m = alloc(128);
-  b2_round = alloc(24);
+  /* One 288-byte block, the array of the foreign call (docs/ACCEL-FFI.md): the
+     CSR's {row, v pointer, m pointer} and the block's own address (the 32-byte
+     configuration), then the 128-byte working vector and message. */
+  b2_round = alloc(288);
+  b2_v = b2_round + 32;
+  b2_m = b2_round + 160;
   st b2_round + 8, b2_v;
   st b2_round + 16, b2_m;
+  st b2_round + 24, b2_round;
+#else
+  b2_v = alloc(128);
 #endif
   st b2_sigma + 0, -81985529216486896;
   st b2_sigma + 8, 3853709921291437230;
@@ -95,7 +101,7 @@ fun 1 blake2b_f(1 rounds, 1 h, 1 m, 1 t0, 1 t1, 1 f) {
        an index >= 10 and the machine then traps.  Wrap exactly as the software
        path below does; BLAKE2b's standard 12 rounds reach row 10 twice. */
     st b2_round, row;
-    @blake2bround(b2_round, 0, 0, 0);
+    @blake2bround(b2_round, 32, b2_round, 288);
     r = r + 1;
     row = row + 1;
     if row == 10 {
