@@ -52,46 +52,32 @@
 #define EC_POINT_BYTES 96
 
 /* ZisK arith256_mod scratch (all U256 values are four little-endian u64s).
-   Keep independent parameter blocks for the two moduli used by recovery so
-   the modulus and c = 0 pointers are installed once, not on every product.
-   The final 80 bytes hold the p2 affine point and its {p1, p2} parameter block
-   for secp add.  This arena is allocated once by secp256k1_init, before any
-   heap mark is taken. */
-#define SECP_ACCEL_PA 0
-#define SECP_ACCEL_PB 8
-#define SECP_ACCEL_PC 16
-#define SECP_ACCEL_PM 24
-#define SECP_ACCEL_PD 32
-/* Foreign-call convention (docs/ACCEL-FFI.md): the block is the array, and its first
-   48 bytes -- the CSR's five pointers plus this word, the block's own address -- are the
-   configuration. */
-#define SECP_ACCEL_BASE 40
-#define SECP_ACCEL_A 48
-#define SECP_ACCEL_B 80
-#define SECP_ACCEL_C 112
-#define SECP_ACCEL_M 144
-#define SECP_ACCEL_D 176
-#define SECP_ACCEL_BLOCK 208
+   Keep independent blocks for the two moduli used by recovery so the modulus
+   and c = 0 are installed once, not on every product.  The final 128 bytes hold
+   the two points for secp add.  This arena is allocated once by
+   secp256k1_init, before any heap mark is taken. */
+/* Foreign-call arrays (docs/ACCEL-FFI.md): each block is exactly what the accelerator
+   reads and writes, at fixed offsets, with no addresses in it; the stub builds the
+   CSR's pointer block from the array pointer. */
+#define SECP_ACCEL_A 0
+#define SECP_ACCEL_B 32
+#define SECP_ACCEL_C 64
+#define SECP_ACCEL_M 96
+#define SECP_ACCEL_D 128
+#define SECP_ACCEL_BLOCK 160
 #define SECP_ACCEL_PBASE 0
 #define SECP_ACCEL_NBASE SECP_ACCEL_BLOCK
-/* The point-addition block: two pointers and its own address (the 24-byte
-   configuration), then the two 64-byte points, one of which receives the sum. */
+/* The point-addition array: two 64-byte points, the first of which receives the sum. */
 #define SECP_ACCEL_ADD (2 * SECP_ACCEL_BLOCK)
-#define SECP_ACCEL_ADD_P1 24
-#define SECP_ACCEL_ADD_P2 88
-#define SECP_ACCEL_ADD_SIZE 152
+#define SECP_ACCEL_ADD_P1 0
+#define SECP_ACCEL_ADD_P2 64
+#define SECP_ACCEL_ADD_SIZE 128
 #define SECP_ACCEL_SIZE (2 * SECP_ACCEL_BLOCK + SECP_ACCEL_ADD_SIZE)
 
 var 1 secp_accel_scratch = 0;
 
 #ifdef ZISK_ACCEL
 fun 1 secp_accel_init_block(1 base, U256 modulus) {
-  st base + SECP_ACCEL_PA, base + SECP_ACCEL_A;
-  st base + SECP_ACCEL_PB, base + SECP_ACCEL_B;
-  st base + SECP_ACCEL_PC, base + SECP_ACCEL_C;
-  st base + SECP_ACCEL_PM, base + SECP_ACCEL_M;
-  st base + SECP_ACCEL_PD, base + SECP_ACCEL_D;
-  st base + SECP_ACCEL_BASE, base;
   st base + SECP_ACCEL_C, U256_ZERO;
   st base + SECP_ACCEL_M, modulus;
   return 0;
@@ -106,10 +92,6 @@ fun 1 secp256k1_init() {
   secp_accel_scratch = alloc(SECP_ACCEL_SIZE);
   secp_accel_init_block(secp_accel_scratch + SECP_ACCEL_PBASE, SECP_P);
   secp_accel_init_block(secp_accel_scratch + SECP_ACCEL_NBASE, SECP_N);
-  var 1 blk = secp_accel_scratch + SECP_ACCEL_ADD;
-  st blk, blk + SECP_ACCEL_ADD_P1;
-  st blk + 8, blk + SECP_ACCEL_ADD_P2;
-  st blk + 16, blk;
 #endif
   return 0;
 }
@@ -118,7 +100,7 @@ fun 1 secp256k1_init() {
 fun U256 secp_accel_modmul_at(1 base, U256 a, U256 b) {
   st base + SECP_ACCEL_A, a;
   st base + SECP_ACCEL_B, b;
-  @arith256mod(base, SECP_ACCEL_A, base, SECP_ACCEL_BLOCK);
+  @arith256mod(base, 0, base, SECP_ACCEL_BLOCK);
   return lds U256 (base + SECP_ACCEL_D);
 }
 
@@ -126,7 +108,7 @@ fun U256 secp_accel_modmul_p(U256 a, U256 b) {
   var 1 base = secp_accel_scratch + SECP_ACCEL_PBASE;
   st base + SECP_ACCEL_A, a;
   st base + SECP_ACCEL_B, b;
-  @arith256mod(base, SECP_ACCEL_A, base, SECP_ACCEL_BLOCK);
+  @arith256mod(base, 0, base, SECP_ACCEL_BLOCK);
   return lds U256 (base + SECP_ACCEL_D);
 }
 
@@ -134,7 +116,7 @@ fun U256 secp_accel_modmul_n(U256 a, U256 b) {
   var 1 base = secp_accel_scratch + SECP_ACCEL_NBASE;
   st base + SECP_ACCEL_A, a;
   st base + SECP_ACCEL_B, b;
-  @arith256mod(base, SECP_ACCEL_A, base, SECP_ACCEL_BLOCK);
+  @arith256mod(base, 0, base, SECP_ACCEL_BLOCK);
   return lds U256 (base + SECP_ACCEL_D);
 }
 #endif
@@ -773,7 +755,7 @@ fun 1 ec_add_affine(1 pt, U256 ax, U256 ay) {
   st blk + SECP_ACCEL_ADD_P1 + 32, y1;
   st blk + SECP_ACCEL_ADD_P2, ax;
   st blk + SECP_ACCEL_ADD_P2 + 32, ay;
-  @secpadd(blk, 24, blk, SECP_ACCEL_ADD_SIZE);
+  @secpadd(blk, 0, blk, SECP_ACCEL_ADD_SIZE);
   st EC_X(pt), lds U256 (blk + SECP_ACCEL_ADD_P1);
   st EC_Y(pt), lds U256 (blk + SECP_ACCEL_ADD_P1 + 32);
   st EC_Z(pt), <1, 0, 0, 0>;
