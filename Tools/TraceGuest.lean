@@ -32,7 +32,7 @@ def Ctx.run (ctx : Ctx) (env : Env) (p : Prog Word) : Option Result :=
   evalPanValueFfiProgramSteps guestFfiContext guestPrimitiveHandler guestHostFfi ctx.st.structs
     ctx.st.functions ctx.st.baseAddress ctx.st.topAddress ctx.st.bytesInWord ctx.fuel
     env.locals env.globals env.memory env.ffi p
-    (memoryAccess := some guestMemoryAccess) (memoryHandler := some guestAcceleratorFfi)
+    (memoryAccess := some guestMemoryAccess)
 
 def Ctx.eval (ctx : Ctx) (env : Env) (e : Exp Word) : Option (PanValue Word) :=
   evalPanValueExp ctx.st.structs env.locals env.globals env.memory ctx.st.baseAddress

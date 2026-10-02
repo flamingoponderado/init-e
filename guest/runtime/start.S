@@ -50,99 +50,94 @@ ffitrap:
     j    cml_exit
 
 # ---- ZisK accelerator FFI stubs (ZISK_ACCEL builds) --------------------------
-# Pancake `@keccakf(p, 200, p, 200)` arrives with a0 = p (absolute address of the
-# 25*u64 state).  `csrrs x0, 0x800, a0` is ZisK's Keccak-f[1600] precompile;
-# tools/spike/spike_run implements the same CSR (tools/spike/zisk_accel.cc).
-.globl ffikeccakf
-ffikeccakf:
-    csrrs x0, 0x800, a0
-    ret
+# Each stub implements one foreign call of docs/ACCEL-FFI.md.  `@name(c, 0, a, n)` has
+# an empty configuration, and the operands lie at fixed offsets from the array `a`, which
+# arrives in a2 (the ExtCall arguments are a0 = c, a1 = 0, a2 = a, a3 = n).  The ZisK
+# CSRs take absolute pointers, so a stub builds the pointer block they expect on its own
+# stack from a2, issues the CSR, and returns.  The Pancake side therefore holds no
+# addresses in the array: the effect is a function of the array's bytes alone.  Only t0,
+# t1 and the stack below sp are touched, so the argument registers are preserved.
+# tools/spike/spike_run implements the same CSRs (tools/spike/zisk_accel.cc).
 
-# FFI: @sha256f(param, 16, param, 16) -> SHA-256 compression CSR 0x805.
-.globl ffisha256f
-ffisha256f:
-    csrrs x0, 0x805, a0
+# The CSR takes the operand's pointer itself: the array is the operand.
+.macro ACCEL_DIRECT name, csr
+.globl ffi\name
+ffi\name:
+    csrrs x0, \csr, a2
     ret
+.endm
 
+# The CSR takes a block {a2, a2 + off}.
+.macro ACCEL_PTRS2 name, csr, off
+.globl ffi\name
+ffi\name:
+    addi sp, sp, -16
+    sd   a2, 0(sp)
+    addi t0, a2, \off
+    sd   t0, 8(sp)
+    mv   t0, sp
+    csrrs x0, \csr, t0
+    addi sp, sp, 16
+    ret
+.endm
+
+# The CSR takes a block of five pointers, `stride` bytes apart from a2.
+.macro ACCEL_PTRS5 name, csr, stride
+.globl ffi\name
+ffi\name:
+    addi sp, sp, -48
+    sd   a2, 0(sp)
+    addi t0, a2, \stride
+    sd   t0, 8(sp)
+    addi t0, a2, 2*\stride
+    sd   t0, 16(sp)
+    addi t0, a2, 3*\stride
+    sd   t0, 24(sp)
+    addi t0, a2, 4*\stride
+    sd   t0, 32(sp)
+    mv   t0, sp
+    csrrs x0, \csr, t0
+    addi sp, sp, 48
+    ret
+.endm
+
+# Keccak-f[1600] on the 200-byte state; point doubling in place on the 64- or 96-byte point.
+ACCEL_DIRECT keccakf,    0x800
+ACCEL_DIRECT secpdbl,    0x804
+ACCEL_DIRECT bn_g1_dbl,  0x807
+ACCEL_DIRECT bls_g1_dbl, 0x80d
+
+# One SHA-256 compression: array = 32-byte packed state, then the 64-byte block.
+ACCEL_PTRS2 sha256f,     0x805, 32
+
+# Point addition (p1 += p2) and Fp2 operations (f1 = f1 op f2): two operands back to back.
+ACCEL_PTRS2 secpadd,     0x803, 64
+ACCEL_PTRS2 bn_g1_add,   0x806, 64
+ACCEL_PTRS2 bn_fp2_add,  0x808, 64
+ACCEL_PTRS2 bn_fp2_sub,  0x809, 64
+ACCEL_PTRS2 bn_fp2_mul,  0x80a, 64
+ACCEL_PTRS2 bls_g1_add,  0x80c, 96
+ACCEL_PTRS2 bls_fp2_add, 0x80e, 96
+ACCEL_PTRS2 bls_fp2_sub, 0x80f, 96
+ACCEL_PTRS2 bls_fp2_mul, 0x810, 96
+
+# d = (a * b + c) mod m: array = a, b, c, m, d, each `stride` bytes.
+ACCEL_PTRS5 arith256mod,  0x802, 32
+ACCEL_PTRS5 bn_arith256,  0x802, 32
+ACCEL_PTRS5 bls_arith384, 0x80b, 48
+
+# One BLAKE2b round: array = SIGMA row (a value, 8 bytes), 128-byte state, 128-byte
+# message.  The CSR's block is {row, state*, message*}.
 .globl ffiblake2bround
 ffiblake2bround:
-    .4byte 0x81952073             # csrs 0x819, a0 -> BLAKE2b round
-    ret
-
-.globl ffiarith256mod
-ffiarith256mod:
-    .4byte 0x80252073             # csrs 0x802, a0 -> Arith256Mod
-    ret
-
-.globl ffisecpadd
-ffisecpadd:
-    .4byte 0x80352073             # csrs 0x803, a0 -> secp256k1 affine add
-    ret
-
-.globl ffisecpdbl
-ffisecpdbl:
-    .4byte 0x80452073             # csrs 0x804, a0 -> secp256k1 affine double
-    ret
-.globl ffibn_arith256
-ffibn_arith256:
-    .4byte 0x80252073             # csrs 0x802, a0 -> Arith256Mod
-    ret
-
-.globl ffibn_g1_add
-ffibn_g1_add:
-    .4byte 0x80652073             # csrs 0x806, a0 -> BN254 G1 affine add
-    ret
-
-.globl ffibn_g1_dbl
-ffibn_g1_dbl:
-    .4byte 0x80752073             # csrs 0x807, a0 -> BN254 G1 affine double
-    ret
-
-.globl ffibn_fp2_add
-ffibn_fp2_add:
-    .4byte 0x80852073             # csrs 0x808, a0 -> BN254 Fp2 add
-    ret
-
-.globl ffibn_fp2_sub
-ffibn_fp2_sub:
-    .4byte 0x80952073             # csrs 0x809, a0 -> BN254 Fp2 subtract
-    ret
-
-.globl ffibn_fp2_mul
-ffibn_fp2_mul:
-    .4byte 0x80a52073             # csrs 0x80A, a0 -> BN254 Fp2 multiply
-    ret
-
-# FFI: BLS12-381 accelerator calls.  The first argument is the parameter
-# block described by tools/spike/zisk_accel.cc; each CSR mutates its
-# output operand in place.  Keep these as tiny assembly bridges so the same
-# Pancake source reaches both Spike's extension and ziskemu's implementation.
-.globl ffibls_arith384
-ffibls_arith384:
-    .4byte 0x80b52073             # csrs 0x80B, a0 -> Arith384Mod
-    ret
-
-.globl ffibls_fp2_add
-ffibls_fp2_add:
-    .4byte 0x80e52073             # csrs 0x80E, a0 -> Fp2 add
-    ret
-
-.globl ffibls_fp2_sub
-ffibls_fp2_sub:
-    .4byte 0x80f52073             # csrs 0x80F, a0 -> Fp2 subtract
-    ret
-
-.globl ffibls_fp2_mul
-ffibls_fp2_mul:
-    .4byte 0x81052073             # csrs 0x810, a0 -> Fp2 multiply
-    ret
-
-.globl ffibls_g1_add
-ffibls_g1_add:
-    .4byte 0x80c52073             # csrs 0x80C, a0 -> G1 affine add
-    ret
-
-.globl ffibls_g1_dbl
-ffibls_g1_dbl:
-    .4byte 0x80d52073             # csrs 0x80D, a0 -> G1 affine double
+    addi sp, sp, -32
+    ld   t1, 0(a2)
+    sd   t1, 0(sp)
+    addi t0, a2, 8
+    sd   t0, 8(sp)
+    addi t0, a2, 136
+    sd   t0, 16(sp)
+    mv   t0, sp
+    csrrs x0, 0x819, t0
+    addi sp, sp, 32
     ret

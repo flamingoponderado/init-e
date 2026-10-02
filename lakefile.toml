@@ -58,3 +58,10 @@ root = "Tools.InputDecodeCheck"
 [[lean_exe]]
 name = "opcode-census"
 root = "Tools.OpcodeCensus"
+
+# `lake exe accel-ffi-check` checks the byte-level accelerator specifications
+# (Guest/AccelFfi.lean) against reference values.
+[[lean_exe]]
+name = "accel-ffi-check"
+root = "Tools.AccelFfiCheck"
+

@@ -1818,9 +1818,7 @@ theorem accessGasCostBody_eq : accessGasCostBody =
             (Exp.const (BitVec.ofNat 64 0)))
           (Prog.return (Exp.const (BitVec.ofNat 64 100)))
           Prog.skip)
-        (Prog.seq
-          (Prog.call (some (none, none)) "warm_address" [Exp.var VarKind.local "addr"])
-          (Prog.return (Exp.const (BitVec.ofNat 64 3000))))) := by
+        (Prog.return (Exp.const (BitVec.ofNat 64 3000)))) := by
   rfl
 
 section
@@ -1868,9 +1866,7 @@ theorem access_gas_cost_runs_warm
     (by rw [if_pos hz]; exact hret)
   have hseq := StepCalculus.seq_runs_returned context primitive handler structs functions
     baseAddress topAddress bytesInWord (some guestMemoryAccess) c mh _
-    (second := Prog.seq
-      (Prog.call (some (none, none)) "warm_address" [Exp.var VarKind.local "addr"])
-      (Prog.return (Exp.const (BitVec.ofNat 64 3000))))
+    (second := Prog.return (Exp.const (BitVec.ofNat 64 3000)))
     (updatePanValueMap l "w" (PanValue.word wv)) cg cm cf _ cg cm cf (k + 2) _ _ hite
   have hIsWarm' := StepCalculus.callMono context primitive handler structs functions
     baseAddress topAddress bytesInWord k l g m f none "is_warm_address" _
@@ -1883,29 +1879,25 @@ theorem access_gas_cost_runs_warm
   rw [accessGasCostBody_eq]
   exact ⟨_, _, hfinal⟩
 
-/-- **`access_gas_cost` on the cold path.** -/
+/-- **`access_gas_cost` on the cold path.** It returns `3000` without touching
+the accessed set: the caller warms the address after charging
+(`warm_after_charge`). -/
 theorem access_gas_cost_runs_cold
     (l g cg : VarName → Option (PanValue Word)) (m cm : Memory)
     (f cf : FfiState HostMemory)
-    (cl nl ng : VarName → Option (PanValue Word)) (nm : Memory) (nf : FfiState HostMemory)
-    (k csteps wsteps : Nat)
+    (cl : VarName → Option (PanValue Word))
+    (k csteps : Nat)
     (hIsWarm : evalPanValueFfiCallSteps context primitive handler structs functions
       baseAddress topAddress bytesInWord k l g m f none "is_warm_address"
       [Exp.var VarKind.local "addr"] (some guestMemoryAccess) c mh
       = some (PanValueFfiControlResult.returned cl cg cm cf
           [PanValue.word (BitVec.ofNat 64 0)], csteps))
-    (hWarm : evalPanValueFfiCallSteps context primitive handler structs functions
-      baseAddress topAddress bytesInWord k
-      (updatePanValueMap l "w" (PanValue.word (BitVec.ofNat 64 0))) cg cm cf
-      (some (none, none)) "warm_address" [Exp.var VarKind.local "addr"]
-      (some guestMemoryAccess) c mh
-      = some (PanValueFfiControlResult.normal nl ng nm nf, wsteps))
     (hlimit : panValuePayloadWithinLimit structs
       (PanValue.word (BitVec.ofNat 64 3000)) = true) :
     ∃ l' steps, evalPanValueFfiProgSteps context primitive handler structs functions
       baseAddress topAddress bytesInWord (k + 4) l g m f accessGasCostBody
       (some guestMemoryAccess) c mh
-      = some (PanValueFfiControlResult.returned l' ng nm nf
+      = some (PanValueFfiControlResult.returned l' cg cm cf
           [PanValue.word (BitVec.ofNat 64 3000)], steps) := by
   have hw : updatePanValueMap l "w" (PanValue.word (BitVec.ofNat 64 0)) "w"
       = some (PanValue.word (BitVec.ofNat 64 0)) := by simp [updatePanValueMap]
@@ -1925,23 +1917,16 @@ theorem access_gas_cost_runs_cold
     (thenBranch := Prog.return (Exp.const (BitVec.ofNat 64 100))) (elseBranch := Prog.skip)
     (updatePanValueMap l "w" (PanValue.word (BitVec.ofNat 64 0))) cg cm cf _ _ (k + 1) _ _
     hcond (by rw [if_neg (fun h => hz h)]; exact hskip)
-  have hcall := StepCalculus.call_runs context primitive handler structs functions
-    baseAddress topAddress bytesInWord (some guestMemoryAccess) c mh
-    (some (none, none)) "warm_address" [Exp.var VarKind.local "addr"]
-    (updatePanValueMap l "w" (PanValue.word (BitVec.ofNat 64 0))) cg cm cf k _ _ hWarm
   have hret := StepCalculus.return_runs context primitive handler structs functions
     baseAddress topAddress bytesInWord (some guestMemoryAccess) c mh
-    (Exp.const (BitVec.ofNat 64 3000)) nl ng nm nf _ _ k
+    (Exp.const (BitVec.ofNat 64 3000))
+    (updatePanValueMap l "w" (PanValue.word (BitVec.ofNat 64 0))) cg cm cf _ _ (k + 1)
     (by rw [evalPanValueExpCounted, eval_const]; rfl) hlimit
-  have hinner := StepCalculus.seq_runs_normal context primitive handler structs functions
-    baseAddress topAddress bytesInWord (some guestMemoryAccess) c mh _ _
-    (updatePanValueMap l "w" (PanValue.word (BitVec.ofNat 64 0))) cg cm cf
-    nl ng nm nf (k + 1) _ _ _ hcall hret
   have hseq := StepCalculus.seq_runs_normal context primitive handler structs functions
     baseAddress topAddress bytesInWord (some guestMemoryAccess) c mh _ _
     (updatePanValueMap l "w" (PanValue.word (BitVec.ofNat 64 0))) cg cm cf
     (updatePanValueMap l "w" (PanValue.word (BitVec.ofNat 64 0))) cg cm cf
-    (k + 2) _ _ _ hite hinner
+    (k + 2) _ _ _ hite hret
   have hIsWarm' := StepCalculus.callMono context primitive handler structs functions
     baseAddress topAddress bytesInWord k l g m f none "is_warm_address" _
     (some guestMemoryAccess) c mh (k + 3) _ (by omega) hIsWarm
@@ -1964,10 +1949,10 @@ plain `Nat` bounds, rather than the `100 ∨ 3000` disjunction they came from,
 means a caller can hand either one straight to those lemmas instead of
 re-case-splitting on `access_gas_cost_runs_warm` / `_runs_cold` by hand.
 
-The two callees are still hypotheses: `is_warm_address` and `warm_address` are
-`htab` probes, which need the load-factor invariant before they can be
-discharged. What is settled here is that nothing *between* them can make the
-charge zero. -/
+The one callee, `is_warm_address`, is still a hypothesis: it is an `htab`
+probe, which needs the load-factor invariant before it can be discharged. What
+is settled here is that nothing after it can make the charge zero. (`access_gas_cost`
+no longer warms the address; the caller does, after charging.) -/
 theorem access_gas_cost_charge_pos
     (l g cg : VarName → Option (PanValue Word)) (m cm : Memory)
     (f cf : FfiState HostMemory)
@@ -1977,13 +1962,6 @@ theorem access_gas_cost_charge_pos
       baseAddress topAddress bytesInWord k l g m f none "is_warm_address"
       [Exp.var VarKind.local "addr"] (some guestMemoryAccess) c mh
       = some (PanValueFfiControlResult.returned cl cg cm cf [PanValue.word wv], csteps))
-    (hWarm : wv = BitVec.ofNat 64 0 →
-      ∃ nl ng nm nf wsteps, evalPanValueFfiCallSteps context primitive handler structs
-        functions baseAddress topAddress bytesInWord k
-        (updatePanValueMap l "w" (PanValue.word (BitVec.ofNat 64 0))) cg cm cf
-        (some (none, none)) "warm_address" [Exp.var VarKind.local "addr"]
-        (some guestMemoryAccess) c mh
-        = some (PanValueFfiControlResult.normal nl ng nm nf, wsteps))
     (hlimit100 : panValuePayloadWithinLimit structs
       (PanValue.word (BitVec.ofNat 64 100)) = true)
     (hlimit3000 : panValuePayloadWithinLimit structs
@@ -1996,11 +1974,10 @@ theorem access_gas_cost_charge_pos
       ∧ 1 ≤ cost.toNat ∧ cost.toNat ≤ 3000 := by
   by_cases hzero : wv = BitVec.ofNat 64 0
   · subst hzero
-    obtain ⟨nl, ng, nm, nf, wsteps, hw⟩ := hWarm rfl
     obtain ⟨l', steps, hrun⟩ := access_gas_cost_runs_cold context primitive handler structs
-      functions baseAddress topAddress bytesInWord c mh l g cg m cm f cf cl nl ng nm nf
-      k csteps wsteps hIsWarm hw hlimit3000
-    exact ⟨l', ng, nm, nf, _, steps, hrun, by decide, by decide⟩
+      functions baseAddress topAddress bytesInWord c mh l g cg m cm f cf cl
+      k csteps hIsWarm hlimit3000
+    exact ⟨l', cg, cm, cf, _, steps, hrun, by decide, by decide⟩
   · obtain ⟨l', steps, hrun⟩ := access_gas_cost_runs_warm context primitive handler structs
       functions baseAddress topAddress bytesInWord c mh l g cg m cm f cf cl wv k csteps
       (by simpa using hzero) hIsWarm hlimit100

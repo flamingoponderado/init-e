@@ -71,8 +71,10 @@ rule out.
 
 ### Mechanism
 
-1. `@trap` returns in the model. `guestMemoryFfi` (`Guest/Accel.lean`) answers
-   `halt` and `trap` with `some memory`, so the run continues. On the machine
+1. `@trap` returns in the model. (This paragraph was written when the memory handler
+   `guestMemoryFfi` answered `halt` and `trap`; the guest's foreign calls now all go
+   through `guestOracle`, which returns the array unchanged for them, so the run
+   continues all the same.) On the machine
    `ffitrap` (`guest/runtime/start.S`) jumps to `cml_exit` and never returns.
    The `Guest/Model.lean` docstring used to call this a safe
    over-approximation. It is not, in two ways: for `TerminatesWithin` it turns
@@ -296,7 +298,10 @@ machine halts. Auditing the *other* handler that can decline — the accelerator
 — turned up a second, and it is a real guest bug rather than a modelling
 artefact.
 
-`guestMemoryFfi` (`Guest/Accel.lean`) answers an accelerator call with `none`
+The memory handler `guestMemoryFfi` (since removed: every accelerator is now a foreign
+call specified by `Guest.acceleratorBytes`, and a failing call ends the run as a final
+FFI event, `.final .failed`, instead of an evaluation failure) answered an accelerator
+call with `none`
 "for an unknown name or an input the machine model would trap on", and the
 `.extCall` case of `evalPanValueFfiProgSteps` propagates that as `none` for the
 whole run — evaluation failure at every fuel, exactly the class the trap fix
@@ -885,10 +890,12 @@ disjunction they come from --- both halves `access_plus_warm_pos` and
 so a caller can hand either bound straight to them instead of re-deriving it
 from `access_gas_cost_runs_warm` / `_runs_cold` by hand.
 
-The two callees remain hypotheses --- `is_warm_address` and `warm_address` are
-`htab` probes, which need the load-factor invariant `2*count <= cap` first.
-What is settled is that **nothing between them can make the charge zero**,
-which is the part that had to be read off the AST rather than off the source.
+The one callee, `is_warm_address`, remains a hypothesis: it is an `htab` probe,
+which needs the load-factor invariant `2*count <= cap` first. What is settled is
+that **nothing after it can make the charge zero**, which is the part that had to
+be read off the AST rather than off the source. (`access_gas_cost` used to call
+`warm_address` itself; since the gas-before-allocation change the caller warms the
+address after charging, so that call, and its hypothesis, are gone.)
 
 This is also the first guest function proved whose branch hypothesis is about a
 *callee's return value* rather than about memory or a local, so it is the shape

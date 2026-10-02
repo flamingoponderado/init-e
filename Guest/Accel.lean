@@ -2,25 +2,30 @@ import RiscvZkvm.Rv64.ZiskAccel
 import Guest.Basic
 
 /-!
-# ZisK accelerator semantics for the guest's `@ffi` calls
+# Reference semantics of the ZisK accelerators on word memory
 
 The `ZISK_ACCEL` build of the guest replaces its software crypto with foreign
 calls that `guest/runtime/start.S` turns into `csrrs` on ZisK precompile CSRs.
 Each accelerator reads operands through pointers in a parameter block and
-writes its result back into memory. The semantics are those of
+writes its result back into memory. The semantics below are those of
 `RiscvZkvm.Rv64.MachineState.csrsWrite`/`csrsValid` (the same functions
 evm-asm uses), transcribed from the machine's word memory to flapjack's
 structured source memory: `readWords` fails (`none`) where the machine model
 would reject the access, and `acceleratorEffect` fails where `csrsValid` would
 trap (zero modulus, unreduced or degenerate curve inputs, bad SIGMA index).
 
+This is no longer what the guest's semantics runs. Every accelerator call follows
+CakeML's foreign-call convention (`docs/ACCEL-FFI.md`) and is specified by the byte-level
+functions of `Guest.AccelFfi`, which `lake exe accel-ffi-check` compares with
+`acceleratorEffect` on concrete vectors. `acceleratorEffect` stays as that reference.
+
 | `@name`                    | CSR   | effect |
 | --- | --- | --- |
-| `keccakf`                  | 0x800 | Keccak-f[1600] on the 25-word state at `p`, in place |
+| `keccakf`                  | 0x800 | moved to the foreign-call interface, see `Guest.AccelFfi` |
 | `arith256mod`, `bn_arith256` | 0x802 | `p → {a*, b*, c*, m*, d*}` (4 limbs): `*d := (a·b + c) mod m` |
 | `secpadd`                  | 0x803 | `p → {p1*, p2*}`: `*p1 := p1 + p2` on secp256k1 (chord) |
 | `secpdbl`                  | 0x804 | point at `p` doubled in place (tangent) |
-| `sha256f`                  | 0x805 | `p → {state*, input*}`: one SHA-256 compression, state in place |
+| `sha256f`                  | 0x805 | moved to the foreign-call interface, see `Guest.AccelFfi` |
 | `bn_g1_add`, `bn_g1_dbl`   | 0x806, 0x807 | as secp over the BN254 field |
 | `bn_fp2_add/sub/mul`       | 0x808–0x80a | `p → {f1*, f2*}`: `*f1 := f1 ∘ f2` in BN254 Fp2, `u² = −1` |
 | `bls_arith384`             | 0x80b | 6-limb `arith256mod` |
@@ -97,20 +102,6 @@ def complexEffect (op : Nat → Nat → List Word → List Word → List Word)
     pure (writeWords memory f1 (op prime limbs a b))
   else none
 
-/-- Keccak-f[1600] on the 25-word state at `p` (CSR 0x800). -/
-def keccakEffect (memory : Memory) (p : Word) : Option Memory := do
-  let state ← readWords memory p 25
-  pure (writeWords memory p (Accel.keccakF state))
-
-/-- One SHA-256 compression: `p → {state*, input*}` (CSR 0x805). -/
-def sha256Effect (memory : Memory) (p : Word) : Option Memory := do
-  let pstate ← readWord memory p
-  let pinput ← readWord memory (p + 8)
-  let state ← readWords memory pstate 4
-  let input ← readWords memory pinput 8
-  pure (writeWords memory pstate (Accel.u32sToDwords (Accel.sha256Compress
-    (Accel.dwordsToU32s state) (Accel.dwordsToU32sBE input))))
-
 /-- One BLAKE2b round: `p → {idx, state*, input*}` (CSR 0x819). -/
 def blake2bEffect (memory : Memory) (p : Word) : Option Memory := do
   let index ← readWord memory p
@@ -124,14 +115,14 @@ def blake2bEffect (memory : Memory) (p : Word) : Option Memory := do
 
 /-- Effect of the accelerator named by the guest's `@name` on memory, with `p`
 the first `ExtCall` argument (the parameter-block pointer, `a0` of the stub).
-`none` for an unknown name or an input the machine model would trap on. -/
+`none` for an unknown name, for the accelerators that go through the ordinary
+foreign-call interface (`Guest.acceleratorBytes`), or an input the machine model
+would trap on. -/
 def acceleratorEffect (name : FunName) (p : Word) (memory : Memory) : Option Memory :=
   match name with
-  | "keccakf" => keccakEffect memory p
   | "arith256mod" | "bn_arith256" => arithModEffect 4 memory p
   | "secpadd" => curveAddEffect Accel.secpP 4 memory p
   | "secpdbl" => curveDblEffect Accel.secpP 4 memory p
-  | "sha256f" => sha256Effect memory p
   | "bn_g1_add" => curveAddEffect Accel.bn254P 4 memory p
   | "bn_g1_dbl" => curveDblEffect Accel.bn254P 4 memory p
   | "bn_fp2_add" => complexEffect Accel.complexAddL Accel.bn254P 4 memory p
@@ -145,15 +136,5 @@ def acceleratorEffect (name : FunName) (p : Word) (memory : Memory) : Option Mem
   | "bls_fp2_mul" => complexEffect Accel.complexMulL Accel.bls12P 6 memory p
   | "blake2bround" => blake2bEffect memory p
   | _ => none
-
-/-- The memory-effect FFI handler of the accelerated guest: `@halt` and `@trap`
-leave memory alone (see `Guest.Model` for the fact that on the machine neither
-returns, and for how the guest's own `throw TrapErr` makes `@trap` terminal
-here anyway), every accelerator acts on its parameter block, anything else is
-unmodelled. The four arguments are the `ExtCall` operands. -/
-def guestMemoryFfi (function : FunName) (configuration _configurationLength _array _arrayLength : Word)
-    (memory : Memory) : Option Memory :=
-  if function == "halt" || function == "trap" then some memory
-  else acceleratorEffect function configuration memory
 
 end Guest

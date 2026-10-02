@@ -64,6 +64,13 @@ fi
 # Build both fixed-path main guests before running the end-to-end checks.
 run_check "build software and accelerated guests" "$ROOT/tools/build_both.sh"
 
+# The Lean side: the Guest library (generated ASTs, step-bound proofs) must build
+# against the current guest sources, and the byte-level accelerator
+# specifications must agree with reference values.
+run_check "lean: lake build Guest" lake build Guest
+run_check "lean: accel-ffi-check" lake exe accel-ffi-check
+run_check "accelerator foreign-call smoke (ziskemu)" python3 "$ROOT/tools/accel-ffi-smoke.py"
+
 run_unit_variant() {
   local variant="$1"
   if [[ "$variant" == "accelerated" ]]; then

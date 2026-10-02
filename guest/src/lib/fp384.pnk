@@ -187,17 +187,16 @@ fun 1 fp_accel_init() {
     return 0;
   }
   bls_consts_init();
-  fp_accel_a = alloc(FP_BYTES);
-  fp_accel_b = alloc(FP_BYTES);
-  fp_accel_d = alloc(FP_BYTES);
-  fp_accel_zero = alloc(FP_BYTES);
-  fp_accel_params = alloc(40);
+  /* One 240-byte block, the array of the foreign call (docs/ACCEL-FFI.md): a, b, zero,
+     m, d of FP_BYTES each at fixed offsets. The modulus is copied in because the
+     accelerator may only touch the array. */
+  fp_accel_params = alloc(240);
+  fp_accel_a = fp_accel_params;
+  fp_accel_b = fp_accel_params + 48;
+  fp_accel_zero = fp_accel_params + 96;
+  fp_accel_d = fp_accel_params + 192;
   memzero(fp_accel_zero, FP_BYTES);
-  st fp_accel_params, fp_accel_a;
-  st fp_accel_params + 8, fp_accel_b;
-  st fp_accel_params + 16, fp_accel_zero;
-  st fp_accel_params + 24, C_P;
-  st fp_accel_params + 32, fp_accel_d;
+  memcpy(fp_accel_params + 144, C_P, FP_BYTES);
   return 0;
 }
 
@@ -205,7 +204,7 @@ fun FP fp_mul(FP a, FP b) {
   fp_accel_init();
   st fp_accel_a, a;
   st fp_accel_b, b;
-  @bls_arith384(fp_accel_params, 0, 0, 0);
+  @bls_arith384(fp_accel_params, 0, fp_accel_params, 240);
   return lds FP fp_accel_d;
 }
 
