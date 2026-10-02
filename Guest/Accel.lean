@@ -2,17 +2,22 @@ import RiscvZkvm.Rv64.ZiskAccel
 import Guest.Basic
 
 /-!
-# ZisK accelerator semantics for the guest's `@ffi` calls
+# Reference semantics of the ZisK accelerators on word memory
 
 The `ZISK_ACCEL` build of the guest replaces its software crypto with foreign
 calls that `guest/runtime/start.S` turns into `csrrs` on ZisK precompile CSRs.
 Each accelerator reads operands through pointers in a parameter block and
-writes its result back into memory. The semantics are those of
+writes its result back into memory. The semantics below are those of
 `RiscvZkvm.Rv64.MachineState.csrsWrite`/`csrsValid` (the same functions
 evm-asm uses), transcribed from the machine's word memory to flapjack's
 structured source memory: `readWords` fails (`none`) where the machine model
 would reject the access, and `acceleratorEffect` fails where `csrsValid` would
 trap (zero modulus, unreduced or degenerate curve inputs, bad SIGMA index).
+
+This is no longer what the guest's semantics runs. Every accelerator call follows
+CakeML's foreign-call convention (`docs/ACCEL-FFI.md`) and is specified by the byte-level
+functions of `Guest.AccelFfi`, which `lake exe accel-ffi-check` compares with
+`acceleratorEffect` on concrete vectors. `acceleratorEffect` stays as that reference.
 
 | `@name`                    | CSR   | effect |
 | --- | --- | --- |
@@ -131,25 +136,5 @@ def acceleratorEffect (name : FunName) (p : Word) (memory : Memory) : Option Mem
   | "bls_fp2_mul" => complexEffect Accel.complexMulL Accel.bls12P 6 memory p
   | "blake2bround" => blake2bEffect memory p
   | _ => none
-
-/-- The accelerators whose Pancake calls follow the foreign-call convention
-(`docs/ACCEL-FFI.md`). They are specified by `Guest.acceleratorBytes` and go through the
-ordinary FFI path; the memory-effect handler below declines them. `acceleratorEffect`
-stays as the reference they are checked against (`lake exe accel-ffi-check`). -/
-def convertedAccelerators : List String :=
-  ["keccakf", "sha256f", "arith256mod", "bn_arith256", "bls_arith384", "secpadd", "secpdbl",
-   "bn_g1_add", "bn_g1_dbl", "bn_fp2_add", "bn_fp2_sub", "bn_fp2_mul",
-   "bls_g1_add", "bls_g1_dbl", "bls_fp2_add", "bls_fp2_sub", "bls_fp2_mul", "blake2bround"]
-
-/-- The memory-effect FFI handler of the accelerated guest: `@halt` and `@trap`
-leave memory alone (see `Guest.Model` for the fact that on the machine neither
-returns, and for how the guest's own `throw TrapErr` makes `@trap` terminal
-here anyway), every accelerator acts on its parameter block, anything else is
-unmodelled. The four arguments are the `ExtCall` operands. -/
-def guestMemoryFfi (function : FunName) (configuration _configurationLength _array _arrayLength : Word)
-    (memory : Memory) : Option Memory :=
-  if function == "halt" || function == "trap" then some memory
-  else if convertedAccelerators.contains function then none
-  else acceleratorEffect function configuration memory
 
 end Guest

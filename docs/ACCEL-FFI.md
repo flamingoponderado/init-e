@@ -43,26 +43,50 @@ semantics reads it.
 
 ## What is converted
 
-| call | configuration | array | specification |
-| --- | --- | --- | --- |
-| `@keccakf(p, 0, p, 200)` | none | the 25-word state | `Guest.keccakfBytes` |
-| `@sha256f(c, 24, a, 96)` | `{state*, input*, a}` | packed 32-byte state, 64-byte block | `Guest.sha256fBytes`, requires `state* = a`, `input* = a + 32` |
+All eighteen accelerators. Each call's operands and results live in one block that is the
+array; the configuration is the CSR's own parameter block (the pointers the hardware
+follows) followed by one extra word, the block's address. The stubs are unchanged, since
+`a0` is still the parameter block.
 
-`sha256_block` now always builds the block at `sha_accel + 56`, copying it in unless
-the caller already did (`sha256_pair` builds it there), so the array is the 96 bytes
-at `sha_accel + 24`.
+| call | configuration | array (the block) |
+| --- | --- | --- |
+| `@keccakf(p, 0, p, 200)` | none | the 25-word state |
+| `@sha256f(c, 24, a, 96)` | `state*, input*, a` | packed 32-byte state, 64-byte block (`sha_accel + 24`) |
+| `@arith256mod`, `@bn_arith256` (`b, 48, b, 208`) | `a*, b*, c*, m*, d*, base` | a, b, c, m, d, 32 bytes each, after the 48-byte configuration |
+| `@bls_arith384` (`b, 48, b, 288`) | same | 48 bytes each; the modulus is copied in |
+| `@secpadd`, `@bn_g1_add`, `@bls_g1_add` | `p1*, p2*, base` | both points; for secp the caller's point is copied in and the sum copied back |
+| `@secpdbl`, `@bn_g1_dbl`, `@bls_g1_dbl` | none | the point, doubled in place |
+| `@bn_fp2_*`, `@bls_fp2_*` | `f1*, f2*, base` | both elements |
+| `@blake2bround` (`b, 32, b, 288`) | `row, state*, input*, base` | the 16-word working vector and message |
 
-The specifications are in `Guest/AccelFfi.lean`, built on the arithmetic that
-`Guest/Accel.lean` takes from `RiscvZkvm.Rv64.ZiskAccel`, and `Guest.guestOracle`
-installs them. `Guest.guestMemoryFfi` no longer handles these two names, and flapjack
-falls back to the ordinary path when the memory handler declines.
+`sha256_block` always builds the block at `sha_accel + 56`, copying it in unless the
+caller already did (`sha256_pair` builds it there). The BN254, BLS12-381 and BLAKE2b
+buffers, previously separate allocations, are now carved out of one block each.
+
+The specifications are `Guest.acceleratorBytes` and its parts in `Guest/AccelFfi.lean`,
+over a `Region` (the array and its base address): a call fails if a pointer or operand
+lies outside the array or is misaligned. `Guest.guestOracle` installs them, and it answers
+`@halt` and `@trap` by returning the array unchanged. The memory-effect handler is gone
+from the model. `Guest/Accel.lean` keeps its transcription of ZisK's `csrsWrite` over word
+memory as the reference the specifications are checked against.
+
+A failing accelerator call (zero modulus, an unreduced or degenerate curve input, a BLAKE2b
+row of 10 or more) now ends the run in the model as a final FFI event, `.final .failed`,
+which is what a trapping machine is, instead of an evaluation failure.
 
 ## What is checked
 
 * `lake exe accel-ffi-check` (also in `tools/check_all.sh`): `keccakfBytes` gives the
   SHA3-256 digest of the empty message from its padding block, `sha256fBytes` gives
-  SHA-256("abc") in the packed layout the guest uses, and malformed shapes are
-  rejected.
+  SHA-256("abc") in the packed layout the guest uses, malformed shapes are rejected, and
+  every other accelerator's specification agrees with the word-memory reference
+  `acceleratorEffect` on concrete vectors, failures included: arithmetic with 4 and 6 limbs
+  and a zero modulus, point addition and doubling on secp256k1, BN254 and BLS12-381
+  (generator, G + 2G, G + G, an invalid point), Fp2 operations with valid and out-of-range
+  elements, and BLAKE2b rows 3, 9 and 12.
+* The secp256k1, BN254, BLS12-381 and KZG vector checks and the `t_blake2f` and
+  `t_precompiles` unit tests, accelerated, which exercise the converted calls on the
+  real CSRs.
 * `tools/accel-ffi-smoke.py` (also in `check_all`): `guest/test/accel_ffi_smoke.pnk`
   makes one `@keccakf` and one `@sha256f` call in the new convention, and its output on
   `ziskemu`, through the unchanged stubs and the real CSRs, equals the `hashlib`
@@ -71,9 +95,10 @@ falls back to the ordinary path when the memory handler declines.
 * `t_keccak` and `t_sha256` under Spike for both guests, and `lake build Guest` (also in
   `check_all`, so the Lean library stays in step with the guest sources).
 * The whole `tests-zkevm@v21.0.1` corpus on `ziskemu` with the accelerated guest:
-  33,614 of 33,614. The cost is negligible: mean steps over the passing cases went from
-  8,835,587 to 8,836,255 (+0.008%), and the largest case from 12,276,776,458 to
-  12,290,475,154 (+0.11%), from the extra 64-byte block copy in `sha256_block`.
+  33,614 of 33,614, with all eighteen accelerators converted. The cost is negligible: mean
+  steps over the passing cases went from 8,835,587 to 8,837,101 (+0.017%), and the largest
+  case from 12,276,776,458 to 12,290,505,139 (+0.11%), mostly from the extra 64-byte block
+  copy in `sha256_block` and the copies of the caller's point in `secpadd`.
 
 ## How the calls are tested
 
@@ -98,11 +123,5 @@ writes whole words and does not have the exponential write.
 
 * Conformance of ZisK to the specification is an assumption about the platform, as
   CakeML's is about its C stubs. It is checked here only by tests.
-* Sixteen accelerators still use the memory-effect model: `arith256mod`,
-  `bn_arith256`, `bls_arith384`, `secpadd`, `secpdbl`, the BN254 and BLS12-381 point
-  and Fp2 operations, and `blake2bround`. Each needs its operands and results to lie
-  in one array, with the parameter block plus array base as configuration. Operands
-  living in a workspace that one array can cover need no copying; scattered operands
-  would.
 * The Pancake memory model must cover the array: `read_bytearray` fails outside the
   program's addressable memory.

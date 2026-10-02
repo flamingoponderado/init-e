@@ -71,8 +71,10 @@ rule out.
 
 ### Mechanism
 
-1. `@trap` returns in the model. `guestMemoryFfi` (`Guest/Accel.lean`) answers
-   `halt` and `trap` with `some memory`, so the run continues. On the machine
+1. `@trap` returns in the model. (This paragraph was written when the memory handler
+   `guestMemoryFfi` answered `halt` and `trap`; the guest's foreign calls now all go
+   through `guestOracle`, which returns the array unchanged for them, so the run
+   continues all the same.) On the machine
    `ffitrap` (`guest/runtime/start.S`) jumps to `cml_exit` and never returns.
    The `Guest/Model.lean` docstring used to call this a safe
    over-approximation. It is not, in two ways: for `TerminatesWithin` it turns
@@ -296,7 +298,10 @@ machine halts. Auditing the *other* handler that can decline — the accelerator
 — turned up a second, and it is a real guest bug rather than a modelling
 artefact.
 
-`guestMemoryFfi` (`Guest/Accel.lean`) answers an accelerator call with `none`
+The memory handler `guestMemoryFfi` (since removed: every accelerator is now a foreign
+call specified by `Guest.acceleratorBytes`, and a failing call ends the run as a final
+FFI event, `.final .failed`, instead of an evaluation failure) answered an accelerator
+call with `none`
 "for an unknown name or an input the machine model would trap on", and the
 `.extCall` case of `evalPanValueFfiProgSteps` propagates that as `none` for the
 whole run — evaluation failure at every fuel, exactly the class the trap fix

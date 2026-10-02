@@ -28,9 +28,9 @@ Everything here is computable, so it doubles as an executable model
 * `guestInitialState` zero-fills the scratch and heap regions per
   `guest/src/config.h`; `guestHostMemory` lays the input out at `INPUT_ADDR`.
 * `guestPrimitiveHandler` is flapjack's own 64-bit `__add_with_carry__`.
-* `guestAcceleratorFfi` (from `guestMemoryFfi`, `Guest/Accel.lean`) gives
-  `@halt`/`@trap` and the accelerator calls their semantics; the accelerators
-  act on Pancake memory through their parameter blocks.
+* Every other foreign call is an ordinary CakeML foreign call, answered by the
+  same oracle: `@halt`/`@trap` return unchanged, and each accelerator is a
+  function of its configuration and array bytes (`Guest/AccelFfi.lean`).
 * `guestMemoryAccess` selects CakeML's aligned-cell model for sub-word
   accesses, with the RISC-V little-endian byte layout.
 
@@ -144,9 +144,9 @@ def sharedWidth (configuration : List UInt8) : Nat :=
 /-- The FFI oracle: `MappedRead` returns the addressed bytes (zero-extended to
 the 8-byte payload), `MappedWrite` stores the value bytes that precede the
 8-byte address in the payload. Both fail outside the host regions. The
-accelerators that fit CakeML's foreign-call interface (`Guest.acceleratorBytes`)
-are functions of the configuration and array bytes; any other external call that
-reaches the oracle fails. -/
+accelerators are functions of the configuration and array bytes
+(`Guest.acceleratorBytes`, `docs/ACCEL-FFI.md`); `@halt` and `@trap` return the
+array unchanged (see the caveats above); any other external call fails. -/
 def guestOracle : FfiOracle HostMemory := fun name host configuration bytes =>
   match name with
   | .sharedMem .mappedRead =>
@@ -165,9 +165,11 @@ def guestOracle : FfiOracle HostMemory := fun name host configuration bytes =>
           if address ≤ current ∧ offset < count then values[offset]? else host current) bytes
       else .final .failed
   | .extCall name =>
-      match acceleratorBytes name configuration bytes with
-      | some result => .returned host result
-      | none => .final .failed
+      if name == "halt" || name == "trap" then .returned host bytes
+      else
+        match acceleratorBytes name configuration bytes with
+        | some result => .returned host result
+        | none => .final .failed
 
 /-- Initial FFI state for a run on `input`. -/
 def guestFfiState (input : InputBlob) : FfiState HostMemory :=
@@ -196,17 +198,11 @@ def guestPrimitiveHandler : PanPrimitiveHandler Word :=
 
 /-- CakeML-style external calls without memory effects: `@halt` and `@trap`
 leave everything unchanged (see the module docstring for the fact that on the
-machine neither returns). Only reached when no memory handler is installed. -/
+machine neither returns). Not reached by the guest's runs, whose semantics has a
+memory access model, so every foreign call goes through `guestOracle`. -/
 def guestHostFfi : PanValueStatefulFfiHandler Word HostMemory :=
   fun function _ _ _ _ locals ffi =>
     if function == "halt" || function == "trap" then some (locals, ffi) else none
-
-/-- Bare-metal external calls: `@halt`/`@trap` as no-ops, and the accelerators
-acting on Pancake memory through their parameter blocks (`Guest.guestMemoryFfi`). -/
-def guestAcceleratorFfi : PanValueMemoryFfiHandler Word HostMemory :=
-  fun function configuration configurationLength array arrayLength locals memory ffi =>
-    (guestMemoryFfi function configuration configurationLength array arrayLength memory).map
-      fun memory => (locals, memory, ffi)
 
 /-- Sub-word accesses follow CakeML's aligned-cell model with the RISC-V byte
 layout: `ld8`/`st8`/`ld32`/`st32` extract or patch bytes of the aligned word
@@ -222,7 +218,7 @@ def runProgramStepped (program : List (Decl Word)) (input : InputBlob) (fuel : N
   evalPanValueFfiProgramStepped guestFfiContext
     { source := guestInitialState, ffi := guestFfiState input }
     guestPrimitiveHandler guestHostFfi fuel program guestEntry []
-    (memoryAccess := some guestMemoryAccess) (memoryHandler := some guestAcceleratorFfi)
+    (memoryAccess := some guestMemoryAccess)
 
 /-- Step-counted run of the guest (the accelerated `guestAst`) on `input`. An
 accelerator call costs one `ExtCall` step. -/
