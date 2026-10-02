@@ -137,7 +137,9 @@ def acceleratorEffect (name : FunName) (p : Word) (memory : Memory) : Option Mem
 ordinary FFI path; the memory-effect handler below declines them. `acceleratorEffect`
 stays as the reference they are checked against (`lake exe accel-ffi-check`). -/
 def convertedAccelerators : List String :=
-  ["arith256mod", "bn_arith256", "bls_arith384"]
+  ["keccakf", "sha256f", "arith256mod", "bn_arith256", "bls_arith384", "secpadd", "secpdbl",
+   "bn_g1_add", "bn_g1_dbl", "bn_fp2_add", "bn_fp2_sub", "bn_fp2_mul",
+   "bls_g1_add", "bls_g1_dbl", "bls_fp2_add", "bls_fp2_sub", "bls_fp2_mul"]
 
 /-- The memory-effect FFI handler of the accelerated guest: `@halt` and `@trap`
 leave memory alone (see `Guest.Model` for the fact that on the machine neither

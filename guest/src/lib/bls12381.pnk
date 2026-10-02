@@ -91,11 +91,15 @@ fun 1 fp2_accel_init() {
     return 0;
   }
   bls_consts_init();
-  fp2_accel_f1 = alloc(FP2_BYTES);
-  fp2_accel_f2 = alloc(FP2_BYTES);
-  fp2_accel_params = alloc(16);
+  /* One 216-byte block, the array of the foreign call (docs/ACCEL-FFI.md): two
+     pointers and the block's own address (the 24-byte configuration), then two
+     96-byte elements. */
+  fp2_accel_params = alloc(216);
+  fp2_accel_f1 = fp2_accel_params + 24;
+  fp2_accel_f2 = fp2_accel_params + 120;
   st fp2_accel_params, fp2_accel_f1;
   st fp2_accel_params + 8, fp2_accel_f2;
+  st fp2_accel_params + 16, fp2_accel_params;
   return 0;
 }
 
@@ -106,7 +110,7 @@ fun 1 fp2_add(1 r, 1 a, 1 b) {
   fp2_accel_init();
   fp2_copy(fp2_accel_f1, a);
   fp2_copy(fp2_accel_f2, b);
-  @bls_fp2_add(fp2_accel_params, 0, 0, 0);
+  @bls_fp2_add(fp2_accel_params, 24, fp2_accel_params, 216);
   fp2_copy(r, fp2_accel_f1);
   return 0;
 #else
@@ -127,7 +131,7 @@ fun 1 fp2_sub(1 r, 1 a, 1 b) {
   fp2_accel_init();
   fp2_copy(fp2_accel_f1, a);
   fp2_copy(fp2_accel_f2, b);
-  @bls_fp2_sub(fp2_accel_params, 0, 0, 0);
+  @bls_fp2_sub(fp2_accel_params, 24, fp2_accel_params, 216);
   fp2_copy(r, fp2_accel_f1);
   return 0;
 #else
@@ -173,7 +177,7 @@ fun 1 fp2_mul(1 r, 1 a, 1 b) {
   fp2_accel_init();
   fp2_copy(fp2_accel_f1, a);
   fp2_copy(fp2_accel_f2, b);
-  @bls_fp2_mul(fp2_accel_params, 0, 0, 0);
+  @bls_fp2_mul(fp2_accel_params, 24, fp2_accel_params, 216);
   fp2_copy(r, fp2_accel_f1);
   return 0;
 #else
@@ -595,11 +599,13 @@ fun 1 bls_g1_accel_init() {
     return 0;
   }
   bls_consts_init();
-  bls_g1_accel_p1 = alloc(96);
-  bls_g1_accel_p2 = alloc(96);
-  bls_g1_accel_params = alloc(16);
+  /* One 216-byte block, as for Fp2 above: configuration, then two 96-byte points. */
+  bls_g1_accel_params = alloc(216);
+  bls_g1_accel_p1 = bls_g1_accel_params + 24;
+  bls_g1_accel_p2 = bls_g1_accel_params + 120;
   st bls_g1_accel_params, bls_g1_accel_p1;
   st bls_g1_accel_params + 8, bls_g1_accel_p2;
+  st bls_g1_accel_params + 16, bls_g1_accel_params;
   return 0;
 }
 
@@ -651,7 +657,7 @@ fun 1 g1_double(1 r, 1 p) {
     bls_g1_accel_init();
     st bls_g1_accel_p1, x;
     st bls_g1_accel_p1 + 48, y;
-    @bls_g1_dbl(bls_g1_accel_p1, 0, 0, 0);
+    @bls_g1_dbl(bls_g1_accel_p1, 0, bls_g1_accel_p1, 96);
     st G1X(r), lds FP bls_g1_accel_p1;
     st G1Y(r), lds FP (bls_g1_accel_p1 + 48);
     st G1Z(r), FP_ONE_MONT;
@@ -730,7 +736,7 @@ fun 1 g1_add(1 r, 1 p1, 1 p2) {
     st bls_g1_accel_p1 + 48, y1;
     st bls_g1_accel_p2, x2;
     st bls_g1_accel_p2 + 48, y2;
-    @bls_g1_add(bls_g1_accel_params, 0, 0, 0);
+    @bls_g1_add(bls_g1_accel_params, 24, bls_g1_accel_params, 216);
     st G1X(r), lds FP bls_g1_accel_p1;
     st G1Y(r), lds FP (bls_g1_accel_p1 + 48);
     st G1Z(r), FP_ONE_MONT;

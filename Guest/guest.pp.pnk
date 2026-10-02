@@ -1999,9 +1999,13 @@ fun 1 secp256k1_init() {
   if secp_accel_scratch != 0 {
     return 0;
   }
-  secp_accel_scratch = alloc((2 * 208 + 80));
+  secp_accel_scratch = alloc((2 * 208 + 152));
   secp_accel_init_block(secp_accel_scratch + 0, <-4294968273, -1, -1, -1>);
   secp_accel_init_block(secp_accel_scratch + 208, <-4624529908474429119, -4994812053365940165, -2, -1>);
+  var 1 blk = secp_accel_scratch + (2 * 208);
+  st blk, blk + 24;
+  st blk + 8, blk + 88;
+  st blk + 16, blk;
   return 0;
 }
 fun {1,1,1,1} secp_accel_modmul_at(1 base, {1,1,1,1} a, {1,1,1,1} b) {
@@ -2279,7 +2283,7 @@ fun 1 ec_double(1 pt) {
   if affine == 0 {
     secp_accel_normalize(pt);
   }
-  @secpdbl(pt, 0, 0, 0);
+  @secpdbl(pt, 0, pt, 64);
   st ((pt) + 64), <1, 0, 0, 0>;
   return 0;
 }
@@ -2308,12 +2312,14 @@ fun 1 ec_add_affine(1 pt, {1,1,1,1} ax, {1,1,1,1} ay) {
     return 0;
   }
   secp256k1_init();
-  st secp_accel_scratch + (2 * 208), ax;
-  st secp_accel_scratch + (2 * 208) + 32, ay;
-  st secp_accel_scratch + ((2 * 208) + 64), pt;
-  st secp_accel_scratch + ((2 * 208) + 64) + 8,
-      secp_accel_scratch + (2 * 208);
-  @secpadd(secp_accel_scratch + ((2 * 208) + 64), 0, 0, 0);
+  var 1 blk = secp_accel_scratch + (2 * 208);
+  st blk + 24, x1;
+  st blk + 24 + 32, y1;
+  st blk + 88, ax;
+  st blk + 88 + 32, ay;
+  @secpadd(blk, 24, blk, 152);
+  st (pt), lds {1,1,1,1} (blk + 24);
+  st ((pt) + 32), lds {1,1,1,1} (blk + 24 + 32);
   st ((pt) + 64), <1, 0, 0, 0>;
   return 0;
 }
@@ -10119,16 +10125,18 @@ fun 1 bn254_accel_init() {
   st bn_accel_params + 24, bn_accel_m;
   st bn_accel_params + 32, bn_accel_d;
   st bn_accel_params + 40, bn_accel_params;
-  bn_accel_fp2_f1 = alloc(64);
-  bn_accel_fp2_f2 = alloc(64);
-  bn_accel_fp2_params = alloc(16);
+  bn_accel_fp2_params = alloc(152);
+  bn_accel_fp2_f1 = bn_accel_fp2_params + 24;
+  bn_accel_fp2_f2 = bn_accel_fp2_params + 88;
   st bn_accel_fp2_params, bn_accel_fp2_f1;
   st bn_accel_fp2_params + 8, bn_accel_fp2_f2;
-  bn_accel_g1_p1 = alloc(64);
-  bn_accel_g1_p2 = alloc(64);
-  bn_accel_g1_params = alloc(16);
+  st bn_accel_fp2_params + 16, bn_accel_fp2_params;
+  bn_accel_g1_params = alloc(152);
+  bn_accel_g1_p1 = bn_accel_g1_params + 24;
+  bn_accel_g1_p2 = bn_accel_g1_params + 88;
   st bn_accel_g1_params, bn_accel_g1_p1;
   st bn_accel_g1_params + 8, bn_accel_g1_p2;
+  st bn_accel_g1_params + 16, bn_accel_g1_params;
   return 0;
 }
 fun {1,1,1,1} bn254_accel_modmul({1,1,1,1} a, {1,1,1,1} b) {
@@ -10144,7 +10152,7 @@ fun 1 bn254_accel_fp2_add(1 d, 1 a, 1 b) {
   st bn_accel_fp2_f1 + 32, lds {1,1,1,1} (a + 32);
   st bn_accel_fp2_f2, lds {1,1,1,1} b;
   st bn_accel_fp2_f2 + 32, lds {1,1,1,1} (b + 32);
-  @bn_fp2_add(bn_accel_fp2_params, 0, 0, 0);
+  @bn_fp2_add(bn_accel_fp2_params, 24, bn_accel_fp2_params, 152);
   st d, lds {1,1,1,1} bn_accel_fp2_f1;
   st d + 32, lds {1,1,1,1} (bn_accel_fp2_f1 + 32);
   return 0;
@@ -10155,7 +10163,7 @@ fun 1 bn254_accel_fp2_sub(1 d, 1 a, 1 b) {
   st bn_accel_fp2_f1 + 32, lds {1,1,1,1} (a + 32);
   st bn_accel_fp2_f2, lds {1,1,1,1} b;
   st bn_accel_fp2_f2 + 32, lds {1,1,1,1} (b + 32);
-  @bn_fp2_sub(bn_accel_fp2_params, 0, 0, 0);
+  @bn_fp2_sub(bn_accel_fp2_params, 24, bn_accel_fp2_params, 152);
   st d, lds {1,1,1,1} bn_accel_fp2_f1;
   st d + 32, lds {1,1,1,1} (bn_accel_fp2_f1 + 32);
   return 0;
@@ -10166,7 +10174,7 @@ fun 1 bn254_accel_fp2_mul(1 d, 1 a, 1 b) {
   st bn_accel_fp2_f1 + 32, lds {1,1,1,1} (a + 32);
   st bn_accel_fp2_f2, lds {1,1,1,1} b;
   st bn_accel_fp2_f2 + 32, lds {1,1,1,1} (b + 32);
-  @bn_fp2_mul(bn_accel_fp2_params, 0, 0, 0);
+  @bn_fp2_mul(bn_accel_fp2_params, 24, bn_accel_fp2_params, 152);
   st d, lds {1,1,1,1} bn_accel_fp2_f1;
   st d + 32, lds {1,1,1,1} (bn_accel_fp2_f1 + 32);
   return 0;
@@ -10503,7 +10511,7 @@ fun 1 bn254_accel_g1_double(1 out, {1,1,1,1} x, {1,1,1,1} y) {
   bn254_accel_init();
   st bn_accel_g1_p1, x;
   st bn_accel_g1_p1 + 32, y;
-  @bn_g1_dbl(bn_accel_g1_p1, 0, 0, 0);
+  @bn_g1_dbl(bn_accel_g1_p1, 0, bn_accel_g1_p1, 64);
   var {1,1,1,1} xr = lds {1,1,1,1} bn_accel_g1_p1;
   var {1,1,1,1} yr = lds {1,1,1,1} (bn_accel_g1_p1 + 32);
   st out, xr;
@@ -10517,7 +10525,7 @@ fun 1 bn254_accel_g1_add(1 out, {1,1,1,1} x1, {1,1,1,1} y1, {1,1,1,1} x2, {1,1,1
   st bn_accel_g1_p1 + 32, y1;
   st bn_accel_g1_p2, x2;
   st bn_accel_g1_p2 + 32, y2;
-  @bn_g1_add(bn_accel_g1_params, 0, 0, 0);
+  @bn_g1_add(bn_accel_g1_params, 24, bn_accel_g1_params, 152);
   var {1,1,1,1} xr = lds {1,1,1,1} bn_accel_g1_p1;
   var {1,1,1,1} yr = lds {1,1,1,1} (bn_accel_g1_p1 + 32);
   st out, xr;
@@ -12413,18 +12421,19 @@ fun 1 fp2_accel_init() {
     return 0;
   }
   bls_consts_init();
-  fp2_accel_f1 = alloc(96);
-  fp2_accel_f2 = alloc(96);
-  fp2_accel_params = alloc(16);
+  fp2_accel_params = alloc(216);
+  fp2_accel_f1 = fp2_accel_params + 24;
+  fp2_accel_f2 = fp2_accel_params + 120;
   st fp2_accel_params, fp2_accel_f1;
   st fp2_accel_params + 8, fp2_accel_f2;
+  st fp2_accel_params + 16, fp2_accel_params;
   return 0;
 }
 fun 1 fp2_add(1 r, 1 a, 1 b) {
   fp2_accel_init();
   fp2_copy(fp2_accel_f1, a);
   fp2_copy(fp2_accel_f2, b);
-  @bls_fp2_add(fp2_accel_params, 0, 0, 0);
+  @bls_fp2_add(fp2_accel_params, 24, fp2_accel_params, 216);
   fp2_copy(r, fp2_accel_f1);
   return 0;
 }
@@ -12432,7 +12441,7 @@ fun 1 fp2_sub(1 r, 1 a, 1 b) {
   fp2_accel_init();
   fp2_copy(fp2_accel_f1, a);
   fp2_copy(fp2_accel_f2, b);
-  @bls_fp2_sub(fp2_accel_params, 0, 0, 0);
+  @bls_fp2_sub(fp2_accel_params, 24, fp2_accel_params, 216);
   fp2_copy(r, fp2_accel_f1);
   return 0;
 }
@@ -12460,7 +12469,7 @@ fun 1 fp2_mul(1 r, 1 a, 1 b) {
   fp2_accel_init();
   fp2_copy(fp2_accel_f1, a);
   fp2_copy(fp2_accel_f2, b);
-  @bls_fp2_mul(fp2_accel_params, 0, 0, 0);
+  @bls_fp2_mul(fp2_accel_params, 24, fp2_accel_params, 216);
   fp2_copy(r, fp2_accel_f1);
   return 0;
 }
@@ -12787,11 +12796,12 @@ fun 1 bls_g1_accel_init() {
     return 0;
   }
   bls_consts_init();
-  bls_g1_accel_p1 = alloc(96);
-  bls_g1_accel_p2 = alloc(96);
-  bls_g1_accel_params = alloc(16);
+  bls_g1_accel_params = alloc(216);
+  bls_g1_accel_p1 = bls_g1_accel_params + 24;
+  bls_g1_accel_p2 = bls_g1_accel_params + 120;
   st bls_g1_accel_params, bls_g1_accel_p1;
   st bls_g1_accel_params + 8, bls_g1_accel_p2;
+  st bls_g1_accel_params + 16, bls_g1_accel_params;
   return 0;
 }
 fun 1 g1_set_inf(1 r) {
@@ -12834,7 +12844,7 @@ fun 1 g1_double(1 r, 1 p) {
     bls_g1_accel_init();
     st bls_g1_accel_p1, x;
     st bls_g1_accel_p1 + 48, y;
-    @bls_g1_dbl(bls_g1_accel_p1, 0, 0, 0);
+    @bls_g1_dbl(bls_g1_accel_p1, 0, bls_g1_accel_p1, 96);
     st (r), lds {1,1,1,1,1,1} bls_g1_accel_p1;
     st ((r) + 48), lds {1,1,1,1,1,1} (bls_g1_accel_p1 + 48);
     st ((r) + 96), <1, 0, 0, 0, 0, 0>;
@@ -12906,7 +12916,7 @@ fun 1 g1_add(1 r, 1 p1, 1 p2) {
     st bls_g1_accel_p1 + 48, y1;
     st bls_g1_accel_p2, x2;
     st bls_g1_accel_p2 + 48, y2;
-    @bls_g1_add(bls_g1_accel_params, 0, 0, 0);
+    @bls_g1_add(bls_g1_accel_params, 24, bls_g1_accel_params, 216);
     st (r), lds {1,1,1,1,1,1} bls_g1_accel_p1;
     st ((r) + 48), lds {1,1,1,1,1,1} (bls_g1_accel_p1 + 48);
     st ((r) + 96), <1, 0, 0, 0, 0, 0>;

@@ -136,17 +136,22 @@ fun 1 bn254_accel_init() {
   st bn_accel_params + 32, bn_accel_d;
   st bn_accel_params + 40, bn_accel_params;
 
-  bn_accel_fp2_f1 = alloc(64);
-  bn_accel_fp2_f2 = alloc(64);
-  bn_accel_fp2_params = alloc(16);
+  /* Fp2 and G1 blocks, 152 bytes each, the array of the foreign call
+     (docs/ACCEL-FFI.md): two pointers and the block's own address (the 24-byte
+     configuration), then two 64-byte operands. */
+  bn_accel_fp2_params = alloc(152);
+  bn_accel_fp2_f1 = bn_accel_fp2_params + 24;
+  bn_accel_fp2_f2 = bn_accel_fp2_params + 88;
   st bn_accel_fp2_params, bn_accel_fp2_f1;
   st bn_accel_fp2_params + 8, bn_accel_fp2_f2;
+  st bn_accel_fp2_params + 16, bn_accel_fp2_params;
 
-  bn_accel_g1_p1 = alloc(64);
-  bn_accel_g1_p2 = alloc(64);
-  bn_accel_g1_params = alloc(16);
+  bn_accel_g1_params = alloc(152);
+  bn_accel_g1_p1 = bn_accel_g1_params + 24;
+  bn_accel_g1_p2 = bn_accel_g1_params + 88;
   st bn_accel_g1_params, bn_accel_g1_p1;
   st bn_accel_g1_params + 8, bn_accel_g1_p2;
+  st bn_accel_g1_params + 16, bn_accel_g1_params;
   return 0;
 }
 
@@ -164,7 +169,7 @@ fun 1 bn254_accel_fp2_add(1 d, 1 a, 1 b) {
   st bn_accel_fp2_f1 + 32, lds U256 (a + 32);
   st bn_accel_fp2_f2, lds U256 b;
   st bn_accel_fp2_f2 + 32, lds U256 (b + 32);
-  @bn_fp2_add(bn_accel_fp2_params, 0, 0, 0);
+  @bn_fp2_add(bn_accel_fp2_params, 24, bn_accel_fp2_params, 152);
   st d, lds U256 bn_accel_fp2_f1;
   st d + 32, lds U256 (bn_accel_fp2_f1 + 32);
   return 0;
@@ -176,7 +181,7 @@ fun 1 bn254_accel_fp2_sub(1 d, 1 a, 1 b) {
   st bn_accel_fp2_f1 + 32, lds U256 (a + 32);
   st bn_accel_fp2_f2, lds U256 b;
   st bn_accel_fp2_f2 + 32, lds U256 (b + 32);
-  @bn_fp2_sub(bn_accel_fp2_params, 0, 0, 0);
+  @bn_fp2_sub(bn_accel_fp2_params, 24, bn_accel_fp2_params, 152);
   st d, lds U256 bn_accel_fp2_f1;
   st d + 32, lds U256 (bn_accel_fp2_f1 + 32);
   return 0;
@@ -188,7 +193,7 @@ fun 1 bn254_accel_fp2_mul(1 d, 1 a, 1 b) {
   st bn_accel_fp2_f1 + 32, lds U256 (a + 32);
   st bn_accel_fp2_f2, lds U256 b;
   st bn_accel_fp2_f2 + 32, lds U256 (b + 32);
-  @bn_fp2_mul(bn_accel_fp2_params, 0, 0, 0);
+  @bn_fp2_mul(bn_accel_fp2_params, 24, bn_accel_fp2_params, 152);
   st d, lds U256 bn_accel_fp2_f1;
   st d + 32, lds U256 (bn_accel_fp2_f1 + 32);
   return 0;
@@ -728,7 +733,7 @@ fun 1 bn254_accel_g1_double(1 out, U256 x, U256 y) {
   bn254_accel_init();
   st bn_accel_g1_p1, x;
   st bn_accel_g1_p1 + 32, y;
-  @bn_g1_dbl(bn_accel_g1_p1, 0, 0, 0);
+  @bn_g1_dbl(bn_accel_g1_p1, 0, bn_accel_g1_p1, 64);
   var U256 xr = lds U256 bn_accel_g1_p1;
   var U256 yr = lds U256 (bn_accel_g1_p1 + 32);
   st out, xr;
@@ -743,7 +748,7 @@ fun 1 bn254_accel_g1_add(1 out, U256 x1, U256 y1, U256 x2, U256 y2) {
   st bn_accel_g1_p1 + 32, y1;
   st bn_accel_g1_p2, x2;
   st bn_accel_g1_p2 + 32, y2;
-  @bn_g1_add(bn_accel_g1_params, 0, 0, 0);
+  @bn_g1_add(bn_accel_g1_params, 24, bn_accel_g1_params, 152);
   var U256 xr = lds U256 bn_accel_g1_p1;
   var U256 yr = lds U256 (bn_accel_g1_p1 + 32);
   st out, xr;
