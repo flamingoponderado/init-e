@@ -44,7 +44,9 @@ fun 1 keccak_init() {
 /* Keccak-f[1600] on the 25-lane state at st. */
 fun 1 keccak_f1600(1 stp) {
 #ifdef ZISK_ACCEL
-  @keccakf(stp, 200, stp, 200);
+  /* Foreign-call convention: no configuration, and the 200-byte state is the
+     array, so the accelerator reads and writes exactly the array. */
+  @keccakf(stp, 0, stp, 200);
   return 0;
 #endif
   var a00 = lds 1 (stp + 0);

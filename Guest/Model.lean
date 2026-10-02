@@ -5,6 +5,7 @@ import Guest.Basic
 import Guest.Ast
 import Guest.SoftwareAst
 import Guest.Accel
+import Guest.AccelFfi
 
 /-!
 # The guest as a flapjack program: state, host, handlers, and the stepped run
@@ -85,15 +86,7 @@ def heapEnd : Word := 2952790016
 /-- `WORD`: bytes per word. -/
 def bytesInWord : Word := 8
 
-/-! ### Bytes and words (little-endian, as the RISC-V target) -/
-
-/-- The eight little-endian bytes of a word. -/
-def leBytes (w : Word) : List UInt8 :=
-  (List.range 8).map fun i => UInt8.ofNat ((w.toNat / 256 ^ i) % 256)
-
-/-- The word whose little-endian bytes are `bytes` (missing high bytes zero). -/
-def wordOfLeBytes (bytes : List UInt8) : Word :=
-  BitVec.ofNat 64 (bytes.foldr (fun byte acc => acc * 256 + byte.toNat) 0)
+/-! Bytes and words (little-endian, as the RISC-V target) are in `Guest.AccelFfi`. -/
 
 /-! ### Pancake memory -/
 
@@ -150,9 +143,10 @@ def sharedWidth (configuration : List UInt8) : Nat :=
 
 /-- The FFI oracle: `MappedRead` returns the addressed bytes (zero-extended to
 the 8-byte payload), `MappedWrite` stores the value bytes that precede the
-8-byte address in the payload. Both fail outside the host regions. Ordinary
-external calls are all handled by `guestAcceleratorFfi`, so the oracle never
-sees them. -/
+8-byte address in the payload. Both fail outside the host regions. The
+accelerators that fit CakeML's foreign-call interface (`Guest.acceleratorBytes`)
+are functions of the configuration and array bytes; any other external call that
+reaches the oracle fails. -/
 def guestOracle : FfiOracle HostMemory := fun name host configuration bytes =>
   match name with
   | .sharedMem .mappedRead =>
@@ -170,7 +164,10 @@ def guestOracle : FfiOracle HostMemory := fun name host configuration bytes =>
           let offset := (current - address).toNat
           if address ≤ current ∧ offset < count then values[offset]? else host current) bytes
       else .final .failed
-  | .extCall _ => .final .failed
+  | .extCall name =>
+      match acceleratorBytes name configuration bytes with
+      | some result => .returned host result
+      | none => .final .failed
 
 /-- Initial FFI state for a run on `input`. -/
 def guestFfiState (input : InputBlob) : FfiState HostMemory :=

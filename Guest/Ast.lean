@@ -2331,7 +2331,7 @@ def guestFn_sha256_init : Decl (BitVec 64) :=
           (Prog.seq
           (Prog.call (some ((some (VarKind.global, "sha_pad")), none)) "alloc" [(Exp.const (BitVec.ofNat 64 128))])
           (Prog.seq
-          (Prog.call (some ((some (VarKind.global, "sha_accel")), none)) "alloc" [(Exp.const (BitVec.ofNat 64 112))])
+          (Prog.call (some ((some (VarKind.global, "sha_accel")), none)) "alloc" [(Exp.const (BitVec.ofNat 64 120))])
           (Prog.return (Exp.const (BitVec.ofNat 64 0))))))
       returnShape := Shape.one }
 
@@ -2368,36 +2368,37 @@ def guestFn_sha256_block : Decl (BitVec 64) :=
       exported := false
       params := [("stp", Shape.one), ("blk", Shape.one)]
       body :=
-        (Prog.dec "blockp" Shape.one (Exp.op BinOp.add [(Exp.var VarKind.global "sha_accel"), (Exp.const (BitVec.ofNat 64 48))])
-          (Prog.seq
-            (Prog.ite (Exp.cmp Cmp.notEqual (Exp.op BinOp.and [(Exp.var VarKind.local "blk"), (Exp.const (BitVec.ofNat 64 7))]) (Exp.const (BitVec.ofNat 64 0)))
-              (Prog.call (some (none, none)) "memcpy" [(Exp.var VarKind.local "blockp"), (Exp.var VarKind.local "blk"), (Exp.const (BitVec.ofNat 64 64))])
-              (Prog.assign VarKind.local "blockp" (Exp.var VarKind.local "blk")))
-            (Prog.dec "i" Shape.one (Exp.const (BitVec.ofNat 64 0))
-              (Prog.seq
-                (Prog.while (Exp.cmp Cmp.less (Exp.var VarKind.local "i") (Exp.const (BitVec.ofNat 64 4)))
-                  (Prog.dec "lo" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.panOp PanOp.mul [(Exp.var VarKind.local "i"), (Exp.const (BitVec.ofNat 64 16))])]))
-                    (Prog.dec "hi" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.panOp PanOp.mul [(Exp.var VarKind.local "i"), (Exp.const (BitVec.ofNat 64 16))]), (Exp.const (BitVec.ofNat 64 8))]))
-                      (Prog.seq
-                        (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "sha_accel"), (Exp.const (BitVec.ofNat 64 16)), (Exp.panOp PanOp.mul [(Exp.var VarKind.local "i"), (Exp.const (BitVec.ofNat 64 8))])]) (Exp.op BinOp.or [(Exp.shift Shift.lsr (Exp.shift Shift.lsl (Exp.var VarKind.local "lo") (Exp.const (BitVec.ofNat 64 32))) (Exp.const (BitVec.ofNat 64 32))), (Exp.shift Shift.lsl (Exp.shift Shift.lsr (Exp.shift Shift.lsl (Exp.var VarKind.local "hi") (Exp.const (BitVec.ofNat 64 32))) (Exp.const (BitVec.ofNat 64 32))) (Exp.const (BitVec.ofNat 64 32)))]))
-                        (Prog.assign VarKind.local "i" (Exp.op BinOp.add [(Exp.var VarKind.local "i"), (Exp.const (BitVec.ofNat 64 1))]))))))
-                (Prog.seq
-                (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "sha_accel"), (Exp.const (BitVec.ofNat 64 0))]) (Exp.op BinOp.add [(Exp.var VarKind.global "sha_accel"), (Exp.const (BitVec.ofNat 64 16))]))
-                (Prog.seq
-                (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "sha_accel"), (Exp.const (BitVec.ofNat 64 8))]) (Exp.var VarKind.local "blockp"))
-                (Prog.seq
-                (Prog.extCall "sha256f" (Exp.var VarKind.global "sha_accel") (Exp.const (BitVec.ofNat 64 16)) (Exp.var VarKind.global "sha_accel") (Exp.const (BitVec.ofNat 64 16)))
-                (Prog.seq
-                (Prog.assign VarKind.local "i" (Exp.const (BitVec.ofNat 64 0)))
-                (Prog.seq
-                (Prog.while (Exp.cmp Cmp.less (Exp.var VarKind.local "i") (Exp.const (BitVec.ofNat 64 4)))
-                  (Prog.dec "packed" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.global "sha_accel"), (Exp.const (BitVec.ofNat 64 16)), (Exp.panOp PanOp.mul [(Exp.var VarKind.local "i"), (Exp.const (BitVec.ofNat 64 8))])]))
+        (Prog.seq
+          (Prog.ite (Exp.cmp Cmp.notEqual (Exp.var VarKind.local "blk") (Exp.op BinOp.add [(Exp.var VarKind.global "sha_accel"), (Exp.const (BitVec.ofNat 64 56))]))
+            (Prog.call (some (none, none)) "memcpy" [(Exp.op BinOp.add [(Exp.var VarKind.global "sha_accel"), (Exp.const (BitVec.ofNat 64 56))]), (Exp.var VarKind.local "blk"), (Exp.const (BitVec.ofNat 64 64))])
+            Prog.skip)
+          (Prog.dec "i" Shape.one (Exp.const (BitVec.ofNat 64 0))
+            (Prog.seq
+              (Prog.while (Exp.cmp Cmp.less (Exp.var VarKind.local "i") (Exp.const (BitVec.ofNat 64 4)))
+                (Prog.dec "lo" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.panOp PanOp.mul [(Exp.var VarKind.local "i"), (Exp.const (BitVec.ofNat 64 16))])]))
+                  (Prog.dec "hi" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.panOp PanOp.mul [(Exp.var VarKind.local "i"), (Exp.const (BitVec.ofNat 64 16))]), (Exp.const (BitVec.ofNat 64 8))]))
                     (Prog.seq
-                      (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.panOp PanOp.mul [(Exp.var VarKind.local "i"), (Exp.const (BitVec.ofNat 64 16))])]) (Exp.shift Shift.lsr (Exp.shift Shift.lsl (Exp.var VarKind.local "packed") (Exp.const (BitVec.ofNat 64 32))) (Exp.const (BitVec.ofNat 64 32))))
-                      (Prog.seq
-                      (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.panOp PanOp.mul [(Exp.var VarKind.local "i"), (Exp.const (BitVec.ofNat 64 16))]), (Exp.const (BitVec.ofNat 64 8))]) (Exp.shift Shift.lsr (Exp.var VarKind.local "packed") (Exp.const (BitVec.ofNat 64 32))))
+                      (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "sha_accel"), (Exp.const (BitVec.ofNat 64 24)), (Exp.panOp PanOp.mul [(Exp.var VarKind.local "i"), (Exp.const (BitVec.ofNat 64 8))])]) (Exp.op BinOp.or [(Exp.shift Shift.lsr (Exp.shift Shift.lsl (Exp.var VarKind.local "lo") (Exp.const (BitVec.ofNat 64 32))) (Exp.const (BitVec.ofNat 64 32))), (Exp.shift Shift.lsl (Exp.shift Shift.lsr (Exp.shift Shift.lsl (Exp.var VarKind.local "hi") (Exp.const (BitVec.ofNat 64 32))) (Exp.const (BitVec.ofNat 64 32))) (Exp.const (BitVec.ofNat 64 32)))]))
                       (Prog.assign VarKind.local "i" (Exp.op BinOp.add [(Exp.var VarKind.local "i"), (Exp.const (BitVec.ofNat 64 1))]))))))
-                (Prog.return (Exp.const (BitVec.ofNat 64 0))))))))))))
+              (Prog.seq
+              (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "sha_accel"), (Exp.const (BitVec.ofNat 64 0))]) (Exp.op BinOp.add [(Exp.var VarKind.global "sha_accel"), (Exp.const (BitVec.ofNat 64 24))]))
+              (Prog.seq
+              (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "sha_accel"), (Exp.const (BitVec.ofNat 64 8))]) (Exp.op BinOp.add [(Exp.var VarKind.global "sha_accel"), (Exp.const (BitVec.ofNat 64 56))]))
+              (Prog.seq
+              (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "sha_accel"), (Exp.const (BitVec.ofNat 64 16))]) (Exp.op BinOp.add [(Exp.var VarKind.global "sha_accel"), (Exp.const (BitVec.ofNat 64 24))]))
+              (Prog.seq
+              (Prog.extCall "sha256f" (Exp.var VarKind.global "sha_accel") (Exp.const (BitVec.ofNat 64 24)) (Exp.op BinOp.add [(Exp.var VarKind.global "sha_accel"), (Exp.const (BitVec.ofNat 64 24))]) (Exp.const (BitVec.ofNat 64 96)))
+              (Prog.seq
+              (Prog.assign VarKind.local "i" (Exp.const (BitVec.ofNat 64 0)))
+              (Prog.seq
+              (Prog.while (Exp.cmp Cmp.less (Exp.var VarKind.local "i") (Exp.const (BitVec.ofNat 64 4)))
+                (Prog.dec "packed" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.global "sha_accel"), (Exp.const (BitVec.ofNat 64 24)), (Exp.panOp PanOp.mul [(Exp.var VarKind.local "i"), (Exp.const (BitVec.ofNat 64 8))])]))
+                  (Prog.seq
+                    (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.panOp PanOp.mul [(Exp.var VarKind.local "i"), (Exp.const (BitVec.ofNat 64 16))])]) (Exp.shift Shift.lsr (Exp.shift Shift.lsl (Exp.var VarKind.local "packed") (Exp.const (BitVec.ofNat 64 32))) (Exp.const (BitVec.ofNat 64 32))))
+                    (Prog.seq
+                    (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.panOp PanOp.mul [(Exp.var VarKind.local "i"), (Exp.const (BitVec.ofNat 64 16))]), (Exp.const (BitVec.ofNat 64 8))]) (Exp.shift Shift.lsr (Exp.var VarKind.local "packed") (Exp.const (BitVec.ofNat 64 32))))
+                    (Prog.assign VarKind.local "i" (Exp.op BinOp.add [(Exp.var VarKind.local "i"), (Exp.const (BitVec.ofNat 64 1))]))))))
+              (Prog.return (Exp.const (BitVec.ofNat 64 0))))))))))))
       returnShape := Shape.one }
 
 def guestFn_sha256_finish : Decl (BitVec 64) :=
@@ -2466,19 +2467,19 @@ def guestFn_sha256_pair : Decl (BitVec 64) :=
         (Prog.seq
           (Prog.call (some (none, none)) "sha256_state_init" [(Exp.var VarKind.global "sha_st")])
           (Prog.seq
-          (Prog.call (some (none, none)) "memcpy" [(Exp.op BinOp.add [(Exp.var VarKind.global "sha_accel"), (Exp.const (BitVec.ofNat 64 48))]), (Exp.var VarKind.local "input_a"), (Exp.const (BitVec.ofNat 64 32))])
+          (Prog.call (some (none, none)) "memcpy" [(Exp.op BinOp.add [(Exp.var VarKind.global "sha_accel"), (Exp.const (BitVec.ofNat 64 56))]), (Exp.var VarKind.local "input_a"), (Exp.const (BitVec.ofNat 64 32))])
           (Prog.seq
-          (Prog.call (some (none, none)) "memcpy" [(Exp.op BinOp.add [(Exp.var VarKind.global "sha_accel"), (Exp.const (BitVec.ofNat 64 80))]), (Exp.var VarKind.local "input_b"), (Exp.const (BitVec.ofNat 64 32))])
+          (Prog.call (some (none, none)) "memcpy" [(Exp.op BinOp.add [(Exp.var VarKind.global "sha_accel"), (Exp.const (BitVec.ofNat 64 88))]), (Exp.var VarKind.local "input_b"), (Exp.const (BitVec.ofNat 64 32))])
           (Prog.seq
-          (Prog.call (some (none, none)) "sha256_block" [(Exp.var VarKind.global "sha_st"), (Exp.op BinOp.add [(Exp.var VarKind.global "sha_accel"), (Exp.const (BitVec.ofNat 64 48))])])
+          (Prog.call (some (none, none)) "sha256_block" [(Exp.var VarKind.global "sha_st"), (Exp.op BinOp.add [(Exp.var VarKind.global "sha_accel"), (Exp.const (BitVec.ofNat 64 56))])])
           (Prog.seq
-          (Prog.call (some (none, none)) "memzero" [(Exp.op BinOp.add [(Exp.var VarKind.global "sha_accel"), (Exp.const (BitVec.ofNat 64 48))]), (Exp.const (BitVec.ofNat 64 64))])
+          (Prog.call (some (none, none)) "memzero" [(Exp.op BinOp.add [(Exp.var VarKind.global "sha_accel"), (Exp.const (BitVec.ofNat 64 56))]), (Exp.const (BitVec.ofNat 64 64))])
           (Prog.seq
-          (Prog.storeByte (Exp.op BinOp.add [(Exp.var VarKind.global "sha_accel"), (Exp.const (BitVec.ofNat 64 48))]) (Exp.const (BitVec.ofNat 64 128)))
+          (Prog.storeByte (Exp.op BinOp.add [(Exp.var VarKind.global "sha_accel"), (Exp.const (BitVec.ofNat 64 56))]) (Exp.const (BitVec.ofNat 64 128)))
           (Prog.seq
-          (Prog.call (some (none, none)) "st_be64" [(Exp.op BinOp.add [(Exp.var VarKind.global "sha_accel"), (Exp.const (BitVec.ofNat 64 104))]), (Exp.const (BitVec.ofNat 64 512))])
+          (Prog.call (some (none, none)) "st_be64" [(Exp.op BinOp.add [(Exp.var VarKind.global "sha_accel"), (Exp.const (BitVec.ofNat 64 112))]), (Exp.const (BitVec.ofNat 64 512))])
           (Prog.seq
-          (Prog.call (some (none, none)) "sha256_block" [(Exp.var VarKind.global "sha_st"), (Exp.op BinOp.add [(Exp.var VarKind.global "sha_accel"), (Exp.const (BitVec.ofNat 64 48))])])
+          (Prog.call (some (none, none)) "sha256_block" [(Exp.var VarKind.global "sha_st"), (Exp.op BinOp.add [(Exp.var VarKind.global "sha_accel"), (Exp.const (BitVec.ofNat 64 56))])])
           (Prog.seq
           (Prog.call (some (none, none)) "sha256_finish" [(Exp.var VarKind.global "sha_st"), (Exp.var VarKind.local "out")])
           (Prog.return (Exp.const (BitVec.ofNat 64 0))))))))))))
@@ -2565,7 +2566,7 @@ def guestFn_keccak_f1600 : Decl (BitVec 64) :=
       params := [("stp", Shape.one)]
       body :=
         (Prog.seq
-          (Prog.extCall "keccakf" (Exp.var VarKind.local "stp") (Exp.const (BitVec.ofNat 64 200)) (Exp.var VarKind.local "stp") (Exp.const (BitVec.ofNat 64 200)))
+          (Prog.extCall "keccakf" (Exp.var VarKind.local "stp") (Exp.const (BitVec.ofNat 64 0)) (Exp.var VarKind.local "stp") (Exp.const (BitVec.ofNat 64 200)))
           (Prog.seq
           (Prog.return (Exp.const (BitVec.ofNat 64 0)))
           (Prog.dec "a00" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 0))]))

@@ -974,7 +974,7 @@ var 1 sha_accel = 0;
 fun 1 sha256_init() {
   sha_st = alloc(64);
   sha_pad = alloc(128);
-  sha_accel = alloc(112);
+  sha_accel = alloc(120);
   return 0;
 }
 fun 1 sha256_state_init(1 stp) {
@@ -989,25 +989,23 @@ fun 1 sha256_state_init(1 stp) {
   return 0;
 }
 fun 1 sha256_block(1 stp, 1 blk) {
-  var 1 blockp = sha_accel + 48;
-  if (blk & 7) != 0 {
-    memcpy(blockp, blk, 64);
-  } else {
-    blockp = blk;
+  if blk != sha_accel + 56 {
+    memcpy(sha_accel + 56, blk, 64);
   }
   var i = 0;
   while i < 4 {
     var lo = lds 1 (stp + i * 16);
     var hi = lds 1 (stp + i * 16 + 8);
-    st sha_accel + 16 + i * 8, (((lo << 32) >>> 32) | (((hi << 32) >>> 32) << 32));
+    st sha_accel + 24 + i * 8, (((lo << 32) >>> 32) | (((hi << 32) >>> 32) << 32));
     i = i + 1;
   }
-  st sha_accel + 0, sha_accel + 16;
-  st sha_accel + 8, blockp;
-  @sha256f(sha_accel, 16, sha_accel, 16);
+  st sha_accel + 0, sha_accel + 24;
+  st sha_accel + 8, sha_accel + 56;
+  st sha_accel + 16, sha_accel + 24;
+  @sha256f(sha_accel, 24, sha_accel + 24, 96);
   i = 0;
   while i < 4 {
-    var packed = lds 1 (sha_accel + 16 + i * 8);
+    var packed = lds 1 (sha_accel + 24 + i * 8);
     st stp + i * 16, (packed << 32) >>> 32;
     st stp + i * 16 + 8, packed >>> 32;
     i = i + 1;
@@ -1047,13 +1045,13 @@ fun 1 sha256(1 p, 1 len, 1 out) {
 }
 fun 1 sha256_pair(1 input_a, 1 input_b, 1 out) {
   sha256_state_init(sha_st);
-  memcpy(sha_accel + 48, input_a, 32);
-  memcpy(sha_accel + 80, input_b, 32);
-  sha256_block(sha_st, sha_accel + 48);
-  memzero(sha_accel + 48, 64);
-  st8 sha_accel + 48, 128;
-  st_be64(sha_accel + 104, 512);
-  sha256_block(sha_st, sha_accel + 48);
+  memcpy(sha_accel + 56, input_a, 32);
+  memcpy(sha_accel + 88, input_b, 32);
+  sha256_block(sha_st, sha_accel + 56);
+  memzero(sha_accel + 56, 64);
+  st8 sha_accel + 56, 128;
+  st_be64(sha_accel + 112, 512);
+  sha256_block(sha_st, sha_accel + 56);
   sha256_finish(sha_st, out);
   return 0;
 }
@@ -1091,7 +1089,7 @@ fun 1 keccak_init() {
   return 0;
 }
 fun 1 keccak_f1600(1 stp) {
-  @keccakf(stp, 200, stp, 200);
+  @keccakf(stp, 0, stp, 200);
   return 0;
   var a00 = lds 1 (stp + 0);
   var a10 = lds 1 (stp + 8);
