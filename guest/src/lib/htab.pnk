@@ -334,6 +334,20 @@ fun 1 htab_del(1 t, 1 key) {
   return 1;
 }
 
+/* Drop the entries inserted after the table held n entries. Insertion only
+   appends to the iteration order and this is the only deleter that runs on a
+   table in use, so those entries are exactly the tail of the order: this undoes
+   a failed frame's insertions without a separate log. */
+fun 1 htab_truncate(1 t, 1 n) {
+  var stride = lds 1 (t + HT_KEYSTRIDE);
+  while (lds 1 (t + HT_COUNT)) >+ n {
+    var 1 pos = (lds 1 (t + HT_COUNT)) - 1;
+    var 1 slot = lds 1 ((lds 1 (t + HT_ORDER)) + pos * 8);
+    htab_del(t, (lds 1 (t + HT_KEYS)) + slot * stride);
+  }
+  return 0;
+}
+
 fun 1 htab_count(1 t) {
   return lds 1 (t + HT_COUNT);
 }

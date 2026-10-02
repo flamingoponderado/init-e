@@ -13,6 +13,20 @@ exception Fail : 1;
 
 #define TX_MAX_GAS_LIMIT 16777216
 #define SYSTEM_TRANSACTION_GAS 30000000
+
+/* The journal must hold every record one state_fresh_tx scope can write: the
+   most regular gas such a scope can run (a user transaction is capped at
+   TX_MAX_GAS_LIMIT, a system transaction gets SYSTEM_TRANSACTION_GAS) divided
+   by the cheapest journal-writing operation, plus slack for the constant
+   per-transaction writes. */
+#if TX_MAX_GAS_LIMIT > SYSTEM_TRANSACTION_GAS
+#define JOURNAL_SCOPE_GAS TX_MAX_GAS_LIMIT
+#else
+#define JOURNAL_SCOPE_GAS SYSTEM_TRANSACTION_GAS
+#endif
+#if JOURNAL_CAP < (JOURNAL_SCOPE_GAS / JOURNAL_MIN_GAS + JOURNAL_SLACK)
+#error "JOURNAL_CAP is too small for the largest regular gas of one state_fresh_tx scope"
+#endif
 #define SYSTEM_MAX_SSTORES_PER_CALL 16
 #define GWEI_TO_WEI 1000000000
 
@@ -717,6 +731,9 @@ fun 1 process_withdrawals(1 pl) {
     var {1,1,1,1} amt = <LD_LE64(w + 36), 0, 0, 0>;
     var {1,1,1,1} wei = u256_mul(amt, <GWEI_TO_WEI, 0, 0, 0>);
     create_ether(w + 16, wei);
+    /* No snapshot is outstanding and nothing rolls a withdrawal back, so drop
+       its undo records: the withdrawal count is not bounded by gas. */
+    journal_n = 0;
     i = i + 1;
   }
   incorporate_tx_into_block();

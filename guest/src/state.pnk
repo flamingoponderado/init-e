@@ -87,7 +87,7 @@ fun 1 state_init(1 nodedb, 1 state_root, 1 codedb) {
   t = htab_new(20, 256);
   st bs + BS_PRE_READS, t;
   sk_buf = alloc(64);
-  journal_cap = 262144;
+  journal_cap = JOURNAL_CAP;
   journal = alloc(journal_cap * 32);
   journal_n = 0;
   ts = 0;

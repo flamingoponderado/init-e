@@ -112,7 +112,9 @@ exception EvmErr : 1;
 #define EV_MEM_MARK 224
 #define EV_STACK_CAP 232
 #define EV_ADDR_TMP 240        /* 24-byte frame-local address slot */
-#define EV_SIZE 264
+#define EV_ACC_ADDRS_N 264     /* entries in the shared accessed-address set when the frame started */
+#define EV_ACC_KEYS_N 272      /* same for the accessed storage keys */
+#define EV_SIZE 280
 
 /* Log record */
 #define LOG_ADDRESS 0
@@ -163,6 +165,8 @@ exception EvmErr : 1;
 
 var 1 ev = 0;          /* current frame */
 var 1 evm_empty = 0;
+var 1 pre_hdr_buf = 0;   /* 96-byte modexp header scratch (preallocated in evm_init) */
+var 1 evm_key_buf = 0;   /* 32-byte storage-key scratch for SLOAD/SSTORE/TLOAD/TSTORE (all callees copy the key) */
 
 /* ---- small helpers ---------------------------------------------------- */
 
@@ -533,8 +537,15 @@ fun 1 frame_new(1 msg) {
   st e + EV_MSG, msg;
   var 1 del = htab_new_scratch(20, 4);
   st e + EV_DELETE, del;
+  /* The accessed sets are shared by every frame of the transaction. A frame
+     that fails removes what it inserted by truncating back to these counts
+     (rollback_child_access); one that succeeds just leaves its entries. */
   st e + EV_ACC_ADDRS, lds 1 (msg + MSG_ACC_ADDRS);
   st e + EV_ACC_KEYS, lds 1 (msg + MSG_ACC_KEYS);
+  var 1 acc_n = htab_count(lds 1 (msg + MSG_ACC_ADDRS));
+  st e + EV_ACC_ADDRS_N, acc_n;
+  acc_n = htab_count(lds 1 (msg + MSG_ACC_KEYS));
+  st e + EV_ACC_KEYS_N, acc_n;
   st e + EV_OUTPUT, evm_empty;
   st e + EV_RETDATA, evm_empty;
   st e + EV_RETDATA_CAP, 0;
@@ -568,14 +579,23 @@ fun 1 warm_address(1 addr) {
   return 0;
 }
 
-/* EIP-2929 access cost for an address (warms it). */
+/* EIP-2929 access cost for an address. Does not warm it: the caller charges
+   first and then calls warm_after_charge, so that nothing is allocated for an
+   access that gas did not pay for. */
 fun 1 access_gas_cost(1 addr) {
   var 1 w = is_warm_address(addr);
   if w != 0 {
     return G_WARM_ACCESS;
   }
-  warm_address(addr);
   return G_COLD_ACCOUNT_ACCESS;
+}
+
+/* Warm addr after the cost c returned by access_gas_cost has been charged. */
+fun 1 warm_after_charge(1 addr, 1 c) {
+  if c == G_COLD_ACCOUNT_ACCESS {
+    warm_address(addr);
+  }
+  return 0;
 }
 
 /* ---- arithmetic / comparison / bitwise (InstructionsCore.lean) ------------------- */
@@ -1123,12 +1143,8 @@ fun 1 log_append(1 e, 1 log) {
 fun 1 op_log(1 ntopics) {
   var {1,1,1,1} start = stack_pop();
   var {1,1,1,1} size = stack_pop();
-  var 1 topics = alloc(ntopics * 32 + 8);
-  var i = 0;
-  while i < ntopics {
-    var {1,1,1,1} t = stack_pop();
-    u256_to_be32(t, topics + i * 32);
-    i = i + 1;
+  if (lds 1 (ev + EV_SP)) <+ ntopics {
+    throw EvmErr E_STACK_UNDERFLOW;
   }
   var 1 n = sat_word(size);
   var {1,1} x = extend_memory_cost1(start, size);
@@ -1140,6 +1156,13 @@ fun 1 op_log(1 ntopics) {
     cost = add_sat(cost, dc.0);
   }
   charge_gas(cost);
+  var 1 topics = alloc(ntopics * 32 + 8);
+  var i = 0;
+  while i < ntopics {
+    var {1,1,1,1} t = stack_pop();
+    u256_to_be32(t, topics + i * 32);
+    i = i + 1;
+  }
   extend_memory(x.1);
   require_not_static();
   var 1 log = alloc(LOG_SIZE);
@@ -1176,15 +1199,15 @@ fun 1 warm_storage_key(1 addr, 1 key) {
 
 fun 1 op_sload() {
   var {1,1,1,1} kv = stack_pop();
-  var 1 key = alloc(32);
+  var 1 key = evm_key_buf;
   u256_to_be32(kv, key);
   var target = lds 1 ((lds 1 (ev + EV_MSG)) + MSG_CURRENT_TARGET);
   var 1 warm = is_warm_storage_key(target, key);
   if warm != 0 {
     charge_gas(G_WARM_ACCESS);
   } else {
-    warm_storage_key(target, key);
     charge_gas(G_COLD_STORAGE_ACCESS);
+    warm_storage_key(target, key);
   }
   var {1,1,1,1} v = get_storage(target, key);
   stack_push(v);
@@ -1196,7 +1219,7 @@ fun 1 op_sstore() {
   require_not_static();
   var {1,1,1,1} kv = stack_pop();
   var {1,1,1,1} new_value = stack_pop();
-  var 1 key = alloc(32);
+  var 1 key = evm_key_buf;
   u256_to_be32(kv, key);
   var target = lds 1 ((lds 1 (ev + EV_MSG)) + MSG_CURRENT_TARGET);
   var 1 warm = is_warm_storage_key(target, key);
@@ -1206,6 +1229,7 @@ fun 1 op_sstore() {
   }
   var 1 mx = max(access_cost, G_CALL_STIPEND + 1);
   check_gas(mx);
+  charge_gas(access_cost);
   if warm == 0 {
     warm_storage_key(target, key);
   }
@@ -1239,7 +1263,7 @@ fun 1 op_sstore() {
   if (cn == 0) && (on != 0) && (oz != 0) {
     credit_state_gas_refund(SG_STORAGE_SET);
   }
-  charge_gas(gas_cost);
+  charge_gas(gas_cost - access_cost);
   charge_state_gas(state_gas);
   set_storage(target, key, new_value);
   pc_add(1);
@@ -1249,7 +1273,7 @@ fun 1 op_sstore() {
 fun 1 op_tload() {
   var {1,1,1,1} kv = stack_pop();
   charge_gas(100);
-  var 1 key = alloc(32);
+  var 1 key = evm_key_buf;
   u256_to_be32(kv, key);
   var target = lds 1 ((lds 1 (ev + EV_MSG)) + MSG_CURRENT_TARGET);
   var {1,1,1,1} v = get_transient_storage(target, key);
@@ -1263,7 +1287,7 @@ fun 1 op_tstore() {
   var {1,1,1,1} kv = stack_pop();
   var {1,1,1,1} v = stack_pop();
   charge_gas(100);
-  var 1 key = alloc(32);
+  var 1 key = evm_key_buf;
   u256_to_be32(kv, key);
   var target = lds 1 ((lds 1 (ev + EV_MSG)) + MSG_CURRENT_TARGET);
   set_transient_storage(target, key, v);
@@ -1286,6 +1310,7 @@ fun 1 op_balance() {
   var 1 addr = to_address_masked(av);
   var 1 c = access_gas_cost(addr);
   charge_gas(c);
+  warm_after_charge(addr, c);
   var 1 a = get_account(addr);
   stack_push(lds {1,1,1,1} (a + ACCT_BALANCE));
   pc_add(1);
@@ -1396,6 +1421,7 @@ fun 1 op_extcodesize() {
   var 1 addr = to_address_masked(av);
   var 1 c = access_gas_cost(addr);
   charge_gas(c + G_WARM_ACCESS);
+  warm_after_charge(addr, c);
   var {1,1} code = ext_code_of(addr);
   stack_push_word(code.1);
   pc_add(1);
@@ -1414,6 +1440,7 @@ fun 1 op_extcodecopy() {
   var 1 acc = access_gas_cost(addr);
   var 1 cost = add_sat(acc + G_WARM_ACCESS + G_COPY_PER_WORD * w, x.0);
   charge_gas(cost);
+  warm_after_charge(addr, acc);
   extend_memory(x.1);
   var {1,1} code = ext_code_of(addr);
   if n != 0 {
@@ -1460,6 +1487,7 @@ fun 1 op_extcodehash() {
   var 1 addr = to_address_masked(av);
   var 1 c = access_gas_cost(addr);
   charge_gas(c);
+  warm_after_charge(addr, c);
   var 1 a = get_account(addr);
   var 1 e = acct_is_empty(a);
   if e != 0 {
