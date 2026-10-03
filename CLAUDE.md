@@ -3,7 +3,7 @@
 ## Docker pre-release process
 
 When cutting a versioned pre-release from a Docker build that has already
-been tested (e.g. a `ziskemu-v0.18.0-<sha>` image that passed the full EEST
+been tested (e.g. a `spike-<sha>` image (earlier ones: `ziskemu-v0.18.0-<sha>`) that passed the full EEST
 corpus), don't push a new `docker/*` tag or dispatch `docker.yml` to get the
 new version tag — that rebuilds from source and isn't guaranteed
 byte-identical to what was actually tested. Instead, in this order:

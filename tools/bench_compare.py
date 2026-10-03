@@ -5,7 +5,7 @@ import json
 import sys
 
 
-METRICS = ("spike_instr", "zisk_steps", "zisk_cost")
+METRICS = ("spike_instr",)
 
 
 def parse_threshold(value):
@@ -128,8 +128,7 @@ def main():
     labels = list(old_fixtures)
     labels.extend(label for label in new_fixtures if label not in old_fixtures)
     print(f"max Spike instruction growth: {args.max_regress:.2f}%")
-    print("fixture | status | spike_instr old -> new (delta) | "
-          "zisk_steps old -> new (delta) | zisk_cost old -> new (delta)")
+    print("fixture | status | spike_instr old -> new (delta)")
     regressions = []
     for label in labels:
         old = old_fixtures.get(label)

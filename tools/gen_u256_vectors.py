@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """gen_u256_vectors.py [--count N] [--seed S] OUT_INPUT OUT_EXPECTED
-Test vectors for guest/test/t_u256.pnk.  The input (ziskemu framing: 8-byte LE
+Test vectors for guest/test/t_u256.pnk.  The input (input framing: 8-byte LE
 length, blob, zero pad to 8) holds N cases of a, b, m as 32-byte big-endian
 words; the expected file holds, per case, NRES 32-byte big-endian results:
   0 add(a,b)   1 sub(a,b)   2 mul(a,b)   3 div(a,b)   4 mod(a,b)

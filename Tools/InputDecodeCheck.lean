@@ -15,7 +15,7 @@ oracle for "this input decodes". The check runs the guest on each input under
 the same stepped semantics `Guest.StepBound` reasons about and reports any
 input where the oracle and `declaredBlockGasLimit` disagree.
 
-Inputs are in the ziskemu packing that `tools/make-inputs.sh` and
+Inputs are in the input packing that `tools/make-inputs.sh` and
 `tools/ssz-inputs.py` write. Generate a corpus that actually decodes with
 
     tools/ssz-inputs.py work/ssz-inputs --fuzz

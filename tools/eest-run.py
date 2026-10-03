@@ -2,7 +2,7 @@
 """Run a guest ELF over an EEST input manifest with spike_run and classify.
 
 Usage: eest-run.py GUEST.elf MANIFEST.tsv [--jobs N] [--limit N] [--filter S]
-                   [--out-dir DIR] [--quiet-passes] [--ziskemu]
+                   [--out-dir DIR] [--quiet-passes]
                    [--json FILE] [--from-json FILE --fail-code CLASS/CODE]
                    [--labels FILE]
 
@@ -19,70 +19,24 @@ from collections import Counter
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SPIKE_RUN = os.environ.get("SPIKE_RUN", os.path.join(ROOT, "tools/spike/spike_run"))
-ZISKEMU = os.environ.get("ZISKEMU", os.path.expanduser("~/.zisk/bin/ziskemu"))
 STEPS_RE = re.compile(r"halted cleanly steps=(\d+)")
 
-# ziskemu's peak RSS is dominated by a fixed per-process cost (ROM/witness
-# tables), not by fixture size: measured 6.50 GB on a 5.8 KB fixture and
-# 6.71 GB (6551 MiB) on an 8.4 MB "bigmem" stress fixture (799.97M steps)
-# with this guest. 6551 MiB + a 30% safety buffer is 8517 MiB; rounded up to
-# 8704 MiB (8.5 GiB).
-ZISKEMU_JOB_MEM_MIB = int(os.environ.get("ZISKEMU_JOB_MEM_MIB", "8704"))
-
-def available_memory_mib():
-    """The tightest of any cgroup memory limit and host/VM available memory,
-    in MiB, or None if it can't be determined (e.g. non-Linux)."""
-    limits = []
-    try:
-        with open("/sys/fs/cgroup/memory.max") as f:  # cgroup v2
-            v = f.read().strip()
-            if v != "max":
-                limits.append(int(v) // (1024 * 1024))
-    except (OSError, ValueError):
-        pass
-    try:
-        with open("/sys/fs/cgroup/memory/memory.limit_in_bytes") as f:  # cgroup v1
-            v = int(f.read().strip())
-            if v < (1 << 62):  # cgroup v1's "no limit" is a huge sentinel value
-                limits.append(v // (1024 * 1024))
-    except (OSError, ValueError):
-        pass
-    try:
-        with open("/proc/meminfo") as f:
-            for line in f:
-                if line.startswith("MemAvailable:"):
-                    limits.append(int(line.split()[1]) // 1024)
-                    break
-    except (OSError, ValueError, IndexError):
-        pass
-    return min(limits) if limits else None
-
-def default_jobs(use_zisk):
-    cpu_jobs = os.cpu_count() or 1
-    if not use_zisk:
-        return cpu_jobs
-    mem_mib = available_memory_mib()
-    if mem_mib is None:
-        return cpu_jobs
-    mem_jobs = max(1, mem_mib // ZISKEMU_JOB_MEM_MIB)
-    return max(1, min(cpu_jobs, mem_jobs))
+def default_jobs():
+    return os.cpu_count() or 1
 
 def resolve_input_path(path, manifest_dir):
     if os.path.isfile(path):
         return path
     return os.path.join(manifest_dir, os.path.basename(path))
 
-def run_case(elf, row, out_dir, use_zisk):
+def run_case(elf, row, out_dir):
     label, inp, expected_hex = row[0], row[1], row[2]
     out = os.path.join(out_dir, label + ".output")
     log = os.path.join(out_dir, label + ".log")
     t0 = time.time()
     env = dict(os.environ)
     env.setdefault("SPIKE_OUTPUT_LEN", "256")
-    if use_zisk:
-        cmd = [ZISKEMU, "-e", elf, "-i", inp, "-o", out, "-m"]
-    else:
-        cmd = [SPIKE_RUN, elf, inp, out]
+    cmd = [SPIKE_RUN, elf, inp, out]
     with open(log, "w") as lf:
         rc = subprocess.call(cmd, stdout=lf, stderr=subprocess.STDOUT, env=env)
     dt = time.time() - t0
@@ -90,9 +44,6 @@ def run_case(elf, row, out_dir, use_zisk):
     logtxt = open(log, errors="replace").read()
     m = STEPS_RE.search(logtxt)
     if m: steps = int(m.group(1))
-    if use_zisk:
-        m = re.search(r"steps[=: ]+(\d+)", logtxt)
-        if m: steps = int(m.group(1))
     actual = ""; dbg = -1; trap = None
     stage_marker = None
     if os.path.exists(out):
@@ -196,15 +147,12 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("elf"); ap.add_argument("manifest")
     ap.add_argument("--jobs", type=int, default=None,
-                    help="default: cpu_count(), capped by available memory "
-                         "(cgroup limit or host free RAM) / "
-                         f"{ZISKEMU_JOB_MEM_MIB} MiB when --ziskemu is set")
+                    help="default: cpu_count()")
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--skip", type=int, default=0)
     ap.add_argument("--filter", default="")
     ap.add_argument("--out-dir", default=os.path.join(ROOT, "work/run"))
     ap.add_argument("--quiet-passes", action="store_true")
-    ap.add_argument("--ziskemu", action="store_true")
     ap.add_argument("--json", default="")
     selection = ap.add_mutually_exclusive_group()
     selection.add_argument("--from-json", default="", metavar="FILE",
@@ -218,7 +166,7 @@ def main():
     if a.fail_code is not None and not a.from_json:
         ap.error("--fail-code requires --from-json")
     if a.jobs is None:
-        a.jobs = default_jobs(a.ziskemu)
+        a.jobs = default_jobs()
     manifest_path = os.path.abspath(a.manifest)
     manifest_dir = os.path.dirname(manifest_path)
     try:
@@ -244,7 +192,7 @@ def main():
         return 2
     os.makedirs(a.out_dir, exist_ok=True)
     with ThreadPoolExecutor(a.jobs) as ex:
-        results = list(ex.map(lambda r: run_case(a.elf, r, a.out_dir, a.ziskemu), rows))
+        results = list(ex.map(lambda r: run_case(a.elf, r, a.out_dir), rows))
     counts = {}
     steps_pass = []
     for r in results:

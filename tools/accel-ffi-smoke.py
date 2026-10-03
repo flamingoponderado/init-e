@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """accel-ffi-smoke.py -- run guest/test/accel_ffi_smoke.pnk (one @keccakf and one
 @sha256f call in the foreign-call convention of docs/ACCEL-FFI.md) on the
-guest build under ziskemu and compare its output with hashlib:
+guest build under spike_run and compare its output with hashlib:
 
   bytes  0..32  Keccak-f of the SHA3-256 padding block of the empty message, whose
                 first 32 bytes are the SHA3-256 digest of the empty message
@@ -12,7 +12,7 @@ guest build under ziskemu and compare its output with hashlib:
 import hashlib, os, subprocess, sys, tempfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-ZISKEMU = os.environ.get("ZISKEMU", os.path.expanduser("~/.zisk/bin/ziskemu"))
+SPIKE_RUN = os.environ.get("SPIKE_RUN", os.path.join(ROOT, "tools/spike/spike_run"))
 
 def expected():
     digest = hashlib.sha256(b"abc").digest()
@@ -27,9 +27,10 @@ def main():
                         os.path.join(ROOT, "guest/test/accel_ffi_smoke.pnk"), elf],
                        check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         with open(inp, "wb") as f:
-            f.write((0).to_bytes(8, "little"))      # empty blob, ziskemu input framing
-        subprocess.run([ZISKEMU, "-e", elf, "-i", inp, "-o", out],
-                       check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            f.write((0).to_bytes(8, "little"))      # empty blob, input framing
+        subprocess.run([SPIKE_RUN, elf, inp, out], check=True,
+                       env=dict(os.environ, SPIKE_OUTPUT_LEN="256"),
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         actual = open(out, "rb").read()[:64]
     want = expected()
     if actual == want:

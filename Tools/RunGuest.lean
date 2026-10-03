@@ -7,7 +7,7 @@ Runs the guest under flapjack's step-counted stateful-FFI source semantics
 exactly as `Guest.runGuestStepped` defines it, and prints the control result,
 the step count, and the output region as the guest left it in host memory.
 
-`input` is a guest input as `tools/make-inputs.sh` writes it (the ziskemu
+`input` is a guest input as `tools/make-inputs.sh` writes it (the input
 packing: 8-byte little-endian blob length, the blob, zero padding to a multiple
 of 8); the blob is what lands at `INPUT_DATA_ADDR`. With no `input` the blob is
 empty. `fuel` is the recursion guard (default `2^40`; every loop iteration and

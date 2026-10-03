@@ -3,10 +3,9 @@
 #define INPUT_ADDR       1073741824   /* 0x40000000: [8B zero meta][8B LE len][blob] */
 #define INPUT_LEN_ADDR   1073741832   /* 0x40000008 */
 #define INPUT_DATA_ADDR  1073741840   /* 0x40000010 */
-/* ZisK >=1.1.0-alpha reserves RAM_ADDR..+4MB as a guarded stack region (see
-   core/src/mem.rs upstream), pushing OUTPUT_ADDR from RAM_ADDR+0x10000
-   (0.18.0's address) up by 0x400000. tools/spike/spike_run.cc (a fork of
-   evm-asm's) targets this same address so Spike and ZisK agree. */
+/* OUTPUT_ADDR is RAM_ADDR+0x410000 (the address ZisK >=1.1.0-alpha used; evm-asm's
+   older guest has RAM_ADDR+0x10000). tools/spike/spike_run.cc (a fork of
+   evm-asm's) targets this same address. */
 #define OUTPUT_ADDR      2688614400   /* 0xa0410000 */
 #define SCRATCH_BASE     2688618496   /* 0xa0411000: after the output/debug prefix */
 #define HEAP_BASE        2701131776   /* 0xa1000000 (= @base) */

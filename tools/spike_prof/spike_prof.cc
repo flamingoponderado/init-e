@@ -1,8 +1,8 @@
 // spike_run.cc — minimal SPIKE driver for the codegen stateless guest.
 // Usage: spike_run <guest.elf> <input-file> <output-file>
-//   Mirrors `ziskemu -e <elf> -i <input> -o <output>`:
+//   Runs the guest like `ziskemu -e <elf> -i <input> -o <output>` did (ziskemu is no longer supported):
 //   - loads guest.elf; preloads <input-file> at 0x40000000 (an 8-byte zero meta
-//     word followed by the ziskemu -i file, which is [8B LE len][blob][pad]);
+//     word followed by the input file, which is [8B LE len][blob][pad]);
 //   - installs the M-mode trap handler at 0x60000000 and points mtvec at it
 //     (services read_input t0=0xF2 and halt a7=93 — the guest's only 2 ecalls);
 //   - registers the zisk_accel crypto-CSR extension;
@@ -516,7 +516,7 @@ int main(int argc, char** argv) {
   load_elf(argv[1], &sim.memif(), &entry, 0, 64);
   p->get_state()->pc = entry;
 
-  // preload input: 8-byte zero meta + ziskemu -i file ([8B len][blob][pad])
+  // preload input: 8-byte zero meta + input file ([8B len][blob][pad])
   std::ifstream f(argv[2], std::ios::binary);
   std::vector<uint8_t> blob((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
   std::vector<uint8_t> img(8, 0);

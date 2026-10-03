@@ -4,7 +4,7 @@ check of Guest.InputDecode against the guest itself.
 
     tools/ssz-inputs.py OUTDIR [--fuzz]
 
-Writes guest inputs in the ziskemu packing `[8B LE len][blob][pad]`, the same
+Writes guest inputs in the input packing `[8B LE len][blob][pad]`, the same
 form `tools/make-inputs.sh` produces, so `lake exe run-guest` and
 `lake exe input-decode-check` both accept them. Without a fixture corpus this
 is the only way to get inputs that actually decode.

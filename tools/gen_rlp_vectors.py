@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """gen_rlp_vectors.py OUT_DIR
-Writes OUT_DIR/rlp.input (ziskemu framing: u64 LE len, blob, zero pad to 8)
+Writes OUT_DIR/rlp.input (input framing: u64 LE len, blob, zero pad to 8)
 containing a sequence of [u32 LE len][rlp bytes] items, and
 OUT_DIR/rlp.expected: one 32-byte record per item as produced by
 guest/test/t_rlp.pnk.

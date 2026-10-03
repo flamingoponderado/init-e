@@ -1,70 +1,39 @@
 # Bakes in the flapjack-compiled guest and the
-# full EEST tests-zkevm fixture corpus, ready to run under ziskemu with no
-# further network access. See evm-asm/Dockerfile for the sibling image this
-# mirrors (same ziskemu-from-source pattern, same license-collection style).
+# full EEST tests-zkevm fixture corpus, ready to run under Spike (tools/spike/
+# spike_run) with no further network access.
 #
-# The `evm-asm` submodule must be initialized in the build context before
-# `docker build` (its scripts/{eest-fetch-fixtures.sh,
-# eest-stateless-to-input.py} are needed; the fixture tag itself is pinned by
-# this repo's eest-fixture-tag.txt; `cakeml`, `flapjack`, and
-# `riscv-isa-sim` are not — flapjack is fetched by `lake` itself, and
-# `riscv-isa-sim`/`cakeml` are only needed for Spike/cake, not ziskemu):
+# The `evm-asm` and `riscv-isa-sim` submodules must be initialized in the
+# build context before `docker build` (evm-asm's scripts/{eest-fetch-
+# fixtures.sh, eest-stateless-to-input.py} are needed; the fixture tag itself
+# is pinned by this repo's eest-fixture-tag.txt; `cakeml` and `flapjack` are
+# not needed -- flapjack is fetched by `lake` itself):
 #
-#   git submodule update --init evm-asm
-#   docker build -t stateless-pancaketh-eest-ziskemu .
+#   git submodule update --init evm-asm riscv-isa-sim
+#   docker build -t stateless-pancaketh-eest-spike .
 
-# ── Stage 1: build ziskemu from source ───────────────────────────────────────
-FROM ubuntu:24.04 AS ziskemu-builder
+# ── Stage 1: build Spike (riscv-isa-sim) and the spike_run driver ────────────
+FROM ubuntu:24.04 AS spike-builder
 
-ARG ZISK_TAG=v1.3.0-alpha
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    git curl ca-certificates build-essential cmake \
-    libomp-dev libgmp-dev protobuf-compiler uuid-dev \
-    nasm libclang-dev clang \
-    libopenmpi-dev openmpi-bin \
-    nlohmann-json3-dev \
-    libgrpc++-dev libprotobuf-dev \
-    libsecp256k1-dev libsodium-dev \
-    libpqxx-dev \
-    gcc-riscv64-unknown-elf \
-    python3 \
+    build-essential ca-certificates xxd \
+    libboost-all-dev device-tree-compiler libssl-dev \
+    binutils-riscv64-unknown-elf \
     && rm -rf /var/lib/apt/lists/*
 
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
-    | sh -s -- -y --default-toolchain stable --profile minimal
-ENV PATH="/root/.cargo/bin:$PATH"
-
-RUN git clone --depth 1 --branch "${ZISK_TAG}" \
-    https://github.com/0xPolygonHermez/zisk /zisk
-WORKDIR /zisk
-# proofman-starks-src's Makefile greps /proc/cpuinfo at build time and adds
-# -mavx512f when the *build* machine has AVX-512. GitHub's runner pool mixes
-# CPUs with and without it, so the published ziskemu died with SIGILL
-# ("Illegal instruction") on any host lacking AVX-512 whenever the image
-# happened to be built on an AVX-512 runner. Blank that detection so the C++
-# side is built for the same portable baseline on every runner (AVX2 is still
-# detected; zisk's own .cargo/config.toml already pins bmi2+adx, a
-# Broadwell/Zen1 floor).
-RUN cargo fetch \
-    && mk="$(ls -d /root/.cargo/registry/src/*/proofman-starks-src-*)/Makefile" \
-    && sed -i 's/^\([[:space:]]*AVX512_SUPPORTED := \).*/\1/' "$mk" \
-    && grep -n 'AVX512_SUPPORTED :=' "$mk"
-RUN cargo build --release -p ziskemu
-
-# Collect zisk project licenses (dual MIT/Apache-2.0) and a per-crate license inventory
+WORKDIR /stateless-pancaketh
+COPY riscv-isa-sim riscv-isa-sim
+COPY tools/spike tools/spike
+RUN mkdir -p riscv-isa-sim/build \
+    && (cd riscv-isa-sim/build && ../configure) \
+    && make -C riscv-isa-sim/build -j"$(nproc)" \
+    && tools/spike/build.sh
 RUN mkdir -p /license-report \
-    && for f in LICENSE LICENSE.md LICENSE.txt LICENSE-MIT LICENSE-APACHE \
-                LICENCE LICENCE.md LICENCE-MIT LICENCE-APACHE COPYING; do \
-         if [ -f "/zisk/$f" ]; then cp "/zisk/$f" "/license-report/zisk-${f}"; fi; \
-       done \
-    && cargo metadata --format-version 1 \
-       | python3 -c 'import json,sys; [print(p["name"], p["version"], p.get("license") or "UNKNOWN") for p in sorted(json.load(sys.stdin)["packages"], key=lambda p: p["name"].lower())]' \
-       > /license-report/zisk-rust-crates.txt
+    && cp riscv-isa-sim/LICENSE /license-report/riscv-isa-sim-LICENSE
 
 
-# ── Stage 2: flapjack build + guest ELFs + fixture bake ──────────────────────
+# ── Stage 2: flapjack build + guest ELF + fixture bake ──────────────────────
 FROM ubuntu:24.04
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -73,24 +42,14 @@ ARG GIT_COMMIT=unknown
 ARG GIT_REF=unknown
 ARG BUILD_DATE=unknown
 
-# libomp-dev/libgmp-dev/libopenmpi-dev/libsodium-dev (not just their -bin/
-# runtime-only counterparts, to guarantee the exact same package version as
-# the ziskemu-builder stage, since both are FROM the same base image) supply
-# ziskemu's own dynamic-link dependencies (confirmed via `ldd`: libomp.so.5,
-# libgmp.so.10, libmpi.so.40/libopen-rte.so.40/libopen-pal.so.40, and their
-# own transitive libhwloc/libevent/libudev/libcap, plus libsodium.so.23).
-# Without these, ziskemu fails to launch at all (a dynamic-linker error),
-# which surfaces as every single EEST case erroring.
+# libssl3t64 is spike_run's one dynamic dependency (libcrypto).
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git curl ca-certificates python3 build-essential \
-    binutils-riscv64-unknown-elf \
-    libomp-dev libgmp-dev libopenmpi-dev libsodium-dev \
+    binutils-riscv64-unknown-elf libssl3t64 \
     && rm -rf /var/lib/apt/lists/*
 
-COPY --from=ziskemu-builder /zisk/target/release/ziskemu /usr/local/bin/ziskemu
-
-# Copy zisk/Rust license artifacts from builder stage
-COPY --from=ziskemu-builder /license-report/ /usr/local/share/licenses/
+# Copy the Spike license from the builder stage
+COPY --from=spike-builder /license-report/ /usr/local/share/licenses/
 
 RUN curl -sSf https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh \
     | sh -s -- -y --default-toolchain none
@@ -99,12 +58,15 @@ ENV PATH="/root/.elan/bin:$PATH"
 WORKDIR /stateless-pancaketh
 COPY . .
 
+# After `COPY . .` so a locally built spike_run in the context cannot shadow it.
+COPY --from=spike-builder /stateless-pancaketh/tools/spike/spike_run /stateless-pancaketh/tools/spike/spike_run
+
 # Install the pinned Lean toolchain; `lake exe flapjack-compile` (invoked by
 # guest/build.sh below) resolves and fetches the flapjack/riscv-zkvm lake
 # dependencies pinned in lakefile.toml/lake-manifest.json on first use.
 RUN elan toolchain install "$(cat lean-toolchain)"
 
-# Build the ZisK-accelerated guest ELF with flapjack
+# Build the guest ELF with flapjack
 # (guest/build.sh's default COMPILER). This is what populates
 # .lake/packages/ (flapjack, riscv-zkvm), collected below.
 RUN tools/build_guest.sh
@@ -157,11 +119,9 @@ LABEL org.opencontainers.image.ref.name="${GIT_REF}"
 LABEL org.opencontainers.image.created="${BUILD_DATE}"
 LABEL eest.fixture.tag="${EEST_TAG}"
 
-ENV ZISKEMU=/usr/local/bin/ziskemu
-
-# Defaults to the guest against the full corpus; override CMD (e.g.
-# `docker run IMAGE guest/build/guest.elf work/inputs/manifest.tsv
-# --ziskemu --quiet-passes --jobs 4`) to pass eest-run.py options like
+# Defaults to the guest against the full corpus under spike_run; override CMD
+# (e.g. `docker run IMAGE guest/build/guest.elf work/inputs/manifest.tsv
+# --quiet-passes --jobs 4`) to pass eest-run.py options like
 # --json/--filter/--jobs.
 ENTRYPOINT ["python3", "tools/eest-run.py"]
-CMD ["guest/build/guest.elf", "work/inputs/manifest.tsv", "--ziskemu", "--quiet-passes"]
+CMD ["guest/build/guest.elf", "work/inputs/manifest.tsv", "--quiet-passes"]

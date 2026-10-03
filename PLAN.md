@@ -1,5 +1,10 @@
 # Plan / status
 
+> `ziskemu`/ZisK support was dropped (the challenge's RAM is far larger than ZisK's, see
+> `docs/SOUNDNESS.md`): tests run on Spike only. References below to ziskemu runs, steps and parity
+> are dated records, and `tools/eest-run.py --ziskemu` no longer exists. The accelerator CSRs
+> themselves stay (implemented in `tools/spike/zisk_accel.cc`).
+
 Milestones (each is measured with `tools/eest-run.py` on EEST fixtures):
 
 - [x] **M0 pipeline**: Pancake → `cake --pancake --target=riscv` → ELF → `spike_run` / `ziskemu`.
@@ -177,5 +182,5 @@ PR checklist for those issues:
 * Performance PRs report before/after instruction counts (`tools/bench.py --json` + `tools/bench_compare.py`).
 * Unit tests must call the same `*_init()` functions as `guest/src/main.pnk` (scratch buffers are never
   allocated lazily).
-* Accelerator PRs show identical fixture output on spike and on ziskemu, and agreement with the
+* Accelerator PRs show identical fixture output on spike, and agreement with the
   spec-derived vectors (`tools/check_*.sh`).

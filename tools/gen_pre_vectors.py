@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """gen_pre_vectors.py OUT_DIR
-Writes ziskemu-framed ([8-byte LE length][blob][zero pad to 8]) unit-test
+Writes framed ([8-byte LE length][blob][zero pad to 8]) unit-test
 inputs for the precompile libraries:
   blake2f.in : 213-byte records (EIP-152 vectors 4-7 + random rounds<=64)
   modexp.in  : records [4B BE blen][4B elen][4B mlen][base][exp][mod]
