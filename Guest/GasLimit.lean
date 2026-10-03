@@ -7,7 +7,7 @@ import Guest.InputDecode
 guest input declares, and does nothing else: it validates nothing, so it is
 total and short enough to audit by eye. It is meant for the *statement* of the
 challenge ("the declared block gas limit is at most 200M", `docs/CHALLENGE.md`).
-For the inputs the guest accepts it agrees with `Guest.declaredBlockGasLimit`
+For the inputs the guest accepts it agrees with `Guest.InputDecode.declaredGasLimit`
 (`declaredGasLimit_of_decode`), whose definition goes through the full mirror of
 the guest's decoder.
 
@@ -43,14 +43,13 @@ a four-byte offset or the eight-byte field yields zeros for the missing bytes,
 and an offset that points past the end yields `0` for the limit. No other
 decoding failure exists.
 
-## Relation to `Guest.declaredBlockGasLimit`
+## Relation to the guest's decoder
 
-`Guest.declaredBlockGasLimit input` is `none` unless the guest's decoder accepts
-the input and then `some` of the payload's `gas_limit`. Whenever the decoder
-accepts, `declaredGasLimit input` is that value:
-`declaredGasLimit_of_decode`, and `Guest.declaredBlockGasLimit_eq_of_decode` in `Guest.StepBound`. On inputs the guest rejects, `declaredGasLimit`
-still returns whatever the bytes at that position say; the guest never executes
-such an input, so it is irrelevant to the step-bound statement.
+`Guest.InputDecode.declaredGasLimit input` is `none` unless the guest's decoder
+accepts the input and then `some` of the payload's `gas_limit`. Whenever the
+decoder accepts, `declaredGasLimit input` is that value:
+`declaredGasLimit_of_decode`. On inputs the guest rejects, `declaredGasLimit`
+still returns whatever the bytes at that position say.
 -/
 
 namespace Guest.GasLimit
@@ -100,7 +99,7 @@ theorem declaredGasLimit_of_decode {input : InputBlob} {decoded : InputDecode.St
   rw [decodePayload_gasLimit hpayload]
   rfl
 
-/-- `InputDecode.declaredGasLimit` (the body of `Guest.declaredBlockGasLimit`) is
+/-- `InputDecode.declaredGasLimit` is
 `some` of the minimal reader's value whenever the decoder accepts. -/
 theorem decoderGasLimit_eq_some {input : InputBlob} {decoded : InputDecode.StatelessInput}
     (h : InputDecode.decodeStatelessInput input = some decoded) :
