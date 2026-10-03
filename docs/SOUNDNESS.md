@@ -48,6 +48,10 @@ as `docs/CHALLENGE.md` states. The following can still go wrong.
   submission may reject or trap), or the Pancake source itself rejects the valid
   block (a bug of the source, which a submission must reproduce). The same
   freedom applies when the declared block gas limit parses and exceeds 200M.
+* **The Pancake source in the challenge, and the Flapjack compiler, might
+  contain bugs.** The source is the reference, so its bugs are reproduced by
+  every submission; the compiler (and its RISC-V semantics) is trusted
+  wherever a submission relies on it.
 * **A trustworthy Lean specification of the stateless guest does not exist.**
   The challenge is stated relative to the Pancake source, not to a specification
   that has been validated against the Ethereum consensus rules.
