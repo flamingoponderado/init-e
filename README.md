@@ -259,7 +259,8 @@ new main baseline, regenerate it with the same `bench.py` command using
 Step and memory accounting (source-step and memory bounds under 200M gas, and
 a step-count-aware "source terminates ⇒ RISC-V terminates") are not
 prerequisites for starting step 2, so they are no longer separate plan steps.
-Existing work on them stays in [docs/STEP-BOUND.md](docs/STEP-BOUND.md).
+Existing work on them is recorded in [docs/STEP-BOUND.md](docs/STEP-BOUND.md); its Lean files were
+removed from the tree (the initial submission uses an infinite step limit) and live in git history.
 
 See `PLAN.md` for the detailed milestone log. Deliberate numeric-width and
 saturation boundaries are documented in [docs/ENVELOPE.md](docs/ENVELOPE.md),

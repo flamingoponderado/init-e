@@ -5,16 +5,13 @@ import Guest.GasLimit
 /-!
 `lake exe input-decode-check input.bin ...`
 
-Differential check of `Guest.declaredBlockGasLimit` against the guest itself.
-It calls `Guest.InputDecode.declaredGasLimit`, which is that definition's body;
-importing `Guest.StepBound` here would force its remaining `sorry` at module
-initialisation.
+Differential check of `Guest.InputDecode.declaredGasLimit` against the guest itself.
 
 `guest/src/main.pnk` returns `1` from its `catch SszErr` block and `0` once
 `decode_stateless_input` has returned, so the value a run returns is an exact
 oracle for "this input decodes". The check runs the guest on each input under
-the same stepped semantics `Guest.StepBound` reasons about and reports any
-input where the oracle and `declaredBlockGasLimit` disagree.
+the stepped semantics of `Guest.Model` and reports any input where the oracle
+and `declaredGasLimit` disagree.
 
 It also compares the minimal reader `Guest.GasLimit.declaredGasLimit` with
 `declaredGasLimit`: on every input that decodes they must agree (a proved

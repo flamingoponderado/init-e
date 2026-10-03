@@ -1,7 +1,7 @@
 import Guest.Source
 import Guest.Ast
 import Guest.DecidableEq
-import Guest.StepBound
+import Guest.Model
 
 /-!
 The committed AST `Guest.guestAst` is what flapjack's parser produces from

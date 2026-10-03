@@ -1,5 +1,11 @@
 # Goal 1 (issue #73): a source-level Pancake step bound for the guest
 
+> **The Lean files described here were removed** (`Guest/StepBound.lean`, `Termination`, `FunctionTermination`,
+> `Expressions`, `Gas`, `Memory`, `FrameBound`, and the `frame-bound`, `opcode-census` and `trace-guest`
+> tools): the initial submission of the challenge uses an infinite step limit, so step-limit theorems are
+> not needed (`docs/CHALLENGE.md`). They are in the git history at commit `7ee63c2`. This document is
+> kept as a record of what was proved and found.
+
 Status of the three `sorry`s of `Guest/StepBound.lean`:
 
 | | state |

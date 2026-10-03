@@ -3,8 +3,9 @@ import Guest.Basic
 /-!
 # The guest's own SSZ decoding of the stateless input, as a function of bytes
 
-`Guest.StepBound.declaredBlockGasLimit` needs the block gas limit the input
-declares, and needs it to be `none` exactly when the input does not decode.
+`Guest.InputDecode.declaredGasLimit` is the block gas limit the input
+declares, `none` exactly when the input does not decode, so that the minimal
+reader `Guest.GasLimit.declaredGasLimit` can be checked against the guest.
 This module mirrors the guest's decoder for that purpose: `decode_payload`,
 `decode_requests`, `decode_bytes_list` and `decode_stateless_input` of
 `guest/src/ssz.pnk`, with their helpers `ssz_check_offsets`,
@@ -30,7 +31,7 @@ sees beyond the blob.
 Decoding is a property of the bytes alone; it says nothing about whether the
 guest has the *memory* to decode them. `alloc` traps once the heap is
 exhausted, and an input can be decodable and still far too large to copy into
-the heap (see `Guest.StepBound`).
+the heap.
 -/
 
 namespace Guest.InputDecode
@@ -292,10 +293,7 @@ def decodeStatelessInput (input : InputBlob) : Option StatelessInput := do
       chainId }
 
 /-- The declared block gas limit: the payload's `gas_limit` field, `none` when
-the input does not decode. `Guest.declaredBlockGasLimit` is exactly this; it
-lives here as well so that tools can use it without importing
-`Guest.StepBound`, whose `guestPancakeStepBound` is still `sorry` and would be
-forced at module initialisation. -/
+the input does not decode. -/
 def declaredGasLimit (input : InputBlob) : Option Nat :=
   (decodeStatelessInput input).map fun decoded => decoded.payload.gasLimit
 

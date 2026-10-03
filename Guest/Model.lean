@@ -10,7 +10,7 @@ import Guest.AccelFfi
 # The guest as a flapjack program: state, host, handlers, and the stepped run
 
 Everything here is computable, so it doubles as an executable model
-(`lake exe run-guest`). The goal stated about it lives in `Guest.StepBound`.
+(`lake exe run-guest`).
 
 * The program is `guestAst` (`Guest/Ast.lean`), the committed output of
   flapjack's Pancake parser on `Guest/guest.pp.pnk`, the cpp-expanded guest
