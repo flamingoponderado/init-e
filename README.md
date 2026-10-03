@@ -74,6 +74,10 @@ verified Ethereum client.
   a zkVM such as ZisK provides ([docs/SOUNDNESS.md](docs/SOUNDNESS.md)), so a
   solution's guarantees transfer to a zkVM only after the RISC-V semantics of
   the challenge is shown to refine the zkVM's, and the memory is checked separately.
+* **Memory needs its own bound.** The assumed memory is probably bigger than
+  what usual zkVMs provide, so before running a solution in a zkVM one needs
+  to prove an upper bound on the solution's memory consumption in addition.
+  The challenge does not give this bound.
 
 ## Status
 
