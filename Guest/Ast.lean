@@ -2479,9 +2479,6 @@ def guestFn_sha256_pair : Decl (BitVec 64) :=
           (Prog.return (Exp.const (BitVec.ofNat 64 0))))))))))))
       returnShape := Shape.one }
 
-def guestGlobal_keccak_rc : Decl (BitVec 64) :=
-  Decl.decl Shape.one "keccak_rc" (Exp.const (BitVec.ofNat 64 0))
-
 def guestGlobal_keccak_st : Decl (BitVec 64) :=
   Decl.decl Shape.one "keccak_st" (Exp.const (BitVec.ofNat 64 0))
 
@@ -2496,60 +2493,10 @@ def guestFn_keccak_init : Decl (BitVec 64) :=
       params := []
       body :=
         (Prog.seq
-          (Prog.call (some ((some (VarKind.global, "keccak_rc")), none)) "alloc" [(Exp.const (BitVec.ofNat 64 192))])
-          (Prog.seq
           (Prog.call (some ((some (VarKind.global, "keccak_st")), none)) "alloc" [(Exp.const (BitVec.ofNat 64 200))])
           (Prog.seq
           (Prog.call (some ((some (VarKind.global, "keccak_pad")), none)) "alloc" [(Exp.const (BitVec.ofNat 64 136))])
-          (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "keccak_rc"), (Exp.const (BitVec.ofNat 64 0))]) (Exp.const (BitVec.ofNat 64 1)))
-          (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "keccak_rc"), (Exp.const (BitVec.ofNat 64 8))]) (Exp.const (BitVec.ofNat 64 32898)))
-          (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "keccak_rc"), (Exp.const (BitVec.ofNat 64 16))]) (Exp.const (BitVec.ofNat 64 9223372036854808714)))
-          (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "keccak_rc"), (Exp.const (BitVec.ofNat 64 24))]) (Exp.const (BitVec.ofNat 64 9223372039002292224)))
-          (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "keccak_rc"), (Exp.const (BitVec.ofNat 64 32))]) (Exp.const (BitVec.ofNat 64 32907)))
-          (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "keccak_rc"), (Exp.const (BitVec.ofNat 64 40))]) (Exp.const (BitVec.ofNat 64 2147483649)))
-          (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "keccak_rc"), (Exp.const (BitVec.ofNat 64 48))]) (Exp.const (BitVec.ofNat 64 9223372039002292353)))
-          (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "keccak_rc"), (Exp.const (BitVec.ofNat 64 56))]) (Exp.const (BitVec.ofNat 64 9223372036854808585)))
-          (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "keccak_rc"), (Exp.const (BitVec.ofNat 64 64))]) (Exp.const (BitVec.ofNat 64 138)))
-          (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "keccak_rc"), (Exp.const (BitVec.ofNat 64 72))]) (Exp.const (BitVec.ofNat 64 136)))
-          (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "keccak_rc"), (Exp.const (BitVec.ofNat 64 80))]) (Exp.const (BitVec.ofNat 64 2147516425)))
-          (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "keccak_rc"), (Exp.const (BitVec.ofNat 64 88))]) (Exp.const (BitVec.ofNat 64 2147483658)))
-          (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "keccak_rc"), (Exp.const (BitVec.ofNat 64 96))]) (Exp.const (BitVec.ofNat 64 2147516555)))
-          (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "keccak_rc"), (Exp.const (BitVec.ofNat 64 104))]) (Exp.const (BitVec.ofNat 64 9223372036854775947)))
-          (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "keccak_rc"), (Exp.const (BitVec.ofNat 64 112))]) (Exp.const (BitVec.ofNat 64 9223372036854808713)))
-          (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "keccak_rc"), (Exp.const (BitVec.ofNat 64 120))]) (Exp.const (BitVec.ofNat 64 9223372036854808579)))
-          (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "keccak_rc"), (Exp.const (BitVec.ofNat 64 128))]) (Exp.const (BitVec.ofNat 64 9223372036854808578)))
-          (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "keccak_rc"), (Exp.const (BitVec.ofNat 64 136))]) (Exp.const (BitVec.ofNat 64 9223372036854775936)))
-          (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "keccak_rc"), (Exp.const (BitVec.ofNat 64 144))]) (Exp.const (BitVec.ofNat 64 32778)))
-          (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "keccak_rc"), (Exp.const (BitVec.ofNat 64 152))]) (Exp.const (BitVec.ofNat 64 9223372039002259466)))
-          (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "keccak_rc"), (Exp.const (BitVec.ofNat 64 160))]) (Exp.const (BitVec.ofNat 64 9223372039002292353)))
-          (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "keccak_rc"), (Exp.const (BitVec.ofNat 64 168))]) (Exp.const (BitVec.ofNat 64 9223372036854808704)))
-          (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "keccak_rc"), (Exp.const (BitVec.ofNat 64 176))]) (Exp.const (BitVec.ofNat 64 2147483649)))
-          (Prog.seq
-          (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.global "keccak_rc"), (Exp.const (BitVec.ofNat 64 184))]) (Exp.const (BitVec.ofNat 64 9223372039002292232)))
-          (Prog.return (Exp.const (BitVec.ofNat 64 0))))))))))))))))))))))))))))))
+          (Prog.return (Exp.const (BitVec.ofNat 64 0)))))
       returnShape := Shape.one }
 
 def guestFn_keccak_f1600 : Decl (BitVec 64) :=
@@ -2561,200 +2508,7 @@ def guestFn_keccak_f1600 : Decl (BitVec 64) :=
       body :=
         (Prog.seq
           (Prog.extCall "keccakf" (Exp.var VarKind.local "stp") (Exp.const (BitVec.ofNat 64 0)) (Exp.var VarKind.local "stp") (Exp.const (BitVec.ofNat 64 200)))
-          (Prog.seq
-          (Prog.return (Exp.const (BitVec.ofNat 64 0)))
-          (Prog.dec "a00" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 0))]))
-            (Prog.dec "a10" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 8))]))
-              (Prog.dec "a20" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 16))]))
-                (Prog.dec "a30" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 24))]))
-                  (Prog.dec "a40" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 32))]))
-                    (Prog.dec "a01" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 40))]))
-                      (Prog.dec "a11" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 48))]))
-                        (Prog.dec "a21" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 56))]))
-                          (Prog.dec "a31" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 64))]))
-                            (Prog.dec "a41" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 72))]))
-                              (Prog.dec "a02" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 80))]))
-                                (Prog.dec "a12" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 88))]))
-                                  (Prog.dec "a22" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 96))]))
-                                    (Prog.dec "a32" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 104))]))
-                                      (Prog.dec "a42" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 112))]))
-                                        (Prog.dec "a03" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 120))]))
-                                          (Prog.dec "a13" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 128))]))
-                                            (Prog.dec "a23" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 136))]))
-                                              (Prog.dec "a33" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 144))]))
-                                                (Prog.dec "a43" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 152))]))
-                                                  (Prog.dec "a04" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 160))]))
-                                                    (Prog.dec "a14" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 168))]))
-                                                      (Prog.dec "a24" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 176))]))
-                                                        (Prog.dec "a34" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 184))]))
-                                                          (Prog.dec "a44" Shape.one (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 192))]))
-                                                            (Prog.dec "r" Shape.one (Exp.const (BitVec.ofNat 64 0))
-                                                              (Prog.seq
-                                                                (Prog.while (Exp.cmp Cmp.less (Exp.var VarKind.local "r") (Exp.const (BitVec.ofNat 64 24)))
-                                                                  (Prog.dec "c0" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "a00"), (Exp.var VarKind.local "a01"), (Exp.var VarKind.local "a02"), (Exp.var VarKind.local "a03"), (Exp.var VarKind.local "a04")])
-                                                                    (Prog.dec "c1" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "a10"), (Exp.var VarKind.local "a11"), (Exp.var VarKind.local "a12"), (Exp.var VarKind.local "a13"), (Exp.var VarKind.local "a14")])
-                                                                      (Prog.dec "c2" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "a20"), (Exp.var VarKind.local "a21"), (Exp.var VarKind.local "a22"), (Exp.var VarKind.local "a23"), (Exp.var VarKind.local "a24")])
-                                                                        (Prog.dec "c3" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "a30"), (Exp.var VarKind.local "a31"), (Exp.var VarKind.local "a32"), (Exp.var VarKind.local "a33"), (Exp.var VarKind.local "a34")])
-                                                                          (Prog.dec "c4" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "a40"), (Exp.var VarKind.local "a41"), (Exp.var VarKind.local "a42"), (Exp.var VarKind.local "a43"), (Exp.var VarKind.local "a44")])
-                                                                            (Prog.dec "d0" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "c4"), (Exp.shift Shift.ror (Exp.var VarKind.local "c1") (Exp.const (BitVec.ofNat 64 63)))])
-                                                                              (Prog.dec "d1" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "c0"), (Exp.shift Shift.ror (Exp.var VarKind.local "c2") (Exp.const (BitVec.ofNat 64 63)))])
-                                                                                (Prog.dec "d2" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "c1"), (Exp.shift Shift.ror (Exp.var VarKind.local "c3") (Exp.const (BitVec.ofNat 64 63)))])
-                                                                                  (Prog.dec "d3" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "c2"), (Exp.shift Shift.ror (Exp.var VarKind.local "c4") (Exp.const (BitVec.ofNat 64 63)))])
-                                                                                    (Prog.dec "d4" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "c3"), (Exp.shift Shift.ror (Exp.var VarKind.local "c0") (Exp.const (BitVec.ofNat 64 63)))])
-                                                                                      (Prog.dec "b00" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "a00"), (Exp.var VarKind.local "d0")])
-                                                                                        (Prog.dec "b10" Shape.one (Exp.shift Shift.ror (Exp.op BinOp.xor [(Exp.var VarKind.local "a11"), (Exp.var VarKind.local "d1")]) (Exp.const (BitVec.ofNat 64 20)))
-                                                                                          (Prog.dec "b20" Shape.one (Exp.shift Shift.ror (Exp.op BinOp.xor [(Exp.var VarKind.local "a22"), (Exp.var VarKind.local "d2")]) (Exp.const (BitVec.ofNat 64 21)))
-                                                                                            (Prog.dec "b30" Shape.one (Exp.shift Shift.ror (Exp.op BinOp.xor [(Exp.var VarKind.local "a33"), (Exp.var VarKind.local "d3")]) (Exp.const (BitVec.ofNat 64 43)))
-                                                                                              (Prog.dec "b40" Shape.one (Exp.shift Shift.ror (Exp.op BinOp.xor [(Exp.var VarKind.local "a44"), (Exp.var VarKind.local "d4")]) (Exp.const (BitVec.ofNat 64 50)))
-                                                                                                (Prog.dec "n00" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "b00"), (Exp.op BinOp.xor [(Exp.op BinOp.or [(Exp.var VarKind.local "b10"), (Exp.var VarKind.local "b20")]), (Exp.var VarKind.local "b10")])])
-                                                                                                  (Prog.dec "n10" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "b10"), (Exp.op BinOp.xor [(Exp.op BinOp.or [(Exp.var VarKind.local "b20"), (Exp.var VarKind.local "b30")]), (Exp.var VarKind.local "b20")])])
-                                                                                                    (Prog.dec "n20" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "b20"), (Exp.op BinOp.xor [(Exp.op BinOp.or [(Exp.var VarKind.local "b30"), (Exp.var VarKind.local "b40")]), (Exp.var VarKind.local "b30")])])
-                                                                                                      (Prog.dec "n30" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "b30"), (Exp.op BinOp.xor [(Exp.op BinOp.or [(Exp.var VarKind.local "b40"), (Exp.var VarKind.local "b00")]), (Exp.var VarKind.local "b40")])])
-                                                                                                        (Prog.dec "n40" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "b40"), (Exp.op BinOp.xor [(Exp.op BinOp.or [(Exp.var VarKind.local "b00"), (Exp.var VarKind.local "b10")]), (Exp.var VarKind.local "b00")])])
-                                                                                                          (Prog.dec "b01" Shape.one (Exp.shift Shift.ror (Exp.op BinOp.xor [(Exp.var VarKind.local "a30"), (Exp.var VarKind.local "d3")]) (Exp.const (BitVec.ofNat 64 36)))
-                                                                                                            (Prog.dec "b11" Shape.one (Exp.shift Shift.ror (Exp.op BinOp.xor [(Exp.var VarKind.local "a41"), (Exp.var VarKind.local "d4")]) (Exp.const (BitVec.ofNat 64 44)))
-                                                                                                              (Prog.dec "b21" Shape.one (Exp.shift Shift.ror (Exp.op BinOp.xor [(Exp.var VarKind.local "a02"), (Exp.var VarKind.local "d0")]) (Exp.const (BitVec.ofNat 64 61)))
-                                                                                                                (Prog.dec "b31" Shape.one (Exp.shift Shift.ror (Exp.op BinOp.xor [(Exp.var VarKind.local "a13"), (Exp.var VarKind.local "d1")]) (Exp.const (BitVec.ofNat 64 19)))
-                                                                                                                  (Prog.dec "b41" Shape.one (Exp.shift Shift.ror (Exp.op BinOp.xor [(Exp.var VarKind.local "a24"), (Exp.var VarKind.local "d2")]) (Exp.const (BitVec.ofNat 64 3)))
-                                                                                                                    (Prog.dec "n01" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "b01"), (Exp.op BinOp.xor [(Exp.op BinOp.or [(Exp.var VarKind.local "b11"), (Exp.var VarKind.local "b21")]), (Exp.var VarKind.local "b11")])])
-                                                                                                                      (Prog.dec "n11" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "b11"), (Exp.op BinOp.xor [(Exp.op BinOp.or [(Exp.var VarKind.local "b21"), (Exp.var VarKind.local "b31")]), (Exp.var VarKind.local "b21")])])
-                                                                                                                        (Prog.dec "n21" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "b21"), (Exp.op BinOp.xor [(Exp.op BinOp.or [(Exp.var VarKind.local "b31"), (Exp.var VarKind.local "b41")]), (Exp.var VarKind.local "b31")])])
-                                                                                                                          (Prog.dec "n31" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "b31"), (Exp.op BinOp.xor [(Exp.op BinOp.or [(Exp.var VarKind.local "b41"), (Exp.var VarKind.local "b01")]), (Exp.var VarKind.local "b41")])])
-                                                                                                                            (Prog.dec "n41" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "b41"), (Exp.op BinOp.xor [(Exp.op BinOp.or [(Exp.var VarKind.local "b01"), (Exp.var VarKind.local "b11")]), (Exp.var VarKind.local "b01")])])
-                                                                                                                              (Prog.dec "b02" Shape.one (Exp.shift Shift.ror (Exp.op BinOp.xor [(Exp.var VarKind.local "a10"), (Exp.var VarKind.local "d1")]) (Exp.const (BitVec.ofNat 64 63)))
-                                                                                                                                (Prog.dec "b12" Shape.one (Exp.shift Shift.ror (Exp.op BinOp.xor [(Exp.var VarKind.local "a21"), (Exp.var VarKind.local "d2")]) (Exp.const (BitVec.ofNat 64 58)))
-                                                                                                                                  (Prog.dec "b22" Shape.one (Exp.shift Shift.ror (Exp.op BinOp.xor [(Exp.var VarKind.local "a32"), (Exp.var VarKind.local "d3")]) (Exp.const (BitVec.ofNat 64 39)))
-                                                                                                                                    (Prog.dec "b32" Shape.one (Exp.shift Shift.ror (Exp.op BinOp.xor [(Exp.var VarKind.local "a43"), (Exp.var VarKind.local "d4")]) (Exp.const (BitVec.ofNat 64 56)))
-                                                                                                                                      (Prog.dec "b42" Shape.one (Exp.shift Shift.ror (Exp.op BinOp.xor [(Exp.var VarKind.local "a04"), (Exp.var VarKind.local "d0")]) (Exp.const (BitVec.ofNat 64 46)))
-                                                                                                                                        (Prog.dec "n02" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "b02"), (Exp.op BinOp.xor [(Exp.op BinOp.or [(Exp.var VarKind.local "b12"), (Exp.var VarKind.local "b22")]), (Exp.var VarKind.local "b12")])])
-                                                                                                                                          (Prog.dec "n12" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "b12"), (Exp.op BinOp.xor [(Exp.op BinOp.or [(Exp.var VarKind.local "b22"), (Exp.var VarKind.local "b32")]), (Exp.var VarKind.local "b22")])])
-                                                                                                                                            (Prog.dec "n22" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "b22"), (Exp.op BinOp.xor [(Exp.op BinOp.or [(Exp.var VarKind.local "b32"), (Exp.var VarKind.local "b42")]), (Exp.var VarKind.local "b32")])])
-                                                                                                                                              (Prog.dec "n32" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "b32"), (Exp.op BinOp.xor [(Exp.op BinOp.or [(Exp.var VarKind.local "b42"), (Exp.var VarKind.local "b02")]), (Exp.var VarKind.local "b42")])])
-                                                                                                                                                (Prog.dec "n42" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "b42"), (Exp.op BinOp.xor [(Exp.op BinOp.or [(Exp.var VarKind.local "b02"), (Exp.var VarKind.local "b12")]), (Exp.var VarKind.local "b02")])])
-                                                                                                                                                  (Prog.dec "b03" Shape.one (Exp.shift Shift.ror (Exp.op BinOp.xor [(Exp.var VarKind.local "a40"), (Exp.var VarKind.local "d4")]) (Exp.const (BitVec.ofNat 64 37)))
-                                                                                                                                                    (Prog.dec "b13" Shape.one (Exp.shift Shift.ror (Exp.op BinOp.xor [(Exp.var VarKind.local "a01"), (Exp.var VarKind.local "d0")]) (Exp.const (BitVec.ofNat 64 28)))
-                                                                                                                                                      (Prog.dec "b23" Shape.one (Exp.shift Shift.ror (Exp.op BinOp.xor [(Exp.var VarKind.local "a12"), (Exp.var VarKind.local "d1")]) (Exp.const (BitVec.ofNat 64 54)))
-                                                                                                                                                        (Prog.dec "b33" Shape.one (Exp.shift Shift.ror (Exp.op BinOp.xor [(Exp.var VarKind.local "a23"), (Exp.var VarKind.local "d2")]) (Exp.const (BitVec.ofNat 64 49)))
-                                                                                                                                                          (Prog.dec "b43" Shape.one (Exp.shift Shift.ror (Exp.op BinOp.xor [(Exp.var VarKind.local "a34"), (Exp.var VarKind.local "d3")]) (Exp.const (BitVec.ofNat 64 8)))
-                                                                                                                                                            (Prog.dec "n03" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "b03"), (Exp.op BinOp.xor [(Exp.op BinOp.or [(Exp.var VarKind.local "b13"), (Exp.var VarKind.local "b23")]), (Exp.var VarKind.local "b13")])])
-                                                                                                                                                              (Prog.dec "n13" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "b13"), (Exp.op BinOp.xor [(Exp.op BinOp.or [(Exp.var VarKind.local "b23"), (Exp.var VarKind.local "b33")]), (Exp.var VarKind.local "b23")])])
-                                                                                                                                                                (Prog.dec "n23" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "b23"), (Exp.op BinOp.xor [(Exp.op BinOp.or [(Exp.var VarKind.local "b33"), (Exp.var VarKind.local "b43")]), (Exp.var VarKind.local "b33")])])
-                                                                                                                                                                  (Prog.dec "n33" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "b33"), (Exp.op BinOp.xor [(Exp.op BinOp.or [(Exp.var VarKind.local "b43"), (Exp.var VarKind.local "b03")]), (Exp.var VarKind.local "b43")])])
-                                                                                                                                                                    (Prog.dec "n43" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "b43"), (Exp.op BinOp.xor [(Exp.op BinOp.or [(Exp.var VarKind.local "b03"), (Exp.var VarKind.local "b13")]), (Exp.var VarKind.local "b03")])])
-                                                                                                                                                                      (Prog.dec "b04" Shape.one (Exp.shift Shift.ror (Exp.op BinOp.xor [(Exp.var VarKind.local "a20"), (Exp.var VarKind.local "d2")]) (Exp.const (BitVec.ofNat 64 2)))
-                                                                                                                                                                        (Prog.dec "b14" Shape.one (Exp.shift Shift.ror (Exp.op BinOp.xor [(Exp.var VarKind.local "a31"), (Exp.var VarKind.local "d3")]) (Exp.const (BitVec.ofNat 64 9)))
-                                                                                                                                                                          (Prog.dec "b24" Shape.one (Exp.shift Shift.ror (Exp.op BinOp.xor [(Exp.var VarKind.local "a42"), (Exp.var VarKind.local "d4")]) (Exp.const (BitVec.ofNat 64 25)))
-                                                                                                                                                                            (Prog.dec "b34" Shape.one (Exp.shift Shift.ror (Exp.op BinOp.xor [(Exp.var VarKind.local "a03"), (Exp.var VarKind.local "d0")]) (Exp.const (BitVec.ofNat 64 23)))
-                                                                                                                                                                              (Prog.dec "b44" Shape.one (Exp.shift Shift.ror (Exp.op BinOp.xor [(Exp.var VarKind.local "a14"), (Exp.var VarKind.local "d1")]) (Exp.const (BitVec.ofNat 64 62)))
-                                                                                                                                                                                (Prog.dec "n04" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "b04"), (Exp.op BinOp.xor [(Exp.op BinOp.or [(Exp.var VarKind.local "b14"), (Exp.var VarKind.local "b24")]), (Exp.var VarKind.local "b14")])])
-                                                                                                                                                                                  (Prog.dec "n14" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "b14"), (Exp.op BinOp.xor [(Exp.op BinOp.or [(Exp.var VarKind.local "b24"), (Exp.var VarKind.local "b34")]), (Exp.var VarKind.local "b24")])])
-                                                                                                                                                                                    (Prog.dec "n24" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "b24"), (Exp.op BinOp.xor [(Exp.op BinOp.or [(Exp.var VarKind.local "b34"), (Exp.var VarKind.local "b44")]), (Exp.var VarKind.local "b34")])])
-                                                                                                                                                                                      (Prog.dec "n34" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "b34"), (Exp.op BinOp.xor [(Exp.op BinOp.or [(Exp.var VarKind.local "b44"), (Exp.var VarKind.local "b04")]), (Exp.var VarKind.local "b44")])])
-                                                                                                                                                                                        (Prog.dec "n44" Shape.one (Exp.op BinOp.xor [(Exp.var VarKind.local "b44"), (Exp.op BinOp.xor [(Exp.op BinOp.or [(Exp.var VarKind.local "b04"), (Exp.var VarKind.local "b14")]), (Exp.var VarKind.local "b04")])])
-                                                                                                                                                                                          (Prog.seq
-                                                                                                                                                                                            (Prog.assign VarKind.local "a00" (Exp.var VarKind.local "n00"))
-                                                                                                                                                                                            (Prog.seq
-                                                                                                                                                                                            (Prog.assign VarKind.local "a10" (Exp.var VarKind.local "n10"))
-                                                                                                                                                                                            (Prog.seq
-                                                                                                                                                                                            (Prog.assign VarKind.local "a20" (Exp.var VarKind.local "n20"))
-                                                                                                                                                                                            (Prog.seq
-                                                                                                                                                                                            (Prog.assign VarKind.local "a30" (Exp.var VarKind.local "n30"))
-                                                                                                                                                                                            (Prog.seq
-                                                                                                                                                                                            (Prog.assign VarKind.local "a40" (Exp.var VarKind.local "n40"))
-                                                                                                                                                                                            (Prog.seq
-                                                                                                                                                                                            (Prog.assign VarKind.local "a01" (Exp.var VarKind.local "n01"))
-                                                                                                                                                                                            (Prog.seq
-                                                                                                                                                                                            (Prog.assign VarKind.local "a11" (Exp.var VarKind.local "n11"))
-                                                                                                                                                                                            (Prog.seq
-                                                                                                                                                                                            (Prog.assign VarKind.local "a21" (Exp.var VarKind.local "n21"))
-                                                                                                                                                                                            (Prog.seq
-                                                                                                                                                                                            (Prog.assign VarKind.local "a31" (Exp.var VarKind.local "n31"))
-                                                                                                                                                                                            (Prog.seq
-                                                                                                                                                                                            (Prog.assign VarKind.local "a41" (Exp.var VarKind.local "n41"))
-                                                                                                                                                                                            (Prog.seq
-                                                                                                                                                                                            (Prog.assign VarKind.local "a02" (Exp.var VarKind.local "n02"))
-                                                                                                                                                                                            (Prog.seq
-                                                                                                                                                                                            (Prog.assign VarKind.local "a12" (Exp.var VarKind.local "n12"))
-                                                                                                                                                                                            (Prog.seq
-                                                                                                                                                                                            (Prog.assign VarKind.local "a22" (Exp.var VarKind.local "n22"))
-                                                                                                                                                                                            (Prog.seq
-                                                                                                                                                                                            (Prog.assign VarKind.local "a32" (Exp.var VarKind.local "n32"))
-                                                                                                                                                                                            (Prog.seq
-                                                                                                                                                                                            (Prog.assign VarKind.local "a42" (Exp.var VarKind.local "n42"))
-                                                                                                                                                                                            (Prog.seq
-                                                                                                                                                                                            (Prog.assign VarKind.local "a03" (Exp.var VarKind.local "n03"))
-                                                                                                                                                                                            (Prog.seq
-                                                                                                                                                                                            (Prog.assign VarKind.local "a13" (Exp.var VarKind.local "n13"))
-                                                                                                                                                                                            (Prog.seq
-                                                                                                                                                                                            (Prog.assign VarKind.local "a23" (Exp.var VarKind.local "n23"))
-                                                                                                                                                                                            (Prog.seq
-                                                                                                                                                                                            (Prog.assign VarKind.local "a33" (Exp.var VarKind.local "n33"))
-                                                                                                                                                                                            (Prog.seq
-                                                                                                                                                                                            (Prog.assign VarKind.local "a43" (Exp.var VarKind.local "n43"))
-                                                                                                                                                                                            (Prog.seq
-                                                                                                                                                                                            (Prog.assign VarKind.local "a04" (Exp.var VarKind.local "n04"))
-                                                                                                                                                                                            (Prog.seq
-                                                                                                                                                                                            (Prog.assign VarKind.local "a14" (Exp.var VarKind.local "n14"))
-                                                                                                                                                                                            (Prog.seq
-                                                                                                                                                                                            (Prog.assign VarKind.local "a24" (Exp.var VarKind.local "n24"))
-                                                                                                                                                                                            (Prog.seq
-                                                                                                                                                                                            (Prog.assign VarKind.local "a34" (Exp.var VarKind.local "n34"))
-                                                                                                                                                                                            (Prog.seq
-                                                                                                                                                                                            (Prog.assign VarKind.local "a44" (Exp.var VarKind.local "n44"))
-                                                                                                                                                                                            (Prog.seq
-                                                                                                                                                                                            (Prog.assign VarKind.local "a00" (Exp.op BinOp.xor [(Exp.var VarKind.local "a00"), (Exp.load Shape.one (Exp.op BinOp.add [(Exp.var VarKind.global "keccak_rc"), (Exp.panOp PanOp.mul [(Exp.var VarKind.local "r"), (Exp.const (BitVec.ofNat 64 8))])]))]))
-                                                                                                                                                                                            (Prog.assign VarKind.local "r" (Exp.op BinOp.add [(Exp.var VarKind.local "r"), (Exp.const (BitVec.ofNat 64 1))])))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
-                                                                (Prog.seq
-                                                                (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 0))]) (Exp.var VarKind.local "a00"))
-                                                                (Prog.seq
-                                                                (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 8))]) (Exp.var VarKind.local "a10"))
-                                                                (Prog.seq
-                                                                (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 16))]) (Exp.var VarKind.local "a20"))
-                                                                (Prog.seq
-                                                                (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 24))]) (Exp.var VarKind.local "a30"))
-                                                                (Prog.seq
-                                                                (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 32))]) (Exp.var VarKind.local "a40"))
-                                                                (Prog.seq
-                                                                (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 40))]) (Exp.var VarKind.local "a01"))
-                                                                (Prog.seq
-                                                                (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 48))]) (Exp.var VarKind.local "a11"))
-                                                                (Prog.seq
-                                                                (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 56))]) (Exp.var VarKind.local "a21"))
-                                                                (Prog.seq
-                                                                (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 64))]) (Exp.var VarKind.local "a31"))
-                                                                (Prog.seq
-                                                                (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 72))]) (Exp.var VarKind.local "a41"))
-                                                                (Prog.seq
-                                                                (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 80))]) (Exp.var VarKind.local "a02"))
-                                                                (Prog.seq
-                                                                (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 88))]) (Exp.var VarKind.local "a12"))
-                                                                (Prog.seq
-                                                                (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 96))]) (Exp.var VarKind.local "a22"))
-                                                                (Prog.seq
-                                                                (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 104))]) (Exp.var VarKind.local "a32"))
-                                                                (Prog.seq
-                                                                (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 112))]) (Exp.var VarKind.local "a42"))
-                                                                (Prog.seq
-                                                                (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 120))]) (Exp.var VarKind.local "a03"))
-                                                                (Prog.seq
-                                                                (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 128))]) (Exp.var VarKind.local "a13"))
-                                                                (Prog.seq
-                                                                (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 136))]) (Exp.var VarKind.local "a23"))
-                                                                (Prog.seq
-                                                                (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 144))]) (Exp.var VarKind.local "a33"))
-                                                                (Prog.seq
-                                                                (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 152))]) (Exp.var VarKind.local "a43"))
-                                                                (Prog.seq
-                                                                (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 160))]) (Exp.var VarKind.local "a04"))
-                                                                (Prog.seq
-                                                                (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 168))]) (Exp.var VarKind.local "a14"))
-                                                                (Prog.seq
-                                                                (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 176))]) (Exp.var VarKind.local "a24"))
-                                                                (Prog.seq
-                                                                (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 184))]) (Exp.var VarKind.local "a34"))
-                                                                (Prog.seq
-                                                                (Prog.store (Exp.op BinOp.add [(Exp.var VarKind.local "stp"), (Exp.const (BitVec.ofNat 64 192))]) (Exp.var VarKind.local "a44"))
-                                                                (Prog.return (Exp.const (BitVec.ofNat 64 0)))))))))))))))))))))))))))))))))))))))))))))))))))))))))
+          (Prog.return (Exp.const (BitVec.ofNat 64 0))))
       returnShape := Shape.one }
 
 def guestFn_keccak_absorb_block : Decl (BitVec 64) :=
@@ -17571,48 +17325,6 @@ def guestFn_blake2_init : Decl (BitVec 64) :=
           (Prog.return (Exp.const (BitVec.ofNat 64 0)))))))))))))))))))))))))))
       returnShape := Shape.one }
 
-def guestFn_blake2_g : Decl (BitVec 64) :=
-  Decl.function
-    { name := "blake2_g"
-      inline := false
-      exported := false
-      params := [("a", Shape.one), ("b", Shape.one), ("c", Shape.one), ("d", Shape.one), ("x", Shape.one), ("y", Shape.one)]
-      body :=
-        (Prog.dec "pa" Shape.one (Exp.op BinOp.add [(Exp.var VarKind.global "b2_v"), (Exp.panOp PanOp.mul [(Exp.var VarKind.local "a"), (Exp.const (BitVec.ofNat 64 8))])])
-          (Prog.dec "pb" Shape.one (Exp.op BinOp.add [(Exp.var VarKind.global "b2_v"), (Exp.panOp PanOp.mul [(Exp.var VarKind.local "b"), (Exp.const (BitVec.ofNat 64 8))])])
-            (Prog.dec "pc" Shape.one (Exp.op BinOp.add [(Exp.var VarKind.global "b2_v"), (Exp.panOp PanOp.mul [(Exp.var VarKind.local "c"), (Exp.const (BitVec.ofNat 64 8))])])
-              (Prog.dec "pd" Shape.one (Exp.op BinOp.add [(Exp.var VarKind.global "b2_v"), (Exp.panOp PanOp.mul [(Exp.var VarKind.local "d"), (Exp.const (BitVec.ofNat 64 8))])])
-                (Prog.dec "va" Shape.one (Exp.load Shape.one (Exp.var VarKind.local "pa"))
-                  (Prog.dec "vb" Shape.one (Exp.load Shape.one (Exp.var VarKind.local "pb"))
-                    (Prog.dec "vc" Shape.one (Exp.load Shape.one (Exp.var VarKind.local "pc"))
-                      (Prog.dec "vd" Shape.one (Exp.load Shape.one (Exp.var VarKind.local "pd"))
-                        (Prog.seq
-                          (Prog.assign VarKind.local "va" (Exp.op BinOp.add [(Exp.var VarKind.local "va"), (Exp.var VarKind.local "vb"), (Exp.var VarKind.local "x")]))
-                          (Prog.seq
-                          (Prog.assign VarKind.local "vd" (Exp.shift Shift.ror (Exp.op BinOp.xor [(Exp.var VarKind.local "vd"), (Exp.var VarKind.local "va")]) (Exp.const (BitVec.ofNat 64 32))))
-                          (Prog.seq
-                          (Prog.assign VarKind.local "vc" (Exp.op BinOp.add [(Exp.var VarKind.local "vc"), (Exp.var VarKind.local "vd")]))
-                          (Prog.seq
-                          (Prog.assign VarKind.local "vb" (Exp.shift Shift.ror (Exp.op BinOp.xor [(Exp.var VarKind.local "vb"), (Exp.var VarKind.local "vc")]) (Exp.const (BitVec.ofNat 64 24))))
-                          (Prog.seq
-                          (Prog.assign VarKind.local "va" (Exp.op BinOp.add [(Exp.var VarKind.local "va"), (Exp.var VarKind.local "vb"), (Exp.var VarKind.local "y")]))
-                          (Prog.seq
-                          (Prog.assign VarKind.local "vd" (Exp.shift Shift.ror (Exp.op BinOp.xor [(Exp.var VarKind.local "vd"), (Exp.var VarKind.local "va")]) (Exp.const (BitVec.ofNat 64 16))))
-                          (Prog.seq
-                          (Prog.assign VarKind.local "vc" (Exp.op BinOp.add [(Exp.var VarKind.local "vc"), (Exp.var VarKind.local "vd")]))
-                          (Prog.seq
-                          (Prog.assign VarKind.local "vb" (Exp.shift Shift.ror (Exp.op BinOp.xor [(Exp.var VarKind.local "vb"), (Exp.var VarKind.local "vc")]) (Exp.const (BitVec.ofNat 64 63))))
-                          (Prog.seq
-                          (Prog.store (Exp.var VarKind.local "pa") (Exp.var VarKind.local "va"))
-                          (Prog.seq
-                          (Prog.store (Exp.var VarKind.local "pb") (Exp.var VarKind.local "vb"))
-                          (Prog.seq
-                          (Prog.store (Exp.var VarKind.local "pc") (Exp.var VarKind.local "vc"))
-                          (Prog.seq
-                          (Prog.store (Exp.var VarKind.local "pd") (Exp.var VarKind.local "vd"))
-                          (Prog.return (Exp.const (BitVec.ofNat 64 0)))))))))))))))))))))))
-      returnShape := Shape.one }
-
 def guestFn_blake2b_f : Decl (BitVec 64) :=
   Decl.function
     { name := "blake2b_f"
@@ -30491,7 +30203,6 @@ def guestAst : List (Decl (BitVec 64)) :=
     guestFn_sha256_finish,
     guestFn_sha256,
     guestFn_sha256_pair,
-    guestGlobal_keccak_rc,
     guestGlobal_keccak_st,
     guestGlobal_keccak_pad,
     guestFn_keccak_init,
@@ -31020,7 +30731,6 @@ def guestAst : List (Decl (BitVec 64)) :=
     guestGlobal_b2_m,
     guestGlobal_b2_round,
     guestFn_blake2_init,
-    guestFn_blake2_g,
     guestFn_blake2b_f,
     guestFn_bn_from_be,
     guestFn_bn_to_be,

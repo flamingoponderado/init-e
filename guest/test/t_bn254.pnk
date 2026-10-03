@@ -27,7 +27,7 @@ fun 1 pad_read(1 src, 1 n, 1 size, 1 dst) {
   return 0;
 }
 
-/* 12 BE integers at src -> Fq12 (Montgomery) at dst, and back. */
+/* 12 BE integers at src -> Fq12  at dst, and back. */
 fun 1 f12_read(1 dst, 1 src) {
   var i = 0;
   while i <+ 12 {

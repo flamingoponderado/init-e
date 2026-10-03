@@ -49,7 +49,7 @@ ffitrap:
     sb   a1, 33(t0)
     j    cml_exit
 
-# ---- ZisK accelerator FFI stubs (ZISK_ACCEL builds) --------------------------
+# ---- ZisK accelerator FFI stubs ----------------------------------------------
 # Each stub implements one foreign call of docs/ACCEL-FFI.md.  `@name(c, 0, a, n)` has
 # an empty configuration, and the operands lie at fixed offsets from the array `a`, which
 # arrives in a2 (the ExtCall arguments are a0 = c, a1 = 0, a2 = a, a3 = n).  The ZisK
