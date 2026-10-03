@@ -63,8 +63,12 @@ verified Ethereum client.
 * **Where the Pancake source goes out of memory (OOM), or diverges, a solution
   is free.** It may accept a block the source runs out of memory on, even an
   invalid one, or reject or trap on a block the source would accept. The bet is
-  that the source never OOMs for a block declaring at most 200M gas, which is
-  proved separately, not part of the solution.
+  that the source never OOMs or diverges for a block declaring at most 200M
+  gas, but whether that holds is still unknown. It is not part of a solution's
+  proof, and anyone can investigate it (see
+  [docs/ALLOC-AUDIT.md](docs/ALLOC-AUDIT.md) and
+  [docs/JOURNAL-BOUND.md](docs/JOURNAL-BOUND.md) for existing notes, which do
+  not settle it).
 * **Declared gas above 200M is outside the assumption.** If the declared block
   gas limit parses and exceeds 200M, a solution may do anything, including
   accepting an invalid block. A user should reject such blocks themselves.
