@@ -48,7 +48,7 @@ the Flapjack compiler are only intermediate lemmas a submission may use. The
 RISC-V semantics in the Flapjack codebase, however, is part of the challenge
 and must not be modified by a submission.
 
-## For people who might use the solutions
+## For people who look at the solutions
 
 *Placeholder; to be filled in, except for the following.* A solution is
 guaranteed to agree with the original Pancake source only as
