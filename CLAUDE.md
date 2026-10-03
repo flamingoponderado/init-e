@@ -15,12 +15,12 @@ byte-identical to what was actually tested. Instead, in this order:
    as canonical for the tag):
 
    ```bash
-   TOKEN=$(curl -s "https://ghcr.io/token?scope=repository:pirapira/stateless-pancaketh:pull" \
+   TOKEN=$(curl -s "https://ghcr.io/token?scope=repository:flamingoponderado/stateless-pancaketh:pull" \
      | python3 -c "import sys,json;print(json.load(sys.stdin)['token'])")
    curl -s -D - -o manifest.json \
      -H "Authorization: Bearer $TOKEN" \
      -H "Accept: application/vnd.oci.image.index.v1+json" \
-     "https://ghcr.io/v2/pirapira/stateless-pancaketh/manifests/<existing-tag>"
+     "https://ghcr.io/v2/flamingoponderado/stateless-pancaketh/manifests/<existing-tag>"
    # "docker-content-digest" response header is the canonical digest
    ```
 
@@ -31,13 +31,13 @@ byte-identical to what was actually tested. Instead, in this order:
 
    ```bash
    BEARER=$(curl -s -u "$(gh api user -q .login):$(gh auth token)" \
-     "https://ghcr.io/token?scope=repository:pirapira/stateless-pancaketh:pull,push" \
+     "https://ghcr.io/token?scope=repository:flamingoponderado/stateless-pancaketh:pull,push" \
      | python3 -c "import sys,json;print(json.load(sys.stdin)['token'])")
    curl -s -X PUT \
      -H "Authorization: Bearer $BEARER" \
      -H "Content-Type: application/vnd.oci.image.index.v1+json" \
      --data-binary @manifest.json \
-     "https://ghcr.io/v2/pirapira/stateless-pancaketh/manifests/<new-tag>"
+     "https://ghcr.io/v2/flamingoponderado/stateless-pancaketh/manifests/<new-tag>"
    ```
 
    No `buildx`/`skopeo`/`crane` needed.
