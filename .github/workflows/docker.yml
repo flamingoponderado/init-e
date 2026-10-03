@@ -8,7 +8,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: flamingoponderado/stateless-pancaketh
+  IMAGE_NAME: flamingoponderado/init-e
 
 jobs:
   build-and-push:
