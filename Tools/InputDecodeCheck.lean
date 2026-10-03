@@ -1,5 +1,6 @@
 import Guest.Model
 import Guest.InputDecode
+import Guest.GasLimit
 
 /-!
 `lake exe input-decode-check input.bin ...`
@@ -15,11 +16,19 @@ oracle for "this input decodes". The check runs the guest on each input under
 the same stepped semantics `Guest.StepBound` reasons about and reports any
 input where the oracle and `declaredBlockGasLimit` disagree.
 
+It also compares the minimal reader `Guest.GasLimit.declaredGasLimit` with
+`declaredGasLimit`: on every input that decodes they must agree (a proved
+theorem, `declaredGasLimit_of_decode`, here checked on the corpus); on rejected
+inputs the minimal reader still returns a value, and the number that differ from
+the guest-level `none` is merely reported.
+
 Inputs are in the input packing that `tools/make-inputs.sh` and
 `tools/ssz-inputs.py` write. Generate a corpus that actually decodes with
 
     tools/ssz-inputs.py work/ssz-inputs --fuzz
     lake exe input-decode-check work/ssz-inputs/*.bin
+
+(`--reader-only` skips the guest runs and compares only the two readers, in seconds.)
 
 The model is quadratic in the input length and in the number of stores, so keep
 the inputs small; a 658-byte one takes under a second.
@@ -68,10 +77,15 @@ def guestVerdict (input : InputBlob) (fuel : Nat) : Verdict :=
 def main (args : List String) : IO UInt32 := do
   let stdout ← IO.getStdout
   let verbose := args.contains "--verbose"
+  -- `--reader-only` skips the (slow) guest runs: only the two readers are compared.
+  let readerOnly := args.contains "--reader-only"
   let paths := args.filter fun arg => !arg.startsWith "--"
   let mut decoded := 0
   let mut rejected := 0
   let mut mismatched : List String := []
+  let mut readerAgrees := 0
+  let mut readerDiffers : List String := []
+  let mut rejectedWithValue := 0
   let mut inconclusive : List String := []
   for path in paths do
     let input ← match unpackInput (← IO.FS.readBinFile ⟨path⟩) with
@@ -79,7 +93,17 @@ def main (args : List String) : IO UInt32 := do
       | .error message => do IO.eprintln s!"{path}: {message}"; return 2
     let name := (System.FilePath.mk path).fileName.getD path
     let declared := InputDecode.declaredGasLimit input
-    let verdict := guestVerdict input (2 ^ 32)
+    let reader := GasLimit.declaredGasLimit input
+    match declared with
+    | some value =>
+        if value == reader then readerAgrees := readerAgrees + 1
+        else do
+          readerDiffers := name :: readerDiffers
+          stdout.putStrLn s!"READER MISMATCH {name}: declaredGasLimit = {value}, \
+            minimal reader = {reader}"
+    | none => if reader != 0 then rejectedWithValue := rejectedWithValue + 1
+    let verdict := if readerOnly then Verdict.inconclusive "guest not run"
+      else guestVerdict input (2 ^ 32)
     let agrees := match declared, verdict with
       | some _, .decoded _ => true
       | none, .sszErr _ => true
@@ -100,6 +124,11 @@ def main (args : List String) : IO UInt32 := do
     stdout.flush
   stdout.putStrLn s!"{paths.length} inputs: {decoded} decoded, {rejected} rejected, \
     {mismatched.length} mismatched, {inconclusive.length} inconclusive"
+  stdout.putStrLn s!"minimal reader: {readerAgrees} agree with declaredGasLimit on decoded \
+    inputs, {readerDiffers.length} disagree; {rejectedWithValue} rejected inputs read a \
+    nonzero value"
   for name in inconclusive.reverse do
+    if readerOnly then break
     stdout.putStrLn s!"  inconclusive: {name}"
-  return if mismatched.isEmpty && inconclusive.isEmpty then 0 else 1
+  if readerOnly then return if readerDiffers.isEmpty then 0 else 1
+  return if mismatched.isEmpty && readerDiffers.isEmpty && inconclusive.isEmpty then 0 else 1
