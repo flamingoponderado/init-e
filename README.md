@@ -281,7 +281,8 @@ new main baseline, regenerate it with the same `bench.py` command using
 ## Plan
 
 1. Port the Pancake compiler, formally verified in HOL, to Lean (flapjack).
-2. Combine this with the guest into an autoresearch-ready theorem.
+2. Combine this with the guest into an autoresearch-ready theorem; the
+   challenge it is meant for is specified in [docs/CHALLENGE.md](docs/CHALLENGE.md).
 
 Step and memory accounting (source-step and memory bounds under 200M gas, and
 a step-count-aware "source terminates ⇒ RISC-V terminates") are not
