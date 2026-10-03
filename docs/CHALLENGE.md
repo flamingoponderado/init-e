@@ -7,7 +7,7 @@ Assumptions
 * **(input)** Execution starts with input in input buffer of Zisk (128 MB starting 0x4000_0000)
 * **(initial pc)** Execution starts from program counter specified at 0x1000 in the initial memory (like Zisk)
 * **(RAM)** 29GB from 0xa000_0000
-* **(gas)** declared block gas limit is at most 200M  (formally: `Guest.GasLimit.declaredGasLimit input ≤ 200000000`, a fixed-position reader in `Guest/GasLimit.lean`)
+* **(gas)** the block gas limit is read from the input by a fixed-position reader (`Guest/GasLimit.lean`). If that parsing succeeds, the declared block gas limit is at most 200M (formally: `Guest.GasLimit.declaredGasLimit input ≤ 200000000`); if the parsing fails, see the **gas parsing failure case** below
 * **(RISC-V?)** The vibe-ported RISC-V interpreter in the Flapjack repo will be used.
 
 Conclusion
@@ -16,6 +16,7 @@ Conclusion
 * **(functional equivalence)**
   * **original success case**: if the original Pancake source (the same RAM size) terminates normally validating the input on Pancake interpreter, the submission RISC-V also terminates with the same output under $K$ steps.
   * **original invalid case**: if the original Pancake source (the same RAM size) terminates normally rejecting the input (or traps for no-OOM reasons) on Pancake interpreter, the submission RISC-V also terminates rejecting the input (or traps for no-OOM reasons) under $K$ steps. All failures are treated equal, so terminating rejects and no-OOM traps all correspond.
+  * **gas parsing failure case**: if parsing the block gas limit from the input fails, the submission RISC-V must terminate rejecting the input, or trap for no-OOM reasons, under $K$ steps (whatever the original Pancake source does).
   * **original diverging case**: if the original Pancake source diverges, OOM-traps, or evaluation failure (evaluator returning none), the submission might terminate, trap or diverge freely.
 
 Score is $K \in \mathbb{N} \cup \{ \infty \}$.
