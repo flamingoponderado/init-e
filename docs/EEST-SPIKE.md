@@ -1,12 +1,17 @@
 # Reproduce the full EEST run with Spike
 
-This is the complete `tests-zkevm` stateless-fixture run, not the small
+This is the sanity check behind the challenge: the assignment, the original
+Pancake source of the guest (`guest/src`), must pass the entire `tests-zkevm`
+stateless-fixture corpus. It is the complete corpus, not the small
 `tools/check_all.sh` sample. `tools/eest-run.py` compares each guest result
 with the fixture's `statelessOutputBytes` and reports root, success, and tail
-regions. The guest's crypto runs on the accelerator CSRs, which Spike implements, and
-the runner itself remains Spike-only. The guest is
-built with `flapjack` (`guest/build.sh`'s default `COMPILER`); pass
-`COMPILER=cake` instead to use a bootstrapped/prebuilt CakeML `cake` binary.
+regions. The guest's crypto runs on the accelerator CSRs, which Spike
+implements, and the runner is Spike-only. The guest is built with `flapjack`
+(`guest/build.sh`'s default `COMPILER`); pass `COMPILER=cake` instead to use a
+bootstrapped/prebuilt CakeML `cake` binary. The same run is available as a
+Docker image (`Dockerfile`, `.github/workflows/docker.yml`), which bakes in
+the guest, `spike_run` and the converted corpus and runs everything with one
+`docker run`; see the README's Docker section.
 
 ## Prerequisites
 
@@ -22,7 +27,7 @@ recorded run below).
 ## Fetch, convert, build, and run all fixtures
 
 `tools/eest-spike-full.sh` fetches the pinned EEST fixture tag, converts the
-whole corpus, builds the accelerated guest, and runs it under Spike:
+whole corpus, builds the guest, and runs it under Spike:
 
 ```bash
 tools/eest-spike-full.sh
@@ -41,10 +46,9 @@ inspection and reruns with `--from-json` or `--labels`.
 
 ## Recorded result
 
-Run on stateless-pancaketh commit
-`fb4553b7ac75caba73f01e7e0f29056fc12c8195`, with 32 Spike workers and the
-accelerated guest built with `flapjack` (5 min 36 s wall time), against
-`tests-zkevm@v21.0.1` (both the `blockchain_tests` and
+Run on commit `a67dd9a557850dc192923bb851f96e113c91544f`, with 16 Spike
+workers and the guest built with `flapjack` (ELF sha256 `49f4665abe01822656bca3c1afa8031404064d16bd939a855416b5fd8ec577c8`),
+against `tests-zkevm@v21.0.1` (both the `blockchain_tests` and
 `blockchain_tests_engine` fixtures):
 
 ```text
@@ -54,21 +58,8 @@ PASS(malformed): 9
 eest-run exit: 0
 ```
 
+Steps over the passing cases: min 25,131, max 12,288,040,916, mean 8,946,640.
+
 There were no fixture failures. The commit-qualified run directory and result
 JSON are the reproducible record for this passing revision; the tracked
 `tools/eest-baseline.json` is not used by this command.
-
-The same guest (the same ELF: sha256
-`1181171037da6360b54665ad0ff6840572d03d1ac69178076302599c3914a6a9`) was also
-run over the same 33,614 inputs under `ziskemu 1.3.0-alpha` (support since
-dropped, see [SOUNDNESS.md](SOUNDNESS.md)): `total: 33614  PASS(full): 33605
-PASS(malformed): 9`, with 25,748 to 13,364,108,009 steps over the passing cases
-(58 min on 32 cores). That run was made from the working tree before it was
-committed; the guest sources were unchanged by the commit, which is why the ELF
-digests match.
-
-The earlier recorded result for `tests-zkevm@v0.6.2` (commit `1489defb`, 26,104
-records: 26,096 `PASS(full)` and 8 `PASS(malformed)`, built with `cake`) is
-superseded by the above; the schema and several gas rules changed between the
-two (see [issue #135](https://github.com/pirapira/stateless-pancaketh/issues/135)
-for the list), so its numbers aren't comparable.
