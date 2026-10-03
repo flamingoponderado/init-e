@@ -48,6 +48,33 @@ the Flapjack compiler are only intermediate lemmas a submission may use. The
 RISC-V semantics in the Flapjack codebase, however, is part of the challenge
 and must not be modified by a submission.
 
+## For people who might use the solutions
+
+*Placeholder; to be filled in, except for the following.* A solution is
+guaranteed to agree with the original Pancake source only as
+[docs/CHALLENGE.md](docs/CHALLENGE.md) states, so do not read it as a
+verified Ethereum client.
+
+* **Bugs of the Pancake source carry over.** If the Pancake source mistakenly
+  accepts an invalid block (or rejects a valid one), a solution must do the same
+  on the cases the challenge covers. EEST passing
+  ([docs/EEST-SPIKE.md](docs/EEST-SPIKE.md)) is a sanity check, not a proof that
+  the source is a correct Ethereum state transition.
+* **Where the Pancake source goes out of memory (OOM), or diverges, a solution
+  is free.** It may accept a block the source runs out of memory on, even an
+  invalid one, or reject or trap on a block the source would accept. The bet is
+  that the source never OOMs for a block declaring at most 200M gas, which is
+  proved separately, not part of the solution.
+* **Declared gas above 200M is outside the assumption.** If the declared block
+  gas limit parses and exceeds 200M, a solution may do anything, including
+  accepting an invalid block. A user should reject such blocks themselves.
+* **All failures are equal.** On an invalid input a solution may reject or
+  trap (not OOM); which of the two, and with which code, is not specified.
+* **The zkVM is a separate question.** The challenge assumes more RAM (29GB) than
+  a zkVM such as ZisK provides ([docs/SOUNDNESS.md](docs/SOUNDNESS.md)), so a
+  solution's guarantees transfer to a zkVM only after the RISC-V semantics of
+  the challenge is shown to refine the zkVM's, and the memory is checked separately.
+
 ## Status
 
 * **EEST fixtures.** The guest passes the entire `tests-zkevm@v21.0.1`
