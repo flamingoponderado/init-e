@@ -6,6 +6,7 @@ import Guest.DecidableEq
 import Guest.Accel
 import Guest.AccelFfi
 import Guest.InputDecode
+import Guest.GasLimit
 import Guest.Model
 import Guest.FrameBound
 import Flapjack.PanValueFfiFuel

@@ -7,7 +7,7 @@ Assumptions
 * **(input)** Execution starts with input in input buffer of Zisk (128 MB starting 0x4000_0000)
 * **(initial pc)** Execution starts from program counter specified at 0x1000 in the initial memory (like Zisk)
 * **(RAM)** 29GB from 0xa000_0000
-* **(gas)** declared block gas limit is at most 200M
+* **(gas)** declared block gas limit is at most 200M  (formally: `Guest.GasLimit.declaredGasLimit input ≤ 200000000`, a fixed-position reader in `Guest/GasLimit.lean`)
 * **(RISC-V?)** The vibe-ported RISC-V interpreter in the Flapjack repo will be used.
 
 Conclusion

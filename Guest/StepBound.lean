@@ -1,5 +1,6 @@
 import Guest.Model
 import Guest.InputDecode
+import Guest.GasLimit
 import Flapjack.PanValueFfiFuel
 
 /-!
@@ -51,6 +52,15 @@ the inputs on which the guest raises `SszErr`; the field is the payload's
 `BE_GAS_LIMIT`. -/
 def declaredBlockGasLimit (input : InputBlob) : Option Nat :=
   InputDecode.declaredGasLimit input
+
+/-- On every input the guest decodes, the declared block gas limit is what the
+minimal reader `Guest.GasLimit.declaredGasLimit` reads from its fixed position;
+that reader is the one `docs/CHALLENGE.md` states the bound with. -/
+theorem declaredBlockGasLimit_eq_of_decode {input : InputBlob}
+    (h : ∃ decoded, InputDecode.decodeStatelessInput input = some decoded) :
+    declaredBlockGasLimit input = some (GasLimit.declaredGasLimit input) :=
+  let ⟨_, hdecoded⟩ := h
+  GasLimit.decoderGasLimit_eq_some hdecoded
 
 /-- Largest declared block gas limit covered by the bound. -/
 def maxBlockGasLimit : Nat := 200000000
