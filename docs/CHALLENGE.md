@@ -5,7 +5,8 @@
 Assumptions
 
 * **(input)** Execution starts with input in input buffer of Zisk (128 MB starting 0x4000_0000)
-* **(initial pc)** Execution starts from program counter specified at 0x1000 in the initial memory (like Zisk)
+* **(initial pc)** Execution starts from the fixed program counter 0x8000_0000 (Zisk's `ROM_ADDR`, where Zisk's own program starts after its BIOS)
+* **(code size)** The submission's code is at most 128 MiB (0x0800_0000 bytes, the size of Zisk's ROM window), loaded at the initial pc
 * **(RAM)** 29GB from 0xa000_0000
 * **(gas)** if the block gas limit parses from the input (by a fixed-position reader, `Guest/GasLimit.lean`), it is at most 200M (formally: `Guest.GasLimit.declaredGasLimit input ≤ 200000000`). The input might not parse; that case fits the assumption, and the conclusion below applies as usual
 * **(RISC-V?)** The vibe-ported RISC-V interpreter in the Flapjack repo will be used.
@@ -27,6 +28,8 @@ The initial submission follows from the Pancake compiler correctness theorem wit
 **(input)** the first eight bytes contains the size of the input; but this convention is already taken care of by the functional equivalence.
 
 **(gas)** this allows submission to do anything if declared gas is too big. Current Pancake source allows big block gas limit (needed to pass EEST). Alternative is: if declared block gas limit is too big, either same output as the original Pancake source or diverge. In any case, it's easy to patch the winner to reject too big declared block gas limit. Current statement formulation is simpler than the alternative.
+
+**(code size)** a limit on the code keeps the submission from encoding a huge lookup table or precomputation in its code, and 128 MiB is the program window Zisk gives (`ROM_ADDR_MAX = ROM_ADDR + 0x0800_0000 - 1` in Zisk's `core/src/mem.rs`; its top 1 MiB is Zisk's float library, not counted here). The program the original Pancake source compiles to is well below it (the guest's `.text` is under 1 MiB).
 
 **(RISC-V?)** The bet is we can prove equivalence of Sail RISC-V and the used interpreter, or failing that we can implement the used interpreter as a zkVM.
 
