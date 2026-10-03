@@ -41,7 +41,7 @@ Everything here is computable, so it doubles as an executable model
   where `ffitrap` jumps to `cml_exit` and never returns. Without it the callers
   would keep going down their error paths, and that is not merely an
   over-approximation: it reaches unmapped byte accesses, which make the whole
-  stepped run `none`. See `docs/STEP-BOUND.md`.
+  stepped run `none`.
 * *Shared-memory payload address.* CakeML passes the exact (unaligned) address
   to the `SharedMem` oracle; flapjack passes `context.byteAlign address`. We
   set `byteAlign := id`, so the oracle sees the exact address and byte stores
