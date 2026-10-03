@@ -51,7 +51,7 @@ compiles the guest with flapjack, and bakes in the full `tests-zkevm` EEST
 fixture corpus (converted into guest inputs), so a conformance run is one
 `docker run` — no Lean, Spike or RISC-V toolchain needed locally. The
 `.github/workflows/docker.yml` workflow builds and pushes it to
-`ghcr.io/flamingoponderado/stateless-pancaketh`. Building needs the
+`ghcr.io/flamingoponderado/init-e`. Building needs the
 submodules (`git submodule update --init evm-asm riscv-isa-sim`):
 
 ```bash
@@ -62,7 +62,7 @@ docker run --rm stateless-pancaketh-eest-spike \
   --filter random_statetest --limit 50              # narrow smoke check
 ```
 
-`ghcr.io/flamingoponderado/stateless-pancaketh:v0.1.4` is the last image that
+`ghcr.io/flamingoponderado/stateless-pancaketh:v0.1.4` (the old repository's package) is the last image that
 ran under `ziskemu` (built from `main` at `414e6c6`, tag `r20261003-02`, with
 the `tests-zkevm@v21.0.1` fixtures; it passes the full corpus and needs an
 x86-64 CPU with AVX2, BMI2 and ADX). It is invoked with `--ziskemu`, which
