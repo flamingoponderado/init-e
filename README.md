@@ -42,6 +42,12 @@ checking a small hand-written program: set the wall-clock and memory limits of
 the checker (proof checking, building and any test runs) to accommodate that,
 rather than sizing them for the original Pancake guest alone.
 
+Using the Flapjack compiler is not mandatory. The checker must not require the
+Pancake source to appear as a literal in a submission: the Pancake source and
+the Flapjack compiler are only intermediate lemmas a submission may use. The
+RISC-V semantics in the Flapjack codebase, however, is part of the challenge
+and must not be modified by a submission.
+
 ## Status
 
 * **EEST fixtures.** The guest passes the entire `tests-zkevm@v21.0.1`
