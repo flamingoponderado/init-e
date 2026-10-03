@@ -151,7 +151,7 @@ RUN canonical_tag="$(tr -d '[:space:]' < eest-fixture-tag.txt)" \
     && tools/make-inputs.sh --all work/inputs
 
 LABEL org.opencontainers.image.licenses="MIT"
-LABEL org.opencontainers.image.source="https://github.com/pirapira/stateless-pancaketh"
+LABEL org.opencontainers.image.source="https://github.com/flamingoponderado/stateless-pancaketh"
 LABEL org.opencontainers.image.revision="${GIT_COMMIT}"
 LABEL org.opencontainers.image.ref.name="${GIT_REF}"
 LABEL org.opencontainers.image.created="${BUILD_DATE}"
