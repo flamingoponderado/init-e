@@ -3,15 +3,21 @@
 
 # Guest build artifacts and local test/work output (rebuilt inside Docker)
 guest/build/
+tools/spike/spike_run
+tools/spike/*.so
+tools/spike/handler.o
+tools/spike/handler.elf
+tools/spike/handler.bin
+tools/spike/handler_bin.h
 work/
 
-# Submodules not needed for the ziskemu EEST image: flapjack is fetched by
-# lake itself, and riscv-isa-sim/cakeml are only needed for Spike/cake, not
-# ziskemu. evm-asm/ IS needed (its scripts/), but its own heavy nested
-# content is excluded below.
+# Submodules not needed for the EEST image: flapjack is fetched by lake itself,
+# and cakeml is only needed for the optional `cake` compiler. riscv-isa-sim IS
+# needed (the Spike stage builds it), but not its build output. evm-asm/ IS
+# needed (its scripts/), but its own heavy nested content is excluded below.
 cakeml/
 flapjack/
-riscv-isa-sim/
+riscv-isa-sim/build/
 evm-asm/.lake/
 evm-asm/gen-out/
 evm-asm/execution-specs/

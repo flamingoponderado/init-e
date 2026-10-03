@@ -1,5 +1,5 @@
 # start.S -- bare-metal runtime shim for a Pancake program running as a
-# ZisK-style stateless guest under tools/spike/spike_run (or ziskemu).
+# ZisK-style stateless guest under tools/spike/spike_run.
 #
 # Contract (see tools/spike/spike_run.cc):
 #   input  at 0x40000000: [8B zero meta][8B LE len][blob]

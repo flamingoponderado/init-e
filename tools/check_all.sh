@@ -69,7 +69,7 @@ run_check "build guest" "$ROOT/tools/build_guest.sh"
 # specifications must agree with reference values.
 run_check "lean: lake build Guest" lake build Guest
 run_check "lean: accel-ffi-check" lake exe accel-ffi-check
-run_check "accelerator foreign-call smoke (ziskemu)" python3 "$ROOT/tools/accel-ffi-smoke.py"
+run_check "accelerator foreign-call smoke (spike)" python3 "$ROOT/tools/accel-ffi-smoke.py"
 
 run_unit_tests() {
   run_check "unit t_globals" \
@@ -168,67 +168,9 @@ run_eest_variant() {
   run_eest_with_baseline "$elf" "$manifest" "$json" "${args[@]}"
 }
 
-# Fixtures recorded as allowed failures in tools/eest-baseline.json for this
-# manifest (e.g. spike step-cap exits) are skipped: their output is not
-# comparable between emulators.
-baseline_allowed_labels() {
-  python3 - "$ROOT/tools/eest-baseline.json" "$1" <<'PY'
-import json, sys
-try:
-    data = json.load(open(sys.argv[1]))
-except OSError:
-    sys.exit(0)
-entry = data.get("manifests", data).get(sys.argv[2], {})
-for label in (entry.get("failures") or {}):
-    print(label)
-PY
-}
-
-compare_eest_outputs() {
-  local manifest="$1"
-  local first_dir="$2"
-  local second_dir="$3"
-  local manifest_name
-  manifest_name="$(basename "$(dirname "$manifest")")"
-  local allowed
-  allowed="$(baseline_allowed_labels "$manifest_name")"
-  local checked=0
-  local skipped=0
-  local failures=0
-  local label remainder first second
-  while IFS=$'\t' read -r label remainder; do
-    [[ -n "$label" ]] || continue
-    if grep -qxF -- "$label" <<<"$allowed"; then
-      skipped=$((skipped + 1))
-      continue
-    fi
-    first="$first_dir/$label.output"
-    second="$second_dir/$label.output"
-    checked=$((checked + 1))
-    if [[ ! -f "$first" || ! -f "$second" ]]; then
-      printf 'missing output for %s\n' "$label"
-      failures=$((failures + 1))
-    elif ! cmp -s "$first" "$second"; then
-      printf 'output differs for %s\n' "$label"
-      failures=$((failures + 1))
-    fi
-  done < "$manifest"
-  if (( failures == 0 )); then
-    printf 'PASS (%s EEST output files byte-identical, %s baseline-allowed failures skipped)\n' "$checked" "$skipped"
-    return 0
-  fi
-  printf 'FAIL (%s of %s EEST output files differ or are missing)\n' \
-    "$failures" "$checked"
-  return 1
-}
-
 # Run every converted EEST manifest, including sampled manifests such as
-# work/inputs-rand/manifest.tsv when present, against the main guest.  The
-# output directories are kept so the Spike/ziskemu byte-for-byte differential
-# below is independent of the PASS/FAIL classification.
+# work/inputs-rand/manifest.tsv when present, against the main guest.
 manifest_found=0
-BASE_MANIFEST=""
-BASE_SPIKE_DIR=""
 for manifest in "$ROOT"/work/inputs*/manifest.tsv; do
   [[ -f "$manifest" ]] || continue
   manifest_found=1
@@ -238,31 +180,9 @@ for manifest in "$ROOT"/work/inputs*/manifest.tsv; do
   run_check "EEST $manifest_name" \
     run_eest_variant "$ROOT/guest/build/guest.elf" "$manifest" \
     "$out_dir" "$out_json"
-  if [[ "$manifest_name" == "inputs" ]]; then
-    BASE_MANIFEST="$manifest"
-    BASE_SPIKE_DIR="$out_dir"
-  fi
 done
 if [[ "$manifest_found" -eq 0 ]]; then
   run_check "EEST manifests available" false
-fi
-
-# ziskemu is deliberately opt-in for the local Spike-first workflow because
-# it is substantially slower.  CI or a release check can enable the exact
-# requested parity gate with CHECK_ALL_ZISKE_PARITY=1.
-if [[ -n "$BASE_MANIFEST" ]]; then
-  if [[ "${CHECK_ALL_ZISKE_PARITY:-0}" == "1" ]]; then
-    ZISK_DIR="$LOG_DIR/eest-inputs-ziskemu"
-    ZISK_JSON="$LOG_DIR/eest-inputs-ziskemu.json"
-    run_check "EEST inputs ziskemu" \
-      run_eest_with_baseline "$ROOT/guest/build/guest.elf" \
-      "$BASE_MANIFEST" "$ZISK_JSON" --quiet-passes --ziskemu \
-      --out-dir "$ZISK_DIR"
-    run_check "EEST inputs Spike/ziskemu byte differential" \
-      compare_eest_outputs "$BASE_MANIFEST" "$BASE_SPIKE_DIR" "$ZISK_DIR"
-  else
-    printf 'SKIP  EEST inputs ziskemu (set CHECK_ALL_ZISKE_PARITY=1)\n'
-  fi
 fi
 
 printf '%s\n' '----------------------------------------'

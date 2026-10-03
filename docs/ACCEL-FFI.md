@@ -92,13 +92,15 @@ BLAKE2b row of 10 or more) ends the run in the model as a final FFI event,
   `t_precompiles`, `t_sha256` and `t_keccak` unit tests, accelerated, which exercise the
   converted calls through the new stubs under Spike.
 * `tools/accel-ffi-smoke.py` (also in `check_all`): `guest/test/accel_ffi_smoke.pnk`
-  makes one `@keccakf` and one `@sha256f` call, and its output on `ziskemu`, through the
-  stubs and the real CSRs, equals the `hashlib` reference for the same inputs. This ties
-  the byte-level specifications to the hardware behaviour for those vectors.
+  makes one `@keccakf` and one `@sha256f` call, and its output on `spike_run`, through the
+  stubs and Spike's implementation of the CSRs (`tools/spike/zisk_accel.cc`), equals the
+  `hashlib` reference for the same inputs. This ties the byte-level specifications to
+  that implementation for those vectors. (It used to run on `ziskemu`'s real CSRs; that
+  support was dropped, see `docs/SOUNDNESS.md`.)
 * `lake build Guest` (also in `check_all`, so the Lean library stays in step with the
   guest sources).
-* The whole `tests-zkevm@v21.0.1` corpus on `ziskemu` with the accelerated guest:
-  33,614 of 33,614. Counting real ZisK steps (the stubs' instructions are executed, though
+* The whole `tests-zkevm@v21.0.1` corpus on `ziskemu` with the accelerated guest
+  (recorded before `ziskemu` support was dropped): 33,614 of 33,614. Counting real ZisK steps (the stubs' instructions are executed, though
   the formal model counts a foreign call as one step), mean steps over the passing cases
   went from 8,835,587 before the conversion to 8,935,499 (+1.1%), almost all of it the
   stubs building their pointer blocks, and the largest case from 12,276,776,458 to
@@ -107,7 +109,7 @@ BLAKE2b row of 10 or more) ends the run in the model as a final FFI event,
 ## How the calls are tested
 
 Through compilation: the Pancake program is compiled and run, and the foreign calls are
-exercised on the compiled code against `ziskemu`'s real accelerator CSRs. The Lean
+exercised on the compiled code against Spike's accelerator CSRs. The Lean
 semantics is not executed on programs for this. Running the guest in it was already
 impractical, and a program that reads memory after a foreign call with a large array
 does not finish at all, because flapjack's `panValueFfiWriteBytes` (a port of CakeML's

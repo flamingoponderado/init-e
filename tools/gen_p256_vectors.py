@@ -15,7 +15,7 @@ and curve checks is cross-checked against `EllipticCurvePublicKey.verify`
 mismatch aborts.  Run under `uv run --directory evm-asm/execution-specs python
 ...` to get the cross-check (tools/check_p256.sh does).
 
-Input (ziskemu framing: 8-byte LE length, blob, zero pad to 8): N cases of
+Input (input framing: 8-byte LE length, blob, zero pad to 8): N cases of
 160 bytes, exactly the precompile call data [32 hash][32 r][32 s][32 qx][32 qy]
 (big-endian).  Expected output per case: 8 bytes LE, 1 if the signature
 verifies else 0 (the precompile then returns 32 bytes ending in 0x01, or empty

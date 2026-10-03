@@ -2,7 +2,7 @@
 # Build the SPIKE backend for the stateless guest:
 #   libziskaccel.so  — accelerator-CSR extension (for stock `spike --extlib`)
 #   spike_run        — custom driver (ELF + input file -> 256-byte output file),
-#                      a drop-in for `ziskemu -e <elf> -i <in> -o <out>`.
+#                      the way `ziskemu -e <elf> -i <in> -o <out>` used to run the guest.
 # Requires riscv-isa-sim checked out + built at $SPIKE_SRC, and a riscv64 as/ld.
 #
 # Vendored from evm-asm/scripts/spike/build.sh (same MIT license, same

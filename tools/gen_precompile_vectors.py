@@ -2,7 +2,7 @@
 """Generate framed records for guest/test/t_precompiles.pnk.
 
 Each record is [idx:u8][gas:u64 LE][data_len:u32 LE][call data]. The whole
-record blob is wrapped in the ziskemu input format used by input_blob().
+record blob is wrapped in the input format used by input_blob().
 """
 import argparse
 import hashlib

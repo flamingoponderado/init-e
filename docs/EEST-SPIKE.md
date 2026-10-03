@@ -4,7 +4,7 @@ This is the complete `tests-zkevm` stateless-fixture run, not the small
 `tools/check_all.sh` sample. `tools/eest-run.py` compares each guest result
 with the fixture's `statelessOutputBytes` and reports root, success, and tail
 regions. The guest's crypto runs on the accelerator CSRs, which Spike implements, and
-the runner itself remains Spike-only. No ziskemu is needed. The guest is
+the runner itself remains Spike-only. The guest is
 built with `flapjack` (`guest/build.sh`'s default `COMPILER`); pass
 `COMPILER=cake` instead to use a bootstrapped/prebuilt CakeML `cake` binary.
 
@@ -60,21 +60,12 @@ JSON are the reproducible record for this passing revision; the tracked
 
 The same guest (the same ELF: sha256
 `1181171037da6360b54665ad0ff6840572d03d1ac69178076302599c3914a6a9`) was also
-run over the same 33,614 inputs under `ziskemu 1.3.0-alpha`:
-
-```bash
-python3 tools/eest-run.py work/eest-spike-<commit>/guest.elf \
-  work/eest-spike-<commit>/inputs/manifest.tsv --ziskemu --quiet-passes
-```
-
-```text
-total: 33614  PASS(full): 33605  PASS(malformed): 9
-steps over passing cases: min=25748 max=13364108009
-```
-
-(58 min on 32 cores; the largest blocks run to ~13.4 billion steps.) That run
-was made from the working tree before it was committed; the guest sources
-were unchanged by the commit, which is why the ELF digests match.
+run over the same 33,614 inputs under `ziskemu 1.3.0-alpha` (support since
+dropped, see [SOUNDNESS.md](SOUNDNESS.md)): `total: 33614  PASS(full): 33605
+PASS(malformed): 9`, with 25,748 to 13,364,108,009 steps over the passing cases
+(58 min on 32 cores). That run was made from the working tree before it was
+committed; the guest sources were unchanged by the commit, which is why the ELF
+digests match.
 
 The earlier recorded result for `tests-zkevm@v0.6.2` (commit `1489defb`, 26,104
 records: 26,096 `PASS(full)` and 8 `PASS(malformed)`, built with `cake`) is

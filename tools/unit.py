@@ -3,7 +3,7 @@
 Build a test Pancake program, run it on INPUT_FILE with spike_run and compare
 the output bytes (as hex, truncated to expected length) with the hex string
 produced by evaluating EXPECT_EXPR in Python (blob = input blob bytes without
-the ziskemu framing; hashlib available)."""
+the input framing; hashlib available)."""
 import argparse, hashlib, os, struct, subprocess, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import pyref

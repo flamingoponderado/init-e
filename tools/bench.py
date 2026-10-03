@@ -3,8 +3,7 @@
 
 The first guest is the primary build.  ``--elf2`` adds a second-build column
 (for example a previous revision's ELF).  Every variant is run under Spike for its
-instruction count and under ziskemu ``-X`` for ZisK STEPS, TOTAL COST, and
-PRECOMPILED COST.  Only fixtures whose Spike output matches the manifest are
+instruction count (``steps=`` from spike_run).  Only fixtures whose Spike output matches the manifest are
 counted in the totals.
 
 With ``--json``, the primary-build metrics retain the historical top-level fields
@@ -23,9 +22,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SPIKE_RUN = os.environ.get("SPIKE_RUN", os.path.join(ROOT, "tools/spike/spike_run"))
 SPIKE_PROF = os.environ.get("SPIKE_PROF", os.path.join(ROOT, "tools/spike_prof/spike_prof"))
 PROF_PY = os.path.join(ROOT, "tools/spike_prof/prof.py")
-ZISKEMU = os.environ.get("ZISKEMU", os.path.expanduser("~/.zisk/bin/ziskemu"))
 
-METRICS = ("spike_instr", "zisk_steps", "zisk_total_cost", "zisk_precompiled_cost")
+METRICS = ("spike_instr",)
 
 
 def resolve_input_path(path, manifest_dir):
@@ -44,42 +42,20 @@ def read_profile(elf, hist):
     return list(csv.DictReader(proc.stdout.splitlines()))
 
 
-def print_profile(label, rows, total_cost):
+def print_profile(label, rows):
     print(f"  profile: {label}")
-    print(f"    {'function':60s} {'instructions':>12s} {'instr%':>8s} "
-          f"{'est_zisk_cost':>14s} {'est_zisk_cost%':>14s}")
+    print(f"    {'function':60s} {'instructions':>12s} {'instr%':>8s}")
     for row in rows:
         name = row["function"]
         count = int(row["instructions"])
         instruction_share = float(row["instruction_share_pct"])
-        if total_cost >= 0:
-            estimated_cost = int(total_cost * instruction_share / 100 + 0.5)
-            estimated_share = instruction_share
-            cost_text = f"{estimated_cost:,}"
-            share_text = f"{estimated_share:6.2f}%"
-        else:
-            cost_text = "?"
-            share_text = "?"
-        print(f"    {name[:60]:60s} {count:12d} {instruction_share:7.2f}% "
-              f"{cost_text:>14s} {share_text:>14s}")
-
-
-def grab_metric(text, label):
-    """Read an integer from a ziskemu stats line such as ``TOTAL COST: N``."""
-    for pattern in (
-            rf"(?im)^\s*{label}\s*[:=]\s*([0-9][0-9,]*)\b",
-            rf"(?im)^\s*{label}\s+([0-9][0-9,]*)\b"):
-        match = re.search(pattern, text)
-        if match:
-            return int(match.group(1).replace(",", ""))
-    return -1
+        print(f"    {name[:60]:60s} {count:12d} {instruction_share:7.2f}%")
 
 
 def run_variant(elf, label, inp, expected_hex, index, variant, out_dir,
                 profile):
     stem = f"{variant}-{index:05d}"
     out = os.path.join(out_dir, stem + ".out")
-    zisk_out = os.path.join(out_dir, stem + ".zisk.out")
     hist = os.path.join(out_dir, stem + ".hist")
 
     spike_env = dict(os.environ)
@@ -96,27 +72,14 @@ def run_variant(elf, label, inp, expected_hex, index, variant, out_dir,
         actual = open(out, "rb").read()[:len(expected_hex) // 2].hex()
     ok = actual == expected_hex
 
-    zisk = subprocess.run(
-        [ZISKEMU, "-e", elf, "-i", inp, "-o", zisk_out, "-X"],
-        capture_output=True, text=True)
-    zisk_text = zisk.stdout + zisk.stderr
-    steps = grab_metric(zisk_text, r"STEPS")
-    total_cost = grab_metric(zisk_text, r"TOTAL\s+COST")
-    precompiled_cost = grab_metric(
-        zisk_text, r"PRECOMPILE(?:D|S)?\s+COST")
-
     result = {
         "label": label,
         "ok": ok,
         "spike_instr": spike,
-        "zisk_steps": steps,
-        "zisk_total_cost": total_cost,
-        "zisk_precompiled_cost": precompiled_cost,
-        "zisk_rc": zisk.returncode,
     }
     if profile:
         try:
-            print_profile(f"{variant}/{label}", read_profile(elf, hist), total_cost)
+            print_profile(f"{variant}/{label}", read_profile(elf, hist))
         except (OSError, RuntimeError, ValueError, KeyError) as exc:
             print(f"  profile unavailable ({variant}/{label}): {exc}")
     return result
@@ -138,10 +101,7 @@ def totals_for(fixtures):
 
 def print_totals(variant, totals):
     print(f"{variant} OK {totals['ok']}/{totals['fixtures']}  "
-          f"spike_instr={format_metric(totals['spike_instr'])}  "
-          f"zisk_steps={format_metric(totals['zisk_steps'])}  "
-          f"zisk_total_cost={format_metric(totals['zisk_total_cost'])}  "
-          f"zisk_precompiled_cost={format_metric(totals['zisk_precompiled_cost'])}")
+          f"spike_instr={format_metric(totals['spike_instr'])}")
 
 
 def main():
@@ -182,10 +142,8 @@ def main():
         variants.append(("accelerated", args.elf2))
 
     metric_headers = {
-        "software": ("software_spike", "software_STEPS", "software_TOTAL",
-                     "software_PRECOMPILES"),
-        "accelerated": ("accelerated_spike", "accelerated_STEPS",
-                        "accelerated_TOTAL", "accelerated_PRECOMPILES"),
+        "software": ("primary_spike",),
+        "accelerated": ("second_spike",),
     }
     header = f"{'fixture':60s} {'ok':>3s}"
     for name, _ in variants:
@@ -217,9 +175,6 @@ def main():
             "ok": primary["ok"],
             # Keep the historical names for bench_compare.py.
             "spike_instr": primary["spike_instr"],
-            "zisk_steps": primary["zisk_steps"],
-            "zisk_cost": primary["zisk_total_cost"],
-            "zisk_precompiled_cost": primary["zisk_precompiled_cost"],
         }
         if args.elf2:
             fixture["variants"] = {
@@ -245,9 +200,6 @@ def main():
                 "fixtures": totals["software"]["fixtures"],
                 "ok": totals["software"]["ok"],
                 "spike_instr": totals["software"]["spike_instr"],
-                "zisk_steps": totals["software"]["zisk_steps"],
-                "zisk_cost": totals["software"]["zisk_total_cost"],
-                "zisk_precompiled_cost": totals["software"]["zisk_precompiled_cost"],
             },
         }
         if args.elf2:

@@ -13,7 +13,7 @@ every failure is confirmed to make coincurve raise; a mismatch aborts.  Run it
 under `uv run --directory evm-asm/execution-specs python ...` to get the
 cross-check (tools/check_secp256k1.sh does).
 
-Input (ziskemu framing: 8-byte LE length, blob, zero pad to 8): N cases of
+Input (input framing: 8-byte LE length, blob, zero pad to 8): N cases of
 104 bytes = [32 msg_hash][32 r][32 s][8 recid LE].
 Expected output per case, 112 bytes:
   [8 ok LE][64 point x||y BE, zeros if !ok]
