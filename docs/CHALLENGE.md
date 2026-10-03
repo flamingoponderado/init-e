@@ -34,7 +34,7 @@ The initial submission follows from the Pancake compiler correctness theorem wit
 
 **diverging case**: maybe the submission reduces memory allocation (a good thing), so even when the original Pancake goes OOM trap, the submission might output something. The submission should not be required to spend resources trying to figure out when the original Pancake goes OOM. The bet is: the diverging case is moot because it's provable that the original Pancake source never OOM-traps for a block of at most 200M declared block gas.
 
-**(RAM)** 29GB is rather big. However, this supports our bet that the original Pancake source does not go OOM for blocks under declared 200M block gas. The bet here is: we'll be able to prove reasonable a memory bound for the winner (it's probable; the winner won't allocate unnecessarily, and the allocation is probably limited by gas.) I thought about making the whole 2^64 addresses available but that might lead to unrealistically big lookup tables or some weird data structure, so I'd rather stay with 13GB.
+**(RAM)** 29GB is rather big. However, this supports our bet that the original Pancake source does not go OOM for blocks under declared 200M block gas. The bet here is: we'll be able to prove reasonable a memory bound for the winner (it's probable; the winner won't allocate unnecessarily, and the allocation is probably limited by gas.) I thought about making the whole 2^64 addresses available but that might lead to unrealistically big lookup tables or some weird data structure, so I'd rather stay with 29GB.
 
 ## Trust Boundary
 
