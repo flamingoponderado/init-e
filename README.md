@@ -42,6 +42,47 @@ checking a small hand-written program: set the wall-clock and memory limits of
 the checker (proof checking, building and any test runs) to accommodate that,
 rather than sizing them for the original Pancake guest alone.
 
+Using the Flapjack compiler is not mandatory. The checker must not require the
+Pancake source to appear as a literal in a submission: the Pancake source and
+the Flapjack compiler are only intermediate lemmas a submission may use. The
+RISC-V semantics in the Flapjack codebase, however, is part of the challenge
+and must not be modified by a submission.
+
+## For people who look at the solutions
+
+*Placeholder; to be filled in, except for the following.* A solution is
+guaranteed to agree with the original Pancake source only as
+[docs/CHALLENGE.md](docs/CHALLENGE.md) states, so do not read it as a
+verified Ethereum client.
+
+* **Bugs of the Pancake source carry over.** If the Pancake source mistakenly
+  accepts an invalid block (or rejects a valid one), a solution must do the same
+  on the cases the challenge covers. EEST passing
+  ([docs/EEST-SPIKE.md](docs/EEST-SPIKE.md)) is a sanity check, not a proof that
+  the source is a correct Ethereum state transition.
+* **Where the Pancake source goes out of memory (OOM), or diverges, a solution
+  is free.** It may accept a block the source runs out of memory on, even an
+  invalid one, or reject or trap on a block the source would accept. The bet is
+  that the source never OOMs or diverges for a block declaring at most 200M
+  gas, but whether that holds is still unknown. It is not part of a solution's
+  proof, and anyone can investigate it (see
+  [docs/ALLOC-AUDIT.md](docs/ALLOC-AUDIT.md) and
+  [docs/JOURNAL-BOUND.md](docs/JOURNAL-BOUND.md) for existing notes, which do
+  not settle it).
+* **Declared gas above 200M is outside the assumption.** If the declared block
+  gas limit parses and exceeds 200M, a solution may do anything, including
+  accepting an invalid block. A user should reject such blocks themselves.
+* **All failures are equal.** On an invalid input a solution may reject or
+  trap (not OOM); which of the two, and with which code, is not specified.
+* **The zkVM is a separate question.** The challenge assumes more RAM (29GB) than
+  a zkVM such as ZisK provides ([docs/SOUNDNESS.md](docs/SOUNDNESS.md)), so a
+  solution's guarantees transfer to a zkVM only after the RISC-V semantics of
+  the challenge is shown to refine the zkVM's, and the memory is checked separately.
+* **Memory needs its own bound.** The assumed memory is probably bigger than
+  what usual zkVMs provide, so before running a solution in a zkVM one needs
+  to prove an upper bound on the solution's memory consumption in addition.
+  The challenge does not give this bound.
+
 ## Status
 
 * **EEST fixtures.** The guest passes the entire `tests-zkevm@v21.0.1`
