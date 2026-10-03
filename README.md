@@ -22,6 +22,26 @@ guest. Tests run on Spike only: the memory the challenge assumes
 (`docs/CHALLENGE.md`) is deliberately larger than ZisK provides, see
 [docs/SOUNDNESS.md](docs/SOUNDNESS.md).
 
+## For challenge participants
+
+*Placeholder; to be filled in.* The statement of the challenge (what a
+submission is, what it must prove, the assumptions and the score) is
+[docs/CHALLENGE.md](docs/CHALLENGE.md). The assignment is the Pancake source in
+`guest/src/`; `docs/SOUNDNESS.md` explains why the assumed memory is larger than
+a zkVM provides. Build the reference guest with `tools/build_guest.sh` and run
+it on Spike with `tools/spike/spike_run` (see [Quick start](#quick-start)).
+
+## For challenge organizers
+
+*Placeholder; to be filled in, except for the following.*
+
+Some solutions are expected to contain the whole flapjack compiler, modified
+to count steps (so that a submission can carry its own step-count-aware
+correctness argument). Checking such a submission is therefore far heavier than
+checking a small hand-written program: set the wall-clock and memory limits of
+the checker (proof checking, building and any test runs) to accommodate that,
+rather than sizing them for the original Pancake guest alone.
+
 ## Status
 
 * **EEST fixtures.** The guest passes the entire `tests-zkevm@v21.0.1`
