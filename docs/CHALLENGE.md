@@ -8,7 +8,7 @@ Assumptions
 * **(initial pc)** Execution starts from the fixed program counter 0x8000_0000 (Zisk's `ROM_ADDR`, where Zisk's own program starts after its BIOS)
 * **(RAM)** 29 GiB in `[0xa000_0000, 0x7_e000_0000)` (exclusive end, 4 KiB aligned), initially zero outside the public input. Integer registers initially contain zero. Every submission includes its own startup code.
 * **(gas)** if the block gas limit parses from the input (by a fixed-position reader, `Guest/GasLimit.lean`), it is at most 200M (formally: `Guest.GasLimit.declaredGasLimit input ≤ 200000000`). The input might not parse; that case fits the assumption, and the conclusion below applies as usual
-* **(RISC-V?)** Flapjack's integer RISC-V model on the `riscv-mi` branch is used, pinned to `8bd4e6b2786203d1d17cbc8e3d401396f346c85e`. Execution starts in machine mode, with identity physical address translation.
+* **(RISC-V?)** Flapjack's integer RISC-V model on the `riscv-mi` branch is used, pinned to `7ef58a0e940088c06e6a283bde681c5754fce262`. Execution starts in machine mode, with identity physical address translation.
   The formal machine setup must enforce `mstatus.MPRV = 3`;
   `isRiscvMachineConfig` alone does not imply this. Address translation in the
   pinned `riscv-mi` model is identity by definition. Accelerators are foreign calls with the specifications in `Guest/AccelFfi.lean`, not extra instructions in the integer ISA.
@@ -25,6 +25,24 @@ Conclusion
 Score is $K \in \mathbb{N} \cup \{ \infty \}$.
 
 The intended initial submission consists of the accelerated guest compiled with Flapjack and the literal score $K = \infty$. Certification uses `nativeSourceCompile_correct`; see the proof obligations and implementation status below.
+
+## Flapjack repin (2026-10-04)
+
+The dependency advanced from `8bd4e6b2786203d1d17cbc8e3d401396f346c85e` to
+`7ef58a0e940088c06e6a283bde681c5754fce262`. The intervening commits change
+documentation, tests, and CI tooling; changes in the two proof modules are
+comments only. Compiler code, theorem statements, source/target semantics,
+and dependency/toolchain versions are unchanged. The literal baseline and
+its recorded Spike ELF therefore remain the same artifacts.
+
+Validation: `lake build InitE Submission InitE.Audit` passed, as did the three
+changed Flapjack Lean parity modules and all 10 verifier tests. The trusted
+axiom closure still matches exactly the 49-name manifest. Of 1,068 upstream
+Python tests, 1,066 passed in the Lake checkout; the remaining two inventory
+checks passed when rerun in a checkout outside `.lake`, which their scanner
+excludes. Source and ELF hashes match the recorded EEST run; that corpus was
+not rerun because the compiler and execution semantics are unchanged.
+Isolated verification remains pending the host upgrade.
 
 ## Rationales and considerations
 

@@ -125,3 +125,12 @@ The submitted literal ROM image is 950,336 bytes. Its 208-byte bootstrap
 executes 23,127 instructions before reaching native code. These measurements
 verify the executable artifact and corpus behavior; the formal correctness
 certificate is tracked separately in `docs/CHALLENGE.md`.
+
+## Dependency repin (2026-10-04)
+
+Flapjack is now pinned to `7ef58a0e940088c06e6a283bde681c5754fce262`.
+Compared with the compiler revision recorded above, its compiler, theorem
+statements, and execution semantics are unchanged; the changes are documentation,
+tests, CI tooling, and proof-module comments. The source and final ELF hashes
+were rechecked and still match the zero-RAM run. The original EEST records
+retain their original compiler revision; the corpus was not rerun for this repin.
