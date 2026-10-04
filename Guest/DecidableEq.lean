@@ -1,5 +1,5 @@
 import Lean
-import Flapjack.Language
+import Flapjack.Pancake.PanLang
 
 /-!
 Decidable equality for flapjack's Pancake syntax, so that the parse result can

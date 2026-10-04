@@ -2,22 +2,22 @@
 # make-inputs.sh [N] [extra converter args...]
 # make-inputs.sh --all OUTDIR
 # Convert EEST zkevm fixtures into guest inputs + manifest under work/inputs
-# using evm-asm's converter (identical selection to evm-asm's harnesses).
+# using the vendored EEST stateless converter.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 # The fixture tag is pinned by this repo (eest-fixture-tag.txt), not by the evm-asm
-# submodule, whose own pin tracks an older schema.
+# test fixture helpers.
 TAG="$(tr -d '[:space:]' < "$ROOT/eest-fixture-tag.txt")"
-FX="${EEST_FIXTURES_DIR:-$ROOT/evm-asm/gen-out/eest-fixtures/$TAG/fixtures/fixtures}"
+FX="${EEST_FIXTURES_DIR:-$ROOT/work/eest-fixtures/$TAG/fixtures/fixtures}"
 
 ensure_fixtures() {
   [[ -d "$FX" ]] && return 0
   echo "fixtures not found at $FX; fetching $TAG..." >&2
-  "$ROOT/evm-asm/scripts/eest-fetch-fixtures.sh" "$TAG"
+  "$ROOT/tools/eest-fetch-fixtures.sh" "$TAG"
   [[ -d "$FX" ]] || {
     echo "fixtures still not found at $FX after fetching $TAG" \
-      "(see evm-asm/gen-out/eest-fixtures/$TAG/.not-available if present)" >&2
+      "(see work/eest-fixtures/$TAG/.not-available if present)" >&2
     exit 1
   }
 }
@@ -62,7 +62,7 @@ if [[ "${1:-}" == "--all" ]]; then
     exit 0
   fi
   mkdir -p "$OUT"
-  python3 "$ROOT/evm-asm/scripts/eest-stateless-to-input.py" \
+  python3 "$ROOT/tools/eest-stateless-to-input.py" \
     --fixtures-dir "$FX" --out-dir "$OUT" --limit 0
   echo "manifest: $OUT/manifest.tsv"
   exit 0
@@ -72,5 +72,5 @@ N="${1:-50}"; shift || true
 OUT="${OUT_DIR:-$ROOT/work/inputs}"
 ensure_fixtures
 rm -rf "$OUT"; mkdir -p "$OUT"
-python3 "$ROOT/evm-asm/scripts/eest-stateless-to-input.py" --fixtures-dir "$FX" --out-dir "$OUT" --limit "$N" "$@"
+python3 "$ROOT/tools/eest-stateless-to-input.py" --fixtures-dir "$FX" --out-dir "$OUT" --limit "$N" "$@"
 echo "manifest: $OUT/manifest.tsv"

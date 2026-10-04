@@ -7,10 +7,10 @@
    older guest has RAM_ADDR+0x10000). tools/spike/spike_run.cc (a fork of
    evm-asm's) targets this same address. */
 #define OUTPUT_ADDR      2688614400   /* 0xa0410000 */
-#define SCRATCH_BASE     2688618496   /* 0xa0411000: after the output/debug prefix */
-#define HEAP_BASE        2701131776   /* 0xa1000000 (= @base) */
-#define HEAP_END         2952790016   /* 0xb0000000 */
-#define SCRATCH_END      2701127680   /* 0xa0fff000: below the Pancake heap */
+#define SCRATCH_BASE     2701135872   /* 0xa1001000: above @base and startup metadata */
+#define HEAP_BASE        2713714688   /* 0xa1c00000: persistent bump allocation starts after scratch */
+#define HEAP_END         33806089496  /* 0x7defffd18: below 93 global words and the machine stack */
+#define SCRATCH_END      2713714688   /* 0xa1c00000: disjoint from the persistent allocator */
 /* State journal (state.pnk): 32-byte undo records, reset at every state_fresh_tx.
    Every journal-writing operation costs at least JOURNAL_MIN_GAS regular gas
    (TSTORE, 100), so one transaction writes at most gas/JOURNAL_MIN_GAS records;

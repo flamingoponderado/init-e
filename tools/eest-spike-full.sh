@@ -22,7 +22,7 @@ test -x "$SPIKE_RUN" || {
   exit 1
 }
 
-evm-asm/scripts/eest-fetch-fixtures.sh "$TAG"
+tools/eest-fetch-fixtures.sh "$TAG"
 tools/make-inputs.sh --all "$RUN_ROOT/inputs"
 guest/build.sh guest/src/main.pnk "$RUN_ROOT/guest.elf"
 

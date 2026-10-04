@@ -6,26 +6,29 @@ Assumptions
 
 * **(input)** Execution starts with input in input buffer of Zisk (128 MB starting 0x4000_0000)
 * **(initial pc)** Execution starts from the fixed program counter 0x8000_0000 (Zisk's `ROM_ADDR`, where Zisk's own program starts after its BIOS)
-* **(RAM)** 29GB from 0xa000_0000
+* **(RAM)** 29 GiB in `[0xa000_0000, 0x7_e000_0000)` (exclusive end, 4 KiB aligned), initially zero outside the public input. Integer registers initially contain zero. Every submission includes its own startup code.
 * **(gas)** if the block gas limit parses from the input (by a fixed-position reader, `Guest/GasLimit.lean`), it is at most 200M (formally: `Guest.GasLimit.declaredGasLimit input ≤ 200000000`). The input might not parse; that case fits the assumption, and the conclusion below applies as usual
-* **(RISC-V?)** The vibe-ported RISC-V interpreter in the Flapjack repo will be used.
+* **(RISC-V?)** Flapjack's integer RISC-V model on the `riscv-mi` branch is used, pinned to `8bd4e6b2786203d1d17cbc8e3d401396f346c85e`. Execution starts in machine mode, with identity physical address translation.
+  The formal machine setup must enforce `mstatus.MPRV = 3`;
+  `isRiscvMachineConfig` alone does not imply this. Address translation in the
+  pinned `riscv-mi` model is identity by definition. Accelerators are foreign calls with the specifications in `Guest/AccelFfi.lean`, not extra instructions in the integer ISA.
 
 Conclusion
 
-* Let **(output)** be content of 0x10000, 64 KiB in case the submission RISC-V terminates
+* Let **(output)** be content of `[0xa041_0000, 0xa042_0000)`, 64 KiB in case the submission RISC-V terminates
 * **(code size)** the submission must prove that its code is at most 128 MiB (0x0800_0000 bytes, the size of Zisk's ROM window), loaded at the initial pc
 * **(functional equivalence)**
-  * **original success case**: if the original Pancake source (the same RAM size) terminates normally validating the input on Pancake interpreter, the submission RISC-V also terminates with the same output under $K$ steps.
-  * **original invalid case**: if the original Pancake source (the same RAM size) terminates normally rejecting the input (or traps for no-OOM reasons) on Pancake interpreter, the submission RISC-V also terminates rejecting the input (or traps for no-OOM reasons) under $K$ steps. All failures are treated equal, so terminating rejects and no-OOM traps all correspond.
-  * **original diverging case**: if the original Pancake source diverges, OOM-traps, or evaluation failure (evaluator returning none), the submission might terminate, trap or diverge freely.
+  * **original success case**: if the original Pancake source (the same RAM size) terminates normally validating the input under `PanSemStateFiniteExact.semanticsDecls`, the submission RISC-V also terminates with the same output under $K$ steps.
+  * **original invalid case**: if the original Pancake source (the same RAM size) terminates normally rejecting the input (or traps for no-OOM reasons) under `PanSemStateFiniteExact.semanticsDecls`, the submission RISC-V also terminates rejecting the input (or traps for no-OOM reasons) under $K$ steps. All failures are treated equal, so terminating rejects and no-OOM traps all correspond.
+  * **original diverging case**: if the original Pancake source diverges, OOM-traps, or evaluation failure (`HolBehaviour.fail`), the submission might terminate, trap or diverge freely.
 
 Score is $K \in \mathbb{N} \cup \{ \infty \}$.
 
-The initial submission follows from the Pancake compiler correctness theorem with $K = \infty$.
+The intended initial submission consists of the accelerated guest compiled with Flapjack and the literal score $K = \infty$. Certification uses `nativeSourceCompile_correct`; see the proof obligations and implementation status below.
 
 ## Rationales and considerations
 
-**(input)** the first eight bytes contains the size of the input; but this convention is already taken care of by the functional equivalence.
+**(input)** the input region starts with eight zero metadata bytes, then an eight-byte little-endian blob length, then the blob; but this convention is already taken care of by the functional equivalence.
 
 **(gas)** this allows submission to do anything if declared gas is too big. Current Pancake source allows big block gas limit (needed to pass EEST). Alternative is: if declared block gas limit is too big, either same output as the original Pancake source or diverge. In any case, it's easy to patch the winner to reject too big declared block gas limit. Current statement formulation is simpler than the alternative.
 
@@ -43,4 +46,200 @@ The initial submission follows from the Pancake compiler correctness theorem wit
 
 * We need to separately prove that the original Pancake source does not go OOM for blocks with at most declared 200M block gas.
 * We need to separately prove that the RISC-V semantics in the challenge refines to the RISC-V implemented by zkVMs.
-* (to brainstorm)
+* The finite artifact, encoding and metadata checks currently use Lean native
+  reduction (`native_decide`, and native reduction inside `bv_decide`). These
+  checks add the generated reduction certificates to the Lean/compiler trust
+  boundary. A submission checker must bind their exact propositions and
+  dependencies to the trusted checkout; it must not permit arbitrary candidate
+  axioms with similar names.
+
+
+## Repository contract and submissions
+
+The challenge fixes the Pancake source in `guest/src/`, its preprocessed text
+`Guest/guest.pp.pnk`, its checked AST, its initial state and FFI semantics, and
+the pinned Flapjack RISC-V semantics. The authoritative source behavior is
+`InitE.sourceBehaviour` in `InitE/SourceSemantics.lean`, which calls
+`PanSemStateFiniteExact.semanticsDecls`, exactly the evaluator in
+`nativeSourceCompile_correct`. `Guest.runGuestStepped` remains an optional
+executable testing model and is not the challenge specification. A participant supplies RISC-V bytes as
+Lean `List (BitVec 8)` literals, a literal score in `InitE.NatE` (`.finite n`
+or `.infinity`), and proofs of code admission and functional equivalence.
+Compiler-generated data must also be accounted for; an ELF or a successful
+Spike run is not a proof submission. Solvers may use the compiler in their
+proofs but may not replace the challenge's semantics or assume their own
+correctness conclusion.
+
+The formal contract is `InitE.Certificate` in `InitE/Challenge.lean`.
+`InitE.Submission` contains the ROM bytes, score and foreign-call dispatch
+metadata; the evaluator, host oracle, machine mode, zeroed registers and RAM
+permissions are fixed by the challenge. Admission binds every dispatch slot
+to the loaded ROM and checks alignment, distinct entry points and valid
+shared-memory call metadata. Participants cannot choose an arbitrary machine
+configuration or interference oracle.
+
+`InitE/Observations.lean` observes the public output by replaying the fixed
+host oracle over the recorded calls. `InitE/OracleReplay.lean` proves that
+this replay equals the actual final host memory for every target execution. Successful validation is normal halt
+with the acceptance byte at output offset 32 equal to one; its entire 64 KiB
+output must match. All covered rejection outcomes form the same class.
+
+Infinity removes the uniform finite step ceiling. It still requires a finite
+terminating execution in every covered case: `InitE.NatE.within_infinity_iff`
+proves that termination within infinity is equivalent to existence of a finite
+termination witness. A diverging execution does not satisfy that condition. The finite ceiling
+is measured in `evaluateTargetHOL` clock steps: ordinary target transitions
+and foreign-call transitions each consume a step, including the final stop
+transition. Spike's hardware instruction count is a testing metric, not a
+certificate of this clock bound.
+
+Tests are optional tools for evaluating candidate programs before proving them.
+The main challenge is proof checking, not reproducing an EEST score. Testing
+instructions and historical results are maintained in `docs/TESTING.md` and
+`docs/EEST-SPIKE.md`.
+
+## Disjoint memory layout
+
+All intervals below have exclusive upper endpoints. The source ordinary-memory
+region begins at `@base = 0xa1000000`. Unlike the old layout, scratch lies
+**above** `@base`, so it belongs to the heap-shaped domain required by the
+compiler theorem. The bump allocator starts after scratch, rather than at
+`@base`, so persistent allocations cannot overwrite temporary frame data.
+
+| Region | Start | End |
+| --- | --- | --- |
+| Input including 16-byte framing | `0x40000000` | `0x48000000` |
+| Submitted ROM window | `0x80000000` | `0x88000000` |
+| Available RAM | `0xa0000000` | `0x7e0000000` |
+| Public output observation | `0xa0410000` | `0xa0420000` |
+| Reserved Pancake startup page | `0xa1000000` | `0xa1001000` |
+| Scratch and EVM frame memory | `0xa1001000` | `0xa1c00000` |
+| Persistent bump allocation | `0xa1c00000` | `0x7defffd18` |
+| 93 scalar globals (744 bytes) | `0x7defffd18` | `0x7df000000` |
+| Machine stack (16 MiB) | `0x7df000000` | `0x7e0000000` |
+
+The RAM endpoint and heap/stack split are 4 KiB aligned. The allocation ceiling
+is word aligned and excludes globals. `InitE/Parameters.lean` proves region
+ordering and alignment. `guest/src/config.h`, `guest/runtime/start.S`, and the
+Spike driver use this layout. The input and output assumptions follow the
+challenge rather than the separate ZisK project's current memory map.
+
+The previous scratch-below-`@base` proof obstruction is recorded in
+[stateless-pancaketh issue #151](https://github.com/flamingoponderado/stateless-pancaketh/issues/151).
+The solution is implemented and validated in **init-e**; stateless-pancaketh
+is a separate ZisK-targeted project.
+
+## Compiler proof obligations
+
+`Flapjack.Pancake.Proofs.PanToTarget.nativeSourceCompile_correct` relates
+original parsed Pancake declarations to the native compiled artifact. Its
+conclusion permits resource-limit termination unless its precision flag is
+true. The baseline must prove the stack bound below `readLimits` to obtain the
+challenge's required termination guarantee.
+
+The pinned compiler's executable depth analysis measured a bound of **538
+words (4,304 bytes)**. This is a
+static call-graph/frame-size analysis, not a bound inferred from EEST runs.
+The changed guest's static bound is checked in `InitE/SourceFacts.lean`. The compiler's
+reservation margins must be included in `readLimits`; `InitE/StackLayout.lean` verifies the strict inequality against the compiler's
+actual limit arithmetic, including those margins.
+
+The assumptions are classified as follows:
+
+| Owner | Obligations |
+| --- | --- |
+| Challenge source | Parse/AST agreement; existence of `main`; good Pancake operations; distinct parameter and function names; exception-ID bound; globals shape/size and allocatability; initial empty declaration maps; source memory domain and allocation ceiling. These must be proved for the fixed source, rather than made assumptions on inputs. |
+| Baseline compiler proof | Successful compilation; literal-byte/artifact equality; bitmap and data installation; `panInstalled`; exact initial-register and memory relation; FFI return/writeback and shared-memory metadata; finite logical stack bound and strict `readLimits` inequality. Other submissions need only their own proof of the challenge property. |
+| Given environment | The specified input and output layout; declared gas limit at most 200M; access to the disjoint RAM range; initial machine mode and identity translation; the fixed foreign-call oracle and its memory-access permissions. |
+
+The first five words at `@base` are fixed bookkeeping values, rather than
+zero. The remaining ordinary-memory cells start at zero. `Guest/Bookkeeping.lean`
+records the baseline's bitmap start/end and code-buffer start/end pointers;
+`guest/runtime/start.S` installs those words before entering the compiled
+Pancake code. The scratch and persistent allocators cannot touch their reserved
+page. These values are part of the challenge's fixed source initial state,
+not arbitrary values supplied by a solver. A complete baseline certificate
+must establish their `panInstalled` relation. `InitE/SourceSemantics.lean` initializes that state directly in the compiler
+theorem's finite-map carrier. Declaration maps begin empty, ordinary memory
+uses the compiler's aligned word-cell domain, and the shared domain consists
+of aligned cells in the input/output arenas. Byte accesses keep their exact
+byte address in the oracle payload. The oracle reuses the byte-level host and
+accelerator specifications but makes `@halt` and `@trap` terminal. Their final
+events record the call name and configuration; `FFI_failed` on a terminal
+`halt` is a host stop signal, not an Ethereum validation rejection. Trap
+configuration length is the source's diagnostic trap code; memory-exhaustion
+codes 1, 6 and 7 are outside the covered cases. No equivalence proof to the
+optional stepped testing evaluator is required.
+
+## Implementation status
+
+The challenge and initial submission are implemented and locally checked by
+Lean. `lake build` builds the fixed challenge and the original submission;
+`lake build InitE.Audit` prints the proof dependencies. The initial certificate
+is `InitE.Challenge.certificate` in `submission/Solution.lean`. It has no
+assumed bootstrap execution, installed poststate, stack bound, compiler
+installation or functional-equivalence premise. The claimed score is the
+literal `.infinity`, and admission proves the hard code-size limit.
+
+The full EEST run for the modified guest passed all 33,614 records (33,605 full
+matches and 9 expected malformed rejects), with zero failures or errors.
+Source/ELF hashes and the command are recorded in `docs/EEST-SPIKE.md` and
+`BASELINE.json`. Tests remain separate from proof submissions.
+
+The obsolete CakeML, evm-asm, and Flapjack submodule registrations were removed.
+Flapjack is a pinned Lake dependency; EEST fixture fetching and conversion are
+vendored under `tools/`. Spike remains a testing submodule. Optional Python
+oracle tests can use a separate `work/execution-specs` checkout.
+
+The submitted baseline image contains **950,336 bytes**, including the
+208-byte bootstrap, runtime stubs, native code, alignment padding and the
+ROM initializer for compiler data. Its native code contains 904,056 bytes;
+the 4,613 bitmap words contain 36,904 bytes. `InitE/ArtifactFacts.lean` checks
+that the native and bitmap literals equal the pinned compiler's artifact.
+The complete loaded ROM image is charged to the code-size limit.
+
+The bootstrap copies 36,928 bytes from ROM at `0x800df000` to RAM at
+`0xa0020000`, installs the three compiler ABI cells and the five source
+bookkeeping words, initializes the compiler's heap/stack registers, and
+jumps to native code at `0x80001190`. It executes 23,127 RISC-V instructions;
+this count is distinct from the full formal evaluator's clock. The challenge
+supplies zero ordinary RAM and zero integer registers at `0x80000000`.
+The copy includes zero ABI initializer cells; the following stores establish
+the bookkeeping values. Scratch, persistent heap, globals and stack remain
+zero before native execution, as proved in `InitE/BootstrapZeroing.lean`.
+The complete EEST run was repeated successfully with this zero-RAM startup.
+
+The bootstrap proof checks its actual bytes against Flapjack's verified
+instruction encoder, proves the copy-loop invariant and all tail instruction
+checks, and composes them through the actual target evaluator.
+`InitE.BootstrapTrace.full_evaluator` reaches an installed native-entry state
+without assuming that execution. `InitE/PanInstallation.lean` proves the
+concrete `panInstalled` relation, including source headers, source memory,
+compiler data and bitmap separation.
+
+The static source facts and logical compiler stack bound are checked in
+`InitE/SourceFacts.lean` and `InitE/CompilerFacts.lean`. `InitE/StackLayout.lean`
+proves the strict bound against actual compiler reservation margins.
+`InitE/AllocationFacts.lean` proves that the fixed source's globals are
+allocatable and disjoint from ordinary memory. `InitE/BaselineCorrectness.lean`
+uses `nativeSourceCompile_correct` directly and removes its resource-limit
+relaxation. `InitE/BaselineArtifact.lean` establishes successful compilation
+and the full artifact. `InitE/FullBaseline.lean` combines compiler correctness
+with the proved startup, obtaining finite termination and identical outcomes
+and events for every terminating source execution. `InitE/TargetBudget.lean`
+proves the infinity equivalence using the actual evaluator's Halt witness.
+
+The proof audit contains only standard Lean axioms and the fixed native
+computation certificates described in the trust boundary. There are no
+`sorry` proofs or handwritten assumption axioms. Compiler metadata is kept
+opaque after computation so that kernel type comparisons do not reevaluate
+the entire compiler; its relationships are established by checked finite
+facts. This affects proof checking performance, not the guest or semantics.
+
+The sig.golf-style verifier script, exact axiom manifest and submission format
+are documented in `docs/SUBMISSIONS.md`. Its policy and staging tests pass;
+the pinned comparator's own regression suite also passes. **End-to-end isolated
+acceptance is deferred** until the planned host upgrade: the current systemd
+255 does not support the required private PID namespace setup. This does not
+change the completed local Lean certificate or the Spike results. A later
+session should run the isolated baseline comparison on the compatible host.

@@ -35,6 +35,9 @@ case "$COMPILER" in
 esac
 # cake's .S uses C-preprocessor macros (cdecl, makesym); run cpp first.
 "$CPP" -P -x assembler-with-cpp "$b.cake.S" > "$b.cake.s"
+# Export the bitmap start used by our startup-page initialization. The other
+# bitmap/code-buffer endpoints are already exported by Flapjack's renderer.
+printf '\n.globl cake_bitmaps\n.globl cake_main\n' >> "$b.cake.s"
 "$AS" -march=rv64ima -mno-relax -o "$b.cake.o" "$b.cake.s"
 "$AS" -march=rv64ima_zicsr -mno-relax -o "$b.start.o" "$HERE/runtime/start.S"
 "$LD" -T "$HERE/runtime/guest.ld" -nostdlib --no-relax -e _start \

@@ -13,18 +13,55 @@
 .section .text
 .globl _start
 _start:
-    li   sp, 0xa00f0000          # small C-style stack for the shim / FFI stubs
+    # Copy the compiler's initial data from the submitted ROM image. The ELF
+    # loader uses the ROM physical load address, so target RAM remains zero
+    # until this loop executes. Both endpoints are eight-byte aligned.
+    la   t0, __guest_data_load
+    la   t1, __guest_data_start
+    la   t2, __guest_data_end
+.Lcopy_data:
+    ld   t3, 0(t0)
+    sd   t3, 0(t1)
+    addi t0, t0, 8
+    addi t1, t1, 8
+    bltu t1, t2, .Lcopy_data
     la   t0, cml_heap
-    li   t1, 0xa1000000          # Pancake heap start (@base)
+    ori  t1, zero, 161
+    slli t1, t1, 24 # 0xa1000000          # Pancake memory start (@base), before scratch
     sd   t1, 0(t0)
     la   t0, cml_stack
-    li   t1, 0xb0000000          # Pancake heap end / stack start
+    ori  t1, zero, 2015
+    slli t1, t1, 24 # 0x7df000000         # globals end / machine stack start
     sd   t1, 0(t0)
     la   t0, cml_stackend
-    li   t1, 0xbf000000          # Pancake stack end
+    ori  t1, zero, 63
+    slli t1, t1, 29 # 0x7e0000000         # aligned RAM end / machine stack end
     sd   t1, 0(t0)
-    call cml_main
-    j    cml_exit
+    # Initial heap-page headers required by panInstalled. These live below
+    # SCRATCH_BASE and HEAP_BASE and are reserved from both allocators.
+    ori  t0, zero, 161
+    slli t0, t0, 24 # 0xa1000000
+    la   t1, cake_bitmaps
+    sd   t1, 0(t0)
+    la   t1, cake_bitmaps_buffer_begin
+    sd   t1, 8(t0)
+    la   t1, cake_bitmaps_buffer_end
+    sd   t1, 16(t0)
+    la   t1, cake_codebuffer_begin
+    sd   t1, 24(t0)
+    la   t1, cake_codebuffer_end
+    sd   t1, 32(t0)
+    # Enter the verified native artifact directly. The renderer wrapper uses
+    # registers/instruction sequences outside its abstract encoder admission.
+    # Every instruction on this startup path uses the admitted integer subset.
+    ori  a1, zero, 161
+    slli a1, a1, 24
+    ori  a2, zero, 2015
+    slli a2, a2, 24
+    ori  a3, zero, 63
+    slli a3, a3, 29
+    la   a0, cake_main
+    j    cake_main
 
 .globl cml_exit
 cml_exit:
@@ -54,9 +91,9 @@ ffitrap:
 # an empty configuration, and the operands lie at fixed offsets from the array `a`, which
 # arrives in a2 (the ExtCall arguments are a0 = c, a1 = 0, a2 = a, a3 = n).  The ZisK
 # CSRs take absolute pointers, so a stub builds the pointer block they expect on its own
-# stack from a2, issues the CSR, and returns.  The Pancake side therefore holds no
+# fixed RAM pointer block from a2, issues the CSR, and returns.  The Pancake side therefore holds no
 # addresses in the array: the effect is a function of the array's bytes alone.  Only t0,
-# t1 and the stack below sp are touched, so the argument registers are preserved.
+# t1, t4 and the reserved pointer block at 0xa00f0000 are touched, so the argument registers are preserved.
 # tools/spike/spike_run implements the same CSRs (tools/spike/zisk_accel.cc).
 
 # The CSR takes the operand's pointer itself: the array is the operand.
@@ -71,13 +108,12 @@ ffi\name:
 .macro ACCEL_PTRS2 name, csr, off
 .globl ffi\name
 ffi\name:
-    addi sp, sp, -16
-    sd   a2, 0(sp)
+    li   t4, 0xa00f0000
+    sd   a2, 0(t4)
     addi t0, a2, \off
-    sd   t0, 8(sp)
-    mv   t0, sp
+    sd   t0, 8(t4)
+    mv   t0, t4
     csrrs x0, \csr, t0
-    addi sp, sp, 16
     ret
 .endm
 
@@ -85,19 +121,18 @@ ffi\name:
 .macro ACCEL_PTRS5 name, csr, stride
 .globl ffi\name
 ffi\name:
-    addi sp, sp, -48
-    sd   a2, 0(sp)
+    li   t4, 0xa00f0000
+    sd   a2, 0(t4)
     addi t0, a2, \stride
-    sd   t0, 8(sp)
+    sd   t0, 8(t4)
     addi t0, a2, 2*\stride
-    sd   t0, 16(sp)
+    sd   t0, 16(t4)
     addi t0, a2, 3*\stride
-    sd   t0, 24(sp)
+    sd   t0, 24(t4)
     addi t0, a2, 4*\stride
-    sd   t0, 32(sp)
-    mv   t0, sp
+    sd   t0, 32(t4)
+    mv   t0, t4
     csrrs x0, \csr, t0
-    addi sp, sp, 48
     ret
 .endm
 
@@ -130,14 +165,13 @@ ACCEL_PTRS5 bls_arith384, 0x80b, 48
 # message.  The CSR's block is {row, state*, message*}.
 .globl ffiblake2bround
 ffiblake2bround:
-    addi sp, sp, -32
+    li   t4, 0xa00f0000
     ld   t1, 0(a2)
-    sd   t1, 0(sp)
+    sd   t1, 0(t4)
     addi t0, a2, 8
-    sd   t0, 8(sp)
+    sd   t0, 8(t4)
     addi t0, a2, 136
-    sd   t0, 16(sp)
-    mv   t0, sp
+    sd   t0, 16(t4)
+    mv   t0, t4
     csrrs x0, 0x819, t0
-    addi sp, sp, 32
     ret

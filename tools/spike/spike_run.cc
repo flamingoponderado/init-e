@@ -486,9 +486,10 @@ int main(int argc, char** argv) {
   cfg.priv = "M";
   cfg.hartids = std::vector<size_t>{0};
   cfg.mem_layout = {
-    mem_cfg_t(0x40000000ULL, 0x01000000ULL),  // input arena
+    mem_cfg_t(0x40000000ULL, 0x08000000ULL),  // challenge input arena (128 MiB)
     mem_cfg_t(0x60000000ULL, 0x00010000ULL),  // handler + tohost/fromhost
-    mem_cfg_t(0x7ffff000ULL, 0x40001000ULL),  // headers+text+data+sszscratch+output -> 0xc0000000
+    mem_cfg_t(0x7ffff000ULL, 0x08001000ULL),  // ELF headers + 128 MiB ROM
+    mem_cfg_t(0xa0000000ULL, 29ULL * 1024 * 1024 * 1024),  // challenge RAM, end 0x7e0000000
   };
   std::vector<DumpRange> dump_ranges_spec = parse_dump_ranges();
   std::vector<std::pair<reg_t, abstract_mem_t*>> mems;

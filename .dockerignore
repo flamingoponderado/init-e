@@ -11,22 +11,17 @@ tools/spike/handler.bin
 tools/spike/handler_bin.h
 work/
 
-# Submodules not needed for the EEST image: flapjack is fetched by lake itself,
-# and cakeml is only needed for the optional `cake` compiler. riscv-isa-sim IS
-# needed (the Spike stage builds it), but not its build output. evm-asm/ IS
-# needed (its scripts/), but its own heavy nested content is excluded below.
+# Flapjack is fetched by Lake; only Spike remains a submodule.
 cakeml/
 flapjack/
+evm-asm/
 riscv-isa-sim/build/
-evm-asm/.lake/
-evm-asm/gen-out/
-evm-asm/execution-specs/
-evm-asm/execution-spec-tests/
-evm-asm/ethrex/
-evm-asm/rust-u256-asm/
 
 # VCS and dev tooling
 .git/
 .claude/
 __pycache__/
 *.pyc
+
+# Local verification tool builds are regenerated, not shipped in testing images.
+verifier/.tools/

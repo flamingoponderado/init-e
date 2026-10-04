@@ -19,7 +19,7 @@ INF_POINT = b"\xc0" + b"\0" * 47
 VECTOR_FILE = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
     "..",
-    "evm-asm",
+    "work",
     "execution-specs",
     "tests",
     "cancun",

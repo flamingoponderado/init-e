@@ -11,18 +11,18 @@ fun 1 trap_with(1 code) {
 var 1 scratch_ptr = 0;
 var 1 frame_mem_ptr = 0;
 fun 1 mem_init() {
-  heap_ptr = @base;
-  scratch_ptr = 2701127680;
-  frame_mem_ptr = 2688618496;
+  heap_ptr = 2713714688;
+  scratch_ptr = 2713714688;
+  frame_mem_ptr = 2701135872;
   return 0;
 }
 fun 1 alloc(1 n) {
   var p = heap_ptr;
-  if n >+ 2952790016 - p {
+  if n >+ 33806089496 - p {
     trap_with(1);
   }
   var q = (p + n + 7) & (0 - 8);
-  if q >+ 2952790016 {
+  if q >+ 33806089496 {
     trap_with(1);
   }
   heap_ptr = q;

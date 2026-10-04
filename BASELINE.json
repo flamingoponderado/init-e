@@ -1,0 +1,46 @@
+{
+  "status": "lean_certificate_checked_isolated_verification_pending",
+  "flapjack": {
+    "branch": "riscv-mi",
+    "revision": "8bd4e6b2786203d1d17cbc8e3d401396f346c85e"
+  },
+  "source_sha256": "d3cec76f0fd072e943f9be62e201b842317a2aa2adcb51bbd0f5cd9dd74d6016",
+  "elf_sha256": "930915c737fe769e0c967faea8cbfa1755ad1f949f544c726cf1ab8acc920b4f",
+  "native_code_bytes": 904056,
+  "claimed_score": "infinity",
+  "eest": {
+    "tag": "tests-zkevm@v21.0.1",
+    "records": 33614,
+    "pass_full": 33605,
+    "pass_malformed": 9,
+    "failures": 0,
+    "errors": 0,
+    "results": "work/eest-challenge/zero-ram-final-results.json"
+  },
+  "bitmap_words": 4613,
+  "native_image_bytes": 940960,
+  "bookkeeping_words": [
+    "0xa0020018",
+    "0xa0029040",
+    "0xa0029040",
+    "0x800ddd08",
+    "0x800de000"
+  ],
+  "source_evaluator": "Flapjack.PanSemStateFiniteExact.semanticsDecls",
+  "source_model": "InitE.sourceBehaviour",
+  "pending": [
+    "end-to-end isolated verification after host upgrade"
+  ],
+  "submitted_image_bytes": 950336,
+  "bootstrap_bytes": 208,
+  "bootstrap_instruction_steps": 23127,
+  "initial_ram": "zero",
+  "initial_integer_registers": "zero",
+  "certificate": "InitE.Challenge.certificate",
+  "stack_bound_words": 538,
+  "trust": {
+    "finite_checks": "Lean native_decide and native bv_decide certificates",
+    "axiom_manifest": "verifier/trusted-axioms.json",
+    "axiom_names": 49
+  }
+}
