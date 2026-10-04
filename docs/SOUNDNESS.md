@@ -29,3 +29,40 @@ source fits in a given zkVM's RAM. That is a separate obligation, to be
 discharged for the zkVM actually used (it is a trust boundary of the
 challenge, alongside the proof that the RISC-V semantics in the challenge
 refines the zkVM's).
+
+## What a passing submission does not guarantee
+
+A submission that passes the challenge is equivalent to the Pancake source only
+as `docs/CHALLENGE.md` states. The following can still go wrong.
+
+* **The RISC-V semantics may differ from the zkVM's.** The semantics the
+  challenge is stated against and the zkVM's implementation might differ. A
+  submission proved against the former is not thereby correct on the latter
+  until the refinement is shown (see above).
+* **A passing submission might accept an invalid block** if the Pancake source
+  runs out of memory on it (the free case, where the submission may do
+  anything), or if the Pancake source itself accepts the invalid block (a bug
+  of the source, which a submission must reproduce).
+* **A passing submission might reject a valid block**, in the symmetric cases:
+  the Pancake source runs out of memory or diverges on it (the free case, so the
+  submission may reject or trap), or the Pancake source itself rejects the valid
+  block (a bug of the source, which a submission must reproduce). The same
+  freedom applies when the declared block gas limit parses and exceeds 200M.
+* **The Pancake source in the challenge, and the Flapjack compiler, might
+  contain bugs.** The source is the reference, so its bugs are reproduced by
+  every submission; the compiler (and its RISC-V semantics) is trusted
+  wherever a submission relies on it.
+* **A trustworthy Lean specification of the stateless guest does not exist.**
+  The challenge is stated relative to the Pancake source, not to a specification
+  that has been validated against the Ethereum consensus rules.
+* **The challenge might produce something that is not a stateless guest.** Since
+  the assignment is the Pancake source and the statement has the free cases
+  above, a winning submission is not necessarily a correct stateless guest.
+* **Lean elaboration might turn a statement into an unintended internal
+  representation.** What is checked is the elaborated term, which might not
+  mean what the source text appears to say (notations, coercions, instances,
+  `native_decide` and similar).
+* **The proof checker might be buggy.** A bug in Lean's kernel, or in the tools
+  around it, could accept a false theorem.
+* **Lean's type theory might be inconsistent.** Everything proved in it is
+  conditional on its consistency.
