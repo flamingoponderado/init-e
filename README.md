@@ -1,26 +1,15 @@
-# stateless-pancaketh
+# init-e
 
 > [!WARNING]
 > This is experimental research code. There is no meaningful proof of
 > correctness anywhere in this project yet, and the codebase has not been
 > audited. Do not use it for anything of value.
 
-Ethereum stateless guest in [Pancake](https://cakeml.org/pancake). Pancake is
-a programming language with a formally verified compiler (currently
-[being ported](https://github.com/flamingoponderado/flapjack) to Lean).
+## Challenge Goal
 
-## Goal
-
-Port `evm-asm/EvmAsm/Stateless/SpecRef` (the pure-Lean functional port of
-execution-specs' Amsterdam `run_stateless_guest`) to Pancake source in
-`guest/src/`, compiled to a RISC-V ELF that obeys a guest contract close to
-evm-asm's `stateless_guest` (input at `0x40000000`, halt via `ecall a7=93`;
-output at `0xa0410000`, rather than evm-asm's `0xa0010000`), so
-`tools/spike/spike_run` (a fork of evm-asm's driver, modified for that
-address) can run it, as an alternative to evm-asm's hand-written/codegen RV64
-guest. Tests run on Spike only: the memory the challenge assumes
-(`docs/CHALLENGE.md`) is deliberately larger than ZisK provides, see
-[docs/SOUNDNESS.md](docs/SOUNDNESS.md).
+Find a RISC-V code that behaves the same (exact statement, see Lean code
+(will be linked when ready)) to the initial Pancake source code of the stateless
+guest.
 
 ## For challenge participants
 
