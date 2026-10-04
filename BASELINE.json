@@ -1,5 +1,5 @@
 {
-  "status": "lean_certificate_checked_isolated_verification_pending",
+  "status": "isolated_verification_passed_with_native_axioms",
   "flapjack": {
     "branch": "riscv-mi",
     "revision": "7ef58a0e940088c06e6a283bde681c5754fce262"
@@ -29,7 +29,7 @@
   "source_evaluator": "Flapjack.PanSemStateFiniteExact.semanticsDecls",
   "source_model": "InitE.sourceBehaviour",
   "pending": [
-    "end-to-end isolated verification after host upgrade"
+    "remove native computation axioms and rerun isolated verification"
   ],
   "submitted_image_bytes": 950336,
   "bootstrap_bytes": 208,
@@ -41,6 +41,15 @@
   "trust": {
     "finite_checks": "Lean native_decide and native bv_decide certificates",
     "axiom_manifest": "verifier/trusted-axioms.json",
+    "axiom_names": 49
+  },
+  "isolated_verification": {
+    "status": "verified",
+    "work": "verifier/runs/host-upgrade-baseline-5",
+    "contract_sha256": "540dcf0e0a2c9349597090a38dbfe988360d5faec7a2e190663da55742359218",
+    "systemd": "259.5",
+    "trusted_audit_memory_limit_gib": 24,
+    "comparator_memory_limit_gib": 64,
     "axiom_names": 49
   }
 }

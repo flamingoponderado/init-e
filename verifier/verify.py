@@ -30,7 +30,7 @@ HERE = Path(__file__).resolve().parent
 TRUSTED = HERE.parent
 LOG_CAP = 4 * 1024 * 1024
 WALL_SECONDS = 4 * 3600
-MEMORY_BYTES = 24 * 1024**3
+MEMORY_BYTES = 64 * 1024**3
 
 
 class VerifyError(ValueError):
@@ -83,14 +83,15 @@ def linux_preflight(env: dict[str, str]) -> None:
 def linux_command(cmd: list[str], project: Path, env: dict[str, str], hidden: list[Path]) -> tuple[list[str], dict[str, str]]:
     unit = 'init-e-verify-' + uuid.uuid4().hex[:12]
     # Lake scales its parallel builds to visible CPUs; the host has eight CPUs but the
-    # verification cgroup has only 24 GiB. Keep large independent Lean modules from
+    # verification cgroup has a finite memory cap. Keep large independent Lean modules from
     # collectively exhausting that memory limit.
     cpus = sorted(os.sched_getaffinity(0))[:2]
     properties = [f'MemoryMax={MEMORY_BYTES}', 'MemorySwapMax=0', f'RuntimeMaxSec={WALL_SECONDS}',
                   f'CPUAffinity={" ".join(map(str, cpus))}',
                   'KillMode=control-group', 'TimeoutStopSec=5', 'SendSIGKILL=yes', 'TasksMax=512',
                   'RestrictAddressFamilies=~AF_UNIX', 'NoNewPrivileges=yes', 'ProtectSystem=strict',
-                  f'ReadWritePaths={project / ".lake"}', 'PrivateTmp=yes', 'PrivatePIDs=yes', 'ProcSubset=pid',
+                  f'ReadWritePaths={project / ".lake"}', 'PrivateTmp=yes', 'PrivateUsers=yes', 'PrivatePIDs=yes', 'ProcSubset=pid',
+                  'ReadOnlyPaths=/home',
                   'InaccessiblePaths=/sys',
                   'InaccessiblePaths=' + ' '.join(f'-{p}' for p in ['/etc/ots', '/etc/init-e', *hidden]),
                   'PrivateDevices=yes', 'TemporaryFileSystem=/dev/shm', 'PrivateIPC=yes',
@@ -170,7 +171,8 @@ def run_checked(cmd: list[str], cwd: Path, env: dict[str, str], log: Path) -> tu
 
 def sandbox_probe(env: dict[str, str]) -> None:
     """Exercise mandatory isolation before staging the large trusted build cache."""
-    with tempfile.TemporaryDirectory(prefix="init-e-isolation-") as temporary:
+    # PrivateTmp hides host /tmp, including probe paths created there.
+    with tempfile.TemporaryDirectory(prefix="init-e-isolation-", dir=HERE) as temporary:
         work = Path(temporary)
         project = work / "project"
         project.mkdir()
@@ -375,7 +377,9 @@ def main() -> int:
     args = parser.parse_args()
     args.trusted = args.trusted.resolve()
     if args.work is None:
-        args.work = Path(tempfile.mkdtemp(prefix="init-e-verify-"))
+        run_root = HERE / "runs"
+        run_root.mkdir(parents=True, exist_ok=True)
+        args.work = Path(tempfile.mkdtemp(prefix="init-e-verify-", dir=run_root))
         args.work.rmdir()
     try:
         result = verify(args)

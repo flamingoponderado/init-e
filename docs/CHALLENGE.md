@@ -42,7 +42,7 @@ Python tests, 1,066 passed in the Lake checkout; the remaining two inventory
 checks passed when rerun in a checkout outside `.lake`, which their scanner
 excludes. Source and ELF hashes match the recorded EEST run; that corpus was
 not rerun because the compiler and execution semantics are unchanged.
-Isolated verification remains pending the host upgrade.
+At repin time isolated verification remained pending the host upgrade.
 
 ## Rationales and considerations
 
@@ -257,7 +257,13 @@ facts. This affects proof checking performance, not the guest or semantics.
 The sig.golf-style verifier script, exact axiom manifest and submission format
 are documented in `docs/SUBMISSIONS.md`. Its policy and staging tests pass;
 the pinned comparator's own regression suite also passes. **End-to-end isolated
-acceptance is deferred** until the planned host upgrade: the current systemd
-255 does not support the required private PID namespace setup. This does not
-change the completed local Lean certificate or the Spike results. A later
-session should run the isolated baseline comparison on the compatible host.
+acceptance passed after the host upgrade** on systemd 259.5; the retained run is
+`verifier/runs/host-upgrade-baseline-5`, with trusted contract hash
+`540dcf0e0a2c9349597090a38dbfe988360d5faec7a2e190663da55742359218`.
+The complete sandbox checks and comparator kernel recheck passed. The trusted
+build used a 24 GiB cap; the comparator cap was raised to 64 GiB during the run,
+and the script now uses 64 GiB throughout. This acceptance includes the exact
+49-name native-computation axiom manifest. The next requested change is to
+replace those native checks with proofs using only standard axioms and rerun
+isolated verification. The guest, challenge semantics and Spike results are
+unchanged.

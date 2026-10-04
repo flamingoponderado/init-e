@@ -99,16 +99,33 @@ axioms remain available.
 
 Proof verification requires unprivileged Linux, Landlock ABI 3 or newer, a
 working systemd user bus, and systemd support for the mandatory unit properties,
-including `PrivatePIDs`. Networking, signals to other processes, host devices,
+including `PrivatePIDs`. Each build/comparison unit has a 64 GiB memory cap,
+no swap, two visible CPUs, and a four-hour runtime limit. Networking, signals to other processes, host devices,
 shared memory and the host PID namespace are isolated; only the build cache is
 writable. Missing isolation makes the checker stop before candidate compilation.
 A run reports `verified` only after comparator accepts the exported proof.
 
-On the development host used for this change, systemd rejects
-`PrivatePIDs=yes`; explicit user/PID namespace alternatives are also denied.
-The toolchain and comparator regression suite pass, but an end-to-end isolated
-baseline acceptance has not been established on that host. The isolated run
-is deferred until the planned host upgrade, after init-e and the other ongoing
-project are finished. Use the setup and verification commands above on the
-compatible host. Structural or Lean build success must not be described as
+The upgraded development host has systemd 259.5. Its complete isolation probe
+passes after adding an AppArmor namespace exception attached to
+`/usr/lib/systemd/systemd-executor`; this is the process that constructs service
+namespaces. A profile applied only to the user manager did not cover that step.
+The executor exception affects service launches across accounts; the host-wide
+AppArmor restriction remains enabled. See the [upstream AppArmor issue](https://gitlab.com/apparmor/apparmor/-/issues/585).
+The launcher explicitly requests `PrivateUsers`, protects `/home` read-only,
+and creates its temporary probe outside the `/tmp` hidden by `PrivateTmp`.
+
+If an SSH or administrator-created shell lacks the user-bus environment, set
+these variables as the verification account:
+
+```bash
+export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+export DBUS_SESSION_BUS_ADDRESS="unix:path=$XDG_RUNTIME_DIR/bus"
+```
+
+The verifier supplies these bus values itself when they are absent. The user
+manager and its bus must still be running. The baseline passed full isolated verification after the upgrade with its
+49-name native-computation axiom manifest. That run used a 24 GiB trusted-build
+limit and raised the comparator limit to 64 GiB during kernel checking; the
+script now uses 64 GiB throughout. Removing the native axioms and rerunning
+verification is the next task. The exact run is recorded in `BASELINE.json`. Structural or Lean build success must not be described as
 isolated verification.
