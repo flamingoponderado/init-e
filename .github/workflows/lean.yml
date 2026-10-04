@@ -1,0 +1,32 @@
+name: Lean – lake build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  lake-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    # flapjack and riscv-zkvm are pulled as lake git dependencies (see
+    # lake-manifest.json) and are not submodules, so no `git submodule
+    # update` is needed here. A fresh build of both is heavy, hence the
+    # generous timeout; the elan/lake cache keeps reruns fast.
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Installs the toolchain pinned by `lean-toolchain` (via elan) and puts
+      # `lake` on PATH. `withCache` caches the elan toolchain and the fetched
+      # lake packages (flapjack, riscv-zkvm, lean-sail) across runs.
+      - name: Set up Lean + lake
+        uses: leanprover/lean4-action@v4
+        with:
+          withCache: true
+
+      - name: lake build
+        run: lake build
