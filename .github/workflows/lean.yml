@@ -20,13 +20,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Installs the toolchain pinned by `lean-toolchain` (via elan) and puts
-      # `lake` on PATH. `withCache` caches the elan toolchain and the fetched
-      # lake packages (flapjack, riscv-zkvm, lean-sail) across runs.
-      - name: Set up Lean + lake
-        uses: leanprover/lean4-action@v4
+      # lean-action installs the toolchain pinned by `lean-toolchain` (via
+      # elan) and runs `lake build`. `use-github-cache` caches the `.lake`
+      # directory, so the fetched lake packages (flapjack, riscv-zkvm,
+      # lean-sail) and the built artifacts persist across runs. Mathlib is not
+      # a dependency here, so we skip its cache and only build.
+      - name: Set up Lean and build
+        uses: leanprover/lean-action@v1
         with:
-          withCache: true
-
-      - name: lake build
-        run: lake build
+          build: true
+          test: false
+          lint: false
+          use-mathlib-cache: false
+          use-github-cache: true
