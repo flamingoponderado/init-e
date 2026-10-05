@@ -1,0 +1,10 @@
+import InitE.ComputationCache
+import Std
+set_option autoImplicit false
+set_option maxRecDepth 1000000
+set_option maxHeartbeats 0
+namespace InitE.BackendStages.BytePieces
+def raw108_0 : List (BitVec 8) := [179#8, 100#8, 165#8, 0#8, 99#8, 140#8, 134#8, 0#8, 99#8, 214#8, 134#8, 0#8, 19#8, 101#8, 16#8, 0#8, 103#8, 128#8, 0#8, 0#8, 19#8, 101#8, 0#8, 0#8, 103#8, 128#8, 0#8, 0#8, 99#8, 12#8, 118#8, 0#8, 99#8, 118#8, 118#8, 0#8, 19#8, 101#8, 16#8, 0#8, 103#8, 128#8, 0#8, 0#8, 19#8, 101#8, 0#8, 0#8, 103#8, 128#8, 0#8, 0#8, 99#8, 140#8, 101#8, 0#8, 99#8, 246#8, 101#8, 0#8, 19#8, 101#8, 16#8, 0#8, 103#8, 128#8, 0#8, 0#8, 19#8, 101#8, 0#8, 0#8, 103#8, 128#8, 0#8, 0#8, 99#8, 246#8, 84#8, 0#8, 19#8, 101#8, 16#8, 0#8, 103#8, 128#8, 0#8, 0#8, 19#8, 101#8, 0#8, 0#8, 103#8, 128#8, 0#8, 0#8]
+def piece108_0 : List (BitVec 8) := (InitE.ComputationCache.boxedValue raw108_0).val
+theorem piece108_0_eq : piece108_0 = raw108_0 := InitE.ComputationCache.boxedValue_eq raw108_0
+end InitE.BackendStages.BytePieces

@@ -1,0 +1,11 @@
+import InitE.BackendStages.Alignment220
+set_option maxRecDepth 1000000
+set_option maxHeartbeats 0
+open Flapjack Flapjack.Compiler.Backend
+namespace InitE.BackendStages
+def localLabelsFinal_220 : List (Nat × Nat) :=
+[(2, 73208), (1, 73148)]
+theorem localLabelsFinal_220_eq : LabToTarget.sectionLabels 73148 Alignment220.lines [] = (73208, localLabelsFinal_220) := by
+  with_unfolding_all rfl
+#print axioms localLabelsFinal_220_eq
+end InitE.BackendStages
