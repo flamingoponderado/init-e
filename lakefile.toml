@@ -2,11 +2,11 @@ name = "Guest"
 version = "0.1.0"
 defaultTargets = ["InitE", "Submission"]
 
-# Current riscv-mi branch, pinned for reproducible challenge semantics.
+# Current riscv-im branch, pinned for reproducible challenge semantics.
 [[require]]
 name = "flapjack"
 git = "https://github.com/flamingoponderado/flapjack"
-rev = "7ef58a0e940088c06e6a283bde681c5754fce262"
+rev = "7981f765cdadecf9b2857f326a65bae47371ab15"
 
 # ZisK accelerator semantics (RiscvZkvm.Rv64.ZiskAccel: Keccak-f, SHA-256
 # compress, Arith256/384Mod, secp256k1/BN254/BLS12-381 affine ops, BLAKE2b
@@ -60,3 +60,13 @@ srcDir = "submission"
 name = "Submission"
 srcDir = "submission"
 roots = ["Solution"]
+
+# Generate proposed literal compiler metadata; ArtifactFacts certifies it.
+[[lean_exe]]
+name = "gen-compiler-config"
+root = "Tools.GenCompilerConfig"
+
+# Generate proposed per-function Word stage data; generated proofs certify it.
+[[lean_exe]]
+name = "gen-word-stages"
+root = "Tools.GenWordStages"

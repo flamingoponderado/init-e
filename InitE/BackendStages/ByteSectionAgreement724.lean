@@ -1,0 +1,11 @@
+import InitE.BackendStages.BytesData724
+import InitE.BackendStages.BytePiecesData724
+set_option autoImplicit false
+set_option maxRecDepth 1000000
+set_option maxHeartbeats 0
+namespace InitE.BackendStages.BytePieces
+theorem section724_eq : ByteData.bytes724 = [piece724_0, piece724_1].flatten := by
+  rw [piece724_0_eq, piece724_1_eq]
+  rfl
+#print axioms section724_eq
+end InitE.BackendStages.BytePieces

@@ -1,0 +1,12 @@
+import InitE.BackendStages.TargetChecks.Data0_812
+set_option autoImplicit false
+set_option Elab.async false
+set_option maxRecDepth 1000000
+set_option maxHeartbeats 0
+open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
+open InitE.BackendStages
+namespace InitE.BackendStages.TargetChecks
+theorem localLabels0_812_eq : LabToTarget.sectionLabels 852756 Initial812.lines [] = (856312, localLabels0_812) := by
+  with_unfolding_all rfl
+#print axioms localLabels0_812_eq
+end InitE.BackendStages.TargetChecks

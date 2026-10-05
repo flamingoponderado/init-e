@@ -1,0 +1,16 @@
+import InitE.SmallStages.Compact709.Complete
+import InitE.SmallStages.Oracles709
+set_option autoImplicit false
+set_option maxRecDepth 1000000
+set_option maxHeartbeats 0
+open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
+open InitE.WordStages InitE.SmallStages.Oracles709
+namespace InitE.SmallStages.Compact709
+theorem optimize709_exact : WordToWord.fullCompileSingleWith
+  RegAlloc.regAllocExecutable riscvConfig.twoRegArith
+  (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
+  RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
+  riscvConfig (source709, oracle709) = optimized709 := by
+  exact optimize709_eq.trans (by with_unfolding_all rfl)
+#print axioms optimize709_exact
+end InitE.SmallStages.Compact709

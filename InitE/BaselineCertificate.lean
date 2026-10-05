@@ -1,7 +1,15 @@
+import InitE.CompilerComputation
 import InitE.BaselineInstallationFacts
 import InitE.BaselineCorrectness
 import InitE.TargetTotality
 import InitE.InstallationTransport
+
+open scoped InitE.CompilerComputation
+
+set_option maxRecDepth 1000000
+set_option maxHeartbeats 0
+set_option cbv.maxSteps 1000000000
+set_option cbv.warning false
 
 namespace InitE
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.BackendProof
@@ -34,38 +42,38 @@ theorem baseline_installation (input : Guest.InputBlob)
   refine ⟨baseline_machine_isRiscv, baseline_artifact_complete,
     ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, memory, ?_⟩
   · change (0 : BitVec 64) < BitVec.ofNat 64 sourceBase
-    native_decide
+    decide_cbv
   · change BitVec.ofNat 64 sourceBase < BitVec.ofNat 64 stackStart
-    native_decide
+    decide_cbv
   · rfl
   · change baselineHeapLen = (BitVec.ofNat 64 stackStart +
       -1 * BitVec.ofNat 64 sourceBase).toNat / (64 / 8)
-    native_decide
+    decide_cbv
   · change BitVec.ofNat 64 heapEnd = BitVec.ofNat 64 sourceBase +
       (wordSemBytesInWord : BitVec 64) * BitVec.ofNat 64 baselineHeapLen -
         BitVec.ofNat 64 (globalsWords * 64 / 8)
-    native_decide
-  · native_decide
+    decide_cbv
+  · decide_cbv
   · rfl
   · change holAligned (wordShiftAmount 64 + 1)
       (BitVec.ofNat 64 stackStart + -1 * BitVec.ofNat 64 sourceBase) = true
-    native_decide
+    decide_cbv
   · rfl
   · rfl
   · change baselineAdj2 ≤ BitVec.ofNat 64 stackStart
-    native_decide
+    decide_cbv
   · change BitVec.ofNat 64 stackStart ≤ baselineAdj4
-    native_decide
+    decide_cbv
   · change (BitVec.ofNat 64 stackStart + -1 * BitVec.ofNat 64 sourceBase).toNat ≤
       (wordSemBytesInWord : BitVec 64).toNat *
         (2 * DataToWord.maxHeapLimit 64 pancakeRiscVBackendConfig.dataConf - 1)
-    native_decide
+    decide_cbv
   · rfl
   · have names :
         (StackNames.findNameSpt pancakeRiscVBackendConfig.stackConf.regNames 2,
          StackNames.findNameSpt pancakeRiscVBackendConfig.stackConf.regNames 3,
          StackNames.findNameSpt pancakeRiscVBackendConfig.stackConf.regNames 4) =
-          (11,12,13) := by native_decide
+          (11,12,13) := by decide_cbv
     have n2 := congrArg Prod.fst names
     have n3 := congrArg (fun p => p.2.1) names
     have n4 := congrArg (fun p => p.2.2) names
@@ -81,7 +89,7 @@ theorem baseline_native_behaviour_eq (input : Guest.InputBlob)
     (nonfail : sourceBehaviour input ≠ HolBehaviour.fail) :
     ∀ behaviour, machineSemHOL baselineMachineConfig (sourceFfi input)
       baselineInstalledState behaviour → behaviour = sourceBehaviour input :=
-  baseline_behaviour_eq input baselineOutput baseline_compile_success
+  baseline_behaviour_eq input baselineOutput baseline_ast_compilation
     baselineMachineConfig baselineInstalledState InitECandidate.nativeCode
     InitECandidate.bitmaps baselineConfig baselineHeapLen baselineAdj2 baselineAdj4
     760 0 installation nonfail
@@ -105,7 +113,7 @@ theorem baseline_installation_transport (input : Guest.InputBlob)
       (StackNames.findNameSpt pancakeRiscVBackendConfig.stackConf.regNames 2,
        StackNames.findNameSpt pancakeRiscVBackendConfig.stackConf.regNames 3,
        StackNames.findNameSpt pancakeRiscVBackendConfig.stackConf.regNames 4) =
-        (11,12,13) := by native_decide
+        (11,12,13) := by decide_cbv
   have n2 := congrArg Prod.fst names
   have n3 := congrArg (fun p => p.2.1) names
   have n4 := congrArg (fun p => p.2.2) names
@@ -138,7 +146,7 @@ theorem baseline_endpoint_behaviour_eq (input : Guest.InputBlob)
     (nonfail : sourceBehaviour input ≠ HolBehaviour.fail) :
     ∀ behaviour, machineSemHOL baselineMachineConfig (sourceFfi input) ms behaviour →
       behaviour = sourceBehaviour input :=
-  baseline_behaviour_eq input baselineOutput baseline_compile_success
+  baseline_behaviour_eq input baselineOutput baseline_ast_compilation
     baselineMachineConfig ms InitECandidate.nativeCode InitECandidate.bitmaps
     baselineConfig baselineHeapLen baselineAdj2 baselineAdj4 760 0
     (baseline_installation_transport input ms related installed) nonfail

@@ -1,7 +1,15 @@
+import InitE.CompilerComputation
 import InitE.BaselineArtifact
 import InitE.BootstrapMemory
 import InitE.MachineInitialization
 import InitE.ArtifactFacts
+
+open scoped InitE.CompilerComputation
+
+set_option maxRecDepth 1000000
+set_option maxHeartbeats 0
+set_option cbv.maxSteps 1000000000
+set_option cbv.warning false
 
 namespace InitE
 open Flapjack Flapjack.RiscV.L3
@@ -10,8 +18,8 @@ open Flapjack.Compiler.Encoders.RiscV.Target
 open Flapjack.Compiler.Backend.LabToTarget
 open Flapjack.Misc
 
-opaque baselineNames : List HolFfiName := baselineConfig.labConf.ffiNames.getD []
-opaque baselineMmio : List ShmemInfoNum := baselineConfig.labConf.shmemExtra
+@[irreducible] def baselineNames : List HolFfiName := baselineConfig.labConf.ffiNames.getD []
+@[irreducible] def baselineMmio : List ShmemInfoNum := baselineConfig.labConf.shmemExtra
 
 def dispatchAddress (i : Nat) : BitVec 64 :=
   BitVec.ofNat 64 nativePc - BitVec.ofNat 64 ((1+i)*ffiOffset)
@@ -20,7 +28,7 @@ def baselineEntryPcs : List (BitVec 64) :=
   ((List.range 20).map fun i => BitVec.ofNat 64 nativePc - BitVec.ofNat 64 ((3+i)*ffiOffset)) ++
     (baselineMmio.map fun rec => BitVec.ofNat 64 nativePc + BitVec.ofNat 64 rec.entryPc)
 
-set_option maxRecDepth 100000 in
+set_option maxRecDepth 1000000 in
 set_option maxHeartbeats 0 in
 theorem baseline_finite_facts :
     ffiNameBoundaryValid baselineNames 20 ∧
@@ -32,6 +40,7 @@ theorem baseline_finite_facts :
     (∀ i : Fin baselineEntryPcs.length, 20 ≤ i.val →
       dispatchAddress 0 ≠ baselineEntryPcs[i] ∧ dispatchAddress 1 ≠ baselineEntryPcs[i]) ∧
     baselineNames.length = baselineEntryPcs.length := by
-  native_decide
+  unfold ffiNameBoundaryValid baselineEntryPcs baselineNames baselineMmio baselineConfig
+  decide_cbv
 
 end InitE

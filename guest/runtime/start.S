@@ -7,7 +7,8 @@
 #   halt   : ecall with a7 = 93
 #
 # The Pancake program itself reads/writes those regions with shared-memory
-# loads/stores (!ldw / !st8 ...), so the only FFI it needs is `halt`.
+# loads/stores (!ldw / !st8 ...). Runtime foreign calls also provide halt,
+# trap, and the accelerator stubs below.
 .option norelax
 .option norvc
 .section .text

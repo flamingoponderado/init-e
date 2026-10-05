@@ -1,4 +1,12 @@
+import InitE.CompilerComputation
 import InitE.PanInstallationCore
+
+open scoped InitE.CompilerComputation
+
+set_option maxRecDepth 1000000
+set_option maxHeartbeats 0
+set_option cbv.maxSteps 1000000000
+set_option cbv.warning false
 
 namespace InitE
 set_option maxRecDepth 10000
@@ -7,7 +15,7 @@ open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Backend.RiscVConfig
 open Flapjack.Compiler.Backend.BackendProof
 open Flapjack.Pancake.Proofs.PanToTarget
 set_option maxRecDepth 10000 in
-private theorem baseline_mmio_projection : baselineConfig.labConf.shmemExtra = baselineMmio := by native_decide
+private theorem baseline_mmio_projection : baselineConfig.labConf.shmemExtra = baselineMmio := by decide_cbv
 
 set_option maxRecDepth 10000 in
 theorem baseline_pan_installed_metadata :
@@ -18,7 +26,7 @@ theorem baseline_pan_installed_metadata :
   have hregs : heapRegs pancakeRiscVBackendConfig.stackConf.regNames = (11,13) := by
     unfold pancakeRiscVBackendConfig
     rw [riscvBackendConfig_eq_executable]
-    native_decide
+    decide_cbv
   exact panInstalled_metadata_congr _ _ _ _ _ (some baselineNames) _ (11,13)
     _ _ baselineMmio _ _ (wlabWlocExact ∘ sourceMemory) _ ordinaryDomain _ sharedDomain
     baseline_installation_metadata.1 hregs baseline_mmio_projection rfl rfl rfl baseline_pan_installed_core

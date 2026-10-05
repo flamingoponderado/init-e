@@ -1,5 +1,13 @@
+import InitE.CompilerComputation
 import InitE.BootstrapMemory
 import InitE.BootstrapSteps
+
+open scoped InitE.CompilerComputation
+
+set_option maxRecDepth 1000000
+set_option maxHeartbeats 0
+set_option cbv.maxSteps 1000000000
+set_option cbv.warning false
 
 namespace InitE
 open Flapjack Flapjack.Compiler.Encoders.Asm
@@ -65,11 +73,11 @@ def bootstrapBlocks : List (Nat × HolAsm 64) := [
 assembler output. This also detects accidentally reintroducing ADDIW. -/
 theorem bootstrap_bytes_match :
     (bootstrapBlocks.flatMap fun block => riscvEnc block.2) =
-      InitECandidate.bootPrefix.take 208 := by native_decide
+      InitECandidate.bootPrefix.take 208 := by decide_cbv
 
 theorem bootstrap_instructions_admitted :
     bootstrapBlocks.all (fun block => asmOkExact block.2 riscvConfig) = true := by
-  native_decide
+  decide_cbv
 
 def bootstrapSteps : Nat := 6 + 5 * initDataWords + 41
 

@@ -1,0 +1,16 @@
+import InitE.SmallStages.Compact505.Complete
+import InitE.SmallStages.Oracles505
+set_option autoImplicit false
+set_option maxRecDepth 1000000
+set_option maxHeartbeats 0
+open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
+open InitE.WordStages InitE.SmallStages.Oracles505
+namespace InitE.SmallStages.Compact505
+theorem optimize505_exact : WordToWord.fullCompileSingleWith
+  RegAlloc.regAllocExecutable riscvConfig.twoRegArith
+  (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
+  RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
+  riscvConfig (source505, oracle505) = optimized505 := by
+  exact optimize505_eq.trans (by with_unfolding_all rfl)
+#print axioms optimize505_exact
+end InitE.SmallStages.Compact505

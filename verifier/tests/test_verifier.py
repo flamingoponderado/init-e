@@ -8,7 +8,9 @@ from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from check_submission import check, claim, score_literal
-from verify import VerifyError, freeze_submission, prepare_project, trusted_axioms
+from verify import (BUILD_SECONDS, WALL_SECONDS, VerifyError, freeze_submission,
+                    limited_lake_command, linux_command, prepare_project, trusted_axioms,
+                    clone_project_cache, REBUILT_NAMESPACES)
 
 
 class PolicyTests(unittest.TestCase):
@@ -88,10 +90,12 @@ class FreezeTests(unittest.TestCase):
             root = Path(temp)
             trusted, source = root / "trusted", root / "source"
             for directory in [trusted / "Guest", trusted / "InitE", trusted / "verifier",
-                              trusted / "submission" / "InitECandidate", source / "InitECandidate"]:
+                              trusted / "submission" / "InitECandidate", trusted / "tools", source / "InitECandidate"]:
                 directory.mkdir(parents=True, exist_ok=True)
             for name in ["lean-toolchain", "lakefile.toml", "lake-manifest.json", "Guest.lean"]:
                 (trusted / name).write_text("trusted")
+            for name in ("lean-process-limit.c", "limited-lake.py"):
+                (trusted / "tools" / name).write_text("trusted limiter " + name)
             (trusted / "Guest" / "guest.pp.pnk").write_text("fixed original source")
             (trusted / "InitE" / "Baseline.lean").write_text("import InitECandidate.Program\ndef trustedCode := InitECandidate.code\n")
             (trusted / "submission" / "InitECandidate" / "Program.lean").write_text("namespace InitECandidate\ndef code := [1,2]\n")
@@ -105,10 +109,20 @@ class FreezeTests(unittest.TestCase):
                 cache = dst / "build" / "lib" / "lean" / "InitE"
                 cache.mkdir(parents=True)
                 (cache / "Stale.olean").write_bytes(b"old")
-            with patch("verify.clone_tree", clone):
+            with patch("verify.clone_project_cache", clone):
                 digest = prepare_project(trusted, source, root / "project", {"K":"infinity"})
             project = root / "project"
             self.assertEqual(len(digest), 64)
+            for name in ("lean-process-limit.c", "limited-lake.py"):
+                self.assertEqual((project / "tools" / name).read_bytes(),
+                                 (trusted / "tools" / name).read_bytes())
+            (trusted / "tools" / "limited-lake.py").write_text("changed trusted limiter")
+            with patch("verify.clone_project_cache", clone):
+                changed = prepare_project(trusted, source, root / "project2", {"K":"infinity"})
+            self.assertNotEqual(digest, changed)
+            (trusted / "tools" / "lean-process-limit.c").unlink()
+            with self.assertRaisesRegex(VerifyError, "trusted Lean limiter source missing"):
+                prepare_project(trusted, source, root / "project3", {"K":"infinity"})
             self.assertEqual((project / "verifier" / "trusted-axioms.json").read_text(), "[]")
             baseline = (project / "baseline" / "InitEBaselineCandidate" / "Program.lean").read_text()
             self.assertIn("InitEBaselineCandidate", baseline)
@@ -119,18 +133,59 @@ class FreezeTests(unittest.TestCase):
             self.assertFalse((project / ".lake" / "build" / "lib" / "lean" / "InitE").exists())
 
 
+class CacheCopyTests(unittest.TestCase):
+    def test_skips_only_rebuilt_workspace_artifacts_and_copies_independently(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            source, target = root / "source", root / "target"
+            for launcher in ("lean-limit", "metadata-limit"):
+                binary = source / launcher / "launcher"
+                binary.parent.mkdir(parents=True)
+                binary.write_text("host-generated launcher")
+                (binary.parent / "lean").symlink_to(binary)
+            kept = [
+                "packages/upstream/.lake/build/lib/lean/InitE/Dependency.olean",
+                "build/lib/lean/Tools/Helper.olean", "build/lib/lean/InitEExtra/Kept.olean",
+                "build/lib/lean/InitEExtra.olean", "build/ir/Tools/Helper.c",
+                "build/bin/tool", "config/lean-limit.json",
+            ]
+            skipped = []
+            for folder in ("build/lib/lean", "build/ir"):
+                for name in REBUILT_NAMESPACES:
+                    skipped.extend([f"{folder}/{name}/Stale.olean", f"{folder}/{name}.olean.private"])
+            for relative in kept + skipped:
+                path = source / relative
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(relative.encode())
+            clone_project_cache(source, target)
+            for launcher in ("lean-limit", "metadata-limit"):
+                self.assertFalse((target / launcher).exists())
+                self.assertTrue((source / launcher / "lean").is_symlink())
+            for relative in kept:
+                original, copied = source / relative, target / relative
+                self.assertEqual(copied.read_bytes(), original.read_bytes())
+                self.assertNotEqual(copied.stat().st_ino, original.stat().st_ino)
+            for relative in skipped:
+                self.assertFalse((target / relative).exists(), relative)
+            (target / kept[1]).write_bytes(b"independent update")
+            self.assertEqual((source / kept[1]).read_bytes(), kept[1].encode())
+
+
 class AxiomTests(unittest.TestCase):
     def setUp(self):
         self.pinned = json.loads((Path(__file__).resolve().parents[1] / "trusted-axioms.json").read_text())
 
-    def test_only_exact_trusted_manifest_names_added(self):
+    def test_only_standard_axioms_permitted(self):
         names = trusted_axioms("INIT_E_TRUSTED_AXIOMS " + json.dumps(self.pinned))
-        self.assertEqual(set(names), set(self.pinned))
-        self.assertIn("InitE.baseline_artifact_matches._native.native_decide.ax_1_1", names)
-        self.assertIn("InitE.packEight_inverse._native.bv_decide.ax_1_5", names)
-        self.assertIn("_private.InitE.BaselineArtifact.0.InitE.baseline_static_check._native.native_decide.ax_1_1", names)
-        self.assertNotIn("Candidate.fake._native.native_decide.ax_1_1", names)
-        self.assertNotIn("Candidate.fake._native.bv_decide.ax_1_5", names)
+        self.assertEqual(set(names), {"propext", "Quot.sound", "Classical.choice"})
+
+    def test_manifest_cannot_extend_standard_axioms(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            manifest = Path(temporary) / "axioms.json"
+            extended = self.pinned + ["InitE.native_check._native.native_decide.ax_1_1"]
+            manifest.write_text(json.dumps(extended))
+            with self.assertRaises(VerifyError):
+                trusted_axioms("INIT_E_TRUSTED_AXIOMS " + json.dumps(extended), manifest)
 
     def test_missing_duplicate_and_unexpected_axioms_rejected(self):
         outputs = ["", "INIT_E_TRUSTED_AXIOMS []\nINIT_E_TRUSTED_AXIOMS []",
@@ -148,3 +203,32 @@ class AxiomTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ResourceLimitTests(unittest.TestCase):
+    def test_verifier_cpu_affinity_and_extended_limits(self):
+        env = {"COMPARATOR_LANDRUN": "/usr/bin/true",
+               "COMPARATOR_LEAN4EXPORT": "/usr/bin/true"}
+        for available in (set(range(32)), {2, 5, 8}):
+            with self.subTest(available=available), patch("verify.os.sched_getaffinity", return_value=available):
+                command, _ = linux_command(["lake", "build"], Path("/tmp/project"), env, [])
+                cpus = " ".join(map(str, sorted(available)[:16]))
+                self.assertIn(f"CPUAffinity={cpus}", command)
+                self.assertIn("RuntimeMaxSec=28800", command)
+                self.assertIn(f"MemoryMax={112 * 1024**3}", command)
+                self.assertIn("MemorySwapMax=0", command)
+                self.assertIn("TasksMax=16384", command)
+                self.assertIn("LAKE_ARTIFACT_CACHE=false", command)
+        self.assertEqual(BUILD_SECONDS, 28800)
+        self.assertEqual(WALL_SECONDS, 28800)
+
+    def test_audit_and_comparator_use_project_local_limiter(self):
+        project = Path("/tmp/frozen-project")
+        for inner in (["lake", "build", "TrustedAxioms"],
+                      ["lake", "env", "/trusted/comparator", "/tmp/comparator.json"]):
+            with self.subTest(inner=inner):
+                command = limited_lake_command(project, inner)
+                self.assertEqual(command, [
+                    sys.executable, str(project / "tools" / "limited-lake.py"),
+                    "--work-dir", str(project / ".lake" / "lean-limit"),
+                    "--slots", "16", "--", *inner])

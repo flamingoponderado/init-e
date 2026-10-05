@@ -1,14 +1,23 @@
+import InitE.CompilerComputation
+import InitE.ImageComputation
 import InitE.BootstrapCopyFacts
 import InitE.BitmapImageFacts
+
+open scoped InitE.CompilerComputation InitE.ImageComputation
+
+set_option maxRecDepth 1000000
+set_option maxHeartbeats 0
+set_option cbv.maxSteps 1000000000
+set_option cbv.warning false
 
 namespace InitE.BootstrapCopy
 open Flapjack Flapjack.RiscV.TargetProof
 
-set_option maxRecDepth 100000 in
+set_option maxRecDepth 1000000 in
 set_option maxHeartbeats 0 in
 theorem final_bitmap_word_image :
     sourceReadWord (resultWidth := 64) false InitE.initialMemory 0x800e8038 8 =
-      InitECandidate.bitmaps.getLast?.getD 0 := by native_decide
+      InitECandidate.bitmaps.getLast?.getD 0 := by decide_cbv
 
 private theorem copyState_value_from_image (k : Nat) (hk : k < 4616) (word : BitVec 64)
     (image : sourceReadWord (resultWidth := 64) false InitE.initialMemory

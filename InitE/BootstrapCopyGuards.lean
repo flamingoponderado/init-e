@@ -1,6 +1,14 @@
+import InitE.CompilerComputation
 import InitE.BootstrapCopyTrace
 import InitE.BootstrapAsmComposition
 import InitE.BaselineInstallationFacts
+
+open scoped InitE.CompilerComputation
+
+set_option maxRecDepth 1000000
+set_option maxHeartbeats 0
+set_option cbv.maxSteps 1000000000
+set_option cbv.warning false
 
 namespace InitE.BootstrapCopyGuards
 open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Encoders.AsmSem
@@ -8,12 +16,12 @@ open Flapjack.Compiler.Encoders.RiscV.Target
 open Flapjack.Compiler.Backend.Semantics.TargetProps
 open InitE.BootstrapSteps InitE.BootstrapCopy InitE.BootstrapAsmComposition
 
-set_option maxRecDepth 100000 in
+set_option maxRecDepth 1000000 in
 set_option maxHeartbeats 0 in
 /-- The fixed compiler dispatch list is above everybootstrapinstruction. -/
 theorem baseline_ffi_entries_above_boot :
     baselineEntryPcs.all (fun pc => decide (0x80001030 ≤ pc.toNat)) = true := by
-  native_decide
+  decide_cbv
 
 /-- Any instruction within the208byte bootstrap code region is ordinary
 execution rather than an FFI dispatch entry. -/
