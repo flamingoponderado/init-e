@@ -34,4 +34,4 @@ def process(n):
   if checked(stage):continue
   name=f"{stage}{n}";run(name,root/f"InitE/BackendStages/{name}.lean",root/f".lake/build/lib/lean/InitE/BackendStages/{name}.olean")
 ids=[0,1,2,4,5,6]+list(range(64,890))
-with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:list(pool.map(process,ids))
+with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:list(pool.map(process,ids))

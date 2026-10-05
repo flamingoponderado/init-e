@@ -27,7 +27,7 @@ for i,(_,suffix) in reversed(list(enumerate(groups))):s+=f"def chunks{i} := Byte
 s+="def full := chunks0\nend InitE.BackendStages.ByteData\n";source.write_text(s);check(name,source)
 while not (root/".lake/build/lib/lean/InitE/BackendStages/Final.olean").exists():time.sleep(5)
 name="Bytes";source=root/"InitE/BackendStages/Bytes.lean"
-s="import InitE.BackendStages.BytesData\nimport InitE.BackendStages.Final\n"+"".join(f"import InitE.BackendStages.BytesChunk{suffix}\n" for _,suffix in groups)+header+"namespace InitE.BackendStages.Bytes\n"+f"theorem suffix{count}_eq : LabToTarget.progToBytes Final.padded{count} = ByteData.chunks{count} := by rfl\n"
+s="import InitE.BackendStages.BytesData\nimport InitE.BackendStages.Final\n"+"".join(f"import InitE.BackendStages.BytesChunk{suffix}\n" for _,suffix in groups)+header+"namespace InitE.BackendStages.Bytes\n"+f"theorem suffix{count}_eq : LabToTarget.progToBytes Final.padded{count} = ByteData.chunks{count} := by rw [LabToTarget.progToBytesMap]; rfl\n"
 for i,(_,suffix) in reversed(list(enumerate(groups))):
  s+=f"theorem suffix{i}_eq : LabToTarget.progToBytes Final.padded{i} = ByteData.chunks{i} := by\n  unfold Final.padded{i} ByteData.chunks{i}\n  rw [Composition.progToBytes_append, BytesChunk{suffix}.compiled_eq, suffix{i+1}_eq]\n"
-s+="theorem compile_eq : LabToTarget.progToBytes Final.padded0 = ByteData.full := suffix0_eq\n#print axioms compile_eq\nend InitE.BackendStages.Bytes\n";source.write_text(s);check(name,source)
+s+="theorem compile_eq : LabToTarget.progToBytes Final.padded0 = ByteData.full := by simpa only [ByteData.full] using suffix0_eq\n#print axioms compile_eq\nend InitE.BackendStages.Bytes\n";source.write_text(s);check(name,source)

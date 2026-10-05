@@ -10,6 +10,7 @@ import InitE.BackendStages.ByteAgreement
 import InitE.BackendStages.ZeroLabels
 import InitE.BackendStages.Metadata.Facts
 import InitE.BackendStages.TargetChecks.InitialOrigin
+import InitE.BackendStages.TargetChecks.Phase1
 import InitE.BackendStages.TargetChecks.LabelEndpoints
 import InitE.BackendStages.TargetChecks.FinalLabelComposition
 import InitE.BackendStages.TargetChecks.FinalLabels
@@ -58,6 +59,9 @@ private theorem target_eq :
   have config := ArtifactConfig.lab_eq Target.labelsFinal Target.ffis Metadata.shmemFfis
     InitE.baselineLabConfig.shmemExtra InitE.baselineLabConfig.secPosLen
     labelsFinal_eq_baseline Metadata.ffiNames_eq rfl rfl
+  dsimp only at config
+  have position : RiscVConfig.pancakeRiscVBackendConfig.labConf.pos = 0 := rfl
+  rw [position] at compiled
   rw [config] at compiled
   unfold LabToTarget.compile
   rw [Filtered.compile_eq]

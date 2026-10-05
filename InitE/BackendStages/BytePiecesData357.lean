@@ -1,0 +1,10 @@
+import InitE.ComputationCache
+import Std
+set_option autoImplicit false
+set_option maxRecDepth 1000000
+set_option maxHeartbeats 0
+namespace InitE.BackendStages.BytePieces
+def raw357_0 : List (BitVec 8) := [3#8, 53#8, 133#8, 16#8, 103#8, 128#8, 0#8, 0#8]
+def piece357_0 : List (BitVec 8) := (InitE.ComputationCache.boxedValue raw357_0).val
+theorem piece357_0_eq : piece357_0 = raw357_0 := InitE.ComputationCache.boxedValue_eq raw357_0
+end InitE.BackendStages.BytePieces

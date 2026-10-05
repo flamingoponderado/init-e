@@ -1,0 +1,11 @@
+import InitE.BackendStages.BytesData699
+import InitE.BackendStages.BytePiecesData699
+set_option autoImplicit false
+set_option maxRecDepth 1000000
+set_option maxHeartbeats 0
+namespace InitE.BackendStages.BytePieces
+theorem section699_eq : ByteData.bytes699 = [piece699_0].flatten := by
+  rw [piece699_0_eq]
+  rfl
+#print axioms section699_eq
+end InitE.BackendStages.BytePieces
