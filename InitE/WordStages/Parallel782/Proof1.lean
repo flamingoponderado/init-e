@@ -1,0 +1,15 @@
+import InitE.WordStages.Parallel782.Data1
+import InitE.WordStages.Parallel782.Data0
+set_option Elab.async false
+set_option maxRecDepth 1000000
+set_option maxHeartbeats 0
+set_option cbv.maxSteps 1000000000
+set_option cbv.warning false
+open scoped InitE.CompilerComputation
+open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
+namespace InitE.WordStages.Parallel782
+theorem pass782_1_eq : WordInst.instSelectExecutable riscvConfig (maxVarHOL (pass782_0) + 1) (pass782_0) = pass782_1 := by
+  conv => lhs; cbv
+  try rfl
+#print axioms pass782_1_eq
+end InitE.WordStages.Parallel782

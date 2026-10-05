@@ -1,0 +1,16 @@
+import InitE.SmallStages.Compact428.Complete
+import InitE.SmallStages.Oracles428
+set_option autoImplicit false
+set_option maxRecDepth 1000000
+set_option maxHeartbeats 0
+open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
+open InitE.WordStages InitE.SmallStages.Oracles428
+namespace InitE.SmallStages.Compact428
+theorem optimize428_exact : WordToWord.fullCompileSingleWith
+  RegAlloc.regAllocExecutable riscvConfig.twoRegArith
+  (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
+  RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
+  riscvConfig (source428, oracle428) = optimized428 := by
+  exact optimize428_eq.trans (by with_unfolding_all rfl)
+#print axioms optimize428_exact
+end InitE.SmallStages.Compact428

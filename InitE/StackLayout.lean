@@ -1,6 +1,14 @@
+import InitE.CompilerComputation
 import InitE.Parameters
 import Flapjack.Compiler.Backend.RiscVConfig.Executable
 import Flapjack.Compiler.Backend.StackRemove.Proofs.InitLimits
+
+open scoped InitE.CompilerComputation
+
+set_option maxRecDepth 1000000
+set_option maxHeartbeats 0
+set_option cbv.maxSteps 1000000000
+set_option cbv.warning false
 
 namespace InitE
 open Flapjack Flapjack.Compiler.Backend
@@ -12,8 +20,9 @@ def installedLimits : Nat × Nat :=
     (2 * DataToWord.maxHeapLimit 64 RiscVConfig.pancakeRiscVBackendConfig.dataConf - 1)
     ((BitVec.ofNat 64 sourceBase), BitVec.ofNat 64 stackStart, BitVec.ofNat 64 ramEnd)
 
-theorem baseline_stack_bound_fits : 538 < installedLimits.1 := by
-  native_decide
+/-- The certified conservative stack upper bound fits after reservation margins. -/
+theorem baseline_stack_bound_fits : 7480 < installedLimits.1 := by
+  decide_cbv
 
 /-- Globals occupy the tail of the heap-shaped ordinary-memory domain. -/
 theorem source_top_excludes_globals :

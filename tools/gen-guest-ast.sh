@@ -5,8 +5,8 @@
 #   Guest/Ast.lean               its parse by flapjack's parser (Guest.guestAst)
 # This mirrors the preprocessing step of guest/build.sh (no GUEST_DEBUG).
 # Re-run after editing guest/src and commit the files; Lake does not
-# track guest/src itself. `lake build` then re-checks (Guest/AstParse.lean)
-# that the committed AST is what the parser produces from its source.
+# track guest/src itself. The committed AST is the challenge input.
+# Provenance and historical proof links are recorded in the AST header.
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")/.." && pwd)"
 # Apple's /usr/bin/cpp is a cc driver shim and mishandles `-x c` below

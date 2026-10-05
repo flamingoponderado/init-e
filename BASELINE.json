@@ -1,8 +1,8 @@
 {
-  "status": "isolated_verification_passed_with_native_axioms",
+  "status": "standard_axiom_verification_pending",
   "flapjack": {
-    "branch": "riscv-mi",
-    "revision": "7ef58a0e940088c06e6a283bde681c5754fce262"
+    "branch": "riscv-im",
+    "revision": "7981f765cdadecf9b2857f326a65bae47371ab15"
   },
   "source_sha256": "d3cec76f0fd072e943f9be62e201b842317a2aa2adcb51bbd0f5cd9dd74d6016",
   "elf_sha256": "930915c737fe769e0c967faea8cbfa1755ad1f949f544c726cf1ab8acc920b4f",
@@ -15,7 +15,22 @@
     "pass_malformed": 9,
     "failures": 0,
     "errors": 0,
-    "results": "work/eest-challenge/zero-ram-final-results.json"
+    "results": "work/eest-challenge/zero-ram-final-results.json",
+    "artifact_recheck": {
+      "date": "2026-10-05",
+      "source_hash_matches": true,
+      "ast_hash_matches": true,
+      "tested_elf_hash_matches": true,
+      "regenerated_literal_modules": 236,
+      "literal_module_mismatches": 0,
+      "corpus_result_recount": {
+        "pass_full": 33605,
+        "pass_malformed": 9,
+        "nonzero_returncodes": 0,
+        "unexpected_output_mismatches": 0
+      },
+      "scope": "Rechecked retained corpus results and regenerated literals; did not rerun Spike."
+    }
   },
   "bitmap_words": 4613,
   "native_image_bytes": 940960,
@@ -29,7 +44,9 @@
   "source_evaluator": "Flapjack.PanSemStateFiniteExact.semanticsDecls",
   "source_model": "InitE.sourceBehaviour",
   "pending": [
-    "remove native computation axioms and rerun isolated verification"
+    "close remaining standard-axiom backend artifact certificates; optimizer and concrete stack linkage are certified",
+    "pass the complete outside challenge/submission build and axiom audit",
+    "rerun isolated verification with only the three standard axioms"
   ],
   "submitted_image_bytes": 950336,
   "bootstrap_bytes": 208,
@@ -37,19 +54,153 @@
   "initial_ram": "zero",
   "initial_integer_registers": "zero",
   "certificate": "InitE.Challenge.certificate",
-  "stack_bound_words": 538,
+  "stack_bound_words": 7480,
   "trust": {
-    "finite_checks": "Lean native_decide and native bv_decide certificates",
+    "finite_checks": "kernel-checked proofs; conversion and performance work in progress",
     "axiom_manifest": "verifier/trusted-axioms.json",
-    "axiom_names": 49
+    "axiom_names": 3
   },
-  "isolated_verification": {
+  "source_contract": {
+    "kind": "literal_ast",
+    "declarations": "Guest.guestAst",
+    "file": "Guest/Ast.lean",
+    "sha256": "9e936dce0c7d51f1a9b064cacc63a2207a0e44f515b2c9fbba97f15850d2e702",
+    "text_provenance": "Guest/guest.pp.pnk",
+    "parser_agreement": "not required; historical proof linked in AST header",
+    "historical_proof_commit": "ae624df7e982496fb15169277f80fe85cf73323f"
+  },
+  "standard_axiom_attempt": {
+    "status": "trusted_build_failed_oom",
+    "work": "verifier/runs/riscv-im-16cpu-1hour",
+    "logical_cpus": 16,
+    "runtime_limit_seconds": 3600,
+    "memory_limit_gib": 64,
+    "wall_seconds": 1105,
+    "source_contract": "before removal of the required parser-agreement proof"
+  },
+  "verification_limits": {
+    "logical_cpus": 16,
+    "runtime_limit_seconds": 28800,
+    "memory_limit_gib": 112,
+    "swap_limit_bytes": 0,
+    "active_lean_compilers": 16,
+    "tasks_max": 16384
+  },
+  "outside_verification": {
+    "status": "interrupted_by_user",
+    "log": "work/lean-perf/outside-full-build.log",
+    "stopped_module": "InitE.SourceStackFacts",
+    "reason": "User requested stopping the original stack proof after more than one hour; full challenge/solution build has not passed."
+  },
+  "stack_bound_is_upper_bound": true,
+  "stack_bound_exact_diagnostic_words": 538,
+  "historical_isolated_verification": {
     "status": "verified",
     "work": "verifier/runs/host-upgrade-baseline-5",
     "contract_sha256": "540dcf0e0a2c9349597090a38dbfe988360d5faec7a2e190663da55742359218",
     "systemd": "259.5",
     "trusted_audit_memory_limit_gib": 24,
     "comparator_memory_limit_gib": 64,
-    "axiom_names": 49
+    "axiom_names": 49,
+    "flapjack_revision": "7ef58a0e940088c06e6a283bde681c5754fce262",
+    "logical_cpus": 2,
+    "runtime_limit_seconds": 14400
+  },
+  "isolated_verification": {
+    "status": "pending",
+    "axiom_names": 3
+  },
+  "standard_axiom_milestones": {
+    "source_stack": {
+      "status": "passed",
+      "theorem": "InitE.sourceLogicalStackBound_bounded",
+      "upper_bound_words": 7480,
+      "axiom_names": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "elapsed_seconds": 47.742,
+      "cpu_seconds": 51.193,
+      "memory_peak_reported": "3G",
+      "log": "work/lean-perf/word-stages/source-stack-certificate-constrained-repaired-build.log"
+    },
+    "compiler_correctness": {
+      "status": "passed",
+      "theorem": "InitE.baseline_behaviour_eq",
+      "axiom_names": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "elapsed_seconds": 27.742,
+      "cpu_seconds": 31.797,
+      "memory_peak_reported": "2.8G",
+      "log": "work/lean-perf/word-stages/baseline-correctness-constrained-build.log"
+    },
+    "challenge": {
+      "status": "passed",
+      "target": "InitE.Challenge",
+      "elapsed_seconds": 7.433,
+      "cpu_seconds": 11.838,
+      "memory_peak_reported": "911.8M",
+      "log": "work/lean-perf/word-stages/challenge-constrained-build.log"
+    },
+    "timing_scope": "incremental builds with checked dependencies; not a cold full submission or isolated verification",
+    "raw_call_lowering": {
+      "status": "passed",
+      "theorem": "InitE.BackendStages.Raw.compile_eq",
+      "functions": 826,
+      "composition_chunks": 52,
+      "axiom_names": [
+        "propext",
+        "Quot.sound"
+      ],
+      "aggregate_check_seconds": 3.78,
+      "scope": "Resumed per-function checks and final aggregate; full backend still pending"
+    },
+    "allocation_lowering": {
+      "status": "passed",
+      "theorem": "InitE.BackendStages.Alloc.compile_eq",
+      "functions": 826,
+      "axiom_names": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "scope": "Per-function and full allocation lowering certified; full backend pending"
+    },
+    "target_encoding": {
+      "status": "passed",
+      "theorems": [
+        "InitE.BackendStages.TargetChecks.Phase0.encode_eq",
+        "InitE.BackendStages.TargetChecks.Phase1.encode_eq",
+        "InitE.BackendStages.TargetChecks.Phase0.labels_eq",
+        "InitE.BackendStages.TargetChecks.Phase1.labels_eq"
+      ],
+      "axiom_names": [
+        "propext",
+        "Quot.sound"
+      ],
+      "corrected_suffix_sections": 294,
+      "aggregate_modules": 108,
+      "phase0_elapsed_seconds": 3.63,
+      "phase1_elapsed_seconds": 4.32,
+      "labels0_elapsed_seconds": 28.67,
+      "labels1_elapsed_seconds": 30.89,
+      "scope": "Both exact encoding passes and label maps; final alignment/byte agreement and whole artifact still pending",
+      "obsolete_original_alias_failures": [
+        648,
+        671,
+        683,
+        684
+      ]
+    }
+  },
+  "development_branches": {
+    "backend_artifact_stages": "2f29a8789b307129c2545b17ae95c06ea41b5021",
+    "backend_metadata": "45b8daf3132cedf731cdd7fe8ac90dd89ac94ad2",
+    "backend_target_checks": "fde986f5a0c00556c9b40f217afa51042872aaf1",
+    "scope": "Scoped remote development snapshots; combined challenge/submission build and isolated verification pending"
   }
 }

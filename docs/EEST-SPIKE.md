@@ -72,7 +72,8 @@ allocation after scratch, reserves the global words below the machine stack,
 and maps 29 GiB RAM ending at `0x7e0000000`. See `docs/CHALLENGE.md` for the
 full disjoint layout. The runtime explicitly initializes the five reserved
 bookkeeping words before entering Pancake code, matching `Guest/Bookkeeping.lean`.
-This run used the pinned `riscv-mi` compiler at
+This run used the compiler from the branch then named `riscv-mi` (now
+`riscv-im`) at
 `8bd4e6b2786203d1d17cbc8e3d401396f346c85e`, with 16 Spike workers, against
 all `tests-zkevm@v21.0.1` records, including declared-gas cases outside the
 challenge's 200M assumption.
@@ -128,9 +129,23 @@ certificate is tracked separately in `docs/CHALLENGE.md`.
 
 ## Dependency repin (2026-10-04)
 
-Flapjack is now pinned to `7ef58a0e940088c06e6a283bde681c5754fce262`.
+That repin used Flapjack `7ef58a0e940088c06e6a283bde681c5754fce262`.
+The current `riscv-im` pin is `7981f765cdadecf9b2857f326a65bae47371ab15`;
+the subsequent upstream changes touch documentation only, so the recorded
+EEST artifact remains applicable.
 Compared with the compiler revision recorded above, its compiler, theorem
 statements, and execution semantics are unchanged; the changes are documentation,
 tests, CI tooling, and proof-module comments. The source and final ELF hashes
 were rechecked and still match the zero-RAM run. The original EEST records
 retain their original compiler revision; the corpus was not rerun for this repin.
+
+## Retained artifact recheck (2026-10-05)
+
+The preprocessed source, literal AST and retained ELF hashes match
+`BASELINE.json`. Regenerating the ROM, native bytes and bitmap literals from
+`guest/build/guest.elf` into a temporary directory produced 236 Lean modules,
+all byte-for-byte identical to the submitted literal modules. Recounting the
+retained result file confirms 33,605 full matches and 9 expected malformed
+rejects, with no nonzero process exits or unexpected output mismatches. This
+rechecks the retained evidence; it is not a new Spike run. The standard-axiom
+proof changes do not alter that tested executable artifact.

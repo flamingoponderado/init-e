@@ -99,8 +99,16 @@ axioms remain available.
 
 Proof verification requires unprivileged Linux, Landlock ABI 3 or newer, a
 working systemd user bus, and systemd support for the mandatory unit properties,
-including `PrivatePIDs`. Each build/comparison unit has a 64 GiB memory cap,
-no swap, two visible CPUs, and a four-hour runtime limit. Networking, signals to other processes, host devices,
+including `PrivatePIDs`. Each build/comparison unit has a 112 GiB memory cap,
+no swap and up to 16 visible logical CPUs. The verifier stages and hashes the
+trusted Lean limiter sources before running them inside isolation. Both the
+trusted audit and comparator use at most 16 active Lean processes, with a
+16,384-task allowance for waiting launchers and Lake reader threads. Generated
+limiter binaries and locks stay under the writable `.lake/lean-limit` directory;
+Lake artifact caching is explicitly disabled. The trusted audit build and the
+complete comparator run (including its builds and kernel checking) each have
+an eight-hour runtime limit. Local builds use `tools/build-lean.sh` with a
+eight-hour limit, or `--quick` with a 10-minute exploratory limit. A timed-out build is unfinished. Networking, signals to other processes, host devices,
 shared memory and the host PID namespace are isolated; only the build cache is
 writable. Missing isolation makes the checker stop before candidate compilation.
 A run reports `verified` only after comparator accepts the exported proof.
@@ -126,6 +134,13 @@ The verifier supplies these bus values itself when they are absent. The user
 manager and its bus must still be running. The baseline passed full isolated verification after the upgrade with its
 49-name native-computation axiom manifest. That run used a 24 GiB trusted-build
 limit and raised the comparator limit to 64 GiB during kernel checking; the
-script now uses 64 GiB throughout. Removing the native axioms and rerunning
+script now uses 112 GiB throughout. Removing the native axioms and rerunning
 verification is the next task. The exact run is recorded in `BASELINE.json`. Structural or Lean build success must not be described as
 isolated verification.
+
+The authoritative source input is `Guest.guestAst`. The certificate uses the
+AST-level compiler theorem and does not require text parsing. The AST header
+links permanently to the original source and historical 49-axiom proof. The current standard-axiom baseline has not yet passed the full
+verifier; the historical successful run above used the former native-axiom
+manifest. See [PROOF-PERFORMANCE.md](PROOF-PERFORMANCE.md) for measured small
+fixtures and current bottlenecks.

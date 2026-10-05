@@ -1,8 +1,16 @@
+import InitE.CompilerComputation
 import InitE.BaselineMetadata
 import InitE.MachineWordMemory
 import InitE.BootstrapMemory
 import InitE.MachineInitialization
 import InitE.ArtifactFacts
+
+open scoped InitE.CompilerComputation
+
+set_option maxRecDepth 1000000
+set_option maxHeartbeats 0
+set_option cbv.maxSteps 1000000000
+set_option cbv.warning false
 
 namespace InitE
 open Flapjack Flapjack.RiscV.L3
@@ -115,7 +123,7 @@ theorem baseline_start_pc : startPcOk baselineMachineConfig (BitVec.ofNat 64 nat
 
 theorem baseline_literal_layout : InitECandidate.bootPrefix.length = 4496 ∧
     InitECandidate.nativeCode.length = 904056 ∧ InitECandidate.code.length = 950336 := by
-  native_decide
+  decide_cbv
 
 private theorem literal_append_byte (leadingBytes bytes trailingBytes : List (BitVec 8))
     (i : Fin bytes.length) :

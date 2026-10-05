@@ -1,5 +1,14 @@
+import InitE.CompilerComputation
+import InitE.ImageComputation
 import InitE.BootstrapProgram
 import InitE.BootstrapCopy
+
+open scoped InitE.CompilerComputation InitE.ImageComputation
+
+set_option maxRecDepth 1000000
+set_option maxHeartbeats 0
+set_option cbv.maxSteps 1000000000
+set_option cbv.warning false
 
 namespace InitE.BootstrapStraightLine
 open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Encoders.AsmSem
@@ -25,12 +34,12 @@ theorem bootstrap_block_bytes :
       (List.range (riscvEnc block.2).length).all (fun offset =>
         decide (initialMemory (BitVec.ofNat 64 (block.1 + offset)) =
           ((riscvEnc block.2)[offset]?.getD 0)))) = true := by
-  native_decide
+  decide_cbv
 
 theorem bootstrap_block_ranges :
     bootstrapBlocks.all (fun block => decide
       (initialPc ≤ block.1 ∧ block.1 + (riscvEnc block.2).length ≤ initialPc + 208)) = true := by
-  native_decide
+  decide_cbv
 
 /-- Every byte in the bootstrap prefix belongs to ordinary executable memory. -/
 theorem bootstrap_code_domain (a : BitVec 64)

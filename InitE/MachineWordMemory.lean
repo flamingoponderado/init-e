@@ -1,7 +1,6 @@
 import InitE.MachineInitialization
 import Flapjack.Compiler.Backend.LabToTarget.InstMem
 import Mathlib.Tactic.FinCases
-import Std.Tactic.BVDecide
 
 namespace InitE
 open Flapjack Flapjack.Compiler.Backend.LabToTarget
@@ -18,101 +17,27 @@ def packEight (bytes : Fin 8 → BitVec 8) : BitVec 64 :=
 
 theorem packEight_lane (bytes : Fin 8 → BitVec 8) (i : Fin 8) :
     ((packEight bytes >>> (8*i.val)).setWidth 8) = bytes i := by
-  fin_cases i
-  · change ((packEight bytes >>> 0).setWidth 8) = bytes 0
-    unfold packEight
-    generalize bytes 0 = b0
-    generalize bytes 1 = b1
-    generalize bytes 2 = b2
-    generalize bytes 3 = b3
-    generalize bytes 4 = b4
-    generalize bytes 5 = b5
-    generalize bytes 6 = b6
-    generalize bytes 7 = b7
-    bv_decide
-  · change ((packEight bytes >>> 8).setWidth 8) = bytes 1
-    unfold packEight
-    generalize bytes 0 = b0
-    generalize bytes 1 = b1
-    generalize bytes 2 = b2
-    generalize bytes 3 = b3
-    generalize bytes 4 = b4
-    generalize bytes 5 = b5
-    generalize bytes 6 = b6
-    generalize bytes 7 = b7
-    bv_decide
-  · change ((packEight bytes >>> 16).setWidth 8) = bytes 2
-    unfold packEight
-    generalize bytes 0 = b0
-    generalize bytes 1 = b1
-    generalize bytes 2 = b2
-    generalize bytes 3 = b3
-    generalize bytes 4 = b4
-    generalize bytes 5 = b5
-    generalize bytes 6 = b6
-    generalize bytes 7 = b7
-    bv_decide
-  · change ((packEight bytes >>> 24).setWidth 8) = bytes 3
-    unfold packEight
-    generalize bytes 0 = b0
-    generalize bytes 1 = b1
-    generalize bytes 2 = b2
-    generalize bytes 3 = b3
-    generalize bytes 4 = b4
-    generalize bytes 5 = b5
-    generalize bytes 6 = b6
-    generalize bytes 7 = b7
-    bv_decide
-  · change ((packEight bytes >>> 32).setWidth 8) = bytes 4
-    unfold packEight
-    generalize bytes 0 = b0
-    generalize bytes 1 = b1
-    generalize bytes 2 = b2
-    generalize bytes 3 = b3
-    generalize bytes 4 = b4
-    generalize bytes 5 = b5
-    generalize bytes 6 = b6
-    generalize bytes 7 = b7
-    bv_decide
-  · change ((packEight bytes >>> 40).setWidth 8) = bytes 5
-    unfold packEight
-    generalize bytes 0 = b0
-    generalize bytes 1 = b1
-    generalize bytes 2 = b2
-    generalize bytes 3 = b3
-    generalize bytes 4 = b4
-    generalize bytes 5 = b5
-    generalize bytes 6 = b6
-    generalize bytes 7 = b7
-    bv_decide
-  · change ((packEight bytes >>> 48).setWidth 8) = bytes 6
-    unfold packEight
-    generalize bytes 0 = b0
-    generalize bytes 1 = b1
-    generalize bytes 2 = b2
-    generalize bytes 3 = b3
-    generalize bytes 4 = b4
-    generalize bytes 5 = b5
-    generalize bytes 6 = b6
-    generalize bytes 7 = b7
-    bv_decide
-  · change ((packEight bytes >>> 56).setWidth 8) = bytes 7
-    unfold packEight
-    generalize bytes 0 = b0
-    generalize bytes 1 = b1
-    generalize bytes 2 = b2
-    generalize bytes 3 = b3
-    generalize bytes 4 = b4
-    generalize bytes 5 = b5
-    generalize bytes 6 = b6
-    generalize bytes 7 = b7
-    bv_decide
-
+  fin_cases i <;>
+    apply BitVec.eq_of_getLsbD_eq <;>
+    intro j hj <;>
+    simp (disch := omega) [packEight, BitVec.getLsbD_of_ge] <;> grind
 theorem packEight_inverse (word : BitVec 64) :
-    packEight (fun i => HolByte.getByte (BitVec.ofNat 64 i.val) word false) = word := by
-  unfold packEight
-  simp [HolByte.getByte, HolByte.byteIndex]
-  bv_decide
+    packEight (fun i => Flapjack.HolByte.getByte (BitVec.ofNat 64 i.val) word false) = word := by
+  apply BitVec.eq_of_getLsbD_eq
+  intro j hj
+  have hdiv : j / 8 < 8 := by omega
+  have hmod : j % 8 < 8 := by omega
+  have hjoin : 8 * (j / 8) + j % 8 = j := by omega
+  have hbyte : Flapjack.HolByte.getByte (BitVec.ofNat 64 (j / 8)) word false =
+      (word >>> (8 * (j / 8))).setWidth 8 := by
+    simp [Flapjack.HolByte.getByte, Flapjack.HolByte.byteIndex,
+      BitVec.toNat_ofNat, Nat.mod_eq_of_lt hdiv]
+  have h := congrArg (fun b : BitVec 8 => b.getLsbD (j % 8))
+    (packEight_lane
+      (fun i => Flapjack.HolByte.getByte (BitVec.ofNat 64 i.val) word false)
+      ⟨j / 8, hdiv⟩)
+  simp only [hbyte, BitVec.getLsbD_setWidth, BitVec.getLsbD_ushiftRight] at h
+  simpa [hmod, hjoin] using h
 
 noncomputable def packedMemoryWord (memory : BitVec 64 → BitVec 8)
     (address : BitVec 64) : BitVec 64 :=

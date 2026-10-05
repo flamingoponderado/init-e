@@ -1,5 +1,11 @@
 import InitE.MachineInitialization
 import InitECandidate.Program
+import InitE.LiteralFacts
+
+set_option maxRecDepth 1000000
+set_option maxHeartbeats 0
+set_option cbv.maxSteps 1000000000
+set_option cbv.warning false
 
 namespace InitE
 open Flapjack Flapjack.RiscV.L3
@@ -86,7 +92,7 @@ theorem initDataWords_eq : initDataWords = 4616 := by decide
 
 theorem initial_ram_zero (a : BitVec 64) (h : ramStart ≤ a.toNat) :
     initialMemory a = 0 := by
-  have size : InitECandidate.code.length = 950336 := by native_decide
+  have size : InitECandidate.code.length = 950336 := LiteralFacts.code_length
   simp only [initialMemory, size]
   apply if_neg
   simp only [initialPc, ramStart] at *

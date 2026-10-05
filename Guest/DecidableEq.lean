@@ -3,7 +3,8 @@ import Flapjack.Pancake.PanLang
 
 /-!
 Decidable equality for flapjack's Pancake syntax, so that the parse result can
-be compared with the committed AST by evaluation (`Guest.AstParse`).
+be compared by evaluation in development tools. Parser agreement is not
+required by the challenge.
 
 `Shape`, `Exp` and `Prog` are nested inductives (through `List`, `Prod` and
 `Option`), which the `DecidableEq` deriving handler refuses. The instances

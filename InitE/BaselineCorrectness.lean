@@ -1,6 +1,6 @@
 import InitE.CompilerFacts
-import InitE.AllocationFacts
-import InitE.StackLayout
+import InitE.OracleBaselineCorrectness
+import InitE.SourceStackCertificate
 
 /-! Compiler-based correctness after installation. The concrete installation
 witness is a premise of this reusable theorem. Concrete source, artifact,
@@ -49,7 +49,8 @@ def BaselineInstallation (input : Guest.InputBlob)
 /-- Reuse the upstream compiler theorem with the fixed source's static and
 allocation premises discharged and the resource-limit relaxation removed. -/
 theorem baseline_behaviour_eq (input : Guest.InputBlob) (out : RiscV.NativeSource.Output)
-    (compiled : RiscV.NativeSource.compile Guest.guestSource = .ok out)
+    (compiled : out.declarations = sourceDeclarations ∧
+      out.artifact = compileProgAsmFast baselineCompilerConfig riscvConfig sourceDeclarations)
     (mc : MachineConfig 64 RiscV.L3.riscv_state RiscVProjection)
     (ms : RiscV.L3.riscv_state) (bytes : List (BitVec 8)) (bitmaps : List (BitVec 64))
     (c : Backend.Config) (heapLen : Nat) (adj2 adj4 : BitVec 64)
@@ -58,28 +59,19 @@ theorem baseline_behaviour_eq (input : Guest.InputBlob) (out : RiscV.NativeSourc
     (nonfail : sourceBehaviour input ≠ HolBehaviour.fail) :
     ∀ behaviour, machineSemHOL mc (sourceFfi input) ms behaviour →
       behaviour = sourceBehaviour input := by
-  have hd := compiledSourceDeclarations_eq out compiled
-  have hb := nativeSourceLogicalBound_eq out hd
   obtain ⟨hmc, hart, hpositive, hsplit, hbase, hlen, htop, hglobals, hdomain,
     haligned, hadj2, hadj4, hleft, hright, hmax, hendian, hinstalled, hlimits⟩ := installed
-  have correct := nativeSourceCompile_correct Guest.guestAst compiled Guest.guestParse_eq_ast
-    mc bytes bitmaps c (some 538) (sourceInitialState input) ms globalsWords heapLen adj2 adj4
-    (sourceFfi input) cbspace dataSp (ofString "main") hmc sourceHasMain
-    ⟨hart, hb.symm, by simpa only [hd] using sourceGoodCode,
-      by simpa only [hd] using sourceDistinctParams,
-      by simpa only [hd] using sourceDistinctFunctions,
-      rfl, rfl, rfl, by simpa only [hd] using sourceExceptionBound, rfl,
-      hpositive, by simpa only [hd, globalsWords] using sourceGlobalsSize.symm,
-      hsplit, hbase, by simpa only [hd] using source_globals_allocatable input,
-      hlen, htop, hglobals, hdomain, haligned, hadj2, hadj4, hleft, hright, hmax,
-      rfl, hendian, hinstalled, rfl, nonfail⟩
-  have hprecise : optionLt (some 538)
-      (some (readLimits mc.target.config pancakeRiscVBackendConfig mc ms).1) = true := by
-    rw [hlimits]
-    simpa only [optionLt, decide_eq_true_eq] using baseline_stack_bound_fits
-  intro behaviour hbehaviour
-  have h := correct behaviour hbehaviour
-  simpa only [SemanticsPropsHOL.extendWithResourceLimitPrimeHOL, hprecise, if_true,
-    sourceBehaviour] using h
+  obtain ⟨depth, hdepth, hbound⟩ := sourceLogicalStackBound_bounded
+  have hcomp : compileProgMaxAsmExecutable baselineCompilerConfig riscvConfig
+      sourceDeclarations = (some (bytes, bitmaps, c), some depth) := by
+    apply Prod.ext
+    · have ha := hart
+      rw [compiled.2, compileProgAsmFast_eq_fst] at ha
+      exact ha
+    · exact hdepth
+  exact oracle_baseline_behaviour_eq WordBackend.oracles input mc ms bytes bitmaps c
+    depth heapLen adj2 adj4 cbspace dataSp hcomp hbound
+    ⟨hmc, hpositive, hsplit, hbase, hlen, htop, hglobals, hdomain,
+      haligned, hadj2, hadj4, hleft, hright, hmax, hendian, hinstalled, hlimits⟩ nonfail
 
 end InitE

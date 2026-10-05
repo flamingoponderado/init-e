@@ -35,8 +35,8 @@ theorem ramEnd_aligned : ramEnd % 4096 = 0 := by decide
 
 theorem heapEnd_aligned : heapEnd % 8 = 0 := by decide
 
-/-- All of the reserved stack exceeds the measured baseline bound;
+/-- The reserved stack exceeds the certified conservative upper bound;
 `readLimits` must separately account for the compiler's reservation margins. -/
-theorem baseline_stack_room : 538 * 8 < stackSize := by decide
+theorem baseline_stack_room : 7480 * 8 < stackSize := by decide
 
 end InitE

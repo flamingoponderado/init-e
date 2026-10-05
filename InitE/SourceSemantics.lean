@@ -5,7 +5,8 @@ import Flapjack.Misc.Alignment
 import Flapjack.Pancake.Semantics.PanSem.Semantics
 import Flapjack.Compiler.Backend.StackRemove
 
-/-! The challenge uses the exact evaluator in `nativeSourceCompile_correct`.
+/-! The challenge fixes `Guest.guestAst` and uses the exact evaluator in
+`panToTargetCompileSemanticsRiscVSource`.
 `Guest.Model` supplies byte-level host/accelerator specifications, not its
 stepped program evaluator. -/
 namespace InitE
@@ -69,7 +70,7 @@ def sourceInitialState (input : Guest.InputBlob) : PanSemStateFiniteExact 64 Gue
     baseAddr := BitVec.ofNat 64 sourceBase
     topAddr := BitVec.ofNat 64 heapEnd }
 
-/-- Authoritative source behavior, on the original parsed declarations. -/
+/-- Authoritative source behavior, on the fixed literal AST. -/
 noncomputable def sourceBehaviour (input : Guest.InputBlob) : HolBehaviour :=
   PanSemStateFiniteExact.semanticsDecls (sourceInitialState input) (ofString "main")
     (Guest.guestAst.map Pancake.PanLang.declToHOL)

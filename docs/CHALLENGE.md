@@ -8,23 +8,23 @@ Assumptions
 * **(initial pc)** Execution starts from the fixed program counter 0x8000_0000 (Zisk's `ROM_ADDR`, where Zisk's own program starts after its BIOS)
 * **(RAM)** 29 GiB in `[0xa000_0000, 0x7_e000_0000)` (exclusive end, 4 KiB aligned), initially zero outside the public input. Integer registers initially contain zero. Every submission includes its own startup code.
 * **(gas)** if the block gas limit parses from the input (by a fixed-position reader, `Guest/GasLimit.lean`), it is at most 200M (formally: `Guest.GasLimit.declaredGasLimit input ≤ 200000000`). The input might not parse; that case fits the assumption, and the conclusion below applies as usual
-* **(RISC-V?)** Flapjack's integer RISC-V model on the `riscv-mi` branch is used, pinned to `7ef58a0e940088c06e6a283bde681c5754fce262`. Execution starts in machine mode, with identity physical address translation.
+* **(RISC-V?)** Flapjack's integer RISC-V model on the `riscv-im` branch is used, pinned to `7981f765cdadecf9b2857f326a65bae47371ab15`. Execution starts in machine mode, with identity physical address translation.
   The formal machine setup must enforce `mstatus.MPRV = 3`;
   `isRiscvMachineConfig` alone does not imply this. Address translation in the
-  pinned `riscv-mi` model is identity by definition. Accelerators are foreign calls with the specifications in `Guest/AccelFfi.lean`, not extra instructions in the integer ISA.
+  pinned `riscv-im` model is identity by definition. Accelerators are foreign calls with the specifications in `Guest/AccelFfi.lean`, not extra instructions in the integer ISA.
 
 Conclusion
 
 * Let **(output)** be content of `[0xa041_0000, 0xa042_0000)`, 64 KiB in case the submission RISC-V terminates
 * **(code size)** the submission must prove that its code is at most 128 MiB (0x0800_0000 bytes, the size of Zisk's ROM window), loaded at the initial pc
 * **(functional equivalence)**
-  * **original success case**: if the original Pancake source (the same RAM size) terminates normally validating the input under `PanSemStateFiniteExact.semanticsDecls`, the submission RISC-V also terminates with the same output under $K$ steps.
-  * **original invalid case**: if the original Pancake source (the same RAM size) terminates normally rejecting the input (or traps for no-OOM reasons) under `PanSemStateFiniteExact.semanticsDecls`, the submission RISC-V also terminates rejecting the input (or traps for no-OOM reasons) under $K$ steps. All failures are treated equal, so terminating rejects and no-OOM traps all correspond.
+  * **original success case**: if the fixed Pancake AST (the same RAM size) terminates normally validating the input under `PanSemStateFiniteExact.semanticsDecls`, the submission RISC-V also terminates with the same output under $K$ steps.
+  * **original invalid case**: if the fixed Pancake AST (the same RAM size) terminates normally rejecting the input (or traps for no-OOM reasons) under `PanSemStateFiniteExact.semanticsDecls`, the submission RISC-V also terminates rejecting the input (or traps for no-OOM reasons) under $K$ steps. All failures are treated equal, so terminating rejects and no-OOM traps all correspond.
   * **original diverging case**: if the original Pancake source diverges, OOM-traps, or evaluation failure (`HolBehaviour.fail`), the submission might terminate, trap or diverge freely.
 
 Score is $K \in \mathbb{N} \cup \{ \infty \}$.
 
-The intended initial submission consists of the accelerated guest compiled with Flapjack and the literal score $K = \infty$. Certification uses `nativeSourceCompile_correct`; see the proof obligations and implementation status below.
+The intended initial submission consists of the accelerated guest compiled with Flapjack and the literal score $K = \infty$. Certification uses `panToTargetCompileSemanticsRiscVSource`; see the proof obligations and implementation status below.
 
 ## Flapjack repin (2026-10-04)
 
@@ -43,6 +43,28 @@ checks passed when rerun in a checkout outside `.lake`, which their scanner
 excludes. Source and ELF hashes match the recorded EEST run; that corpus was
 not rerun because the compiler and execution semantics are unchanged.
 At repin time isolated verification remained pending the host upgrade.
+
+## Flapjack branch rename and repin (2026-10-05)
+
+The branch is now named `riscv-im`. The current dependency pin is
+`7981f765cdadecf9b2857f326a65bae47371ab15`, advancing from
+`7ef58a0e940088c06e6a283bde681c5754fce262`. Only upstream `README.md` and
+`docs/SOUNDNESS.md` changed, documenting the comparison with Sail RISC-V.
+Compiler code, semantics, theorem statements and toolchain are unchanged;
+the submitted byte literals and recorded Spike artifacts remain applicable.
+The earlier isolated verification record retains its original revision.
+
+Validation at the new pin: `tools/build-lean.sh InitE.Challenge
+InitE.MachineWordMemory` passed; all 12 verifier regression tests passed; the
+actual Linux isolation probe passed with the new unit settings. The full
+baseline certificate has not yet been rechecked during the ongoing
+standard-axiom conversion. EEST was not rerun for this documentation-only
+upstream change.
+
+Future isolated verification units use up to 16 logical CPUs, a 112 GiB memory
+cap with no swap, and an eight-hour runtime limit for each trusted build and
+comparator run. Local full builds also stop after eight hours. Removing the
+native-computation axioms and verifying the revised proofs remains in progress.
 
 ## Rationales and considerations
 
@@ -64,22 +86,26 @@ At repin time isolated verification remained pending the host upgrade.
 
 * We need to separately prove that the original Pancake source does not go OOM for blocks with at most declared 200M block gas.
 * We need to separately prove that the RISC-V semantics in the challenge refines to the RISC-V implemented by zkVMs.
-* The finite artifact, encoding and metadata checks currently use Lean native
-  reduction (`native_decide`, and native reduction inside `bv_decide`). These
-  checks add the generated reduction certificates to the Lean/compiler trust
-  boundary. A submission checker must bind their exact propositions and
-  dependencies to the trusted checkout; it must not permit arbitrary candidate
-  axioms with similar names.
+* The verifier permits only `propext`, `Classical.choice`, and `Quot.sound`.
+  Native-computation axioms are rejected. The earlier accepted baseline used
+  49 axioms; replacing its finite checks with kernel-checked proofs remains
+  in progress. That historical acceptance does not certify the current proof
+  conversion.
 
 
 ## Repository contract and submissions
 
-The challenge fixes the Pancake source in `guest/src/`, its preprocessed text
-`Guest/guest.pp.pnk`, its checked AST, its initial state and FFI semantics, and
-the pinned Flapjack RISC-V semantics. The authoritative source behavior is
+The challenge fixes the literal Pancake AST `Guest.guestAst` in
+`Guest/Ast.lean`, its initial state and FFI semantics, and the pinned Flapjack
+RISC-V semantics. The Pancake source in `guest/src/` and preprocessed text
+`Guest/guest.pp.pnk` are retained as readable provenance. The AST is
+authoritative: parser agreement is not a challenge or certificate premise. A provenance
+comment in `Guest/Ast.lean` records the generation command and permanent links
+to the original source, historical parser-agreement proof, and the baseline
+proof with its former 49-axiom manifest. The authoritative source behavior is
 `InitE.sourceBehaviour` in `InitE/SourceSemantics.lean`, which calls
 `PanSemStateFiniteExact.semanticsDecls`, exactly the evaluator in
-`nativeSourceCompile_correct`. `Guest.runGuestStepped` remains an optional
+`panToTargetCompileSemanticsRiscVSource`. `Guest.runGuestStepped` remains an optional
 executable testing model and is not the challenge specification. A participant supplies RISC-V bytes as
 Lean `List (BitVec 8)` literals, a literal score in `InitE.NatE` (`.finite n`
 or `.infinity`), and proofs of code admission and functional equivalence.
@@ -149,24 +175,31 @@ is a separate ZisK-targeted project.
 
 ## Compiler proof obligations
 
-`Flapjack.Pancake.Proofs.PanToTarget.nativeSourceCompile_correct` relates
-original parsed Pancake declarations to the native compiled artifact. Its
-conclusion permits resource-limit termination unless its precision flag is
-true. The baseline must prove the stack bound below `readLimits` to obtain the
-challenge's required termination guarantee.
+The upstream `panToTargetCompileSemantics` theorem is reused through
+`InitE.panToTargetCompileSemanticsOraclesRiscVSource`. The compiler input is
+`mainFirstHOL` of the fixed declarations; its conclusion concerns those
+declarations in their original order. The baseline uses an explicit allocation
+tape, and the compiler validates every proposed coloring. Its artifact API is
+`compileProgAsmFast`; its stack premise uses `compileProgMaxAsmExecutable`,
+the evaluator linked to compiler correctness. No text-parser agreement is
+required.
 
-The pinned compiler's executable depth analysis measured a bound of **538
-words (4,304 bytes)**. This is a
-static call-graph/frame-size analysis, not a bound inferred from EEST runs.
-The changed guest's static bound is checked in `InitE/SourceFacts.lean`. The compiler's
-reservation margins must be included in `readLimits`; `InitE/StackLayout.lean` verifies the strict inequality against the compiler's
-actual limit arithmetic, including those margins.
+Compiler correctness permits resource-limit termination unless its precision
+flag holds. The baseline proves a finite compiler stack depth of at most
+**7,480 words (59,840 bytes)** from the fixed program's acyclic call graph and
+checked frame sizes. `InitE/StackAnalysis/Closed.lean` certifies the independent
+optimized literals, and `InitE/SourceStackCertificate.lean` links them to the
+checked optimizer and the compiler evaluator. This concrete linkage passes
+with the three standard axioms. The measured exact depth of 538 words is only
+diagnostic. `InitE/OracleBaselineCorrectness.lean` proves the strict inequality
+against `readLimits`, including compiler reservation margins, so the baseline
+can remove the resource-limit relaxation.
 
 The assumptions are classified as follows:
 
 | Owner | Obligations |
 | --- | --- |
-| Challenge source | Parse/AST agreement; existence of `main`; good Pancake operations; distinct parameter and function names; exception-ID bound; globals shape/size and allocatability; initial empty declaration maps; source memory domain and allocation ceiling. These must be proved for the fixed source, rather than made assumptions on inputs. |
+| Challenge source | Existence of `main`; good Pancake operations; distinct parameter and function names; exception-ID bound; globals shape/size and allocatability; initial empty declaration maps; source memory domain and allocation ceiling. These must be proved for the fixed source, rather than made assumptions on inputs. |
 | Baseline compiler proof | Successful compilation; literal-byte/artifact equality; bitmap and data installation; `panInstalled`; exact initial-register and memory relation; FFI return/writeback and shared-memory metadata; finite logical stack bound and strict `readLimits` inequality. Other submissions need only their own proof of the challenge property. |
 | Given environment | The specified input and output layout; declared gas limit at most 200M; access to the disjoint RAM range; initial machine mode and identity translation; the fixed foreign-call oracle and its memory-access permissions. |
 
@@ -191,8 +224,10 @@ optional stepped testing evaluator is required.
 
 ## Implementation status
 
-The challenge and initial submission are implemented and locally checked by
-Lean. `lake build` builds the fixed challenge and the original submission;
+The challenge and initial submission are implemented. The previous version
+passed isolated verification with native-computation axioms. The current
+AST-based, standard-axiom version is being rechecked; it has not yet passed a
+full build. `lake build` builds the fixed challenge and original submission;
 `lake build InitE.Audit` prints the proof dependencies. The initial certificate
 is `InitE.Challenge.certificate` in `submission/Solution.lean`. It has no
 assumed bootstrap execution, installed poststate, stack bound, compiler
@@ -235,24 +270,27 @@ without assuming that execution. `InitE/PanInstallation.lean` proves the
 concrete `panInstalled` relation, including source headers, source memory,
 compiler data and bitmap separation.
 
-The static source facts and logical compiler stack bound are checked in
-`InitE/SourceFacts.lean` and `InitE/CompilerFacts.lean`. `InitE/StackLayout.lean`
-proves the strict bound against actual compiler reservation margins.
+The static source facts are checked in `InitE/SourceCodeFacts.lean`.
+`InitE/SourceStackCertificate.lean` links the checked optimizer outputs to the
+conservative stack certificate; the concrete linkage passes with the three
+standard axioms.
+`InitE/OracleBaselineCorrectness.lean` proves the strict bound against actual
+compiler reservation margins.
 `InitE/AllocationFacts.lean` proves that the fixed source's globals are
 allocatable and disjoint from ordinary memory. `InitE/BaselineCorrectness.lean`
-uses `nativeSourceCompile_correct` directly and removes its resource-limit
-relaxation. `InitE/BaselineArtifact.lean` establishes successful compilation
+uses the general compiler theorem through the validated allocation-tape
+specialization and removes its resource-limit relaxation. `InitE/BaselineArtifact.lean` establishes successful compilation
 and the full artifact. `InitE/FullBaseline.lean` combines compiler correctness
 with the proved startup, obtaining finite termination and identical outcomes
 and events for every terminating source execution. `InitE/TargetBudget.lean`
 proves the infinity equivalence using the actual evaluator's Halt witness.
 
-The proof audit contains only standard Lean axioms and the fixed native
-computation certificates described in the trust boundary. There are no
-`sorry` proofs or handwritten assumption axioms. Compiler metadata is kept
-opaque after computation so that kernel type comparisons do not reevaluate
-the entire compiler; its relationships are established by checked finite
-facts. This affects proof checking performance, not the guest or semantics.
+The current verifier allowlist contains only the three standard Lean axioms.
+Finite proof conversion and performance fixes are still in progress. The AST
+compiler interfaces and theorem composition have been type-checked with cached
+prerequisites; this is not a fresh audit of all source and artifact facts.
+Metaprogrammed tactics and simplification procedures may construct proofs,
+but Lean's kernel must check them without additional axioms.
 
 The sig.golf-style verifier script, exact axiom manifest and submission format
 are documented in `docs/SUBMISSIONS.md`. Its policy and staging tests pass;
@@ -262,8 +300,48 @@ acceptance passed after the host upgrade** on systemd 259.5; the retained run is
 `540dcf0e0a2c9349597090a38dbfe988360d5faec7a2e190663da55742359218`.
 The complete sandbox checks and comparator kernel recheck passed. The trusted
 build used a 24 GiB cap; the comparator cap was raised to 64 GiB during the run,
-and the script now uses 64 GiB throughout. This acceptance includes the exact
+and the script now uses 112 GiB throughout. This acceptance includes the exact
 49-name native-computation axiom manifest. The next requested change is to
 replace those native checks with proofs using only standard axioms and rerun
 isolated verification. The guest, challenge semantics and Spike results are
 unchanged.
+
+## Standard-axiom certification
+
+The authoritative source contract is the literal `Guest.guestAst`. Its header
+records how it was generated and permanently links to the original source and
+historical 49-axiom proof. `Guest.AstParse` is removed. Good-code, distinct-name,
+allocation and stack premises remain required and are proved for the baseline.
+
+The exact Pancake-to-Word frontend, all 826 Word optimizer results, raw-call
+lowering, allocation lowering, removal and naming have kernel-checked
+aggregate certificates. Both complete target encoding passes and their label
+maps also pass with standard axioms.
+The concrete stack linkage and compiler-correctness specialization also pass
+with only `propext`, `Classical.choice`, and `Quot.sound`. Remaining backend
+stages, literal-byte agreement, metadata and full submission verification are
+still being completed. Partial or cached checks do not establish a full pass.
+
+Large computations use separately checked intermediate definitions, explicit
+equations and proof-producing simplification procedures. Native generation
+only proposes values; kernel proofs establish every equation used by the
+certificate. These changes preserve the AST, evaluator, memory layout,
+submitted byte literals and infinity score. Benchmark fixtures, exact timings,
+cache qualifications and development checkpoints are recorded in
+[PROOF-PERFORMANCE.md](PROOF-PERFORMANCE.md), rather than treated as challenge
+premises.
+
+Verification uses a 112 GiB memory cap, zero swap, 16 logical CPUs and at most
+16 active Lean compiler processes. Each build/comparison step has an eight-hour
+runtime limit. A trusted project-local launcher admits compilers before their
+proof environments load, preserving the original compiler, githash and Lake
+cache traces. Both launcher sources are staged and hashed with the trusted
+contract. Bounded logs retain their final output, including the axiom manifest.
+
+The standalone challenge and compiler-correctness modules pass outside
+`PrivatePIDs` under these caps; the complete challenge/submission build and
+axiom audit must pass before the full isolated verifier is run. Only a complete
+comparator acceptance with the exact three-name manifest counts as current
+verification. The historical 49-axiom acceptance described above is separate.
+Commands, isolation requirements and the submission format are in
+[SUBMISSIONS.md](SUBMISSIONS.md); `BASELINE.json` records current status.

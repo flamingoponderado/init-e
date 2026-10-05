@@ -29,8 +29,9 @@ from check_submission import check, score_literal, MAX_FILES, MAX_FILE_BYTES, MA
 HERE = Path(__file__).resolve().parent
 TRUSTED = HERE.parent
 LOG_CAP = 4 * 1024 * 1024
-WALL_SECONDS = 4 * 3600
-MEMORY_BYTES = 64 * 1024**3
+BUILD_SECONDS = 8 * 3600
+WALL_SECONDS = 8 * 3600
+MEMORY_BYTES = 112 * 1024**3
 
 
 class VerifyError(ValueError):
@@ -80,15 +81,15 @@ def linux_preflight(env: dict[str, str]) -> None:
         raise VerifyError('Landlock ABI 3 or newer is required')
 
 
-def linux_command(cmd: list[str], project: Path, env: dict[str, str], hidden: list[Path]) -> tuple[list[str], dict[str, str]]:
+def linux_command(cmd: list[str], project: Path, env: dict[str, str], hidden: list[Path],
+                  wall_seconds: int = WALL_SECONDS) -> tuple[list[str], dict[str, str]]:
     unit = 'init-e-verify-' + uuid.uuid4().hex[:12]
-    # Lake scales its parallel builds to visible CPUs; the host has eight CPUs but the
-    # verification cgroup has a finite memory cap. Keep large independent Lean modules from
-    # collectively exhausting that memory limit.
-    cpus = sorted(os.sched_getaffinity(0))[:2]
-    properties = [f'MemoryMax={MEMORY_BYTES}', 'MemorySwapMax=0', f'RuntimeMaxSec={WALL_SECONDS}',
+    # Lake scales parallel builds to visible CPUs. Cap the verifier at 16
+    # logical CPUs (or fewer if the host affinity provides fewer).
+    cpus = sorted(os.sched_getaffinity(0))[:16]
+    properties = [f'MemoryMax={MEMORY_BYTES}', 'MemorySwapMax=0', f'RuntimeMaxSec={wall_seconds}',
                   f'CPUAffinity={" ".join(map(str, cpus))}',
-                  'KillMode=control-group', 'TimeoutStopSec=5', 'SendSIGKILL=yes', 'TasksMax=512',
+                  'KillMode=control-group', 'TimeoutStopSec=5', 'SendSIGKILL=yes', 'TasksMax=16384',
                   'RestrictAddressFamilies=~AF_UNIX', 'NoNewPrivileges=yes', 'ProtectSystem=strict',
                   f'ReadWritePaths={project / ".lake"}', 'PrivateTmp=yes', 'PrivateUsers=yes', 'PrivatePIDs=yes', 'ProcSubset=pid',
                   'ReadOnlyPaths=/home',
@@ -99,7 +100,7 @@ def linux_command(cmd: list[str], project: Path, env: dict[str, str], hidden: li
                   'SystemCallFilter=~@network-io @debug ptrace process_vm_readv process_vm_writev '
                   'pidfd_getfd kill tkill tgkill pidfd_send_signal']
     clean = {'PATH': f'{Path.home() / ".elan/bin"}:{os.environ.get("PATH", "/usr/bin:/bin")}',
-             'HOME': str(Path.home()), 'LANG': 'C.UTF-8',
+             'HOME': str(Path.home()), 'LANG': 'C.UTF-8', 'LAKE_ARTIFACT_CACHE': 'false',
              'COMPARATOR_LANDRUN': env['COMPARATOR_LANDRUN'],
              'COMPARATOR_LEAN4EXPORT': env['COMPARATOR_LEAN4EXPORT'],
              'INIT_E_VERIFIER_HOST_DEV': str(Path('/dev').stat().st_dev),
@@ -115,18 +116,22 @@ def linux_command(cmd: list[str], project: Path, env: dict[str, str], hidden: li
              *[arg for prop in properties for arg in ('-p', prop)], '--', *command], bus_env)
 
 
-def run_checked(cmd: list[str], cwd: Path, env: dict[str, str], log: Path) -> tuple[int, bool]:
-    """Capture at most 4 MiB; keep draining; kill the process group at the outer deadline."""
+def run_checked(cmd: list[str], cwd: Path, env: dict[str, str], log: Path,
+                wall_seconds: int = WALL_SECONDS) -> tuple[int, bool]:
+    """Capture at most LOG_CAP bytes of the log tail while draining all output.
+
+    Kill the process group at the outer deadline, as for uncapped output.
+    """
     proc = subprocess.Popen(cmd, cwd=cwd, env=env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                             start_new_session=True, bufsize=0)
-    deadline = time.monotonic() + WALL_SECONDS + 120
+    deadline = time.monotonic() + wall_seconds + 120
     truncated = False
     timed_out = False
     try:
         os.set_blocking(proc.stdout.fileno(), False)
         with selectors.DefaultSelector() as selector, log.open('wb') as output:
             selector.register(proc.stdout, selectors.EVENT_READ)
-            kept = 0
+            tail = bytearray()
             while True:
                 remain = deadline - time.monotonic()
                 if remain <= 0:
@@ -140,13 +145,17 @@ def run_checked(cmd: list[str], cwd: Path, env: dict[str, str], log: Path) -> tu
                     continue
                 if not chunk:
                     break
-                if kept < LOG_CAP:
-                    output.write(chunk[:LOG_CAP - kept])
-                    kept += min(len(chunk), LOG_CAP - kept)
-                if kept >= LOG_CAP:
+                tail.extend(chunk)
+                if len(tail) > LOG_CAP:
+                    del tail[:len(tail) - LOG_CAP]
                     truncated = True
             if truncated:
-                output.write(b'\n[output truncated]\n')
+                marker = b'[output truncated; retaining final log bytes]\n'
+                output.write(marker[:LOG_CAP])
+                output.write(tail[-max(0, LOG_CAP - len(marker)):]
+                             if LOG_CAP > len(marker) else b'')
+            else:
+                output.write(tail)
         if not timed_out:
             proc.wait(timeout=max(.1, deadline - time.monotonic()))
     except subprocess.TimeoutExpired:
@@ -240,7 +249,14 @@ def clear_artifacts(project: Path, names: tuple[str, ...]) -> None:
 
 def prepare_project(trusted: Path, source: Path, project: Path, values: dict) -> str:
     """Freeze baseline literals independently of the candidate namespace."""
+    helpers = ("lean-process-limit.c", "limited-lake.py")
+    for name in helpers:
+        if not (trusted / "tools" / name).is_file():
+            raise VerifyError(f"trusted Lean limiter source missing: tools/{name}")
     project.mkdir()
+    (project / "tools").mkdir()
+    for name in helpers:
+        shutil.copy2(trusted / "tools" / name, project / "tools" / name)
     for name in ("lean-toolchain", "lakefile.toml", "lake-manifest.json", "Guest.lean"):
         shutil.copy2(trusted / name, project / name)
     rename = re.compile(r"(?<![A-Za-z0-9_'])InitECandidate(?![A-Za-z0-9_'])")
@@ -301,15 +317,22 @@ def trusted_axioms(log: str, manifest: Path | None = None) -> list[str]:
     pinned = json.loads(manifest.read_text())
     if not isinstance(pinned, list) or not all(isinstance(name, str) for name in pinned):
         raise VerifyError("pinned trusted axiom manifest is malformed")
-    if len(pinned) != len(set(pinned)) or not STANDARD_AXIOMS.issubset(pinned):
-        raise VerifyError("pinned trusted axiom manifest is malformed")
-    # Exact equality with a reviewed trusted-only closure: no name patterns and
-    # no names supplied by the candidate can add an axiom permission.
+    if len(pinned) != len(set(pinned)) or set(pinned) != STANDARD_AXIOMS:
+        raise VerifyError("trusted manifest must contain exactly the three standard Lean axioms")
+    # Exact equality with the standard axioms: neither baseline computations
+    # nor candidate names can add an axiom permission.
     if set(names) != set(pinned):
         unexpected = sorted(set(names) - set(pinned))
         missing = sorted(set(pinned) - set(names))
         raise VerifyError(f"trusted axiom closure changed: unexpected={unexpected}, missing={missing}")
     return sorted(pinned)
+
+
+def limited_lake_command(project: Path, command: list[str]) -> list[str]:
+    """Run with trusted project-local sources and writable admission locks."""
+    return [sys.executable, str(project / "tools" / "limited-lake.py"),
+            "--work-dir", str(project / ".lake" / "lean-limit"),
+            "--slots", "16", "--", *command]
 
 
 def verify(args: argparse.Namespace) -> dict:
@@ -340,11 +363,13 @@ def verify(args: argparse.Namespace) -> dict:
         result["contract_sha256"] = prepare_project(args.trusted, source, project, policy["claim"])
         # Trusted audit runs first and imports only the independently frozen baseline.
         audit_log = work / "trusted-audit.log"
-        command, clean = linux_command(["lake", "build", "TrustedAxioms"], project, env,
-                                       [source, *args.hide])
-        code, timeout = run_checked(command, project, clean, audit_log)
+        audit_command = limited_lake_command(project, ["lake", "build", "TrustedAxioms"])
+        command, clean = linux_command(audit_command, project, env,
+                                       [source, *args.hide], wall_seconds=BUILD_SECONDS)
+        code, timeout = run_checked(command, project, clean, audit_log,
+                                    wall_seconds=BUILD_SECONDS)
         if timeout or code != 0:
-            return dict(result, status="trusted_build_failed", audit_log=str(audit_log),
+            return dict(result, status="trusted_build_failed", audit_log=str(audit_log), timed_out=timeout,
                         reason=audit_log.read_text(errors="replace")[-1200:])
         permitted = trusted_axioms(audit_log.read_text(errors="replace"),
                                   project / "verifier" / "trusted-axioms.json")
@@ -353,8 +378,9 @@ def verify(args: argparse.Namespace) -> dict:
         config_path = work / "comparator.json"
         config_path.write_text(json.dumps(config, indent=2) + "\n")
         result["permitted_axioms"] = permitted
-        command, clean = linux_command(["lake", "env", env["COMPARATOR_BIN"], str(config_path)],
-                                       project, env, [source, *args.hide])
+        comparator_command = limited_lake_command(
+            project, ["lake", "env", env["COMPARATOR_BIN"], str(config_path)])
+        command, clean = linux_command(comparator_command, project, env, [source, *args.hide])
         code, timeout = run_checked(command, project, clean, log)
         output = log.read_text(errors="replace")
         if timeout:
