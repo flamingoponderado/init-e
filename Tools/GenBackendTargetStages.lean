@@ -78,8 +78,9 @@ def renderWordStage (env : Environment) (e : Expr) : IO String := do
 kernel-checked sectionLabels and encLinesAgain equations. -/
 def prepare (env : Environment) (phase identifier position : Nat)
     (labels : Spt (Spt Nat)) (ffis : List HolFfiName)
-    (sec : LabSem.LabSectionHOL 64) : IO Unit := do
-  let (localNext, localLabels) := LabToTarget.sectionLabels position sec.lines []
+    (sec : LabSem.LabSectionHOL 64) (labelsPosition : Option Nat := none) : IO Unit := do
+  let labelPosition := labelsPosition.getD position
+  let (localNext, localLabels) := LabToTarget.sectionLabels labelPosition sec.lines []
   let (lines, next, ok) := LabToTarget.encLinesAgain labels ffis position riscvConfig.encode sec.lines [] true
   let output : LabSem.LabSectionHOL 64 := {sec with lines := lines}
   let localText ← renderWordStage env (toExpr localLabels)
@@ -95,7 +96,7 @@ def prepare (env : Environment) (phase identifier position : Nat)
     s!"def localLabels{phase}_{identifier} : List (Nat × Nat) :=\n{localText}\ndef Reencode{phase}_{identifier} : LabSem.LabSectionHOL 64 :=\n{if unchanged then previous else outputText}\n" ++ ending
   IO.FS.writeFile s!"{dir}/Data{phase}_{identifier}.lean" data
   let labelsProof := s!"import InitE.BackendStages.TargetChecks.Data{phase}_{identifier}\n" ++ common ++
-    s!"theorem localLabels{phase}_{identifier}_eq : LabToTarget.sectionLabels {position} {previous}.lines [] = ({localNext}, localLabels{phase}_{identifier}) := by\n  with_unfolding_all rfl\n#print axioms localLabels{phase}_{identifier}_eq\n" ++ ending
+    s!"theorem localLabels{phase}_{identifier}_eq : LabToTarget.sectionLabels {labelPosition} {previous}.lines [] = ({localNext}, localLabels{phase}_{identifier}) := by\n  with_unfolding_all rfl\n#print axioms localLabels{phase}_{identifier}_eq\n" ++ ending
   IO.FS.writeFile s!"{dir}/Labels{phase}_{identifier}.lean" labelsProof
   let encodingProof := s!"import InitE.BackendStages.TargetChecks.Data{phase}_{identifier}\n" ++ common ++
     s!"theorem Reencode{phase}_{identifier}_eq : LabToTarget.encLinesAgain Target.labels{phase} Target.ffis {position} riscvConfig.encode {previous}.lines [] true = (Reencode{phase}_{identifier}.lines, {next}, {ok}) := by\n  with_unfolding_all rfl\n#print axioms Reencode{phase}_{identifier}_eq\n" ++ ending
@@ -136,10 +137,6 @@ def prepareCorrect (env : Environment) (phase identifier position labelPosition 
     return
   let data := s!"import {inputImport}\nimport InitE.BackendStages.TargetLabels{phase}\nimport InitE.BackendStages.TargetFfis\nimport Flapjack.Compiler.Encoders.RiscV.Target.Configuration\n" ++ common ++
     s!"def localLabels{phase}_{identifier} : List (Nat × Nat) :=\n{localText}\ndef Reencode{phase}_{identifier} : LabSem.LabSectionHOL 64 :=\n{if unchanged then previous else outputText}\n" ++ ending
-  let data := if phase == 1 then
-    s!"import {inputImport}\nimport InitE.BackendStages.TargetChecks.Data1_{identifier}\n" ++ common ++
-    s!"def localLabels1_{identifier} := InitE.BackendStages.TargetChecks.localLabels1_{identifier}\ndef Reencode1_{identifier} := InitE.BackendStages.TargetChecks.Reencode1_{identifier}\n" ++ ending
-    else data
   IO.FS.writeFile s!"{dir}/CorrectData{phase}_{identifier}.lean" data
   let labelsProof := s!"import InitE.BackendStages.TargetChecks.CorrectData{phase}_{identifier}\n" ++ common ++
     s!"theorem localLabels{phase}_{identifier}_eq : LabToTarget.sectionLabels {labelPosition} {previous}.lines [] = ({localNext}, localLabels{phase}_{identifier}) := by\n  with_unfolding_all rfl\n#print axioms localLabels{phase}_{identifier}_eq\n" ++ ending
@@ -165,6 +162,7 @@ def prepareAll (env : Environment) (stack : List (Nat × StackLang.HolProg 64))
   let dir := "InitE/BackendStages/TargetChecks"
   IO.FS.createDirAll dir
   let mut position := 0
+  let mut labelPosition := 0
   for sec in initial do
     let n := sec.sectionId
     let text ← renderWordStage env (toExpr sec)
@@ -173,13 +171,14 @@ def prepareAll (env : Environment) (stack : List (Nat × StackLang.HolProg 64))
        s!"def Initial{n} : LabSem.LabSectionHOL 64 :=\n{text}\nend InitE.BackendStages.TargetChecks\n")
     IO.FS.writeFile s!"{dir}/InitialBridge{n}.lean"
       (s!"import InitE.BackendStages.Encoded{n}\nimport InitE.BackendStages.TargetChecks.Initial{n}\nset_option autoImplicit false\nset_option maxRecDepth 1000000\nset_option maxHeartbeats 0\nnamespace InitE.BackendStages.TargetChecks\ntheorem Initial{n}_eq : InitE.BackendStages.Encoded{n} = Initial{n} := by\n  with_unfolding_all rfl\n#print axioms Initial{n}_eq\nend InitE.BackendStages.TargetChecks\n")
-    prepare env 0 n position labels0 ffis sec
-    position := (LabToTarget.sectionLabels position sec.lines []).1
+    prepare env 0 n position labels0 ffis sec (some labelPosition)
+    position := (LabToTarget.encLinesAgain labels0 ffis position riscvConfig.encode sec.lines [] true).2.1
+    labelPosition := (LabToTarget.sectionLabels labelPosition sec.lines []).1
   let (first, _) := LabToTarget.encSecsAgain 0 labels0 ffis riscvConfig.encode initial
   position := 0
   for sec in first do
     prepare env 1 sec.sectionId position labels1 ffis sec
-    position := (LabToTarget.sectionLabels position sec.lines []).1
+    position := (LabToTarget.encLinesAgain labels1 ffis position riscvConfig.encode sec.lines [] true).2.1
   IO.println s!"Prepared {initial.length} initial sections and both target phases"
 
 def prepareCorrectAll (env : Environment) (stack : List (Nat × StackLang.HolProg 64))

@@ -1,11 +1,16 @@
 #!/usr/bin/env python3
 """Generate checked local-label composition chunks without changing leaves."""
-import argparse,csv,re
+import argparse,csv,re,time
 from pathlib import Path
-p=argparse.ArgumentParser();p.add_argument("--phase",choices=["0","1","Final"],required=True);p.add_argument("--labels",nargs="*",type=int);p.add_argument("--tag",default="");a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument("--phase",choices=["0","1","Final"],required=True);p.add_argument("--labels",nargs="*",type=int);p.add_argument("--tag",default="");p.add_argument("--watch",action="store_true");a=p.parse_args()
 root=Path(__file__).resolve().parents[1];base=root/"InitE/BackendStages/TargetChecks"
 ids=[int(r[0]) for r in csv.reader((root/"InitE/BackendStages/TargetChecks/Positions0.csv").open())]
 if a.labels:ids=[n for n in ids if n in a.labels]
+if a.watch:
+ while True:
+  missing=[n for n in ids if not (root/f"InitE/BackendStages/AlignmentLabels{n}.lean").exists()]
+  if not missing:break
+  print(f"WAIT final label sources: {len(ids)-len(missing)}/{len(ids)}",flush=True);time.sleep(30)
 entries=[]
 for n in ids:
  prefix="Correct" if a.phase=="1" and n>=596 else ""
@@ -34,3 +39,22 @@ for k,chunk in enumerate(chunks):
  s+=f"  rfl\n#print axioms labels_append\nend {ns}\nend InitE.BackendStages.TargetChecks\n"
  (base/f"Labels{a.phase}{a.tag}Chunk{k}.lean").write_text(s)
 print(f"Prepared {len(chunks)} phase{a.phase} label composition chunks")
+
+if a.phase=="Final" and not a.labels and not a.tag:
+ imports="".join(f"import InitE.BackendStages.TargetChecks.LabelsFinalChunk{k}\n" for k in range(26))+"import InitE.BackendStages.Final\nimport InitE.BackendStages.TargetLabelsFinal\n"
+ text=imports+"set_option autoImplicit false\nset_option maxHeartbeats 0\nset_option maxRecDepth 1000000\nopen Flapjack Flapjack.Compiler.Backend\nopen InitE.BackendStages\nnamespace InitE.BackendStages.TargetChecks.FinalLabels\n"
+ accumulated="(.ln : Spt (Spt Nat))"
+ for k in range(26):accumulated=f"(LabelsFinal.Chunk{k}.after {accumulated})"
+ text+=f"def accumulated : Spt (Spt Nat) := {accumulated}\n"
+ remaining="[]"
+ for k in reversed(range(26)):remaining=f"(LabelsFinal.Chunk{k}.input ++ {remaining})"
+ text+=f"theorem fold_eq : LabToTarget.computeLabelsAlt 0 Alignment.program .ln = accumulated := by\n  change LabToTarget.computeLabelsAlt 0 {remaining} .ln = accumulated\n"
+ before="(.ln : Spt (Spt Nat))"
+ for k in range(26):
+  remaining="[]"
+  for j in reversed(range(k+1,26)):remaining=f"(LabelsFinal.Chunk{j}.input ++ {remaining})"
+  text+=f"  rw [LabelsFinal.Chunk{k}.labels_append {remaining} {before}]\n"
+  before=f"(LabelsFinal.Chunk{k}.after {before})"
+ text+="  rfl\ntheorem accumulated_eq : accumulated = Target.labelsFinal := by\n  with_unfolding_all rfl\ntheorem compute_eq : LabToTarget.computeLabelsAlt 0 Alignment.program .ln = Target.labelsFinal := fold_eq.trans accumulated_eq\n#print axioms compute_eq\nend InitE.BackendStages.TargetChecks.FinalLabels\n"
+ (base/"FinalLabelComposition.lean").write_text(text)
+ print("Prepared canonical FinalLabels.compute_eq")

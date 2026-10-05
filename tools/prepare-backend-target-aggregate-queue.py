@@ -2,10 +2,12 @@
 """One compiler, resumable target aggregate queue waiting for certified leaves."""
 import argparse,fcntl,hashlib,json,re,subprocess,time
 from pathlib import Path
-p=argparse.ArgumentParser();p.add_argument("--seconds",type=int,default=180);p.add_argument("--cpus",default="12-15");p.add_argument("--origin-only",action="store_true");a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument("--seconds",type=int,default=180);p.add_argument("--cpus",default="12-15");p.add_argument("--origin-only",action="store_true");p.add_argument("--output-only",action="store_true");p.add_argument("--final-only",action="store_true");a=p.parse_args()
 root=Path(__file__).resolve().parents[1];base=root/"InitE/BackendStages/TargetChecks";out=root/".lake/build/lib/lean/InitE/BackendStages/TargetChecks";work=root/"work/lean-perf/backend-stages/target-checks";state=work/"aggregate-queue-state";state.mkdir(parents=True,exist_ok=True)
-names=[name for k in range(26) for name in [f"Labels0Chunk{k}",f"Labels1Chunk{k}",f"CorrectEncodeChunk0_{k}",f"CorrectEncodeChunk1_{k}"]]+["Phase0","Phase1","Labels0","Labels1"]
+names=[name for k in range(26) for name in [f"Labels0Chunk{k}",f"Labels1Chunk{k}",f"CorrectEncodeChunk0_{k}",f"CorrectEncodeChunk1_{k}"]]+["Phase0","Phase1","Labels0","Labels1","LabelEndpoints"]
 if a.origin_only:names=[f"OriginChunk{k}" for k in range(26)]+["InitialOrigin"]
+if a.output_only:names=["LabelEndpoints"]
+if a.final_only:names=["LabelEndpoints"]+[f"LabelsFinalChunk{k}" for k in range(26)]+["FinalLabelComposition"]
 def imports(name):return re.findall(r"^import ([\w.]+)",(base/f"{name}.lean").read_text(),re.M)
 def ready(module):
  source=root/(module.replace(".","/")+".lean");artifact=root/".lake/build/lib/lean"/(module.replace(".","/")+".olean")
@@ -23,6 +25,7 @@ pending=list(names);failed=[];completed=0
 while pending:
  progress=False
  for name in list(pending):
+  if not (base/f"{name}.lean").exists():continue
   dependencies=imports(name)
   if not all(ready(x) for x in dependencies):continue
   source=base/f"{name}.lean";digest=hashlib.sha256(source.read_bytes()+(base/"Composition.lean").read_bytes()).hexdigest();marker=state/f"{name}.json";prior=json.loads(marker.read_text()) if marker.exists() else {}
