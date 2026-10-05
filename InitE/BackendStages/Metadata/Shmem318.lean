@@ -1,0 +1,18 @@
+import InitE.BackendStages.Metadata.Data318
+import InitE.BackendStages.Padded318
+set_option autoImplicit false
+set_option Elab.async false
+set_option maxRecDepth 1000000
+set_option maxHeartbeats 0
+open Flapjack Flapjack.Compiler.Backend
+open InitE.BackendStages
+namespace InitE.BackendStages.Metadata
+theorem walkStep318 : walkShmemLines Padded318.lines 193140 beforeFfis318 beforeShmem318 = (194040, afterFfis318, afterShmem318) := by
+  with_unfolding_all rfl
+theorem shmemStep318 (rest : LabSem.LabProgHOL 64) : LabToTarget.getShmemInfo (Padded318 :: rest) 193140 beforeFfis318 beforeShmem318 = LabToTarget.getShmemInfo rest 194040 afterFfis318 afterShmem318 := by
+  rw [getShmemInfo_section, walkStep318]
+theorem symbolLength318 : LabToTarget.secLength Padded318.lines 0 = 900 := by
+  with_unfolding_all rfl
+#print axioms shmemStep318
+#print axioms symbolLength318
+end InitE.BackendStages.Metadata
