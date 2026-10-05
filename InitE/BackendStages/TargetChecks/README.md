@@ -4,7 +4,7 @@ Native generation proposes literals; Lean kernel equations certify them. Allowed
 
 Canonical endpoints are Initial.program, Phase0.program, Phase1.program, Phase0.encode_eq (false stability), Phase1.encode_eq (true stability), Labels0.labels_eq, Labels1.labels_eq, and Initial.origin_eq under InitE.BackendStages.TargetChecks. These depend on sibling backend pipeline modules supplied by the full challenge branch.
 
-Label positions and encoding positions differ during phase0. Sections595,597,692,862 change encoding lengths. Original leaf equations through595 are reused; corrected encoding leaves596..889 live under Correct. Use corrected phase1 outputs directly. Old alias648 differs; cached jump offsets can retain old bytes. Agreement594..598 passed, but the attempted whole output bridge was rejected and removed.
+Label positions and encoding positions differ during phase0. Sections595,597,692,862 change encoding lengths. Original leaf equations through595 are reused; corrected encoding leaves596..889 live under Correct. Use corrected phase1 outputs directly. Old aliases648,671,683,684 retained stale bytes; they were repaired to checked Correct outputs and all eight legacy Encode/Phase endpoints passed. Agreement594..598 passed, but the attempted whole output bridge was rejected and removed.
 
 Resume the affected checked-leaf queue with `python3 tools/prepare-backend-target-correct.py --affected-only --workers 4 --seconds 180`. It uses CPUs4–7. Original full proposal checks use `prepare-backend-target-all.py` on CPUs0–3.
 
