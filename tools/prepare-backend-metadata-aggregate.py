@@ -42,7 +42,7 @@ def program(prefix):
 imports=''.join(f'import InitE.BackendStages.Metadata.Chunk{t}\n' for t in tags)
 imports+='import InitE.BackendStages.Metadata.FinalData\nimport InitE.BackendStages.TargetFfis\nimport InitE.CompilerConfigLiteral\n'
 lines=[imports+common, f'def filteredProgram : LabSem.LabProgHOL 64 := {program("Filtered")}', f'def paddedProgram : LabSem.LabProgHOL 64 := {program("Padded")}']
-lines += ['theorem ffiLiteral_eq : LabToTarget.findFfiNames filteredProgram = Target.ffis := by', '  unfold filteredProgram', '  exact '+' '.join(f'ffiChunk{t} _ (' for t in tags)+'(by with_unfolding_all rfl)'+')'*len(tags)]
+lines += ['theorem ffiLiteral_eq : LabToTarget.findFfiNames filteredProgram = Target.ffis := by', '  unfold filteredProgram', '  exact '+' '.join(f'ffiChunk{t} _ (' for t in tags)+'(by simp only [LabToTarget.findFfiNames, nextFfis'+str(ids[-1])+'])'+')'*len(tags)]
 lines += ['theorem shmemLiteral_eq : LabToTarget.getShmemInfo paddedProgram 0 [] [] = (shmemFfis, InitE.baselineLabConfig.shmemExtra) := by', '  unfold paddedProgram']
 for group,tag in zip(groups,tags):
     n=group[0]
