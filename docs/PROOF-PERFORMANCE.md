@@ -1395,3 +1395,12 @@ passes it only to the comparator, and grants systemd write access only to that
 directory in addition to the Lake cache. Candidate Landrun write permissions
 remain restricted to the Lake cache. Tmpfs and ramfs are rejected. Final
 full-size parsing and kernel replay still require the next isolated run.
+
+The disk-spooling full retry is now live in
+`init-e-full-verifier-spool-standard3.service`, invocation
+`95281914a9f845369accdafc9ea6424b`, with frozen source snapshot `e6bb936d`.
+It repeats the cold workspace trusted audit and full comparator under the same
+112-GiB, zero-swap, 16-CPU/16-compiler-slot and eight-hour inner limits. The
+outer allowance remains eighteen hours. All 21 verifier regression tests pass
+in 7.733 seconds, and the real sandbox temporary-file probe confirms that Lean
+uses the supplied private disk directory. Full acceptance remains pending.
