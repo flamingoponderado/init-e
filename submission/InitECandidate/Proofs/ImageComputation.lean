@@ -1,7 +1,10 @@
 import InitECandidate.Proofs.BootstrapMemory
 
 /-! Proved access shortcuts keep byte checks from expanding the full image. -/
+set_option autoImplicit false
+
 namespace InitECandidate.Proofs.ImageComputation
+open InitE
 open Flapjack
 
 theorem code_getElem?_eq (i : Nat) :

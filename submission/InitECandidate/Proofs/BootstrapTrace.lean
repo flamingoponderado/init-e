@@ -2,7 +2,10 @@ import InitECandidate.Proofs.BootstrapStraightLine
 import InitECandidate.Proofs.BootstrapCopyGuards
 import InitECandidate.Proofs.BootstrapTailChecks
 
+set_option autoImplicit false
+
 namespace InitECandidate.Proofs.BootstrapTrace
+open InitE
 open Flapjack Flapjack.RiscV.L3
 open Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Encoders.AsmSem
 open Flapjack.Compiler.Encoders.RiscV.Target

@@ -2,7 +2,10 @@ import InitECandidate.Proofs.BootstrapCodeFacts
 
 set_option linter.unusedSimpArgs false
 
+set_option autoImplicit false
+
 namespace InitECandidate.Proofs.BootstrapStraightLine
+open InitE
 open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Encoders.AsmSem
 open Flapjack.Compiler.Encoders.RiscV.Target
 open Flapjack.RiscV.TargetProof

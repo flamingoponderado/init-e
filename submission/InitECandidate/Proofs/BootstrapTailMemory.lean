@@ -5,7 +5,10 @@ import InitECandidate.Proofs.BootstrapTailWrites
 set_option maxRecDepth 8192
 set_option linter.unusedSimpArgs false
 
+set_option autoImplicit false
+
 namespace InitECandidate.Proofs.BootstrapStraightLine
+open InitE
 open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Encoders.AsmSem
 open Flapjack.Compiler.Backend.LabToTarget
 open Flapjack.Compiler.Encoders.RiscV.Target

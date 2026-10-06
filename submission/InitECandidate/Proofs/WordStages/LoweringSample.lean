@@ -13,7 +13,10 @@ set_option maxRecDepth 1000000
 set_option maxHeartbeats 0
 set_option cbv.maxSteps 1000000000
 set_option cbv.warning false
+set_option autoImplicit false
+
 namespace InitECandidate.Proofs.WordStages
+open InitE
 theorem lowering_sample_eq :
     (panToWordCompileProgHOL riscvConfig.isa sourceDeclarations).take 8 =
       [source64, source65, source66, source67, source68, source69, source70, source71] := by

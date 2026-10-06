@@ -1,6 +1,9 @@
 import InitECandidate.Proofs.BootstrapMemory
 
+set_option autoImplicit false
+
 namespace InitECandidate.Proofs.BitmapComputation
+open InitE
 
 def wordBytes (w : BitVec 64) : List (BitVec 8) :=
   (List.range 8).map (wordByte w)

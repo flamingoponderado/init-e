@@ -1,6 +1,9 @@
 import InitECandidate.Proofs.BootstrapCopyFacts
 
+set_option autoImplicit false
+
 namespace InitECandidate.Proofs.BootstrapStraightLine
+open InitE
 open Flapjack Flapjack.Compiler.Backend.LabToTarget
 
 /-- The eight actual startup stores, in execution order. -/

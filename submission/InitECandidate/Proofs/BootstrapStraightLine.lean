@@ -7,7 +7,10 @@ set_option linter.unusedSimpArgs false
 set_option linter.unusedTactic false
 set_option linter.unreachableTactic false
 
+set_option autoImplicit false
+
 namespace InitECandidate.Proofs.BootstrapStraightLine
+open InitE
 open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Encoders.AsmSem
 open Flapjack.Compiler.Encoders.RiscV.Target
 open InitECandidate.Proofs.BootstrapSteps InitECandidate.Proofs.BootstrapCopy

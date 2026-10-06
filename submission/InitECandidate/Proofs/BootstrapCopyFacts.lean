@@ -1,7 +1,10 @@
 import InitECandidate.Proofs.BootstrapCopy
 import InitECandidate.Proofs.BootstrapMemory
 
+set_option autoImplicit false
+
 namespace InitECandidate.Proofs.BootstrapCopy
+open InitE
 open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Encoders.AsmSem
 open Flapjack.Compiler.Encoders.RiscV.Target
 open Flapjack.RiscV.TargetProof InitECandidate.Proofs.BootstrapSteps

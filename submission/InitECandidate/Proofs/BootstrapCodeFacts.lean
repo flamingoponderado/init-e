@@ -10,7 +10,10 @@ set_option maxHeartbeats 0
 set_option cbv.maxSteps 1000000000
 set_option cbv.warning false
 
+set_option autoImplicit false
+
 namespace InitECandidate.Proofs.BootstrapStraightLine
+open InitE
 open Flapjack Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Encoders.AsmSem
 open Flapjack.Compiler.Encoders.RiscV.Target
 open InitECandidate.Proofs.BootstrapSteps InitECandidate.Proofs.BootstrapCopy
