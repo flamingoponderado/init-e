@@ -89,3 +89,107 @@ argument counts and source bodies. Reusing their optimizer certificates requires
 handling the outer function number: it affects allocator fallback, but not a
 successful oracle result. Such reuse is useful only if complete export replay
 improves, not merely if elaboration becomes faster.
+
+## Initial instruction-encoding prototype: not retained
+
+A small test used the first 256 ordinary assembly lines of actual guest function
+461, preserving their order and the bytes from `Filtered461`/`Encoded461`. This
+is a real subsequence, not a complete function certificate: labels and jumps are
+excluded. There are 128 distinct instruction/encoding pairs in this sample.
+
+The prototype checks each distinct encoding once, reuses those equations in a
+balanced list-map proof, and checks the agreements with the original flat input
+and output. The complete shared proof and data closure is included in export and
+independent kernel replay, rather than treating the cache as free.
+
+| Metric (three-trial median) | Direct computation | Shared equations |
+| --- | ---: | ---: |
+| Proof module build CPU, user + system | 0.880 s | 1.980 s |
+| Kernel replay | 164 ms | 301 ms |
+| Total replay process wall time | 1.272 s | 1.481 s |
+| Export bytes | 3,030,497 | 3,470,501 |
+
+Both variants passed independent kernel replay and used only `propext` and
+`Quot.sound`. This design is rejected for production: checking the structural
+proofs and their additional definitions costs more than the avoided instruction
+encoding at this scale. Reuse across more functions might amortize the cache,
+but these measurements do not justify rollout or a claim of faster comparison.
+
+Reproduce with:
+
+```sh
+python3 tools/certificate-bench/encoding.py \
+  --work work/lean-perf/encoding-reuse-new --function 461 --count 256 --trials 3
+```
+
+The harness alternates comparison order, includes cache setup and flattening
+bridges, and rejects nonstandard axioms. Inputs are recorded by source hash;
+measurements are saved in `tools/certificate-bench/encoding-results.json`.
+
+
+## Reusing duplicate guest optimizer pipelines
+
+Functions 225/649 have identical source bodies and argument counts; functions
+226/650 form a second identical pair. Their colouring oracles and optimized
+bodies also agree. The outer function number differs. A successful checked
+colouring oracle makes the allocation independent of that function number;
+only the allocator fallback uses it.
+
+Each pair now shares one fused certificate for the compiler prefix through the
+second dead-code pass, one checked oracle result, and a complete compiler
+certificate parameterized by the function number. The public optimizer
+certificates reuse that theorem. This replaces repeated computation and avoids
+repeating the staged rewrite composition in each consumer. The fused prefixes
+are small enough to build quickly; this does not justify fusing the largest
+guest functions.
+
+Two alternating replay trials of the actual paired exported closures gave:
+
+| Pair | Original kernel replay | Shared kernel replay | Original / shared export bytes |
+| --- | --- | --- | --- |
+| 225/649 | 7.980 / 7.964 s | 6.824 / 6.644 s | 52,110,828 / 51,955,615 |
+| 226/650 | 8.529 / 8.179 s | 7.009 / 7.081 s | 52,128,706 / 51,958,281 |
+
+These times cover the full exported dependency closure, including shared Lean
+and compiler definitions. Parsing took about 6.3 seconds in either version.
+The number of exported constants fell from 9,247 to 8,680 and from 9,267 to 8,654.
+Both exports replayed successfully with the independent Lean kernel. All public
+certificates depend only on `propext`, `Classical.choice`, and `Quot.sound`.
+Existing data declarations and theorem statements were checked unchanged.
+
+Direct compilation of the 225 and 226 public proof modules used 2.86 and 3.78
+CPU seconds before reuse, versus 1.30 and 1.30 seconds afterwards. CPU here includes
+user and system time. Summing the ten affected original module compilations
+used 18.15 CPU seconds; the eleven new module compilations, including the new
+oracle helper and both shared complete-certificate modules, used
+15.60 CPU seconds. Common dependencies were already built. The original source
+variants were compiled from the baseline revision; these sums are scoped
+direct-compilation measurements, not a timing claim for a cold full build.
+The harness below rebuilds the complete affected module sets in separate
+environments to provide an independent comparison.
+
+The first implementation reused staged equations separately in each consumer.
+Its first timing appeared slower; alternating trials showed that result was
+sensitive to concurrent load. The final implementation instead shares the
+complete name-parameterized certificate and a fused common prefix. It passed
+the alternating measurements above. Production rollout uses that final version.
+
+`tools/reuse-word-functions.py` preserves this organization after generation,
+checks that paired source literals still agree, and is idempotent. Both relevant
+generators invoke it. It generates proof proposals; subsequent Lean builds and
+comparator replay still check them.
+
+To reproduce with already built common dependencies and exporter, supply a git
+revision from before this change and an empty output directory:
+
+```sh
+python3 tools/certificate-bench/word-reuse.py --base-revision <baseline-revision> \
+  --work work/lean-perf/word-function-reuse-reproduction --trials 2
+```
+
+The harness builds only the affected modules in separate before/after directories,
+exports both paired obligations, and alternates kernel replays. Each command has
+a three-minute timeout. Original measurements and frozen exports are in
+`work/lean-perf/word-function-reuse/`. Portable CPU, replay, and export measurements
+are saved in `tools/certificate-bench/word-reuse-results.json`. The original
+word bodies and proofs agree at baseline revisions `b2d063a22` and `7704dcf16`.

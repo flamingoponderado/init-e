@@ -1321,6 +1321,10 @@ unsafe def main (args : List String) : IO Unit := do
          "  rw [InitE.CompilerStages.fullCompile_expanded]\n  dsimp only\n" ++
          "  rw [InitE.SmallSsaKernelComputation.fullSsaStructural_eq]\n  kernel_rfl\n" ++
          s!"#print axioms optimize{label}_eq\nend InitE.WordStages\n")
+      if label == 225 || label == 226 then
+        let result ← IO.Process.output { cmd := "python3", args := #["tools/reuse-word-functions.py", toString label] }
+        unless result.exitCode == 0 do
+          throw (IO.userError s!"shared optimizer regeneration failed: {result.stderr}")
       IO.println s!"Certified-stage proposal {label}: {sourceDefs.utf8ByteSize + text.utf8ByteSize}/{optimizedDefs.utf8ByteSize + optimizedText.utf8ByteSize} bytes"
       continue
     let text ← renderWordStage env (toExpr entry)

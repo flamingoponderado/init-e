@@ -1,11 +1,5 @@
+import InitE.SmallSsaKernelComputation
 import InitE.CompactComputation
-import InitE.SmallStages.Compact650.Pass2
-import InitE.SmallStages.Compact650.Pass3
-import InitE.SmallStages.Compact650.Pass4
-import InitE.SmallStages.Compact650.Pass5
-import InitE.SmallStages.Compact650.Pass6
-import InitE.SmallStages.Compact650.Pass7
-import InitE.SmallStages.Compact650.Pass8
 import InitE.SmallStages.Compact650.Pass10
 set_option autoImplicit false
 set_option maxRecDepth 1000000
@@ -34,18 +28,43 @@ theorem fullCompile_expanded (ra : WordToWord.RegAllocFn)
   kernel_rfl
 
 #print axioms fullCompile_expanded
+/-- The common prefix is certified once; every function name reuses the opaque equation. -/
+theorem preallocated_eq :
+    (let p0 := WordSimp.compileExp source650.2.2
+     let p1 := WordInst.instSelectExecutable riscvConfig (maxVarHOL p0 + 1) p0
+     let p2 := WordAlloc.fullSsaCcTrans 10 p1
+     let p3 := WordAlloc.removeDeadProg p2
+     let p4 := WordCse.wordCommonSubexpElim p3
+     let p5 := WordCopy.copyProp p4
+     let p6 := WordInst.threeToTwoRegProg riscvConfig.twoRegArith p5
+     let p7 := WordUnreach.removeUnreach p6
+     WordAlloc.removeDeadProg p7) = pass8 := by
+  dsimp only
+  rw [InitE.SmallSsaKernelComputation.fullSsaStructural_eq]
+  kernel_rfl
+
+#print axioms preallocated_eq
+/-- Check the common pipeline once, for every function name using this valid oracle. -/
+theorem optimize_shared (name : Nat) : WordToWord.fullCompileSingleWith
+    RegAlloc.regAllocExecutable riscvConfig.twoRegArith
+    (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
+    RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
+    riscvConfig ((name, 10, source650.2.2), oracle) = (name, 10, pass10) := by
+  rw [fullCompile_expanded]
+  dsimp only
+  have alg_eq : RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg = 3 := by rfl
+  rw [alg_eq, preallocated_eq]
+  rw [InitE.WordStages.wordAllocWith_of_oracle RegAlloc.regAllocExecutable name 3
+    (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length)) riscvConfig pass8 pass10 oracle
+    oracle_checked]
+  kernel_rfl
+
+#print axioms optimize_shared
 theorem optimize650_eq : WordToWord.fullCompileSingleWith
     RegAlloc.regAllocExecutable riscvConfig.twoRegArith
     (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
     RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
     riscvConfig (source650, oracle) = (650, 10, pass10) := by
-  rw [fullCompile_expanded]
-  dsimp only
-  have name_eq : source650.1 = 650 := by rfl
-  have argc_eq : source650.2.1 = 10 := by rfl
-  have alg_eq : RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg = 3 := by rfl
-  rw [name_eq, argc_eq, alg_eq, pass2_eq, pass3_eq,
-      pass4_eq, pass5_eq, pass6_eq, pass7_eq, pass8_eq, pass10_eq]
-  try rfl
+  exact optimize_shared 650
 #print axioms optimize650_eq
 end InitE.SmallStages.Compact650

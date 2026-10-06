@@ -1,3 +1,4 @@
+import InitE.SmallStages.Compact650.Complete
 import InitE.CompactComputation
 import InitE.SmallSsaKernelComputation
 import InitE.CompilerStages
@@ -240,9 +241,6 @@ theorem optimize226_eq : WordToWord.fullCompileSingleWith
   (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
   RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
   riscvConfig (source226, oracle226) = optimized226 := by
-  rw [InitE.CompilerStages.fullCompile_expanded]
-  dsimp only
-  rw [InitE.SmallSsaKernelComputation.fullSsaStructural_eq]
-  kernel_rfl
+  exact InitE.SmallStages.Compact650.optimize_shared 226
 #print axioms optimize226_eq
 end InitE.WordStages
