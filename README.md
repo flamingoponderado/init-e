@@ -30,7 +30,10 @@ The full EEST procedure is in [docs/EEST-SPIKE.md](docs/EEST-SPIKE.md).
 Tests help develop candidates; submitting a solution requires proofs.
 
 This is experimental research code. Equivalence with this guest is not a proof
-that the guest implements Ethereum correctly. See the challenge's trust boundary.
+that the guest implements Ethereum correctly. Evaluate [docs/SOUNDNESS.md](docs/SOUNDNESS.md)
+and the [riscv-im-compare README](https://github.com/flamingoponderado/riscv-im-compare#readme)
+as well: its comparison of Flapjack's RISC-V model with riscv-zkvm documents
+explicit assumptions and remaining gaps that matter for the intended execution platform.
 
 The challenge takes `Guest.guestAst` directly. The Pancake text remains readable
 provenance; parser agreement is not required. See
