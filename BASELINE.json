@@ -45,7 +45,7 @@
   "source_model": "InitE.sourceBehaviour",
   "pending": [
     "complete the current isolated verification with only the three standard axioms",
-    "publish the combined challenge, submission, verifier and measured verification results on PR14"
+    "record full isolated acceptance and measured results on PR14"
   ],
   "submitted_image_bytes": 950336,
   "bootstrap_bytes": 208,
@@ -317,7 +317,7 @@
     "backend_artifact_stages": "643559785120fd67fc604b912fc21c14c5e6f4fe",
     "backend_metadata": "35eeaafcd2066c55a56aaddf378e6decbd6bf55a",
     "backend_target_checks": "ba72d737fea985d064a32563a12a041a42b5e84a",
-    "scope": "Scoped remote development snapshots; combined outside build passed, full isolated verification and final combined publication pending",
+    "scope": "Scoped remote development snapshots and combined standard-axiom snapshot published; full outside build passed, isolated verification and final measured results pending",
     "standard_axiom_integration": "c1684cc7144c03457ed9ac6198f5757f132e48a2",
     "admission_facts": {
       "branch": "perf/admission-facts",
@@ -386,13 +386,43 @@
     "work": "verifier/runs/full-standard3-20261006",
     "log": "work/lean-perf/full-verifier-standard3.log",
     "time_log": "work/lean-perf/full-verifier-standard3.time",
-    "stage": "Cold workspace trusted audit inside PrivatePIDs after successful isolation preflight",
+    "stage": "Trusted audit passed; final isolated comparator running",
     "axiom_count": 3,
     "memory_limit_gib": 112,
     "logical_cpus": 16,
     "active_lean_compilers": 16,
     "inner_runtime_limit_seconds": 28800,
     "outer_runtime_limit_seconds": 64800,
-    "resource_snapshots": "work/lean-perf/full-verifier-standard3-resources.jsonl"
+    "resource_snapshots": "work/lean-perf/full-verifier-standard3-resources.jsonl",
+    "trusted_audit": {
+      "status": "passed",
+      "observed_at": "2026-10-06T01:43:34.503234+00:00",
+      "unit": "init-e-verify-1bb782b22538.service",
+      "invocation_id": "fa21ef1f298d4d5cbfc65f32ad77e107",
+      "jobs": 53263,
+      "permitted_axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "cpu_seconds": 147050.743233,
+      "memory_peak_bytes": 117086064640,
+      "memory_swap_peak_bytes": 0,
+      "elapsed_seconds": 9802.874174,
+      "accounting_message": "init-e-verify-1bb782b22538.service: Consumed 1d 16h 50min 50.743s CPU time over 2h 43min 22.873s wall clock time, 109G memory peak.",
+      "scope": "Cold rebuild of workspace proof namespaces; upstream dependencies and trusted tool caches reused. Comparator acceptance remains pending."
+    }
+  },
+  "published_standard_axiom_snapshot": {
+    "commit": "1eecd1778a5646c9613097220e21e25a4bb67103",
+    "pr": 14,
+    "state": "open_draft",
+    "source_agreement": {
+      "trusted_and_configuration_files_checked": 56470,
+      "supplement_files_checked": 241,
+      "mismatches": 0,
+      "evidence": "work/lean-perf/published-frozen-source-agreement.json",
+      "scope": "Frozen sources and submission agree; this is not verifier acceptance"
+    }
   }
 }

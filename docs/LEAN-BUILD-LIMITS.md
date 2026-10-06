@@ -36,9 +36,21 @@ Checked Compact191/207 targets remained up to date under the virtual sysroot,
 and a fresh main Optimize262 wrapper passed with the standard three axioms.
 Nested outer-two/inner-sixteen cache checks preserved the two-slot cap.
 
-Full private-verifier integration is pending. Its sanitized environment currently
-drops limiter settings; wrapping the verifier alone is insufficient. It must
-explicitly propagate `LAKE_OVERRIDE_LEAN`, `LEAN_SYSROOT`, `LEAN_LIMIT_REAL`,
-`LEAN_LIMIT_LOCK_DIR`, and `LEAN_LIMIT_SLOTS` across compiler phases and use
-hash-checked copies of the C/Python helpers. These smoke checks do not establish
-that the full verifier passes.
+The verifier stages and hashes the C/Python helpers, then invokes the limiter
+inside its sanitized environment for both the trusted audit and comparator.
+The helper initializes the virtual sysroot and compiler admission there;
+nested Lake launches preserve the slot cap. Wrapping the host verifier alone
+would not propagate these settings into its sandbox. The full outside build
+passes with the final caps; full isolated acceptance remains pending while
+the cold verifier rebuild runs. Smoke checks alone do not establish acceptance.
+
+For a local full build with the verifier's memory, CPU and compiler-slot caps:
+
+```sh
+tools/build-lean.sh --constrained InitE Submission InitE.Audit
+```
+
+This uses 112 GiB with zero swap, at most 16 logical CPUs and 16 active Lean
+compiler slots, and an eight-hour limit. Without `--constrained`, the script
+still limits CPU affinity, compiler slots and elapsed time, but does not apply
+the memory cap. `--quick` reduces the elapsed limit to ten minutes.

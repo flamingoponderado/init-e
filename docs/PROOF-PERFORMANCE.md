@@ -1329,3 +1329,13 @@ limits. The persistent outer unit permits eighteen hours for both steps plus
 staging. Its log/time files are `work/lean-perf/full-verifier-standard3.*`;
 outer CPU/RSS measurements do not include sibling sandbox-unit processes.
 Only the verifier's final `verified` status will establish isolated acceptance.
+
+The cold workspace trusted audit passed all 53,263 jobs with exactly
+`propext`, `Classical.choice`, and `Quot.sound`. Wall time was
+9,802.874 seconds (2h 43m 23s), CPU time 147,050.743 seconds,
+and cgroup memory peak 117,086,064,640 bytes (109.0 GiB), with zero swap.
+The memory peak includes charged file cache, not just compiler heaps.
+Upstream dependencies and trusted tool caches were reused. The final comparator
+is running separately inside PrivatePIDs with the same limits; trusted audit
+success alone is not submission acceptance. Exact service accounting is retained
+in `work/lean-perf/full-verifier-standard3-trusted-audit-result.json`.
