@@ -25,6 +25,14 @@ SECTIONS
 {
   . = 0x80000000;
   .text : { *(.text) } :text
+  # RAM begins zeroed. Initial compiler data is stored in ROM and copied by
+  # the submitted bootstrap, rather than supplied by the environment.
+  __guest_data_load = ALIGN(LOADADDR(.text) + SIZEOF(.text), 8);
   . = 0xa0020000;
-  .data : { *(.data) } :data
+  .data : AT(__guest_data_load)
+  {
+    __guest_data_start = .;
+    *(.data)
+    __guest_data_end = .;
+  } :data
 }

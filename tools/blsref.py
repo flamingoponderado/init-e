@@ -17,7 +17,7 @@ py_ecc; `selfcheck()` verifies bilinearity and agreement on random inputs.
 Group law = py_ecc optimized_curve (homogeneous projective, same case split),
 so normalised outputs match py_ecc byte for byte.
 
-Run `uv run --directory evm-asm/execution-specs python tools/blsref.py` for
+Run `uv run --directory work/execution-specs python tools/blsref.py` for
 the self-check (needs py_ecc); `--consts OUT.pnk` writes the constants file.
 """
 import sys

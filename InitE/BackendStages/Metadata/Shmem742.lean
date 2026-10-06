@@ -1,0 +1,18 @@
+import InitE.BackendStages.Metadata.Data742
+import InitE.BackendStages.Padded742
+set_option autoImplicit false
+set_option Elab.async false
+set_option maxRecDepth 1000000
+set_option maxHeartbeats 0
+open Flapjack Flapjack.Compiler.Backend
+open InitE.BackendStages
+namespace InitE.BackendStages.Metadata
+theorem walkStep742 : walkShmemLines Padded742.lines 657596 beforeFfis742 beforeShmem742 = (657712, afterFfis742, afterShmem742) := by
+  with_unfolding_all rfl
+theorem shmemStep742 (rest : LabSem.LabProgHOL 64) : LabToTarget.getShmemInfo (Padded742 :: rest) 657596 beforeFfis742 beforeShmem742 = LabToTarget.getShmemInfo rest 657712 afterFfis742 afterShmem742 := by
+  rw [getShmemInfo_section, walkStep742]
+theorem symbolLength742 : LabToTarget.secLength Padded742.lines 0 = 116 := by
+  with_unfolding_all rfl
+#print axioms shmemStep742
+#print axioms symbolLength742
+end InitE.BackendStages.Metadata

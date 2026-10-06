@@ -20,7 +20,7 @@ while [ $# -gt 0 ]; do
 done
 W="$ROOT/work/p256"; mkdir -p "$W"
 INP="$W/p256_${COUNT}_${SEED}.in"; EXP="$W/p256_${COUNT}_${SEED}.expected"
-if ! uv run --directory "$ROOT/evm-asm/execution-specs" python "$ROOT/tools/gen_p256_vectors.py" \
+if ! uv run --directory "$ROOT/work/execution-specs" python "$ROOT/tools/gen_p256_vectors.py" \
      --count "$COUNT" --seed "$SEED" "$INP" "$EXP" 2>/dev/null; then
   echo "(uv env unavailable; generating without the cryptography cross-check)" >&2
   python3 "$ROOT/tools/gen_p256_vectors.py" --count "$COUNT" --seed "$SEED" "$INP" "$EXP"

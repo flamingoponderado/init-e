@@ -48,10 +48,12 @@ as `docs/CHALLENGE.md` states. The following can still go wrong.
   submission may reject or trap), or the Pancake source itself rejects the valid
   block (a bug of the source, which a submission must reproduce). The same
   freedom applies when the declared block gas limit parses and exceeds 200M.
-* **The Pancake source in the challenge, and the Flapjack compiler, might
-  contain bugs.** The source is the reference, so its bugs are reproduced by
-  every submission; the compiler (and its RISC-V semantics) is trusted
-  wherever a submission relies on it.
+* **The fixed Pancake program and the semantic models might contain bugs.**
+  The program is the reference, so submissions reproduce its behavior in the
+  covered cases. Compiler-based submissions must prove the compiler theorem's
+  premises and the submitted bytes' agreement with its output. Compiler
+  execution is not an additional axiom; fidelity of the source and RISC-V
+  models to the intended systems remains a separate requirement.
 * **A trustworthy Lean specification of the stateless guest does not exist.**
   The challenge is stated relative to the Pancake source, not to a specification
   that has been validated against the Ethereum consensus rules.
@@ -60,8 +62,9 @@ as `docs/CHALLENGE.md` states. The following can still go wrong.
   above, a winning submission is not necessarily a correct stateless guest.
 * **Lean elaboration might turn a statement into an unintended internal
   representation.** What is checked is the elaborated term, which might not
-  mean what the source text appears to say (notations, coercions, instances,
-  `native_decide` and similar).
+  mean what the source text appears to say (notations, coercions and
+  instances). The verifier rejects native-computation axioms and permits
+  only the three standard Lean axioms.
 * **The proof checker might be buggy.** A bug in Lean's kernel, or in the tools
   around it, could accept a false theorem.
 * **Lean's type theory might be inconsistent.** Everything proved in it is

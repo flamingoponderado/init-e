@@ -12,7 +12,7 @@ Plain `int` + `pow`, affine chord/tangent formulas.  When `cryptography` is
 importable (an execution-specs dependency) every case that passes the range
 and curve checks is cross-checked against `EllipticCurvePublicKey.verify`
 (Prehashed SHA-256), i.e. against the very library the Python spec calls; a
-mismatch aborts.  Run under `uv run --directory evm-asm/execution-specs python
+mismatch aborts.  Run under `uv run --directory work/execution-specs python
 ...` to get the cross-check (tools/check_p256.sh does).
 
 Input (input framing: 8-byte LE length, blob, zero pad to 8): N cases of

@@ -2,7 +2,7 @@
 """gen_mpt_vectors.py OUT_DIR [--seed S] [--fixture INPUT] [--bench-sets N] [--bench-keccak R]
 
 Run with the execution-specs environment:
-  uv run --directory evm-asm/execution-specs python tools/gen_mpt_vectors.py OUT_DIR
+  uv run --directory work/execution-specs python tools/gen_mpt_vectors.py OUT_DIR
 
 Writes OUT_DIR/mpt.input (input framing: u64 LE len, blob, zero pad to 8),
 OUT_DIR/mpt.expected and OUT_DIR/mpt.mask (0xff = byte must match). The blob is

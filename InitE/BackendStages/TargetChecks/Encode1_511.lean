@@ -1,0 +1,12 @@
+import InitE.BackendStages.TargetChecks.Data1_511
+set_option autoImplicit false
+set_option Elab.async false
+set_option maxRecDepth 1000000
+set_option maxHeartbeats 0
+open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
+open InitE.BackendStages
+namespace InitE.BackendStages.TargetChecks
+theorem Reencode1_511_eq : LabToTarget.encLinesAgain Target.labels1 Target.ffis 359344 riscvConfig.encode Reencode0_511.lines [] true = (Reencode1_511.lines, 360216, true) := by
+  with_unfolding_all rfl
+#print axioms Reencode1_511_eq
+end InitE.BackendStages.TargetChecks

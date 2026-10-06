@@ -8,7 +8,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 W="$ROOT/work/mpt"
 mkdir -p "$W"
-uv run --directory "$ROOT/evm-asm/execution-specs" python "$ROOT/tools/gen_mpt_vectors.py" "$W" "$@"
+uv run --directory "$ROOT/work/execution-specs" python "$ROOT/tools/gen_mpt_vectors.py" "$W" "$@"
 if [ ! -f "$W/t_mpt.elf" ] || [ "$ROOT/guest/src/mpt.pnk" -nt "$W/t_mpt.elf" ] || [ "$ROOT/guest/test/t_mpt.pnk" -nt "$W/t_mpt.elf" ]; then
   "$ROOT/guest/build.sh" "$ROOT/guest/test/t_mpt.pnk" "$W/t_mpt.elf" >/dev/null
 fi

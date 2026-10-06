@@ -1,0 +1,11 @@
+import InitE.BackendStages.Padded220
+import InitE.BackendStages.BytesData220
+set_option autoImplicit false
+set_option maxRecDepth 1000000
+set_option maxHeartbeats 0
+open Flapjack Flapjack.Compiler.Backend
+namespace InitE.BackendStages
+theorem sectionBytes220_eq : (Padded220.lines.map LabToTarget.lineBytes).flatten = ByteData.bytes220 := by
+  with_unfolding_all rfl
+#print axioms sectionBytes220_eq
+end InitE.BackendStages

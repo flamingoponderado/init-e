@@ -1,0 +1,18 @@
+import InitE.FrontendComputation
+import InitE.FrontendStages.Declarations.Simplify76
+set_option Elab.async false
+set_option maxRecDepth 1000000
+set_option maxHeartbeats 0
+set_option cbv.maxSteps 1000000000
+set_option cbv.warning false
+open scoped InitE.FrontendComputation
+open Flapjack
+namespace InitE.FrontendStages.Declarations
+
+def originalData92 : Decl (BitVec 64) :=
+Flapjack.Decl.decl Flapjack.Shape.one "sha_accel" (Flapjack.Exp.const 0#64)
+def simplifiedData92 : Decl (BitVec 64) :=
+Flapjack.Decl.decl Flapjack.Shape.one "sha_accel" (Flapjack.Exp.const 0#64)
+def original92 := Pancake.PanLang.declToHOL originalData92
+def simplified92 := Pancake.PanLang.declToHOL simplifiedData92
+end InitE.FrontendStages.Declarations

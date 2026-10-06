@@ -10,7 +10,7 @@ plain `int` + `pow`, affine chord/tangent formulas.  When `coincurve`
 (libsecp256k1, an execution-specs dependency) is importable every successful
 recovery is cross-checked against `PublicKey.from_signature_and_message`, and
 every failure is confirmed to make coincurve raise; a mismatch aborts.  Run it
-under `uv run --directory evm-asm/execution-specs python ...` to get the
+under `uv run --directory work/execution-specs python ...` to get the
 cross-check (tools/check_secp256k1.sh does).
 
 Input (input framing: 8-byte LE length, blob, zero pad to 8): N cases of

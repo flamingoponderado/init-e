@@ -1,0 +1,4 @@
+import InitE.BackendStages.TargetChecks.Phase0_386
+import InitE.BackendStages.TargetChecks.Labels1_386
+import InitE.BackendStages.TargetChecks.Encode1_386
+set_option autoImplicit false

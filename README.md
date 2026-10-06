@@ -1,277 +1,37 @@
 # init-e
 
-> [!WARNING]
-> This is experimental research code. There is no meaningful proof of
-> correctness anywhere in this project yet, and the codebase has not been
-> audited. Do not use it for anything of value.
+A proof challenge: submit RISC-V bytecode and prove that it agrees with the
+fixed Pancake guest on the cases specified in [docs/CHALLENGE.md](docs/CHALLENGE.md).
+The score is a certified execution step bound, either a natural number or infinity.
+Code must fit in the 128 MiB program window.
 
-## Challenge Goal
+The assignment includes `guest/src/`, the authoritative literal AST in `Guest/Ast.lean`, and
+its initial memory and accelerator FFI semantics. The authoritative source
+evaluator is the compiler theorem’s `PanSemStateFiniteExact.semanticsDecls`,
+fixed by `InitE/SourceSemantics.lean`. Flapjack is a pinned Lake
+dependency from the `riscv-im` branch. The baseline includes a proved bootstrap
+and uses compiler correctness to
+certify the complete submitted image with score infinity. The verifier script
+and submission format are described in [docs/SUBMISSIONS.md](docs/SUBMISSIONS.md);
+the standard-axiom baseline has passed the full outside build and proof audit.
+The cold isolated trusted audit also passed with exactly the three standard axioms.
+Its full isolated comparator is running; acceptance is pending.
+The earlier isolated acceptance used native-computation axioms and is recorded
+separately.
 
-Find a RISC-V code that behaves the same (exact statement, see Lean code
-(will be linked when ready)) to the initial Pancake source code of the stateless
-guest.
+Build the challenge and initial submission with `tools/build-lean.sh`; run the
+proof audit with `tools/build-lean.sh InitE.Audit`. Build the optional testing
+model with `tools/build-lean.sh Guest`. These commands stop after eight hours;
+use `tools/build-lean.sh --quick MODULE` for a 10-minute exploratory check.
+A timeout means the check is unfinished, not that the proof passed. Candidate testing, toolchain setup,
+Docker instructions, and historical results are in [docs/TESTING.md](docs/TESTING.md).
+The full EEST procedure is in [docs/EEST-SPIKE.md](docs/EEST-SPIKE.md).
+Tests help develop candidates; submitting a solution requires proofs.
 
-## For challenge participants
+This is experimental research code. Equivalence with this guest is not a proof
+that the guest implements Ethereum correctly. See the challenge's trust boundary.
 
-*Placeholder; to be filled in.* The statement of the challenge (what a
-submission is, what it must prove, the assumptions and the score) is
-[docs/CHALLENGE.md](docs/CHALLENGE.md). The assignment is the Pancake source in
-`guest/src/`; `docs/SOUNDNESS.md` explains why the assumed memory is larger than
-a zkVM provides. Build the reference guest with `tools/build_guest.sh` and run
-it on Spike with `tools/spike/spike_run` (see [Quick start](#quick-start)).
-
-## For challenge organizers
-
-*Placeholder; to be filled in, except for the following.*
-
-Some solutions are expected to contain the whole flapjack compiler, modified
-to count steps (so that a submission can carry its own step-count-aware
-correctness argument). Checking such a submission is therefore far heavier than
-checking a small hand-written program: set the wall-clock and memory limits of
-the checker (proof checking, building and any test runs) to accommodate that,
-rather than sizing them for the original Pancake guest alone.
-
-Using the Flapjack compiler is not mandatory. The checker must not require the
-Pancake source to appear as a literal in a submission: the Pancake source and
-the Flapjack compiler are only intermediate lemmas a submission may use. The
-RISC-V semantics in the Flapjack codebase, however, is part of the challenge
-and must not be modified by a submission.
-
-## For people who look at the solutions
-
-*Placeholder; to be filled in, except for the following.* A solution is
-guaranteed to agree with the original Pancake source only as
-[docs/CHALLENGE.md](docs/CHALLENGE.md) states, so do not read it as a
-verified Ethereum client.
-
-* **Bugs of the Pancake source carry over.** If the Pancake source mistakenly
-  accepts an invalid block (or rejects a valid one), a solution must do the same
-  on the cases the challenge covers. EEST passing
-  ([docs/EEST-SPIKE.md](docs/EEST-SPIKE.md)) is a sanity check, not a proof that
-  the source is a correct Ethereum state transition.
-* **Where the Pancake source goes out of memory (OOM), or diverges, a solution
-  is free.** It may accept a block the source runs out of memory on, even an
-  invalid one, or reject or trap on a block the source would accept. The bet is
-  that the source never OOMs or diverges for a block declaring at most 200M
-  gas, but whether that holds is still unknown. It is not part of a solution's
-  proof, and anyone can investigate it (see
-  [docs/ALLOC-AUDIT.md](docs/ALLOC-AUDIT.md) and
-  [docs/JOURNAL-BOUND.md](docs/JOURNAL-BOUND.md) for existing notes, which do
-  not settle it).
-* **Declared gas above 200M is outside the assumption.** If the declared block
-  gas limit parses and exceeds 200M, a solution may do anything, including
-  accepting an invalid block. A user should reject such blocks themselves.
-* **All failures are equal.** On an invalid input a solution may reject or
-  trap (not OOM); which of the two, and with which code, is not specified.
-* **The zkVM is a separate question.** The challenge assumes more RAM (29GB) than
-  a zkVM such as ZisK provides ([docs/SOUNDNESS.md](docs/SOUNDNESS.md)), so a
-  solution's guarantees transfer to a zkVM only after the RISC-V semantics of
-  the challenge is shown to refine the zkVM's, and the memory is checked separately.
-* **Memory needs its own bound.** The assumed memory is probably bigger than
-  what usual zkVMs provide, so before running a solution in a zkVM one needs
-  to prove an upper bound on the solution's memory consumption in addition.
-  The challenge does not give this bound.
-
-## Status
-
-* **EEST fixtures.** The guest passes the entire `tests-zkevm@v21.0.1`
-  corpus (pinned by `eest-fixture-tag.txt`): a reproducible run
-  ([docs/EEST-SPIKE.md](docs/EEST-SPIKE.md)) with the guest
-  reports 33,614/33,614 records (33,605 `PASS(full)`, 9 expected
-  `PASS(malformed)` rejects), 0 failures, under Spike. This is the sanity
-  check that the challenge assignment, the original Pancake source, passes
-  EEST; the Docker image (below) runs it in one command.
-  Day-to-day CI (`tools/check_all.sh`) ratchets a sampled 839-block
-  baseline (`tools/eest-baseline.json`, regenerated by
-  `tools/make-sample-inputs.sh`) on every change instead of the full corpus;
-  it currently shows 0 failures. The benchmark release
-  `tests-zkevm-benchmark@v0.8.2` is on an older (v0.8.x) schema than v21.0.1
-  and is not supported.
-* **A real chain block.** (Recorded against the `tests-zkevm@v0.6.2` input
-  schema; the block input has not been regenerated for v21.0.1.) The guest
-  reproduced a real `glamsterdam-devnet-7`
-  block (`115260`, 65.3M gas) exactly, matching the network's recorded
-  output byte-for-byte, on both the `cake`- and `flapjack`-compiled guests —
-  see [issue #54](https://github.com/pirapira/stateless-pancaketh/issues/54).
-
-## Docker
-
-The `Dockerfile` builds `spike_run` from the `riscv-isa-sim` submodule,
-compiles the guest with flapjack, and bakes in the full `tests-zkevm` EEST
-fixture corpus (converted into guest inputs), so a conformance run is one
-`docker run` — no Lean, Spike or RISC-V toolchain needed locally. The
-`.github/workflows/docker.yml` workflow builds and pushes it to
-`ghcr.io/flamingoponderado/init-e`. Building needs the
-submodules (`git submodule update --init evm-asm riscv-isa-sim`):
-
-```bash
-docker build -t stateless-pancaketh-eest-spike .
-docker run --rm stateless-pancaketh-eest-spike     # whole corpus under spike_run
-docker run --rm stateless-pancaketh-eest-spike \
-  guest/build/guest.elf work/inputs/manifest.tsv --quiet-passes \
-  --filter random_statetest --limit 50              # narrow smoke check
-```
-
-`ghcr.io/flamingoponderado/stateless-pancaketh:v0.1.4` (the old repository's package) is the last image that
-ran under `ziskemu` (built from `main` at `414e6c6`, tag `r20261003-02`, with
-the `tests-zkevm@v21.0.1` fixtures; it passes the full corpus and needs an
-x86-64 CPU with AVX2, BMI2 and ADX). It is invoked with `--ziskemu`, which
-`tools/eest-run.py` no longer has; images built from this `Dockerfile` run
-under Spike instead. `v0.1.0`–`v0.1.3` are under `ghcr.io/pirapira/`, with
-the software guest as `guest.elf` and the accelerated one as
-`guest-accel.elf`.
-
-## Toolchain
-
-* `lake` (Lean 4's build tool), via `elan` (the Lean version manager):
-
-  ```bash
-  curl https://elan.lean-lang.org/elan-init.sh -sSf | sh
-  ```
-
-  `elan` puts `lake`/`lean` on `PATH` (`~/.elan/bin`; open a new shell if
-  they're not found right after installing) and, on the first `lake`
-  invocation in this repo, fetches the toolchain pinned by
-  `lean-toolchain` (`leanprover/lean4:v4.33.1`) automatically — no
-  separate Lean install needed.
-* `flapjack` (Lean 4 port of the Pancake compiler, `lake exe flapjack-compile`):
-  version pinned by the `flapjack` *lake* dependency in `lakefile.toml` (see
-  `lake-manifest.json` for the exact commit; the `flapjack` git submodule is a
-  separate, uninitialized checkout used only by other tooling, not by
-  `lake`). `guest/build.sh` uses it by default (triggering `lake build` on
-  first use).
-* `riscv64-unknown-elf-{as,ld}`, needed to build both `spike_run` and the
-  guest itself:
-
-  ```bash
-  sudo apt-get install -y binutils-riscv64-unknown-elf
-  ```
-* `spike_run`, a custom driver built on top of Spike (`riscv-isa-sim`,
-  checked out as this repo's `riscv-isa-sim` submodule — see "Quick start"
-  below to initialize it), vendored into this repo at `tools/spike/` (a
-  fork of `evm-asm/scripts/spike/`'s driver, modified to match this repo's
-  guest's output address). Build it once (needs `libboost-all-dev` and
-  `device-tree-compiler`), then build `spike_run` against it (needs
-  `libssl-dev`); `tools/spike/build.sh` finds the submodule at its default
-  `SPIKE_SRC` path, no override needed:
-
-  ```bash
-  mkdir -p riscv-isa-sim/build
-  (cd riscv-isa-sim/build && ../configure)   # parentheses = subshell, so this `cd` doesn't persist
-  make -C riscv-isa-sim/build -j"$(nproc)"
-  tools/spike/build.sh
-  ```
-* Python oracle: `uv run --directory evm-asm/execution-specs python ...`.
-
-## Quick start
-
-This repo's `evm-asm` submodule (EEST fixture fetcher and converter; the
-fixture tag itself is pinned by `eest-fixture-tag.txt`) and
-`riscv-isa-sim` submodule (Spike) are needed; initialize them if missing:
-
-```bash
-git submodule update --init evm-asm riscv-isa-sim
-```
-
-`tools/eest-run.py` uses Spike by default and needs
-`tools/spike/spike_run` built first, which itself needs
-`riscv64-unknown-elf-{as,ld}` (see "Toolchain" above for the
-`riscv-isa-sim` build prerequisites):
-
-```bash
-mkdir -p riscv-isa-sim/build
-(cd riscv-isa-sim/build && ../configure)   # parentheses = subshell, so this `cd` doesn't persist
-make -C riscv-isa-sim/build -j"$(nproc)"
-tools/spike/build.sh
-```
-
-`tools/build_guest.sh` compiles the guest with `flapjack` by default, which
-needs `lake` on `PATH` (see "Toolchain" above to install it via `elan` if
-it isn't already):
-
-```bash
-tools/make-inputs.sh 50                       # work/inputs/manifest.tsv
-tools/build_guest.sh                           # guest/build/guest.elf
-tools/eest-run.py guest/build/guest.elf work/inputs/manifest.tsv --quiet-passes
-```
-
-Next steps:
-
-* For a pinned, self-contained full-corpus run through Spike, including the
-  recorded commit and result, see [docs/EEST-SPIKE.md](docs/EEST-SPIKE.md).
-
-## Tools
-
-`guest/build.sh` accepts `DEBUG=1` to define `GUEST_DEBUG`; this preserves the
-debug bytes at output offsets 69, 70, and 100. The default build omits those
-stores. For example:
-
-```bash
-DEBUG=1 guest/build.sh guest/src/main.pnk guest/build/guest-debug.elf
-```
-
-`tools/build_guest.sh` builds the main guest, `guest/build/guest.elf`. Its
-crypto runs on the ZisK accelerators (`docs/ACCEL-FFI.md`), through the stubs in
-`guest/runtime/start.S`; Spike (`tools/spike/spike_run`) implements the same
-CSRs. There is no separate software build.
-
-`tools/eest-run.py` uses Spike by default and supports several ways to narrow
-down a failing sweep:
-
-```bash
-tools/eest-run.py guest/build/guest.elf work/inputs/manifest.tsv --json work/run/results.json
-tools/eest-run.py guest/build/guest.elf work/inputs/manifest.tsv \
-  --from-json work/run/results.json --fail-code 1/99
-```
-
-`--labels FILE` selects one manifest label per line (blank lines and lines
-starting with `#` are ignored). A JSON run records the classification, debug
-bytes, regions, and steps for each fixture. When failures exist, the runner
-also prints a histogram grouped by result regions and debug failure code.
-
-`tools/check_all.sh` saves command output under `$CHECK_ALL_LOG_DIR` (default
-`work/check-all`). `CHECK_ALL_INPUT_COUNT` controls the generated EEST sample
-size, and `CHECK_ALL_EEST_JOBS` controls EEST parallelism. The alt_bn128
-vector checker can run a quick ECADD/ECMUL smoke check with:
-
-```bash
-tools/check_bn254.sh --only 1,2
-```
-
-`check_all.sh` builds the main guest, checks it with Spike against the EEST
-expectations and the unit/vector oracles, and runs the Lean checks. 
-
-The checker also covers pairing and field-tower records; select those record
-types with `--only`.
-
-## Testing
-
-Run `tools/check_all.sh` for the unit/oracle tests, vector checks, and every
-EEST manifest under `work/inputs*/manifest.tsv`. If `work/inputs/manifest.tsv`
-is absent, it generates a 30-fixture baseline first; set
-`CHECK_ALL_INPUT_COUNT` to choose another size. The other sampled manifests
-(`work/inputs-seq`, `-rand`, `-rand2`, `-malformed`) come from
-`tools/make-sample-inputs.sh`, which regenerates all five from the pinned
-fixture tag. EEST results are checked
-against the checked-in `tools/eest-baseline.json`: a fixture that passed in
-the baseline must keep passing, while recorded failures are allowed only with
-the same failure class/code. A better result passes with a refresh hint; use
-`python3 tools/eest-baseline.py update MANIFEST.tsv RESULTS.json` after
-reviewing the improvement. Each check gets a PASS/FAIL line, detailed output
-is saved under `work/check-all/`, and regressions make the script exit
-non-zero.
-
-## Plan
-
-1. Port the Pancake compiler, formally verified in HOL, to Lean (flapjack).
-2. Combine this with the guest into an autoresearch-ready theorem; the
-   challenge it is meant for is specified in [docs/CHALLENGE.md](docs/CHALLENGE.md).
-
-Step and memory accounting (source-step and memory bounds under 200M gas, and
-a step-count-aware "source terminates ⇒ RISC-V terminates") are not
-prerequisites for starting step 2, so they are no longer separate plan steps.
-
-How the guest was built (milestone log, issues, pull requests) is in
-[stateless-pancaketh](https://github.com/flamingoponderado/stateless-pancaketh).
-Deliberate numeric-width and saturation boundaries are documented in
-[docs/ENVELOPE.md](docs/ENVELOPE.md).
+The challenge takes `Guest.guestAst` directly. The Pancake text remains readable
+provenance; parser agreement is not required. See
+[proof-performance notes](docs/PROOF-PERFORMANCE.md) for scaled measurements and
+the remaining standard-axiom verification work.

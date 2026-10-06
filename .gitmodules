@@ -1,12 +1,3 @@
-[submodule "evm-asm"]
-	path = evm-asm
-	url = https://github.com/Verified-zkEVM/evm-asm
-[submodule "cakeml"]
-	path = cakeml
-	url = https://github.com/CakeML/cakeml
-[submodule "flapjack"]
-	path = flapjack
-	url = https://github.com/flamingoponderado/flapjack.git
 [submodule "riscv-isa-sim"]
 	path = riscv-isa-sim
 	url = https://github.com/riscv-software-src/riscv-isa-sim.git

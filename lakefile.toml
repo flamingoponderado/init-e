@@ -1,15 +1,12 @@
 name = "Guest"
 version = "0.1.0"
-defaultTargets = ["Guest"]
+defaultTargets = ["InitE", "Submission"]
 
-# Pinned to flapjack main after PR 661 (`Flapjack.PanValueFfiClockFuel`), which
-# together with `Flapjack.PanValueFfiFuel` upstreams what used to live here as
-# `Guest/StepCalculus.lean`. Bump deliberately (and re-check lean-toolchain
-# compatibility) rather than tracking main unpinned.
+# Current riscv-im branch, pinned for reproducible challenge semantics.
 [[require]]
 name = "flapjack"
 git = "https://github.com/flamingoponderado/flapjack"
-rev = "2732831e21be0a32e3135417f39563cc1124a8d4"
+rev = "7981f765cdadecf9b2857f326a65bae47371ab15"
 
 # ZisK accelerator semantics (RiscvZkvm.Rv64.ZiskAccel: Keccak-f, SHA-256
 # compress, Arith256/384Mod, secp256k1/BN254/BLS12-381 affine ops, BLAKE2b
@@ -47,3 +44,29 @@ root = "Tools.InputDecodeCheck"
 name = "accel-ffi-check"
 root = "Tools.AccelFfiCheck"
 
+
+[[lean_exe]]
+name = "compile-baseline"
+root = "Tools.CompileBaseline"
+
+[[lean_lib]]
+name = "InitE"
+
+[[lean_lib]]
+name = "InitECandidate"
+srcDir = "submission"
+
+[[lean_lib]]
+name = "Submission"
+srcDir = "submission"
+roots = ["Solution"]
+
+# Generate proposed literal compiler metadata; ArtifactFacts certifies it.
+[[lean_exe]]
+name = "gen-compiler-config"
+root = "Tools.GenCompilerConfig"
+
+# Generate proposed per-function Word stage data; generated proofs certify it.
+[[lean_exe]]
+name = "gen-word-stages"
+root = "Tools.GenWordStages"

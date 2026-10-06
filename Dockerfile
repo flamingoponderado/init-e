@@ -2,14 +2,11 @@
 # full EEST tests-zkevm fixture corpus, ready to run under Spike (tools/spike/
 # spike_run) with no further network access.
 #
-# The `evm-asm` and `riscv-isa-sim` submodules must be initialized in the
-# build context before `docker build` (evm-asm's scripts/{eest-fetch-
-# fixtures.sh, eest-stateless-to-input.py} are needed; the fixture tag itself
-# is pinned by this repo's eest-fixture-tag.txt; `cakeml` and `flapjack` are
-# not needed -- flapjack is fetched by `lake` itself):
+# Initialize the Spike submodule before building. Flapjack is fetched by Lake;
+# EEST fixture tools are vendored under tools/.
 #
-#   git submodule update --init evm-asm riscv-isa-sim
-#   docker build -t stateless-pancaketh-eest-spike .
+#   git submodule update --init riscv-isa-sim
+#   docker build -t init-e-eest-spike .
 
 # ── Stage 1: build Spike (riscv-isa-sim) and the spike_run driver ────────────
 FROM ubuntu:24.04 AS spike-builder
@@ -101,7 +98,7 @@ RUN curl -sSf \
       > /usr/local/share/licenses/eest-LICENSE.txt
 
 # Fetch and bake in EEST fixtures (tools/make-inputs.sh --all auto-fetches
-# via evm-asm/scripts/eest-fetch-fixtures.sh if missing) and convert the
+# via tools/eest-fetch-fixtures.sh if missing) and convert the
 # whole corpus into guest inputs + a manifest under work/inputs. Keep the
 # ARG so the resolved value remains visible in the image label, but reject
 # drift from the repository's canonical fixture-tag source.

@@ -3,7 +3,7 @@
 Test vectors for guest/test/t_bn254.pnk (alt_bn128 ECADD / ECMUL / ECPAIRING,
 lib/bn254.pnk).  Oracle: py_ecc.optimized_bn128 exactly as
 execution-specs alt_bn128.py uses it, so run under
-  uv run --directory evm-asm/execution-specs python tools/gen_bn254_vectors.py ...
+  uv run --directory work/execution-specs python tools/gen_bn254_vectors.py ...
 `expected(blob)` (also imported by guest/test/exp_bn254.py for tools/unit.py)
 evaluates a whole input blob.
 

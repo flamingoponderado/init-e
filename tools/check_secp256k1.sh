@@ -23,7 +23,7 @@ while [ $# -gt 0 ]; do
 done
 W="$ROOT/work/secp"; mkdir -p "$W"
 INP="$W/secp_${COUNT}_${SEED}.in"; EXP="$W/secp_${COUNT}_${SEED}.expected"
-if ! uv run --directory "$ROOT/evm-asm/execution-specs" python "$ROOT/tools/gen_secp_vectors.py" \
+if ! uv run --directory "$ROOT/work/execution-specs" python "$ROOT/tools/gen_secp_vectors.py" \
      --count "$COUNT" --seed "$SEED" "$INP" "$EXP" 2>/dev/null; then
   echo "(uv env unavailable; generating without the coincurve cross-check)" >&2
   python3 "$ROOT/tools/gen_secp_vectors.py" --count "$COUNT" --seed "$SEED" "$INP" "$EXP"

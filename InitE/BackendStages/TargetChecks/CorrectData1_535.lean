@@ -1,0 +1,17 @@
+import InitE.BackendStages.TargetChecks.CorrectData0_535
+import InitE.BackendStages.TargetLabels1
+import InitE.BackendStages.TargetFfis
+import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
+set_option autoImplicit false
+set_option Elab.async false
+set_option maxRecDepth 1000000
+set_option maxHeartbeats 0
+open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
+open InitE.BackendStages
+namespace InitE.BackendStages.TargetChecks.Correct
+def localLabels1_535 : List (Nat × Nat) :=
+[(16, 379768), (15, 379752), (7, 379740), (6, 379716), (14, 379656), (13, 379624), (5, 379616), (4, 379596),
+  (12, 379536), (11, 379488), (3, 379480), (2, 379460), (10, 379400), (1, 379364), (9, 379360)]
+def Reencode1_535 : LabSem.LabSectionHOL 64 :=
+Reencode0_535
+end InitE.BackendStages.TargetChecks.Correct

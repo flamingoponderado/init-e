@@ -12,10 +12,10 @@ if [ -n "${BLS_PYTHON:-}" ]; then
   PY=("$BLS_PYTHON")
 elif [ -n "${VIRTUAL_ENV:-}" ] && [ -x "$VIRTUAL_ENV/bin/python" ]; then
   PY=("$VIRTUAL_ENV/bin/python")
-elif [ -x "$ROOT/evm-asm/execution-specs/.venv/bin/python" ]; then
-  PY=("$ROOT/evm-asm/execution-specs/.venv/bin/python")
+elif [ -x "$ROOT/work/execution-specs/.venv/bin/python" ]; then
+  PY=("$ROOT/work/execution-specs/.venv/bin/python")
 else
-  PY=(uv run --directory "$ROOT/evm-asm/execution-specs" python)
+  PY=(uv run --directory "$ROOT/work/execution-specs" python)
 fi
 
 "${PY[@]}" "$ROOT/tools/gen_kzg_vectors.py" "$W/kzg.in" "$W/kzg.expected"

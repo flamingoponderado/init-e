@@ -5,7 +5,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 W="$ROOT/work/rlp"
 mkdir -p "$W"
-if uv run --directory "$ROOT/evm-asm/execution-specs" python "$ROOT/tools/gen_rlp_vectors.py" "$W" 2>/dev/null; then
+if uv run --directory "$ROOT/work/execution-specs" python "$ROOT/tools/gen_rlp_vectors.py" "$W" 2>/dev/null; then
   :
 else
   echo "(uv env unavailable; generating without ethereum_rlp cross-check)" >&2

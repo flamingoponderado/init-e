@@ -26,7 +26,7 @@ fi
 if [ -n "$ONLY" ]; then
   TAG="${TAG}_${ONLY//,/_}"
 fi
-PY=(uv run --directory "$ROOT/evm-asm/execution-specs" python)
+PY=(uv run --directory "$ROOT/work/execution-specs" python)
 INP="$W/bn254_${TAG}.in"; EXP="$W/bn254_${TAG}.expected"
 GEN_ARGS=(--seed "$SEED" --pairings "$PAIRINGS")
 if [ -n "$ONLY" ]; then

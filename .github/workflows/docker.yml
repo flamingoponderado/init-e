@@ -22,12 +22,9 @@ jobs:
         with:
           submodules: false
 
-      # evm-asm (its scripts/) and riscv-isa-sim (built into spike_run) are
-      # needed; cakeml and flapjack are excluded via .dockerignore and not
-      # fetched here -- flapjack is a lake dependency the Dockerfile's own
-      # build fetches.
-      - name: Initialize evm-asm and riscv-isa-sim submodules
-        run: git submodule update --init evm-asm riscv-isa-sim
+      # Flapjack is a Lake dependency; fixture tools are vendored locally.
+      - name: Initialize Spike submodule
+        run: git submodule update --init riscv-isa-sim
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3

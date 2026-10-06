@@ -1,0 +1,16 @@
+import InitE.SmallStages.Compact619.Complete
+import InitE.SmallStages.Oracles619
+set_option autoImplicit false
+set_option maxRecDepth 1000000
+set_option maxHeartbeats 0
+open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
+open InitE.WordStages InitE.SmallStages.Oracles619
+namespace InitE.SmallStages.Compact619
+theorem optimize619_exact : WordToWord.fullCompileSingleWith
+  RegAlloc.regAllocExecutable riscvConfig.twoRegArith
+  (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
+  RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
+  riscvConfig (source619, oracle619) = optimized619 := by
+  exact optimize619_eq.trans (by with_unfolding_all rfl)
+#print axioms optimize619_exact
+end InitE.SmallStages.Compact619

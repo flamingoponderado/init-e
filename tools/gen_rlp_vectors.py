@@ -22,7 +22,7 @@ Record layout (all unused bytes 0):
   29     rlp_item (prefix decode, trailing allowed) status
 The Python oracle mirrors EvmAsm/EL/RLP/Decode.lean and is cross-checked
 against execution-specs' ethereum_rlp when importable (run under
-`uv run --directory evm-asm/execution-specs python`)."""
+`uv run --directory work/execution-specs python`)."""
 import os, random, struct, sys
 
 try:

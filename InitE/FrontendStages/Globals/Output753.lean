@@ -1,0 +1,22 @@
+import InitE.FrontendStages.Declarations.Data753
+import InitE.FrontendStages.Globals.Context
+set_option Elab.async false
+set_option maxRecDepth 1000000
+set_option maxHeartbeats 0
+set_option cbv.maxSteps 1000000000
+set_option cbv.warning false
+open scoped InitE.FrontendComputation
+namespace InitE.FrontendStages.Declarations
+open Flapjack
+def globalBody753_0 : Prog (BitVec 64) :=
+Flapjack.Prog.call (some (none, none)) "memzero" [Flapjack.Exp.var Flapjack.VarKind.local "r", Flapjack.Exp.const 96#64]
+
+def globalBody753_1 : Prog (BitVec 64) :=
+Flapjack.Prog.return (Flapjack.Exp.const 0#64)
+
+def globalBody753_2 : Prog (BitVec 64) :=
+.seq globalBody753_0 globalBody753_1
+
+def globalData753 : Decl (BitVec 64) := .function { name := "fp2_set_zero", inline := false, exported := false, params := [("r", Flapjack.Shape.one)], body := globalBody753_2, returnShape := (Flapjack.Shape.one) }
+def globalOutput753 := Pancake.PanLang.declToHOL globalData753
+end InitE.FrontendStages.Declarations
