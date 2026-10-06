@@ -160,6 +160,15 @@ rtk proxy python3 tools/certificate-bench/image.py \
   --work work/lean-perf/image-pair-confirmation --family both --trials 2 --timeout 180
 ```
 
+The baseline metadata proof has its own one-theorem runner. It reconstructs the
+former `decide_cbv` proof as the control, so it remains useful after the compact
+proof is installed:
+
+```sh
+rtk proxy python3 tools/certificate-bench/metadata.py \
+  --work work/lean-perf/metadata-confirmation --trials 2 --timeout 180
+```
+
 Choose unused directory names. The runner refuses to overwrite earlier results.
 It requires the exporter and comparator libraries under `verifier/.tools`.
 Missing tools are a setup issue; consult the existing verifier setup instructions.

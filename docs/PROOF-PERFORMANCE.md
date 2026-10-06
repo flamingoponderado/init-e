@@ -150,6 +150,34 @@ proposed optimized Word program passed with exactly `propext`,
 the default-config challenge certificate still needs either cached stage
 proofs or a derived correctness wrapper for explicit allocation oracles.
 
+## Baseline metadata certificate
+
+`InitE.baseline_finite_facts` previously ended in `decide_cbv`, which embedded a
+large reduction proof in the exported environment. After unfolding the same
+definitions, the proof now converts a kernel-checked Boolean equality with
+`of_decide_eq_true (by kernel_rfl)`. The theorem statement and finite metadata
+values are unchanged.
+
+The bounded benchmark targets only this theorem and uses the verifier's actual
+declaration comparison, primitive comparison, axiom audit, and independent
+kernel replay. Two alternating trials produced:
+
+| Metric | `decide_cbv` control | Compact proof |
+| --- | ---: | ---: |
+| Median comparator wall time | 18.09 s | 11.55 s |
+| Median kernel replay | 4.491 s | 2.204 s |
+| Solution export | 65.35 MB | 34.01 MB |
+| Fixture `.olean` | 30.59 MB | 32.95 KB |
+| Peak comparator RSS | 1,987,446 KiB | 1,691,230 KiB |
+
+Both variants were accepted and depend only on `propext`, `Classical.choice`,
+and `Quot.sound`. Direct builds of `CompilerInstallationMetadata.lean` and
+`BootstrapCopyGuards.lean` passed after the change. No whole-submission
+comparator was run, so the effect on total verifier wall time remains unknown.
+Reproduce the fragment experiment with
+`tools/certificate-bench/metadata.py`; portable results are in
+[metadata-results.json](../tools/certificate-bench/metadata-results.json).
+
 
 ## Compiler-pass checkpoints and dead-code subterms
 
