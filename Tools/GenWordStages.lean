@@ -507,8 +507,8 @@ partial def clashCheckpoint (env : Environment) (state : IO.Ref ClashCheckpointS
       let an ← clashValue env state a
       let bn ← clashValue env state b
       pure s!"some ({an}, {bn})"
-  let data := s!"def tree{index} : Flapjack.RegAlloc.ClashTree :=\n  (InitE.ComputationCache.boxedValue (α := Flapjack.RegAlloc.ClashTree) ({cached})).val\n" ++
-    s!"theorem tree{index}_def : tree{index} = ({cached}) := InitE.ComputationCache.boxedValue_eq _\n" ++
+  let data := s!"def tree{index} : Flapjack.RegAlloc.ClashTree :=\n  (InitECandidate.Proofs.ComputationCache.boxedValue (α := Flapjack.RegAlloc.ClashTree) ({cached})).val\n" ++
+    s!"theorem tree{index}_def : tree{index} = ({cached}) := InitECandidate.Proofs.ComputationCache.boxedValue_eq _\n" ++
     s!"def literal{index} : Flapjack.RegAlloc.ClashTree := {literal}\n" ++
     s!"def live{index} : Flapjack.NumSet := {liveText}\n" ++
     s!"def coloured{index} : Flapjack.NumSet := {colouredText}\n" ++
@@ -622,13 +622,13 @@ partial def deadCheckpoint (env : Environment) (state : IO.Ref DeadCheckpointSta
   let skipProof := if output.startsWith "output" then s!"  exact {output}_skip\n" else "  kernel_rfl\n"
   let type := "Flapjack.WordLangProgHOL (BitVec 64)"
   let text := s!"@[irreducible, cbv_opaque] def input{index} : {type} :=\n" ++
-    s!"  (InitE.ComputationCache.boxedValue (α := {type}) ({input})).val\n" ++
+    s!"  (InitECandidate.Proofs.ComputationCache.boxedValue (α := {type}) ({input})).val\n" ++
     s!"theorem input{index}_def : input{index} = ({input}) := by\n" ++
-    s!"  unfold input{index}\n  exact InitE.ComputationCache.boxedValue_eq _\n" ++
+    s!"  unfold input{index}\n  exact InitECandidate.Proofs.ComputationCache.boxedValue_eq _\n" ++
     s!"@[irreducible, cbv_opaque] def output{index} : {type} :=\n" ++
-    s!"  (InitE.ComputationCache.boxedValue (α := {type}) ({output})).val\n" ++
+    s!"  (InitECandidate.Proofs.ComputationCache.boxedValue (α := {type}) ({output})).val\n" ++
     s!"theorem output{index}_def : output{index} = ({output}) := by\n" ++
-    s!"  unfold output{index}\n  exact InitE.ComputationCache.boxedValue_eq _\n" ++
+    s!"  unfold output{index}\n  exact InitECandidate.Proofs.ComputationCache.boxedValue_eq _\n" ++
     s!"@[cbv_eval] theorem output{index}_skip : Flapjack.WordAlloc.isSkip output{index} = {if WordAlloc.isSkip result.1 then "true" else "false"} := by\n" ++
     s!"  rw [output{index}_def]\n" ++ skipProof ++
     s!"theorem node{index}_eq : Flapjack.WordAlloc.removeDeadStructural input{index} {l} {n} {t} = (output{index}, {ol}, {on}) := by\n" ++ proof
@@ -660,17 +660,17 @@ unsafe def main (args : List String) : IO Unit := do
     let wordRoot ← wordProgData env wordState word
     if args.contains "--write-word-source" then
       let defs := String.intercalate "\n" (← wordState.get).lines.toList
-      writeCompactCertificate s!"InitE/WordStages/Source{label}.lean"
+      writeCompactCertificate s!"submission/InitECandidate/Proofs/WordStages/Source{label}.lean"
         ("import Flapjack.Pancake.WordLang\nset_option maxRecDepth 1000000\nset_option maxHeartbeats 0\n" ++
-         "open Flapjack\nnamespace InitE.WordStages\n" ++ defs ++ "\n" ++
+         "open Flapjack\nnamespace InitECandidate.Proofs.WordStages\n" ++ defs ++ "\n" ++
          s!"def source{label} : Nat × Nat × WordLangProgHOL (BitVec 64) :=\n" ++
-         s!"  ({label}, {entry.2.1.length+1}, {wordRoot})\nend InitE.WordStages\n")
+         s!"  ({label}, {entry.2.1.length+1}, {wordRoot})\nend InitECandidate.Proofs.WordStages\n")
     let state ← IO.mkRef ({} : LoopWordCheckpointState)
     let root ← loopWordCheckpoint env (← loopState.get).values (← wordState.get).values
       context state entry.2.2 (label,2)
     let nodes := (← state.get).nodes
-    let proofNamespace := s!"InitE.FrontendStages.Word.Checkpoints{index}"
-    let directory := s!"InitE/FrontendStages/Word/Checkpoints{index}"
+    let proofNamespace := s!"InitECandidate.Proofs.FrontendStages.Word.Checkpoints{index}"
+    let directory := s!"submission/InitECandidate/Proofs/FrontendStages/Word/Checkpoints{index}"
     for folder in ["Data", "Conditional", "Compose", "Agreement"] do
       IO.FS.createDirAll s!"{directory}/{folder}"
     let header := "set_option autoImplicit false\nset_option Elab.async false\n" ++
@@ -687,8 +687,8 @@ unsafe def main (args : List String) : IO Unit := do
     for group in List.range groups do
       let suffix := suffixOf group
       let previous := suffixOf (group-1)
-      let dataImports := "import InitE.LoopWordComputation\n" ++
-        s!"import InitE.FrontendStages.Word.Variables{index}\nimport InitE.WordStages.Source{label}\n" ++
+      let dataImports := "import InitECandidate.Proofs.LoopWordComputation\n" ++
+        s!"import InitECandidate.Proofs.FrontendStages.Word.Variables{index}\nimport InitECandidate.Proofs.WordStages.Source{label}\n" ++
         (if group == 0 then "" else s!"import {proofNamespace}.Data.Chunk{previous}\n")
       let mut data := dataImports ++ header
       let mut conditional := s!"import {proofNamespace}.Data.Chunk{suffix}\n" ++ header
@@ -699,9 +699,9 @@ unsafe def main (args : List String) : IO Unit := do
       for k in List.range nodes.size |>.drop (group*chunkSize) |>.take chunkSize do
         let n := nodes[k]!
         data := data ++ s!"@[irreducible, cbv_opaque] def output{k} : WordLangProgHOL (BitVec 64) :=\n" ++
-          s!"  (InitE.ComputationCache.boxedValue (α := WordLangProgHOL (BitVec 64)) ({n.output})).val\n" ++
+          s!"  (InitECandidate.Proofs.ComputationCache.boxedValue (α := WordLangProgHOL (BitVec 64)) ({n.output})).val\n" ++
           s!"theorem output{k}_def : output{k} = ({n.output}) := by\n" ++
-          s!"  unfold output{k}\n  exact InitE.ComputationCache.boxedValue_eq _\n\n"
+          s!"  unfold output{k}\n  exact InitECandidate.Proofs.ComputationCache.boxedValue_eq _\n\n"
         let binders := n.children.foldl (fun acc child => acc ++
           s!"\n    (child{child} : {conclusion nodes[child]! child})") ""
         let mut proof := s!"  rw [output{k}_def]\n"
@@ -711,19 +711,19 @@ unsafe def main (args : List String) : IO Unit := do
           let count := if n.kind == "seq" then 8 else if n.kind == "ite" then 12
             else if n.kind == "loop" then 7 else 5
           if n.kind == "loop" then
-            proof := proof ++ s!"  have h := InitE.LoopWordComputation.comp_loop_checked Word.context{index}" ++
+            proof := proof ++ s!"  have h := InitECandidate.Proofs.LoopWordComputation.comp_loop_checked Word.context{index}" ++
               s!" (match Loop.{n.input} with | .loop live _ _ => live | _ => .ln)" ++
               s!" (match Loop.{n.input} with | .loop _ _ live => live | _ => .ln)" ++
               " _ _ _ _" ++ n.children.foldl (fun acc child => acc ++ s!" child{child}") "" ++
               "\n  exact h.trans (by kernel_rfl)\n"
           else
-            proof := proof ++ s!"  exact InitE.LoopWordComputation.comp_{n.kind}_checked" ++
+            proof := proof ++ s!"  exact InitECandidate.Proofs.LoopWordComputation.comp_{n.kind}_checked" ++
               String.join (List.replicate count " _") ++
               n.children.foldl (fun acc child => acc ++ s!" child{child}") "" ++ "\n"
         conditional := conditional ++ s!"theorem node{k}_conditional{binders} : {conclusion n k} := by\n{proof}\n"
         compose := compose ++ s!"theorem node{k}_eq : {conclusion n k} :=\n  node{k}_conditional" ++
           n.children.foldl (fun acc child => acc ++ s!" node{child}_eq") "" ++ "\n\n"
-        agreement := agreement ++ s!"theorem output{k}_source : output{k} = InitE.WordStages.{n.candidate} := by\n" ++
+        agreement := agreement ++ s!"theorem output{k}_source : output{k} = InitECandidate.Proofs.WordStages.{n.candidate} := by\n" ++
           s!"  rw [output{k}_def]\n" ++
           n.children.foldl (fun acc child => acc ++ s!"  try rw [output{child}_source]\n") "" ++
           "  try (kernel_rfl)\n\n"
@@ -740,13 +740,13 @@ unsafe def main (args : List String) : IO Unit := do
     writeCompactCertificate s!"{directory}.lean"
       (s!"import {proofNamespace}.Compose.Chunk{last}\nimport {proofNamespace}.Agreement.Chunk{last}\n" ++ header ++
        s!"theorem compiledBody_eq : Flapjack.LoopToWord.compHOL Word.context{index} Loop.output{index}.2.2 ({label},2) =\n" ++
-       s!"    (InitE.WordStages.{nodes[root]!.candidate}, ({nodes[root]!.finish.1}, {nodes[root]!.finish.2})) := by\n" ++
+       s!"    (InitECandidate.Proofs.WordStages.{nodes[root]!.candidate}, ({nodes[root]!.finish.1}, {nodes[root]!.finish.2})) := by\n" ++
        s!"  have h := node{root}_eq\n  rw [output{root}_source] at h\n  exact h\n" ++
        s!"#print axioms compiledBody_eq\nend {proofNamespace}\n")
     IO.println s!"Loop-to-Word checkpoints {index}: {nodes.size} nodes, {groups} chunks, root {root}"
     return
   if args.contains "--frontend-word-context" then
-    IO.FS.createDirAll "InitE/FrontendStages/Word"
+    IO.FS.createDirAll "submission/InitECandidate/Proofs/FrontendStages/Word"
     let p0 := panSimpDeclsHOL InitE.sourceDeclarations
     let p1 := Pancake.PanStructs.CompileShapeExact.compileTopExact p0
     let p2 := compileTopExactHOL p1 (Basis.Pure.MlString.ofString "main")
@@ -763,10 +763,10 @@ unsafe def main (args : List String) : IO Unit := do
     let header := "set_option autoImplicit false\nset_option Elab.async false\n" ++
       "set_option maxRecDepth 1000000\nset_option maxHeartbeats 0\n" ++
       "set_option cbv.maxSteps 1000000000\nset_option cbv.warning false\n" ++
-      "open Flapjack\nnamespace InitE.FrontendStages.Word\n"
-    writeCompactCertificate s!"InitE/FrontendStages/Word/Variables{index}.lean"
-      (s!"import InitE.FrontendStages.Loop.Data{index}\n" ++
-       "import InitE.WordFrontendComputation\n" ++ header ++
+      "open Flapjack\nnamespace InitECandidate.Proofs.FrontendStages.Word\n"
+    writeCompactCertificate s!"submission/InitECandidate/Proofs/FrontendStages/Word/Variables{index}.lean"
+      (s!"import InitECandidate.Proofs.FrontendStages.Loop.Data{index}\n" ++
+       "import InitECandidate.Proofs.WordFrontendComputation\n" ++ header ++
        s!"def assigned{index} : NumSet := {assignedText}\n" ++
        s!"def variables{index} : List Nat := {varsText}\n" ++
        s!"def context{index} : Spt Nat := {contextText}\n" ++
@@ -780,10 +780,10 @@ unsafe def main (args : List String) : IO Unit := do
        s!"    (.ln : Spt Nat) = context{index} := by\n" ++
        s!"  rw [variables{index}_eq]\n  kernel_rfl\n" ++
        s!"#print axioms assigned{index}_eq\n#print axioms variables{index}_eq\n#print axioms context{index}_eq\n" ++
-       "end InitE.FrontendStages.Word\n")
+       "end InitECandidate.Proofs.FrontendStages.Word\n")
     return
   if args.contains "--frontend-loop" then
-    IO.FS.createDirAll "InitE/FrontendStages/Loop"
+    IO.FS.createDirAll "submission/InitECandidate/Proofs/FrontendStages/Loop"
     let p0 := panSimpDeclsHOL InitE.sourceDeclarations
     let p1 := Pancake.PanStructs.CompileShapeExact.compileTopExact p0
     let p2 := compileTopExactHOL p1 (Basis.Pure.MlString.ofString "main")
@@ -794,12 +794,12 @@ unsafe def main (args : List String) : IO Unit := do
     let header := "set_option autoImplicit false\nset_option Elab.async false\n" ++
       "set_option maxRecDepth 1000000\nset_option maxHeartbeats 0\n" ++
       "set_option cbv.maxSteps 1000000000\nset_option cbv.warning false\n" ++
-      "open Flapjack\nnamespace InitE.FrontendStages.Loop\n"
-    writeCompactCertificate "InitE/FrontendStages/Loop/Context.lean"
+      "open Flapjack\nnamespace InitECandidate.Proofs.FrontendStages.Loop\n"
+    writeCompactCertificate "submission/InitECandidate/Proofs/FrontendStages/Loop/Context.lean"
       ("import Flapjack.Pancake.CrepToLoop.ContextExact\nimport Lean\n" ++ header ++
        "def signatures : List (Flapjack.Basis.Pure.MlString.MlString × List Nat × Unit) :=\n" ++ text ++
        "\ndef functionMap := crepToLoopMakeFuncsExactExecutable signatures\n" ++
-       "end InitE.FrontendStages.Loop\n")
+       "end InitECandidate.Proofs.FrontendStages.Loop\n")
     let count := (args.head?.bind String.toNat?).getD 1
     let offset := (args[1]?.bind String.toNat?).getD 0
     for (entry, index) in p3.zipIdx.drop offset |>.take count do
@@ -809,25 +809,25 @@ unsafe def main (args : List String) : IO Unit := do
       let text ← loopProgData env state body
       let defs := String.intercalate "\n" (← state.get).lines.toList
       let params ← renderWordStage env (toExpr (List.range entry.2.1.length))
-      writeCompactCertificate s!"InitE/FrontendStages/Loop/Data{index}.lean"
-        ("import InitE.FrontendStages.Loop.Context\n" ++ header ++ defs ++
+      writeCompactCertificate s!"submission/InitECandidate/Proofs/FrontendStages/Loop/Data{index}.lean"
+        ("import InitECandidate.Proofs.FrontendStages.Loop.Context\n" ++ header ++ defs ++
          s!"\ndef output{index} : Nat × List Nat × HolLoopProg 64 :=\n" ++
          s!"  ({index + firstLoopName}, {params}, {text})\n" ++
-         "end InitE.FrontendStages.Loop\n")
-      writeCompactCertificate s!"InitE/FrontendStages/Loop/Translate{index}.lean"
-        ("import InitE.LoopKernelComputation\n" ++ s!"import InitE.FrontendStages.Crep.Data{index}\n" ++
-         s!"import InitE.FrontendStages.Loop.Data{index}\n" ++
+         "end InitECandidate.Proofs.FrontendStages.Loop\n")
+      writeCompactCertificate s!"submission/InitECandidate/Proofs/FrontendStages/Loop/Translate{index}.lean"
+        ("import InitECandidate.Proofs.LoopKernelComputation\n" ++ s!"import InitECandidate.Proofs.FrontendStages.Crep.Data{index}\n" ++
+         s!"import InitECandidate.Proofs.FrontendStages.Loop.Data{index}\n" ++
          "import Flapjack.Compiler.Encoders.RiscV.Target.Configuration\n" ++ header ++
          s!"theorem translate{index}_eq :\n" ++
          s!"    ({index + firstLoopName}, List.range Crep.output{index}.2.1.length,\n" ++
          s!"      optimiseHOL (compFuncHOLExact Flapjack.Compiler.Encoders.RiscV.Target.riscvConfig.isa\n" ++
          s!"        functionMap Crep.output{index}.2.1 (crepSimpProgHOL Crep.output{index}.2.2))) = output{index} := by\n" ++
-         "  rw [InitE.LoopKernelComputation.optimiseStructural_eq]\n  kernel_rfl\n" ++
-         s!"#print axioms translate{index}_eq\nend InitE.FrontendStages.Loop\n")
+         "  rw [InitECandidate.Proofs.LoopKernelComputation.optimiseStructural_eq]\n  kernel_rfl\n" ++
+         s!"#print axioms translate{index}_eq\nend InitECandidate.Proofs.FrontendStages.Loop\n")
       IO.println s!"Loop translation {index}: {defs.utf8ByteSize + text.utf8ByteSize} bytes"
     return
   if args.contains "--frontend-crep" then
-    IO.FS.createDirAll "InitE/FrontendStages/Crep"
+    IO.FS.createDirAll "submission/InitECandidate/Proofs/FrontendStages/Crep"
     let ds := panSimpDeclsHOL InitE.sourceDeclarations
     let structs := Pancake.PanStructs.CompileShapeExact.compileTopExact ds
     let p2 := compileTopExactHOL structs (Basis.Pure.MlString.ofString "main")
@@ -845,9 +845,9 @@ unsafe def main (args : List String) : IO Unit := do
       "set_option maxRecDepth 1000000\nset_option maxHeartbeats 0\n" ++
       "set_option cbv.maxSteps 1000000000\nset_option cbv.warning false\n" ++
       "open Flapjack Flapjack.Pancake.PanLang\n" ++
-      "namespace InitE.FrontendStages.Crep\n"
-    writeCompactCertificate "InitE/FrontendStages/Crep/Context.lean"
-      ("import InitE.CrepComputation\n" ++ header ++
+      "namespace InitECandidate.Proofs.FrontendStages.Crep\n"
+    writeCompactCertificate "submission/InitECandidate/Proofs/FrontendStages/Crep/Context.lean"
+      ("import InitECandidate.Proofs.CrepComputation\n" ++ header ++
        "def signatureData : List (MlS × List (MlS × Shape) × Shape) :=\n" ++ signaturesText ++
        "\ndef exceptionData : List (MlS × Shape) :=\n" ++ exceptionsText ++
        "\ndef functionSkeleton : List (MlS × List (MlS × ShapeHOL) × ProgHOL 64 × ShapeHOL) :=\n" ++
@@ -855,7 +855,7 @@ unsafe def main (args : List String) : IO Unit := do
        "def exceptionSkeleton : List (DeclHOL 64) := exceptionData.map (fun p => .exnDecl p.1 (shapeToHOL p.2))\n" ++
        "def functionMap := makeFuncsExactHOL functionSkeleton\n" ++
        "def exceptionMap := getEidsFromDeclsHOL exceptionSkeleton\n" ++
-       "end InitE.FrontendStages.Crep\n")
+       "end InitECandidate.Proofs.FrontendStages.Crep\n")
     let indices := ds.zipIdx.filter (fun p => Pancake.PanLang.isFunctionHOL p.1) |>.map Prod.snd
     let count := (args.head?.bind String.toNat?).getD 8
     let offset := (args[1]?.bind String.toNat?).getD 0
@@ -866,39 +866,39 @@ unsafe def main (args : List String) : IO Unit := do
       let defs := String.intercalate "\n" (← state.get).lines.toList
       let name ← renderWordStage env (toExpr f.1)
       let params ← renderWordStage env (toExpr (crepVarsHOL f.2.1))
-      let sourceRef := if index == 0 then "InitE.FrontendStages.generatedMain"
-        else s!"InitE.FrontendStages.Declarations.globalOutput{indices[index-1]!}"
-      writeCompactCertificate s!"InitE/FrontendStages/Crep/Data{index}.lean"
-        ("import InitE.FrontendStages.Crep.Context\n" ++ header ++ defs ++
+      let sourceRef := if index == 0 then "InitECandidate.Proofs.FrontendStages.generatedMain"
+        else s!"InitECandidate.Proofs.FrontendStages.Declarations.globalOutput{indices[index-1]!}"
+      writeCompactCertificate s!"submission/InitECandidate/Proofs/FrontendStages/Crep/Data{index}.lean"
+        ("import InitECandidate.Proofs.FrontendStages.Crep.Context\n" ++ header ++ defs ++
          s!"\ndef data{index} : CrepProg (BitVec 64) := {text}\n" ++
          s!"def output{index} : MlS × List Nat × CrepProgHOL 64 :=\n" ++
          s!"  ({name}, {params}, crepProgToHOL data{index})\n" ++
-         "end InitE.FrontendStages.Crep\n")
-      let sourceImport := if index == 0 then "import InitE.FrontendStages.MainData\n"
-        else s!"import InitE.FrontendStages.Globals.Output{indices[index-1]!}\n"
-      writeCompactCertificate s!"InitE/FrontendStages/Crep/Translate{index}.lean"
-        ("import InitE.CrepKernelComputation\nimport InitE.FrontendCodecComputation\n" ++
-         (if index == 0 then "import InitE.FrontendStages.Globals.KernelContext\n" else "") ++
-         sourceImport ++ s!"import InitE.FrontendStages.Crep.Data{index}\n" ++ header ++
+         "end InitECandidate.Proofs.FrontendStages.Crep\n")
+      let sourceImport := if index == 0 then "import InitECandidate.Proofs.FrontendStages.MainData\n"
+        else s!"import InitECandidate.Proofs.FrontendStages.Globals.Output{indices[index-1]!}\n"
+      writeCompactCertificate s!"submission/InitECandidate/Proofs/FrontendStages/Crep/Translate{index}.lean"
+        ("import InitECandidate.Proofs.CrepKernelComputation\nimport InitECandidate.Proofs.FrontendCodecComputation\n" ++
+         (if index == 0 then "import InitECandidate.Proofs.FrontendStages.Globals.KernelContext\n" else "") ++
+         sourceImport ++ s!"import InitECandidate.Proofs.FrontendStages.Crep.Data{index}\n" ++ header ++
          s!"theorem translate{index}_eq :\n" ++
-         s!"    InitE.CrepComputation.compileDeclaration functionMap exceptionMap\n      {sourceRef} = some output{index} := by\n" ++
-         "  rw [InitE.CrepKernelComputation.compileDeclaration_eq]\n" ++
+         s!"    InitECandidate.Proofs.CrepComputation.compileDeclaration functionMap exceptionMap\n      {sourceRef} = some output{index} := by\n" ++
+         "  rw [InitECandidate.Proofs.CrepKernelComputation.compileDeclaration_eq]\n" ++
          (if index == 0 then "  dsimp only [output0]\n" else
            s!"  dsimp only [{sourceRef}, output{index}]\n" ++
-           "  rw [InitE.FrontendCodecComputation.declToHOL_function_eq]\n") ++
-         "  rw [InitE.CrepKernelComputation.crepProgToHOL_function_eq]\n" ++
+           "  rw [InitECandidate.Proofs.FrontendCodecComputation.declToHOL_function_eq]\n") ++
+         "  rw [InitECandidate.Proofs.CrepKernelComputation.crepProgToHOL_function_eq]\n" ++
          (if index == 0 then
-           "  dsimp only [InitE.FrontendStages.generatedMain]\n" ++
-           "  rw [InitE.FrontendStages.Declarations.globalInitializers_structural_eq]\n"
+           "  dsimp only [InitECandidate.Proofs.FrontendStages.generatedMain]\n" ++
+           "  rw [InitECandidate.Proofs.FrontendStages.Declarations.globalInitializers_structural_eq]\n"
           else "") ++
          "  dsimp only [functionMap, functionSkeleton, exceptionMap, exceptionSkeleton]\n" ++
-         "  rw [InitE.FrontendCodecComputation.shapeToHOL_function_eq]\n" ++
+         "  rw [InitECandidate.Proofs.FrontendCodecComputation.shapeToHOL_function_eq]\n" ++
          "  kernel_rfl\n" ++
-         s!"#print axioms translate{index}_eq\nend InitE.FrontendStages.Crep\n")
+         s!"#print axioms translate{index}_eq\nend InitECandidate.Proofs.FrontendStages.Crep\n")
       IO.println s!"Crep translation {index}: {defs.utf8ByteSize + text.utf8ByteSize} bytes"
     return
   if args.contains "--frontend-globals" then
-    IO.FS.createDirAll "InitE/FrontendStages/Globals"
+    IO.FS.createDirAll "submission/InitECandidate/Proofs/FrontendStages/Globals"
     let ds := panSimpDeclsHOL InitE.sourceDeclarations
     let globals := ds.zipIdx.filter (fun p => Pancake.PanLang.isDeclHOL p.1)
     let maxSize := (decShapesHOL ds).map Pancake.PanLang.sizeOfShapeHOL |>.sum
@@ -910,12 +910,12 @@ unsafe def main (args : List String) : IO Unit := do
     let newStart := newMainNameHOL ds
     let newStartText ← renderWordStage env (toExpr newStart)
     let imports := String.join (globals.map fun p =>
-      s!"import InitE.FrontendStages.Declarations.Data{p.2}\n")
+      s!"import InitECandidate.Proofs.FrontendStages.Declarations.Data{p.2}\n")
     let refs := String.intercalate ", " (globals.map fun p => s!"simplified{p.2}")
-    writeCompactCertificate "InitE/FrontendStages/Globals/Context.lean"
-      (imports ++ "import InitE.GlobalsComputation\n" ++
+    writeCompactCertificate "submission/InitECandidate/Proofs/FrontendStages/Globals/Context.lean"
+      (imports ++ "import InitECandidate.Proofs.GlobalsComputation\n" ++
        "set_option maxRecDepth 1000000\nset_option maxHeartbeats 0\n" ++
-       "namespace InitE.FrontendStages.Declarations\nopen Flapjack\n" ++
+       "namespace InitECandidate.Proofs.FrontendStages.Declarations\nopen Flapjack\n" ++
        s!"def globalDeclarations : List (Pancake.PanLang.DeclHOL 64) := [{refs}]\n" ++
        s!"def globalInitial : PanGlobalsContextExact 64 :=\n" ++
        "  { globals := HolFiniteMapExact.empty, globalsSize := 0,\n" ++
@@ -924,7 +924,7 @@ unsafe def main (args : List String) : IO Unit := do
        "  (compileDecsExactHOL globalInitial globalDeclarations).2.2.2\n" ++
        "def globalStart : Basis.Pure.MlString.MlString := Basis.Pure.MlString.ofString \"main\"\n" ++
        s!"def globalNewStart : Basis.Pure.MlString.MlString := {newStartText}\n" ++
-       "end InitE.FrontendStages.Declarations\n")
+       "end InitECandidate.Proofs.FrontendStages.Declarations\n")
     let count := (args.head?.bind String.toNat?).getD 8
     let offset := (args[1]?.bind String.toNat?).getD 0
     let functionIndices := ds.zipIdx.filter (fun p => Pancake.PanLang.isFunctionHOL p.1) |>.map Prod.snd
@@ -942,35 +942,35 @@ unsafe def main (args : List String) : IO Unit := do
         let previous := ((functionIndices.takeWhile (fun j => j < i)).reverse)[15]?
         let previousImport := match previous with
           | none => ""
-          | some j => s!"import InitE.FrontendStages.Globals.Translate{j}\n"
-        writeCompactCertificate s!"InitE/FrontendStages/Globals/Translate{i}.lean"
-          (s!"import InitE.FrontendStages.Declarations.Data{i}\n" ++
-           "import InitE.FrontendStages.Globals.KernelContext\n" ++ previousImport ++
+          | some j => s!"import InitECandidate.Proofs.FrontendStages.Globals.Translate{j}\n"
+        writeCompactCertificate s!"submission/InitECandidate/Proofs/FrontendStages/Globals/Translate{i}.lean"
+          (s!"import InitECandidate.Proofs.FrontendStages.Declarations.Data{i}\n" ++
+           "import InitECandidate.Proofs.FrontendStages.Globals.KernelContext\n" ++ previousImport ++
            "set_option autoImplicit false\nset_option Elab.async false\nset_option maxRecDepth 1000000\nset_option maxHeartbeats 0\n" ++
            "set_option cbv.maxSteps 1000000000\nset_option cbv.warning false\n" ++
-           "open scoped InitE.FrontendComputation\n" ++
-           "namespace InitE.FrontendStages.Declarations\nopen Flapjack\n" ++ defs ++ "\n" ++
+           "open scoped InitECandidate.Proofs.FrontendComputation\n" ++
+           "namespace InitECandidate.Proofs.FrontendStages.Declarations\nopen Flapjack\n" ++ defs ++ "\n" ++
            s!"def globalData{i} : Decl (BitVec 64) :=\n{text}\n" ++
            s!"def globalOutput{i} := Pancake.PanLang.declToHOL globalData{i}\n" ++
            s!"theorem globalTranslate{i}_eq :\n" ++
-           s!"    InitE.GlobalsComputation.compiledFunction globalContext\n" ++
-           s!"      (InitE.GlobalsComputation.renameDeclaration globalStart globalNewStart simplified{i}) =\n" ++
+           s!"    InitECandidate.Proofs.GlobalsComputation.compiledFunction globalContext\n" ++
+           s!"      (InitECandidate.Proofs.GlobalsComputation.renameDeclaration globalStart globalNewStart simplified{i}) =\n" ++
            s!"        some globalOutput{i} := by\n" ++
            s!"  dsimp only [simplified{i}, globalOutput{i}]\n" ++
-           "  rw [InitE.FrontendCodecComputation.declToHOL_function_eq]\n" ++
-           "  simp only [InitE.GlobalsComputation.compiledFunction, InitE.GlobalsComputation.renameDeclaration, InitE.GlobalsKernelComputation.compileProg_function_eq, InitE.GlobalsKernelComputation.fperm_function_eq]\n" ++
+           "  rw [InitECandidate.Proofs.FrontendCodecComputation.declToHOL_function_eq]\n" ++
+           "  simp only [InitECandidate.Proofs.GlobalsComputation.compiledFunction, InitECandidate.Proofs.GlobalsComputation.renameDeclaration, InitECandidate.Proofs.GlobalsKernelComputation.compileProg_function_eq, InitECandidate.Proofs.GlobalsKernelComputation.fperm_function_eq]\n" ++
            "  rw [globalContext_structural_eq]\n" ++
            "  kernel_rfl\n" ++
-           s!"theorem globalNonGlobal{i} : InitE.GlobalsComputation.nonGlobal\n" ++
-           s!"    (InitE.GlobalsComputation.renameDeclaration globalStart globalNewStart simplified{i}) := by trivial\n" ++
-           s!"theorem globalException{i}_eq : InitE.GlobalsComputation.exceptionDeclaration\n" ++
-           s!"    (InitE.GlobalsComputation.renameDeclaration globalStart globalNewStart simplified{i}) = none := by rfl\n" ++
-           s!"#print axioms globalTranslate{i}_eq\nend InitE.FrontendStages.Declarations\n")
+           s!"theorem globalNonGlobal{i} : InitECandidate.Proofs.GlobalsComputation.nonGlobal\n" ++
+           s!"    (InitECandidate.Proofs.GlobalsComputation.renameDeclaration globalStart globalNewStart simplified{i}) := by trivial\n" ++
+           s!"theorem globalException{i}_eq : InitECandidate.Proofs.GlobalsComputation.exceptionDeclaration\n" ++
+           s!"    (InitECandidate.Proofs.GlobalsComputation.renameDeclaration globalStart globalNewStart simplified{i}) = none := by rfl\n" ++
+           s!"#print axioms globalTranslate{i}_eq\nend InitECandidate.Proofs.FrontendStages.Declarations\n")
         IO.println s!"Global translation {i}: {defs.utf8ByteSize + text.utf8ByteSize} bytes"
       | _ => pure ()
     return
   if args.contains "--frontend-declarations" then
-    IO.FS.createDirAll "InitE/FrontendStages/Declarations"
+    IO.FS.createDirAll "submission/InitECandidate/Proofs/FrontendStages/Declarations"
     let count := (args.head?.bind String.toNat?).getD 8
     let offset := (args[1]?.bind String.toNat?).getD 0
     let declarations := if args.contains "--largest" then
@@ -991,25 +991,25 @@ unsafe def main (args : List String) : IO Unit := do
       let bodyDefs := String.intercalate "\n" (← bodyState.get).lines.toList
       let header := "set_option Elab.async false\nset_option maxRecDepth 1000000\nset_option maxHeartbeats 0\n" ++
         "set_option cbv.maxSteps 1000000000\nset_option cbv.warning false\n" ++
-        "open scoped InitE.FrontendComputation\n" ++
-        "open Flapjack\nnamespace InitE.FrontendStages.Declarations\n"
-      writeCompactCertificate s!"InitE/FrontendStages/Declarations/Data{index}.lean"
-        ("import InitE.FrontendComputation\n" ++
-         (if index < 16 then "" else s!"import InitE.FrontendStages.Declarations.Simplify{index - 16}\n") ++
+        "open scoped InitECandidate.Proofs.FrontendComputation\n" ++
+        "open Flapjack\nnamespace InitECandidate.Proofs.FrontendStages.Declarations\n"
+      writeCompactCertificate s!"submission/InitECandidate/Proofs/FrontendStages/Declarations/Data{index}.lean"
+        ("import InitECandidate.Proofs.FrontendComputation\n" ++
+         (if index < 16 then "" else s!"import InitECandidate.Proofs.FrontendStages.Declarations.Simplify{index - 16}\n") ++
          header ++ bodyDefs ++ "\n" ++
          s!"def originalData{index} : Decl (BitVec 64) :=\n" ++ input ++
          s!"\ndef simplifiedData{index} : Decl (BitVec 64) :=\n" ++ output ++
          s!"\ndef original{index} := Pancake.PanLang.declToHOL originalData{index}\n" ++
          s!"def simplified{index} := Pancake.PanLang.declToHOL simplifiedData{index}\n" ++
-         "end InitE.FrontendStages.Declarations\n")
-      writeCompactCertificate s!"InitE/FrontendStages/Declarations/Simplify{index}.lean"
-        ("import InitE.FrontendCodecComputation\n" ++
-         s!"import InitE.FrontendStages.Declarations.Data{index}\n" ++ header ++
-         s!"theorem simplify{index}_eq : InitE.FrontendComputation.simplifyDeclaration original{index} = simplified{index} := by\n" ++
-         s!"  change InitE.FrontendComputation.simplifyDeclaration (Pancake.PanLang.declToHOL originalData{index}) = Pancake.PanLang.declToHOL simplifiedData{index}\n" ++
-         "  simp only [InitE.FrontendCodecComputation.declToHOL_eq]\n" ++
+         "end InitECandidate.Proofs.FrontendStages.Declarations\n")
+      writeCompactCertificate s!"submission/InitECandidate/Proofs/FrontendStages/Declarations/Simplify{index}.lean"
+        ("import InitECandidate.Proofs.FrontendCodecComputation\n" ++
+         s!"import InitECandidate.Proofs.FrontendStages.Declarations.Data{index}\n" ++ header ++
+         s!"theorem simplify{index}_eq : InitECandidate.Proofs.FrontendComputation.simplifyDeclaration original{index} = simplified{index} := by\n" ++
+         s!"  change InitECandidate.Proofs.FrontendComputation.simplifyDeclaration (Pancake.PanLang.declToHOL originalData{index}) = Pancake.PanLang.declToHOL simplifiedData{index}\n" ++
+         "  simp only [InitECandidate.Proofs.FrontendCodecComputation.declToHOL_eq]\n" ++
          "  kernel_rfl\n" ++
-         s!"#print axioms simplify{index}_eq\nend InitE.FrontendStages.Declarations\n")
+         s!"#print axioms simplify{index}_eq\nend InitECandidate.Proofs.FrontendStages.Declarations\n")
       IO.println s!"Frontend declaration {index}: {input.utf8ByteSize}/{output.utf8ByteSize} bytes"
     return
   if args.contains "--frontend-pancake" then
@@ -1020,7 +1020,7 @@ unsafe def main (args : List String) : IO Unit := do
     for (program, index) in [p0, p1, p2].zipIdx do
       let literal ← renderWordStage env (toExpr (program.map Pancake.PanLang.declOfHOL))
       let imp := if index == 0 then "import InitE.SourceDeclarations\n"
-        else s!"import InitE.FrontendStages.Pass{index-1}\n"
+        else s!"import InitECandidate.Proofs.FrontendStages.Pass{index-1}\n"
       let expression := match index with
         | 0 => "panSimpDeclsHOL sourceDeclarations"
         | 1 => "Pancake.PanStructs.CompileShapeExact.compileTopExact pass0"
@@ -1028,12 +1028,12 @@ unsafe def main (args : List String) : IO Unit := do
       writeCompactCertificate s!"work/lean-perf/monolithic-frontend/Pass{index}.lean"
         (imp ++ "set_option Elab.async false\nset_option maxRecDepth 1000000\n" ++
          "set_option maxHeartbeats 0\nset_option cbv.maxSteps 1000000000\nset_option cbv.warning false\n" ++
-         "open scoped InitE.CompilerComputation\nopen Flapjack\nnamespace InitE.FrontendStages\n" ++
+         "open scoped InitECandidate.Proofs.CompilerComputation\nopen Flapjack\nnamespace InitECandidate.Proofs.FrontendStages\n" ++
          s!"def serialized{index} : List (Decl (BitVec 64)) :=\n" ++ literal ++
          s!"\ndef pass{index} : List (Pancake.PanLang.DeclHOL 64) := serialized{index}.map Pancake.PanLang.declToHOL\n" ++
          s!"theorem pass{index}_eq : {expression} = pass{index} := by\n" ++
          "  kernel_rfl\n" ++
-         s!"#print axioms pass{index}_eq\nend InitE.FrontendStages\n")
+         s!"#print axioms pass{index}_eq\nend InitECandidate.Proofs.FrontendStages\n")
       IO.println s!"Pancake frontend proposal {index}: {literal.utf8ByteSize} bytes"
     return
   let source := panToWordCompileProgHOL riscvConfig.isa InitE.sourceDeclarations
@@ -1056,7 +1056,7 @@ unsafe def main (args : List String) : IO Unit := do
   let regs := riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length)
   let oracles := (WordToWord.nextNOracle source.length config.colOracle).1
   IO.FS.createDirAll "work/lean-perf/word-stages"
-  if certifiedStages || passes then IO.FS.createDirAll "InitE/WordStages"
+  if certifiedStages || passes then IO.FS.createDirAll "submission/InitECandidate/Proofs/WordStages"
   for (entry, oracle) in (source.zip oracles).drop offset |>.take limit do
     if args.contains "--preserve-checked" && [64, 240, 713].contains entry.1 then
       continue
@@ -1077,7 +1077,7 @@ unsafe def main (args : List String) : IO Unit := do
           then some color else none
     if args.contains "--allocation-checkpoints" then
       let label := entry.1
-      let inputNamespace := if args.contains "--sparse-input" then s!"InitE.WordStages.Sparse{label}" else s!"InitE.WordStages.Parallel{label}"
+      let inputNamespace := if args.contains "--sparse-input" then s!"InitECandidate.Proofs.WordStages.Sparse{label}" else s!"InitECandidate.Proofs.WordStages.Parallel{label}"
       let preReg := beforeAllocation entry
       let tree := WordAlloc.getClashTree preReg []
       let forced := WordAlloc.getForced riscvConfig preReg []
@@ -1088,22 +1088,22 @@ unsafe def main (args : List String) : IO Unit := do
       let state ← IO.mkRef ({} : ClashCheckpointState)
       let root ← clashCheckpoint env state colour tree .ln .ln
       let st ← state.get
-      let dir := s!"InitE/ClashStages{label}"
+      let dir := s!"submission/InitECandidate/Proofs/ClashStages{label}"
       IO.FS.createDirAll dir
       let colourText ← renderWordStage env (toExpr colour)
       let header := "set_option Elab.async false\nset_option maxRecDepth 1000000\nset_option maxHeartbeats 0\nset_option cbv.maxSteps 1000000000\nset_option cbv.warning false\n" ++
-        s!"namespace InitE.ClashStages{label}\n"
-      writeCompactCertificate (dir ++ "/Data.lean") ("import InitE.ComputationCache\nimport Flapjack.Compiler.Backend.RegAlloc.ClashTree\n" ++ header ++
-        s!"def colour : Flapjack.Spt Nat := {colourText}\n" ++ String.join st.data.toList ++ s!"end InitE.ClashStages{label}\n")
+        s!"namespace InitECandidate.Proofs.ClashStages{label}\n"
+      writeCompactCertificate (dir ++ "/Data.lean") ("import InitECandidate.Proofs.ComputationCache\nimport Flapjack.Compiler.Backend.RegAlloc.ClashTree\n" ++ header ++
+        s!"def colour : Flapjack.Spt Nat := {colourText}\n" ++ String.join st.data.toList ++ s!"end InitECandidate.Proofs.ClashStages{label}\n")
       let chunks := (st.next + 95) / 96
       for chunk in List.range chunks do
-        let previous := if chunk == 0 then s!"InitE.ClashStages{label}.Data" else s!"InitE.ClashStages{label}.Proof{chunk-1}"
+        let previous := if chunk == 0 then s!"InitECandidate.Proofs.ClashStages{label}.Data" else s!"InitECandidate.Proofs.ClashStages{label}.Proof{chunk-1}"
         writeCompactCertificate (dir ++ s!"/Proof{chunk}.lean") (s!"import {previous}\n" ++ header ++
-          String.join (st.proofs.toList.drop (chunk*96) |>.take 96) ++ s!"end InitE.ClashStages{label}\n")
-      writeCompactCertificate (dir ++ "/Tree.lean") (s!"import InitE.ClashStages{label}.Data\nimport {inputNamespace}.Data8\n" ++ header ++
-        s!"theorem tree_eq : Flapjack.WordAlloc.getClashTree {inputNamespace}.pass{label}_8 [] = literal{root} := by\n  kernel_rfl\n#print axioms tree_eq\nend InitE.ClashStages{label}\n")
-      writeCompactCertificate (dir ++ "/Closed.lean") (s!"import InitE.ClashStages{label}.Proof{chunks-1}\nimport InitE.ClashStages{label}.Tree\n" ++ header ++
-        s!"theorem checked : (Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) (Flapjack.WordAlloc.getClashTree {inputNamespace}.pass{label}_8 []) .ln .ln).isSome = true := by\n  rw [tree_eq, ← tree{root}_agree]\n  have h := node{root}_eq\n  change Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree{root} .ln .ln = result{root} at h\n  rw [h]\n  rfl\n#print axioms checked\nend InitE.ClashStages{label}\n")
+          String.join (st.proofs.toList.drop (chunk*96) |>.take 96) ++ s!"end InitECandidate.Proofs.ClashStages{label}\n")
+      writeCompactCertificate (dir ++ "/Tree.lean") (s!"import InitECandidate.Proofs.ClashStages{label}.Data\nimport {inputNamespace}.Data8\n" ++ header ++
+        s!"theorem tree_eq : Flapjack.WordAlloc.getClashTree {inputNamespace}.pass{label}_8 [] = literal{root} := by\n  kernel_rfl\n#print axioms tree_eq\nend InitECandidate.Proofs.ClashStages{label}\n")
+      writeCompactCertificate (dir ++ "/Closed.lean") (s!"import InitECandidate.Proofs.ClashStages{label}.Proof{chunks-1}\nimport InitECandidate.Proofs.ClashStages{label}.Tree\n" ++ header ++
+        s!"theorem checked : (Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) (Flapjack.WordAlloc.getClashTree {inputNamespace}.pass{label}_8 []) .ln .ln).isSome = true := by\n  rw [tree_eq, ← tree{root}_agree]\n  have h := node{root}_eq\n  change Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree{root} .ln .ln = result{root} at h\n  rw [h]\n  rfl\n#print axioms checked\nend InitECandidate.Proofs.ClashStages{label}\n")
       IO.println s!"Allocation clash checkpoints {label}: {st.next} nodes"
       continue
     proposedColors := proposal :: proposedColors
@@ -1118,11 +1118,11 @@ unsafe def main (args : List String) : IO Unit := do
       continue
     if args.contains "--compose-proofs" then
       let label := entry.1
-      let file := s!"InitE/WordStages/Optimize{label}.lean"
+      let file := s!"submission/InitECandidate/Proofs/WordStages/Optimize{label}.lean"
       let original ← IO.FS.readFile file
       let preamble := (original.splitOn s!"theorem optimize{label}_eq").head!
-      let preamble := preamble.replace s!"import InitE.WordStages.Source{label}\n"
-        s!"import InitE.WordStages.Source{label}\nimport InitE.WordStages.Pass{label}_10\nimport InitE.CompilerStages\n"
+      let preamble := preamble.replace s!"import InitECandidate.Proofs.WordStages.Source{label}\n"
+        s!"import InitECandidate.Proofs.WordStages.Source{label}\nimport InitECandidate.Proofs.WordStages.Pass{label}_10\nimport InitECandidate.Proofs.CompilerStages\n"
       let passes := String.intercalate ", " ((List.range 11).map fun n => s!"pass{label}_{n}_eq")
       writeCompactCertificate file (preamble ++
         s!"theorem optimize{label}_eq : WordToWord.fullCompileSingleWith\n" ++
@@ -1130,12 +1130,12 @@ unsafe def main (args : List String) : IO Unit := do
         "  (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))\n" ++
         "  RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg\n" ++
         s!"  riscvConfig (source{label}, oracle{label}) = optimized{label} := by\n" ++
-        "  rw [InitE.CompilerStages.fullCompile_expanded]\n  dsimp only\n" ++
+        "  rw [InitECandidate.Proofs.CompilerStages.fullCompile_expanded]\n  dsimp only\n" ++
         s!"  have name_eq : source{label}.1 = {label} := by rfl\n" ++
         s!"  have argc_eq : source{label}.2.1 = {entry.2.1} := by rfl\n" ++
         s!"  have oracle_eq : oracle{label} = proposed{label} := by kernel_rfl\n" ++
         s!"  rw [name_eq, argc_eq, oracle_eq, {passes}]\n  kernel_rfl\n" ++
-        s!"#print axioms optimize{label}_eq\nend InitE.WordStages\n")
+        s!"#print axioms optimize{label}_eq\nend InitECandidate.Proofs.WordStages\n")
       IO.println s!"Composed pass equations for optimizer {label}"
       continue
     if args.contains "--dead-checkpoints" then
@@ -1146,12 +1146,12 @@ unsafe def main (args : List String) : IO Unit := do
       let root ← deadCheckpoint env state p2 .ln [] []
       let st ← state.get
       let label := entry.1
-      let directory := s!"InitE/DeadStages{label}"
+      let directory := s!"submission/InitECandidate/Proofs/DeadStages{label}"
       IO.FS.createDirAll directory
-      let header := "import InitE.ComputationCache\nimport InitE.DeadBranchComputation\nset_option Elab.async false\nset_option maxRecDepth 1000000\n" ++
+      let header := "import InitECandidate.Proofs.ComputationCache\nimport InitECandidate.Proofs.DeadBranchComputation\nset_option Elab.async false\nset_option maxRecDepth 1000000\n" ++
         "set_option maxHeartbeats 0\nset_option cbv.maxSteps 1000000000\n" ++
-        "set_option cbv.warning false\nopen scoped InitE.CompilerComputation\n" ++
-        s!"namespace InitE.DeadStages{label}\n"
+        "set_option cbv.warning false\nopen scoped InitECandidate.Proofs.CompilerComputation\n" ++
+        s!"namespace InitECandidate.Proofs.DeadStages{label}\n"
       let mut chunk := 0
       let chunkSize := if args.contains "--wide-checkpoints" then 256 else 32
       let mut count := 0
@@ -1164,10 +1164,10 @@ unsafe def main (args : List String) : IO Unit := do
           if count == chunkSize then
             let suffix := String.ofList (List.replicate (3 - (toString chunk).length) '0') ++ toString chunk
             let prev := String.ofList (List.replicate (3 - (toString (chunk-1)).length) '0') ++ toString (chunk-1)
-            let imp := if chunk == 0 then "import InitE.CompilerComputation\n"
-              else s!"import InitE.DeadStages{label}.Chunk{prev}\n"
+            let imp := if chunk == 0 then "import InitECandidate.Proofs.CompilerComputation\n"
+              else s!"import InitECandidate.Proofs.DeadStages{label}.Chunk{prev}\n"
             writeCompactCertificate s!"{directory}/Chunk{suffix}.lean"
-              (imp ++ header ++ text ++ s!"#print axioms node{last+count-1}_eq\nend InitE.DeadStages{label}\n")
+              (imp ++ header ++ text ++ s!"#print axioms node{last+count-1}_eq\nend InitECandidate.Proofs.DeadStages{label}\n")
             last := last + count
             chunk := chunk + 1
             count := 0
@@ -1175,39 +1175,39 @@ unsafe def main (args : List String) : IO Unit := do
       if !text.isEmpty then
         let suffix := String.ofList (List.replicate (3 - (toString chunk).length) '0') ++ toString chunk
         let prev := String.ofList (List.replicate (3 - (toString (chunk-1)).length) '0') ++ toString (chunk-1)
-        let imp := if chunk == 0 then "import InitE.CompilerComputation\n"
-          else s!"import InitE.DeadStages{label}.Chunk{prev}\n"
+        let imp := if chunk == 0 then "import InitECandidate.Proofs.CompilerComputation\n"
+          else s!"import InitECandidate.Proofs.DeadStages{label}.Chunk{prev}\n"
         writeCompactCertificate s!"{directory}/Chunk{suffix}.lean"
-          (imp ++ header ++ text ++ s!"#print axioms node{root}_eq\nend InitE.DeadStages{label}\n")
+          (imp ++ header ++ text ++ s!"#print axioms node{root}_eq\nend InitECandidate.Proofs.DeadStages{label}\n")
       else
         chunk := chunk - 1
       let suffix := String.ofList (List.replicate (3 - (toString chunk).length) '0') ++ toString chunk
-      writeCompactCertificate s!"InitE/DeadStages{label}.lean"
-        (s!"import InitE.DeadStages{label}.Chunk{suffix}\n\n#print axioms InitE.DeadStages{label}.node{root}_eq\n")
-      let inputEquations := String.intercalate ", " ((List.range st.next).map fun i => s!"InitE.DeadStages{label}.input{i}_def")
-      let outputEquations := String.intercalate ", " ((List.range st.next).map fun i => s!"InitE.DeadStages{label}.output{i}_def")
+      writeCompactCertificate s!"submission/InitECandidate/Proofs/DeadStages{label}.lean"
+        (s!"import InitECandidate.Proofs.DeadStages{label}.Chunk{suffix}\n\n#print axioms InitECandidate.Proofs.DeadStages{label}.node{root}_eq\n")
+      let inputEquations := String.intercalate ", " ((List.range st.next).map fun i => s!"InitECandidate.Proofs.DeadStages{label}.input{i}_def")
+      let outputEquations := String.intercalate ", " ((List.range st.next).map fun i => s!"InitECandidate.Proofs.DeadStages{label}.output{i}_def")
       let emptyLive := st.values[toExpr (Spt.ln : NumSet)]!
       let emptyStores := st.values[toExpr ([] : List WordStoreHOL)]!
       let emptyLoops := st.values[toExpr ([] : List (NumSet × NumSet))]!
-      let bridgePath := s!"InitE/WordStages/Pass{label}_3.lean"
+      let bridgePath := s!"submission/InitECandidate/Proofs/WordStages/Pass{label}_3.lean"
       if ← System.FilePath.pathExists bridgePath then
         let original ← IO.FS.readFile bridgePath
         let bridgeText := ((original.splitOn "private theorem checkpoint_input_eq").head!).splitOn
           s!"theorem pass{label}_3_eq" |>.head!
-        let bridgeText := (bridgeText.replace "set_option cbv.warning false\n" "set_option cbv.warning false\nset_option linter.unusedSimpArgs false\n").replace s!"import InitE.WordStages.Pass{label}_2\n"
-          s!"import InitE.WordStages.Pass{label}_2\nimport InitE.DeadStages{label}\n"
-        let bridgeText := bridgeText.replace s!"import InitE.DeadStages{label}\nimport InitE.DeadStages{label}\n"
-          s!"import InitE.DeadStages{label}\n"
+        let bridgeText := (bridgeText.replace "set_option cbv.warning false\n" "set_option cbv.warning false\nset_option linter.unusedSimpArgs false\n").replace s!"import InitECandidate.Proofs.WordStages.Pass{label}_2\n"
+          s!"import InitECandidate.Proofs.WordStages.Pass{label}_2\nimport InitECandidate.Proofs.DeadStages{label}\n"
+        let bridgeText := bridgeText.replace s!"import InitECandidate.Proofs.DeadStages{label}\nimport InitECandidate.Proofs.DeadStages{label}\n"
+          s!"import InitECandidate.Proofs.DeadStages{label}\n"
         writeCompactCertificate bridgePath (bridgeText ++
-          s!"private theorem checkpoint_input_eq : pass{label}_2 = InitE.DeadStages{label}.input{root} := by\n  simp only [{inputEquations}]\n  kernel_rfl\n" ++
-          s!"private theorem checkpoint_output_eq : InitE.DeadStages{label}.output{root} = pass{label}_3 := by\n  simp only [{outputEquations}]\n  kernel_rfl\n" ++
+          s!"private theorem checkpoint_input_eq : pass{label}_2 = InitECandidate.Proofs.DeadStages{label}.input{root} := by\n  simp only [{inputEquations}]\n  kernel_rfl\n" ++
+          s!"private theorem checkpoint_output_eq : InitECandidate.Proofs.DeadStages{label}.output{root} = pass{label}_3 := by\n  simp only [{outputEquations}]\n  kernel_rfl\n" ++
           s!"theorem pass{label}_3_eq : WordAlloc.removeDeadProg pass{label}_2 = pass{label}_3 := by\n" ++
           "  unfold WordAlloc.removeDeadProg\n" ++
           "  rw [WordAlloc.removeDeadStructural_eq, checkpoint_input_eq]\n" ++
-          s!"  have checked := InitE.DeadStages{label}.node{root}_eq\n" ++
-          s!"  simp only [InitE.DeadStages{label}.{emptyLive}, InitE.DeadStages{label}.{emptyStores}, InitE.DeadStages{label}.{emptyLoops}] at checked\n" ++
+          s!"  have checked := InitECandidate.Proofs.DeadStages{label}.node{root}_eq\n" ++
+          s!"  simp only [InitECandidate.Proofs.DeadStages{label}.{emptyLive}, InitECandidate.Proofs.DeadStages{label}.{emptyStores}, InitECandidate.Proofs.DeadStages{label}.{emptyLoops}] at checked\n" ++
           "  rw [checked]\n" ++
-          s!"  exact checkpoint_output_eq\n#print axioms pass{label}_3_eq\nend InitE.WordStages\n")
+          s!"  exact checkpoint_output_eq\n#print axioms pass{label}_3_eq\nend InitECandidate.Proofs.WordStages\n")
       IO.println s!"Dead checkpoints {entry.1}: {st.next}; root {root}"
       continue
     if passes then
@@ -1225,14 +1225,14 @@ unsafe def main (args : List String) : IO Unit := do
       let p10 := WordRemove.removeMustTerminate p9
       let programs := [p0,p1,p2,p3,p4,p5,p6,p7,p8,p9,p10]
       let fused := args.contains "--fused-passes"
-      let mut fusedText := s!"import InitE.WordStages.Source{label}\nimport InitE.CompilerComputation\nimport InitE.CompilerStages\nimport InitE.ClashComputation\nimport InitE.ComputationCache\n" ++
+      let mut fusedText := s!"import InitECandidate.Proofs.WordStages.Source{label}\nimport InitECandidate.Proofs.CompilerComputation\nimport InitECandidate.Proofs.CompilerStages\nimport InitECandidate.Proofs.ClashComputation\nimport InitECandidate.Proofs.ComputationCache\n" ++
         "set_option Elab.async false\nset_option maxRecDepth 1000000\nset_option maxHeartbeats 0\nset_option cbv.maxSteps 1000000000\nset_option cbv.warning false\n" ++
-        "open scoped InitE.CompilerComputation InitE.ClashComputation\nopen Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target\nopen InitE.WordStages\n" ++
-        s!"namespace InitE.WordStages.Fused{label}\n"
+        "open scoped InitECandidate.Proofs.CompilerComputation InitECandidate.Proofs.ClashComputation\nopen Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target\nopen InitECandidate.Proofs.WordStages\n" ++
+        s!"namespace InitECandidate.Proofs.WordStages.Fused{label}\n"
       for (program, index) in programs.zipIdx do
         let prev := if index == 0 then s!"source{label}.2.2" else s!"pass{label}_{index-1}"
-        let imports := if index == 0 then s!"import InitE.WordStages.Source{label}\n"
-          else s!"import InitE.WordStages.Pass{label}_{index-1}\n"
+        let imports := if index == 0 then s!"import InitECandidate.Proofs.WordStages.Source{label}\n"
+          else s!"import InitECandidate.Proofs.WordStages.Pass{label}_{index-1}\n"
         let expression := match index with
           | 0 => s!"WordSimp.compileExp ({prev})"
           | 1 => s!"WordInst.instSelectExecutable riscvConfig (maxVarHOL ({prev}) + 1) ({prev})"
@@ -1253,33 +1253,33 @@ unsafe def main (args : List String) : IO Unit := do
         let dataDefs := String.intercalate "\n" (← dataState.get).lines.toList
         if fused then
           fusedText := fusedText ++ colorDef ++ dataDefs ++ "\n" ++
-            s!"def pass{label}_{index} : WordLangProgHOL (BitVec 64) := (InitE.ComputationCache.boxedValue (α := WordLangProgHOL (BitVec 64)) ({text})).val\n" ++
-            s!"theorem pass{label}_{index}_def : pass{label}_{index} = ({text}) := InitE.ComputationCache.boxedValue_eq _\n" ++
+            s!"def pass{label}_{index} : WordLangProgHOL (BitVec 64) := (InitECandidate.Proofs.ComputationCache.boxedValue (α := WordLangProgHOL (BitVec 64)) ({text})).val\n" ++
+            s!"theorem pass{label}_{index}_def : pass{label}_{index} = ({text}) := InitECandidate.Proofs.ComputationCache.boxedValue_eq _\n" ++
             s!"theorem pass{label}_{index}_eq : {expression} = pass{label}_{index} := by\n  rw [pass{label}_{index}_def]\n" ++
             (if index == 0 then "" else s!"  rw [pass{label}_{index-1}_def]\n") ++
-            (if index == 2 then "  rw [InitE.SmallSsaKernelComputation.fullSsaStructural_eq]\n" else "") ++
+            (if index == 2 then "  rw [InitECandidate.Proofs.SmallSsaKernelComputation.fullSsaStructural_eq]\n" else "") ++
             "  kernel_rfl\n" ++ s!"#print axioms pass{label}_{index}_eq\n"
           continue
-        writeCompactCertificate s!"InitE/WordStages/Pass{label}_{index}.lean"
-          (imports ++ "import InitE.CompilerComputation\n" ++
+        writeCompactCertificate s!"submission/InitECandidate/Proofs/WordStages/Pass{label}_{index}.lean"
+          (imports ++ "import InitECandidate.Proofs.CompilerComputation\n" ++
            "set_option Elab.async false\nset_option maxRecDepth 1000000\nset_option maxHeartbeats 0\n" ++
            "set_option cbv.maxSteps 1000000000\nset_option cbv.warning false\n" ++
-           "open scoped InitE.CompilerComputation\n" ++
+           "open scoped InitECandidate.Proofs.CompilerComputation\n" ++
            "open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target\n" ++
-           "namespace InitE.WordStages\n" ++ colorDef ++ dataDefs ++ "\n" ++
+           "namespace InitECandidate.Proofs.WordStages\n" ++ colorDef ++ dataDefs ++ "\n" ++
            s!"def pass{label}_{index} : WordLangProgHOL (BitVec 64) :=\n" ++ text ++
            s!"\ntheorem pass{label}_{index}_eq : {expression} = pass{label}_{index} := by\n" ++
-           (if index == 2 then "  rw [InitE.SmallSsaKernelComputation.fullSsaStructural_eq]\n" else "") ++
+           (if index == 2 then "  rw [InitECandidate.Proofs.SmallSsaKernelComputation.fullSsaStructural_eq]\n" else "") ++
            "  kernel_rfl\n" ++
-           s!"#print axioms pass{label}_{index}_eq\nend InitE.WordStages\n")
+           s!"#print axioms pass{label}_{index}_eq\nend InitECandidate.Proofs.WordStages\n")
         IO.println s!"Pass proposal {label}/{index}: {dataDefs.utf8ByteSize + text.utf8ByteSize} bytes"
       if fused then
         let equations := String.intercalate ", " ((List.range 11).map fun n => s!"pass{label}_{n}_eq")
         fusedText := fusedText ++
           s!"theorem compiled_eq : WordToWord.fullCompileSingleWith RegAlloc.regAllocExecutable riscvConfig.twoRegArith (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length)) RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg riscvConfig (source{label}, proposed{label}) = ({label}, {entry.2.1}, pass{label}_10) := by\n" ++
-          "  rw [InitE.CompilerStages.fullCompile_expanded]\n  dsimp only\n" ++
-          s!"  have name_eq : source{label}.1 = {label} := by rfl\n  have argc_eq : source{label}.2.1 = {entry.2.1} := by rfl\n  rw [name_eq, argc_eq, {equations}]\n  try rfl\n#print axioms compiled_eq\nend InitE.WordStages.Fused{label}\n"
-        writeCompactCertificate s!"InitE/WordStages/Fused{label}.lean" fusedText
+          "  rw [InitECandidate.Proofs.CompilerStages.fullCompile_expanded]\n  dsimp only\n" ++
+          s!"  have name_eq : source{label}.1 = {label} := by rfl\n  have argc_eq : source{label}.2.1 = {entry.2.1} := by rfl\n  rw [name_eq, argc_eq, {equations}]\n  try rfl\n#print axioms compiled_eq\nend InitECandidate.Proofs.WordStages.Fused{label}\n"
+        writeCompactCertificate s!"submission/InitECandidate/Proofs/WordStages/Fused{label}.lean" fusedText
         IO.println s!"Fused opaque optimizer proposal {label}: {fusedText.utf8ByteSize} bytes"
       continue
     if certifiedStages then
@@ -1298,19 +1298,19 @@ unsafe def main (args : List String) : IO Unit := do
       let optimizedDefs := String.intercalate "\n" (← optimizedState.get).lines.toList
       let oracleText ← renderWordStage env (toExpr proposal)
       unless args.contains "--optimized-only" do
-        writeCompactCertificate s!"InitE/WordStages/Source{label}.lean"
+        writeCompactCertificate s!"submission/InitECandidate/Proofs/WordStages/Source{label}.lean"
           ("import Flapjack.Pancake.WordLang\nset_option maxRecDepth 1000000\nset_option maxHeartbeats 0\n" ++
-           "open Flapjack\nnamespace InitE.WordStages\n" ++ sourceDefs ++ "\n" ++
+           "open Flapjack\nnamespace InitECandidate.Proofs.WordStages\n" ++ sourceDefs ++ "\n" ++
            s!"def source{label} : Nat × Nat × Flapjack.WordLangProgHOL (BitVec 64) :=\n" ++ text ++
-           "\nend InitE.WordStages\n")
-      writeCompactCertificate s!"InitE/WordStages/Optimize{label}.lean"
-        (s!"import InitE.WordStages.Source{label}\n" ++
-         "import InitE.CompilerComputation\n" ++
+           "\nend InitECandidate.Proofs.WordStages\n")
+      writeCompactCertificate s!"submission/InitECandidate/Proofs/WordStages/Optimize{label}.lean"
+        (s!"import InitECandidate.Proofs.WordStages.Source{label}\n" ++
+         "import InitECandidate.Proofs.CompilerComputation\n" ++
          "set_option Elab.async false\nset_option maxRecDepth 1000000\nset_option maxHeartbeats 0\n" ++
          "set_option cbv.maxSteps 1000000000\nset_option cbv.warning false\n" ++
-         "open scoped InitE.CompilerComputation\n" ++
+         "open scoped InitECandidate.Proofs.CompilerComputation\n" ++
          "open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target\n" ++
-         "namespace InitE.WordStages\n" ++ optimizedDefs ++ "\n" ++
+         "namespace InitECandidate.Proofs.WordStages\n" ++ optimizedDefs ++ "\n" ++
          s!"def oracle{label} : Option (Spt Nat) :=\n" ++ oracleText ++
          s!"\ndef optimized{label} : Nat × Nat × WordLangProgHOL (BitVec 64) :=\n" ++ optimizedText ++
          s!"\ntheorem optimize{label}_eq : WordToWord.fullCompileSingleWith\n" ++
@@ -1318,9 +1318,9 @@ unsafe def main (args : List String) : IO Unit := do
          "  (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))\n" ++
          "  RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg\n" ++
          s!"  riscvConfig (source{label}, oracle{label}) = optimized{label} := by\n" ++
-         "  rw [InitE.CompilerStages.fullCompile_expanded]\n  dsimp only\n" ++
-         "  rw [InitE.SmallSsaKernelComputation.fullSsaStructural_eq]\n  kernel_rfl\n" ++
-         s!"#print axioms optimize{label}_eq\nend InitE.WordStages\n")
+         "  rw [InitECandidate.Proofs.CompilerStages.fullCompile_expanded]\n  dsimp only\n" ++
+         "  rw [InitECandidate.Proofs.SmallSsaKernelComputation.fullSsaStructural_eq]\n  kernel_rfl\n" ++
+         s!"#print axioms optimize{label}_eq\nend InitECandidate.Proofs.WordStages\n")
       if label == 225 || label == 226 then
         let result ← IO.Process.output { cmd := "python3", args := #["tools/reuse-word-functions.py", toString label] }
         unless result.exitCode == 0 do
@@ -1331,9 +1331,9 @@ unsafe def main (args : List String) : IO Unit := do
     if text.contains '⋯' then
       throw (IO.userError "incomplete pretty-printer output")
     let file := s!"work/lean-perf/word-stages/Source{entry.1}.lean"
-    writeCompactCertificate file ("import InitE.SourceDeclarations\n\nset_option maxRecDepth 1000000\nset_option maxHeartbeats 0\n\nnamespace InitE.WordStages\n" ++
+    writeCompactCertificate file ("import InitE.SourceDeclarations\n\nset_option maxRecDepth 1000000\nset_option maxHeartbeats 0\n\nnamespace InitECandidate.Proofs.WordStages\n" ++
       s!"def source{entry.1} : Nat × Nat × Flapjack.WordLangProgHOL (BitVec 64) :=\n" ++
-      text ++ "\nend InitE.WordStages\n")
+      text ++ "\nend InitECandidate.Proofs.WordStages\n")
     let preReg := beforeAllocation entry
     let tree := WordAlloc.getClashTree preReg []
     let forced := WordAlloc.getForced riscvConfig preReg []
@@ -1349,8 +1349,8 @@ unsafe def main (args : List String) : IO Unit := do
       let oracleFile := s!"work/lean-perf/word-stages/Color{entry.1}.lean"
       let colorText ← renderWordStage env (toExpr color)
       writeCompactCertificate oracleFile ("import InitE.SourceDeclarations\n" ++
-        "namespace InitE.WordStages\n" ++
-        s!"def color{entry.1} : Flapjack.Spt Nat :=\n" ++ colorText ++ "\nend InitE.WordStages\n")
+        "namespace InitECandidate.Proofs.WordStages\n" ++
+        s!"def color{entry.1} : Flapjack.Spt Nat :=\n" ++ colorText ++ "\nend InitECandidate.Proofs.WordStages\n")
     let optimized := WordToWord.fullCompileSingleWith RegAlloc.regAllocExecutable
       riscvConfig.twoRegArith regs config.regAlg riscvConfig (entry, oracle)
     let optimizedText ← renderWordStage env (toExpr optimized)
@@ -1358,12 +1358,12 @@ unsafe def main (args : List String) : IO Unit := do
     if optimizedText.contains '⋯' || oracleText.contains '⋯' then
       throw (IO.userError "incomplete optimizer pretty-printer output")
     let proofFile := s!"work/lean-perf/word-stages/Optimize{entry.1}.lean"
-    writeCompactCertificate proofFile ("import InitE.CompilerComputation\n" ++
+    writeCompactCertificate proofFile ("import InitECandidate.Proofs.CompilerComputation\n" ++
       "import InitE.SourceDeclarations\n\n" ++
       "set_option maxRecDepth 1000000\nset_option maxHeartbeats 0\n" ++
-      "set_option cbv.maxSteps 1000000000\nopen scoped InitE.CompilerComputation\n" ++
+      "set_option cbv.maxSteps 1000000000\nopen scoped InitECandidate.Proofs.CompilerComputation\n" ++
       "open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target\n" ++
-      "namespace InitE.WordStages\n" ++
+      "namespace InitECandidate.Proofs.WordStages\n" ++
       s!"def source{entry.1} : Nat × Nat × WordLangProgHOL (BitVec 64) :=\n" ++ text ++
       s!"\ndef oracle{entry.1} : Option (Spt Nat) :=\n" ++ oracleText ++
       s!"\ndef optimized{entry.1} : Nat × Nat × WordLangProgHOL (BitVec 64) :=\n" ++ optimizedText ++
@@ -1372,15 +1372,15 @@ unsafe def main (args : List String) : IO Unit := do
       "  (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))\n" ++
       "  RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg\n" ++
       s!"  riscvConfig (source{entry.1}, oracle{entry.1}) = optimized{entry.1} := by\n" ++
-      "  rw [InitE.CompilerStages.fullCompile_expanded]\n  dsimp only\n" ++
-      "  rw [InitE.SmallSsaKernelComputation.fullSsaStructural_eq]\n  kernel_rfl\n" ++
-      s!"#print axioms optimize{entry.1}_eq\nend InitE.WordStages\n")
+      "  rw [InitECandidate.Proofs.CompilerStages.fullCompile_expanded]\n  dsimp only\n" ++
+      "  rw [InitECandidate.Proofs.SmallSsaKernelComputation.fullSsaStructural_eq]\n  kernel_rfl\n" ++
+      s!"#print axioms optimize{entry.1}_eq\nend InitECandidate.Proofs.WordStages\n")
     IO.println s!"{file}: {text.utf8ByteSize} bytes; optimized: {optimizedText.utf8ByteSize} bytes"
   if colorsOnly then
     let text ← renderWordStage env (toExpr proposedColors.reverse)
     if text.contains '⋯' then throw (IO.userError "incomplete oracle-list output")
     writeCompactCertificate "work/lean-perf/word-stages/AllocationOracles.lean"
-      ("import InitE.CompilerOracles\n\nset_option maxRecDepth 1000000\n" ++
+      ("import InitECandidate.Proofs.CompilerOracles\n\nset_option maxRecDepth 1000000\n" ++
        "set_option maxHeartbeats 0\nnamespace InitE\n" ++
        "-- Native proposals, checked by the compiler's oracle validator in subsequent proofs.\n" ++
        "def allocationOracles : List (Option (Flapjack.Spt Nat)) :=\n" ++ text ++ "\nend InitE\n")

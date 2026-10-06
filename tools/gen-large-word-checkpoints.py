@@ -24,17 +24,17 @@ for label, index, size in entries:
             result = subprocess.run(args, cwd=root, env=env, stdout=output, stderr=subprocess.STDOUT)
         if result.returncode:
             raise SystemExit(f"Proposal generation failed for {index}: see {log}")
-    (root / f"InitE/FrontendStages/Word/Translate{index}.lean").write_text(f"""import InitE.FrontendStages.Word.Checkpoints{index}
+    (root / f"submission/InitECandidate/Proofs/FrontendStages/Word/Translate{index}.lean").write_text(f"""import InitECandidate.Proofs.FrontendStages.Word.Checkpoints{index}
 set_option autoImplicit false
 set_option Elab.async false
 set_option maxRecDepth 1000000
 set_option maxHeartbeats 0
-namespace InitE.FrontendStages.Word
+namespace InitECandidate.Proofs.FrontendStages.Word
 open Flapjack
 
-theorem translate{index}_eq : InitE.WordFrontendComputation.compileEntry Loop.output{index} =
-    InitE.WordStages.source{label} := by
-  unfold InitE.WordFrontendComputation.compileEntry
+theorem translate{index}_eq : InitECandidate.Proofs.WordFrontendComputation.compileEntry Loop.output{index} =
+    InitECandidate.Proofs.WordStages.source{label} := by
+  unfold InitECandidate.Proofs.WordFrontendComputation.compileEntry
   have name_eq : Loop.output{index}.1 = {label} := by rfl
   simp only [name_eq]
   unfold loopToWordCompFuncHOL
@@ -42,6 +42,6 @@ theorem translate{index}_eq : InitE.WordFrontendComputation.compileEntry Loop.ou
   rw [context{index}_eq, Checkpoints{index}.compiledBody_eq]
   rfl
 #print axioms translate{index}_eq
-end InitE.FrontendStages.Word
+end InitECandidate.Proofs.FrontendStages.Word
 """)
     print(f"Proposed checkpoints for index {index}, label {label}, {size} Word nodes", flush=True)

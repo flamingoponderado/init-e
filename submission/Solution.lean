@@ -1,6 +1,6 @@
 import InitE
-import InitE.FullBaseline
-import InitE.BaselineSubmission
+import InitECandidate.Proofs.FullBaseline
+import InitECandidate.Proofs.BaselineSubmission
 
 namespace InitE.Challenge
 open Flapjack

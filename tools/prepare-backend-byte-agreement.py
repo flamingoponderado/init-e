@@ -7,10 +7,10 @@ for name in [f"ByteSectionAgreement{n}" for n in ids]+[f"ByteCandidate{i:03d}" f
  dep=work/f"{name}.check.json"
  while not dep.exists():time.sleep(5)
  if json.loads(dep.read_text())["returncode"]:raise RuntimeError(str(dep))
-while not (root/".lake/build/lib/lean/InitE/BackendStages/BytesData.olean").exists():time.sleep(5)
-s="import InitE.BackendStages.BytesData\nimport InitECandidate.Program\n"+"".join(f"import InitE.BackendStages.ByteSectionAgreement{n}\n" for n in ids)+"".join(f"import InitE.BackendStages.ByteCandidate{i:03d}\n" for i in range(221))
-s+="set_option autoImplicit false\nset_option maxRecDepth 1000000\nset_option maxHeartbeats 0\nset_option linter.unusedSimpArgs false\nnamespace InitE.BackendStages.BytePieces\n"
-s+="theorem nativeCode_eq : ByteData.full = InitECandidate.nativeCode := by\n  simp only ["+", ".join(["ByteData.full"]+[f"ByteData.chunks{i}" for i in range(54)]+[f"BytesChunkData{g}.bytes" for g in groups]+["InitECandidate.nativeCode"]+[f"section{n}_eq" for n in ids]+[f"candidate{i:03d}_eq" for i in range(221)]+["List.flatten_cons","List.flatten_nil","List.append_assoc","List.append_nil","List.nil_append"])+"]\n#print axioms nativeCode_eq\nend InitE.BackendStages.BytePieces\n"
-source=root/"InitE/BackendStages/ByteAgreement.lean";source.write_text(s);start=time.monotonic()
-r=subprocess.run(["rtk","proxy","python3",str(root/"tools/prepare-backend-lean.py"),"-o",str(root/".lake/build/lib/lean/InitE/BackendStages/ByteAgreement.olean"),str(source)],cwd=root,text=True,capture_output=True)
+while not (root/".lake/build/lib/lean/InitECandidate/Proofs/BackendStages/BytesData.olean").exists():time.sleep(5)
+s="import InitECandidate.Proofs.BackendStages.BytesData\nimport InitECandidate.Program\n"+"".join(f"import InitECandidate.Proofs.BackendStages.ByteSectionAgreement{n}\n" for n in ids)+"".join(f"import InitECandidate.Proofs.BackendStages.ByteCandidate{i:03d}\n" for i in range(221))
+s+="set_option autoImplicit false\nset_option maxRecDepth 1000000\nset_option maxHeartbeats 0\nset_option linter.unusedSimpArgs false\nnamespace InitECandidate.Proofs.BackendStages.BytePieces\n"
+s+="theorem nativeCode_eq : ByteData.full = InitECandidate.nativeCode := by\n  simp only ["+", ".join(["ByteData.full"]+[f"ByteData.chunks{i}" for i in range(54)]+[f"BytesChunkData{g}.bytes" for g in groups]+["InitECandidate.nativeCode"]+[f"section{n}_eq" for n in ids]+[f"candidate{i:03d}_eq" for i in range(221)]+["List.flatten_cons","List.flatten_nil","List.append_assoc","List.append_nil","List.nil_append"])+"]\n#print axioms nativeCode_eq\nend InitECandidate.Proofs.BackendStages.BytePieces\n"
+source=root/"submission/InitECandidate/Proofs/BackendStages/ByteAgreement.lean";source.write_text(s);start=time.monotonic()
+r=subprocess.run(["rtk","proxy","python3",str(root/"tools/prepare-backend-lean.py"),"-o",str(root/".lake/build/lib/lean/InitECandidate/Proofs/BackendStages/ByteAgreement.olean"),str(source)],cwd=root,text=True,capture_output=True)
 (work/"ByteAgreement.check.log").write_text(r.stdout+r.stderr);(work/"ByteAgreement.check.json").write_text(json.dumps(dict(returncode=r.returncode,seconds=time.monotonic()-start)));print(r.stdout+r.stderr);r.check_returncode()

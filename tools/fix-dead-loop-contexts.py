@@ -8,7 +8,7 @@ from pathlib import Path
 import re
 root = Path(__file__).resolve().parent.parent
 count = 0
-for base in (root / "InitE").glob("DeadStages*/Parallel"):
+for base in (root / "submission" / "InitECandidate" / "Proofs").glob("DeadStages*/Parallel"):
     loop_nodes = {}
     for data in (base / "Data").glob("Chunk*.lean"):
         for node, before, child, after in re.findall(

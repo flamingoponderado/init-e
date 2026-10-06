@@ -25,9 +25,9 @@ def main():
         for mode in ['Original','Reused']:
             case=f'{mode}{n}';cases.append(case)
             s=original_source(n) if mode=='Original' else reused_source(n)
-            s=f'import InitE.BackendStages.TargetChecks.CorrectLabels0_{n}\nimport InitE.BackendStages.TargetChecks.CorrectEncode0_{n}\n'+s
+            s=f'import InitECandidate.Proofs.BackendStages.TargetChecks.CorrectLabels0_{n}\nimport InitECandidate.Proofs.BackendStages.TargetChecks.CorrectEncode0_{n}\n'+s
             s=s.replace(f'localLabels1_{n}_eq',f'{case}_eq')
-            s+=f'set_option linter.defProp false\nnamespace LabelBench{case}\nopen InitE.BackendStages.TargetChecks.Correct\ndef certificate := And.intro Reencode0_{n}_eq (And.intro localLabels0_{n}_eq {case}_eq)\n#print axioms certificate\nend LabelBench{case}\n'
+            s+=f'set_option linter.defProp false\nnamespace LabelBench{case}\nopen InitECandidate.Proofs.BackendStages.TargetChecks.Correct\ndef certificate := And.intro Reencode0_{n}_eq (And.intro localLabels0_{n}_eq {case}_eq)\n#print axioms certificate\nend LabelBench{case}\n'
             (out/(case+'.lean')).write_text(s)
     def run(case,trial,cmd,artifact):
         name=f'{case}-{trial}';start=time.monotonic();tf=out/(name+'.time')

@@ -8,19 +8,19 @@ for first in range(64,890,16):
  last=min(first+15,889)
  ns=range(first,last+1)
  name=f"RawChunk{first}_{last}"
- if (work/f"{name}.check.json").exists() and json.loads((work/f"{name}.check.json").read_text())["returncode"] == 0 and (root/f".lake/build/lib/lean/InitE/BackendStages/{name}.olean").exists(): continue
+ if (work/f"{name}.check.json").exists() and json.loads((work/f"{name}.check.json").read_text())["returncode"] == 0 and (root/f".lake/build/lib/lean/InitECandidate/Proofs/BackendStages/{name}.olean").exists(): continue
  for n in ns:
   while not (work/f"Raw{n}.check.json").exists(): time.sleep(1)
   if json.loads((work/f"Raw{n}.check.json").read_text())["returncode"]: raise RuntimeError(f"Raw{n} failed")
- s=f"import InitE.BackendStages.Chunk{first}_{last}\n"+"".join(f"import InitE.BackendStages.Raw{n}\n" for n in ns)
- s+="set_option maxRecDepth 1000000\nset_option maxHeartbeats 0\nopen Flapjack Flapjack.Compiler.Backend\nnamespace InitE.BackendStages."+name+"\n"
+ s=f"import InitECandidate.Proofs.BackendStages.Chunk{first}_{last}\n"+"".join(f"import InitECandidate.Proofs.BackendStages.Raw{n}\n" for n in ns)
+ s+="set_option maxRecDepth 1000000\nset_option maxHeartbeats 0\nopen Flapjack Flapjack.Compiler.Backend\nnamespace InitECandidate.Proofs.BackendStages."+name+"\n"
  s+="def bodies : List (Nat × StackLang.HolProg 64) := ["+", ".join(f"({n}, raw{n})" for n in ns)+"]\n"
  s+=f"theorem compiled_eq : Chunk{first}_{last}.bodies.map (fun (identifier, body) => (identifier, StackRawCall.compTop RawInfo.rawInfo body)) = bodies := by\n  change ["+", ".join(f"({n}, StackRawCall.compTop RawInfo.rawInfo (function{n} (.list [])).1)" for n in ns)+"] = bodies\n"
- s+="  rw ["+", ".join(f"raw{n}_eq" for n in ns)+"]\n  rfl\n#print axioms compiled_eq\nend InitE.BackendStages."+name+"\n"
- source=root/f"InitE/BackendStages/{name}.lean"
+ s+="  rw ["+", ".join(f"raw{n}_eq" for n in ns)+"]\n  rfl\n#print axioms compiled_eq\nend InitECandidate.Proofs.BackendStages."+name+"\n"
+ source=root/f"submission/InitECandidate/Proofs/BackendStages/{name}.lean"
  source.write_text(s)
  started=time.monotonic()
- result=subprocess.run(["rtk","proxy","python3",str(root/"tools/prepare-backend-lean.py"),"-o",str(root/f".lake/build/lib/lean/InitE/BackendStages/{name}.olean"),str(source)],cwd=root,env=env,text=True,capture_output=True)
+ result=subprocess.run(["rtk","proxy","python3",str(root/"tools/prepare-backend-lean.py"),"-o",str(root/f".lake/build/lib/lean/InitECandidate/Proofs/BackendStages/{name}.olean"),str(source)],cwd=root,env=env,text=True,capture_output=True)
  (work/f"{name}.check.log").write_text(result.stdout+result.stderr)
  (work/f"{name}.check.json").write_text(json.dumps(dict(returncode=result.returncode,seconds=time.monotonic()-started)))
  print(f"{name}: {result.returncode}",flush=True)

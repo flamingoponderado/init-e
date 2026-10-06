@@ -4,8 +4,8 @@ from pathlib import Path
 import re
 import sys
 label = int(sys.argv[1])
-root = Path(f"InitE/ClashStages{label}")
-ns = f"InitE.ClashStages{label}"
+root = Path(f"submission/InitECandidate/Proofs/ClashStages{label}")
+ns = f"InitECandidate.Proofs.ClashStages{label}"
 files = sorted(root.glob("Proof*.lean"), key=lambda p: int(p.stem[5:]))
 pattern = re.compile(r"theorem (tree\d+_agree|node\d+_eq) : (.*?) := by\n(.*?)(?=\ntheorem |\nend )", re.S)
 entries = [list(pattern.finditer(path.read_text())) for path in files]
@@ -16,12 +16,12 @@ set_option maxRecDepth 1000000
 set_option maxHeartbeats 0
 set_option cbv.maxSteps 1000000000
 set_option cbv.warning false
-open scoped InitE.ClashComputation
+open scoped InitECandidate.Proofs.ClashComputation
 """
 for folder in ["Conditional", "Compose"]:
     (root / folder).mkdir(exist_ok=True)
 for i, group in enumerate(entries):
-    cond = f"import {ns}.Data\nimport InitE.ClashComputation\nimport Flapjack.Compiler.Backend.WordAlloc.TotalColour\n" + options + f"namespace {ns}\n"
+    cond = f"import {ns}.Data\nimport InitECandidate.Proofs.ClashComputation\nimport Flapjack.Compiler.Backend.WordAlloc.TotalColour\n" + options + f"namespace {ns}\n"
     comp = f"import {ns}.Conditional.Chunk{i:03}\n"
     if i:
         comp += f"import {ns}.Compose.Chunk{i-1:03}\n"

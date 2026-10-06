@@ -7,7 +7,7 @@ All shared cache, assembly data, and flattening proofs are included in exported 
 import argparse, hashlib, json, os, re, subprocess, time
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
-HEADER = """import InitE.CompactComputation
+HEADER = """import InitECandidate.Proofs.CompactComputation
 import Flapjack.Compiler.Encoders.RiscV.Target.Configuration
 import Flapjack.Compiler.Backend.LabToTarget.Encoding
 import Flapjack.Compiler.Backend.LabSem.State
@@ -44,7 +44,7 @@ def main():
     args=ap.parse_args();os.chdir(ROOT)
     out=args.work.resolve();out.mkdir(parents=True,exist_ok=True)
     if any(out.iterdir()):ap.error('use an empty work directory')
-    src=ROOT/f'InitE/BackendStages/Filtered{args.function}.lean';tgt=ROOT/f'InitE/BackendStages/Encoded{args.function}.lean'
+    src=ROOT/f'submission/InitECandidate/Proofs/BackendStages/Filtered{args.function}.lean';tgt=ROOT/f'submission/InitECandidate/Proofs/BackendStages/Encoded{args.function}.lean'
     inputs=asm_lines(src.read_text());outputs=asm_lines(tgt.read_text())
     assert len(inputs)==len(outputs) and 0<args.count<=len(inputs)
     inputs=inputs[:args.count];outputs=outputs[:args.count]

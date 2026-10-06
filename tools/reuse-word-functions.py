@@ -10,15 +10,15 @@ import re
 
 ROOT = Path(__file__).resolve().parents[1]
 PAIRS = {225: (649, 2), 226: (650, 10)}
-COMPLETE_TEMPLATE = """import InitE.SmallSsaKernelComputation
-import InitE.CompactComputation
-import InitE.SmallStages.Compact649.Pass10
+COMPLETE_TEMPLATE = """import InitECandidate.Proofs.SmallSsaKernelComputation
+import InitECandidate.Proofs.CompactComputation
+import InitECandidate.Proofs.SmallStages.Compact649.Pass10
 set_option autoImplicit false
 set_option maxRecDepth 1000000
 set_option maxHeartbeats 0
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.Asm Flapjack.Compiler.Encoders.RiscV.Target
-open InitE.WordStages
-namespace InitE.SmallStages.Compact649
+open InitECandidate.Proofs.WordStages
+namespace InitECandidate.Proofs.SmallStages.Compact649
 theorem fullCompile_expanded (ra : WordToWord.RegAllocFn)
     {width : Nat} [NeZero width] (two : Bool) (regs alg : Nat)
     (c : AsmConfigExact width) (entry : Nat × Nat × WordLangProgHOL (BitVec width))
@@ -52,7 +52,7 @@ theorem preallocated_eq :
      let p7 := WordUnreach.removeUnreach p6
      WordAlloc.removeDeadProg p7) = pass8 := by
   dsimp only
-  rw [InitE.SmallSsaKernelComputation.fullSsaStructural_eq]
+  rw [InitECandidate.Proofs.SmallSsaKernelComputation.fullSsaStructural_eq]
   kernel_rfl
 
 #print axioms preallocated_eq
@@ -66,7 +66,7 @@ theorem optimize_shared (name : Nat) : WordToWord.fullCompileSingleWith
   dsimp only
   have alg_eq : RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg = 3 := by rfl
   rw [alg_eq, preallocated_eq]
-  rw [InitE.WordStages.wordAllocWith_of_oracle RegAlloc.regAllocExecutable name 3
+  rw [InitECandidate.Proofs.WordStages.wordAllocWith_of_oracle RegAlloc.regAllocExecutable name 3
     (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length)) riscvConfig pass8 pass10 oracle
     oracle_checked]
   kernel_rfl
@@ -79,11 +79,11 @@ theorem optimize649_eq : WordToWord.fullCompileSingleWith
     riscvConfig (source649, oracle) = (649, 2, pass10) := by
   exact optimize_shared 649
 #print axioms optimize649_eq
-end InitE.SmallStages.Compact649
+end InitECandidate.Proofs.SmallStages.Compact649
 """
 
 def source_body(label):
-    text = (ROOT / f"InitE/WordStages/Source{label}.lean").read_text()
+    text = (ROOT / f"submission/InitECandidate/Proofs/WordStages/Source{label}.lean").read_text()
     match = re.search(rf"def source{label}.*?:=\s*\({label},\s*(\d+),\s*(.*)\)\s*end", text, re.S)
     if not match:
         raise RuntimeError(f"Cannot identify source tuple {label}")
@@ -93,7 +93,7 @@ def prepare(label):
     shared, argc = PAIRS[label]
     if source_body(label) != source_body(shared) or source_body(label)[0] != argc:
         raise RuntimeError(f"Source bodies {label}/{shared} no longer agree; recheck reuse before regeneration")
-    compact = ROOT / f"InitE/SmallStages/Compact{shared}"
+    compact = ROOT / f"submission/InitECandidate/Proofs/SmallStages/Compact{shared}"
     complete = COMPLETE_TEMPLATE.replace("649", str(shared))
     if argc != 2:
         complete = complete.replace("fullSsaCcTrans 2 p1", f"fullSsaCcTrans {argc} p1")
@@ -101,9 +101,9 @@ def prepare(label):
         complete = complete.replace(f"({shared}, 2,", f"({shared}, {argc},")
     (compact / "Complete.lean").write_text(complete)
     pass_file = compact / "Pass10.lean"
-    text = pass_file.read_text().replace("import InitE.CompactComputation", "import InitE.WordStages.OracleReuse", 1)
-    if "import InitE.WordStages.OracleReuse" not in text:
-        text = "import InitE.WordStages.OracleReuse\n" + text
+    text = pass_file.read_text().replace("import InitECandidate.Proofs.CompactComputation", "import InitECandidate.Proofs.WordStages.OracleReuse", 1)
+    if "import InitECandidate.Proofs.WordStages.OracleReuse" not in text:
+        text = "import InitECandidate.Proofs.WordStages.OracleReuse\n" + text
     # Preserve every declaration before the first certificate, including imports/settings.
     first = text.index("theorem ")
     comment = text.rfind("/--", 0, first)
@@ -116,22 +116,22 @@ theorem oracle_checked : WordAlloc.oracleColourOk
   kernel_rfl
 
 theorem pass10_eq : WordRemove.removeMustTerminate (WordToWord.wordAllocWith RegAlloc.regAllocExecutable {shared} riscvConfig 3 (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length)) pass8 oracle) = pass10 := by
-  rw [InitE.WordStages.wordAllocWith_of_oracle RegAlloc.regAllocExecutable {shared} 3
+  rw [InitECandidate.Proofs.WordStages.wordAllocWith_of_oracle RegAlloc.regAllocExecutable {shared} 3
     (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length)) riscvConfig pass8 pass10 oracle
     oracle_checked]
   kernel_rfl
 #print axioms pass10_eq
-end InitE.SmallStages.Compact{shared}
+end InitECandidate.Proofs.SmallStages.Compact{shared}
 """
     pass_file.write_text(text)
-    optimize = ROOT / f"InitE/WordStages/Optimize{label}.lean"
+    optimize = ROOT / f"submission/InitECandidate/Proofs/WordStages/Optimize{label}.lean"
     text = optimize.read_text()
-    imp = f"import InitE.SmallStages.Compact{shared}.Complete\n"
+    imp = f"import InitECandidate.Proofs.SmallStages.Compact{shared}.Complete\n"
     if imp not in text:
         text = imp + text
     start = text.index(" := by\n", text.index(f"theorem optimize{label}_eq")) + len(" := by\n")
     end = text.index(f"#print axioms optimize{label}_eq", start)
-    optimize.write_text(text[:start] + f"  exact InitE.SmallStages.Compact{shared}.optimize_shared {label}\n" + text[end:])
+    optimize.write_text(text[:start] + f"  exact InitECandidate.Proofs.SmallStages.Compact{shared}.optimize_shared {label}\n" + text[end:])
     print(f"Prepared checked-proof reuse for {label}/{shared}")
 
 if __name__ == "__main__":

@@ -4,8 +4,8 @@ import Lean
 checked by the kernel. Import the tactic in every generated proof module. -/
 def writeCompactCertificate (path : System.FilePath) (contents : String) : IO Unit :=
   IO.FS.writeFile path
-    (if contents.contains "kernel_rfl" then "import InitE.CompactComputation\n" ++
-      (if contents.contains "Flapjack.WordAlloc.joinIte" then "import InitE.DeadBranchComputation\n" else "") ++
-      (if contents.contains "InitE.SmallSsaKernelComputation.fullSsaStructural_eq" then "import InitE.SmallSsaKernelComputation\n" else "") ++
-      (if contents.contains "InitE.CompilerStages.fullCompile_expanded" then "import InitE.CompilerStages\n" else "") ++
+    (if contents.contains "kernel_rfl" then "import InitECandidate.Proofs.CompactComputation\n" ++
+      (if contents.contains "Flapjack.WordAlloc.joinIte" then "import InitECandidate.Proofs.DeadBranchComputation\n" else "") ++
+      (if contents.contains "InitECandidate.Proofs.SmallSsaKernelComputation.fullSsaStructural_eq" then "import InitECandidate.Proofs.SmallSsaKernelComputation\n" else "") ++
+      (if contents.contains "InitECandidate.Proofs.CompilerStages.fullCompile_expanded" then "import InitECandidate.Proofs.CompilerStages\n" else "") ++
       contents else contents)

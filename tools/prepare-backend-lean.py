@@ -13,6 +13,8 @@ while held is None:
 env=os.environ.copy();env.update(json.loads((work/"lean-env.json").read_text()));env["LAKE_ARTIFACT_CACHE"]="false"
 os.sched_setaffinity(0, set(range(12)))
 args=sys.argv[1:]
+if any(arg.endswith(".lean") and pathlib.Path(arg).resolve().is_relative_to(root / "submission") for arg in args):
+ args=["-R",str(root / "submission"),*args]
 try:result=subprocess.run([(work/"lean-compiler.txt").read_text().strip(),*args],cwd=root,env=env,timeout=600)
 except subprocess.TimeoutExpired:raise SystemExit(124)
 raise SystemExit(result.returncode)

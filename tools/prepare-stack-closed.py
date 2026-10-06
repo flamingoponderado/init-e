@@ -1,6 +1,6 @@
 from pathlib import Path
 nums=range(64,890)
-text="".join(f"import InitE.StackAnalysis.RankFacts{g}\n" for g in range(26))+"import InitE.StackAnalysis.Aggregate\nset_option maxRecDepth 1000000\nset_option maxHeartbeats 0\nset_option cbv.maxSteps 1000000000\nset_option cbv.warning false\nset_option Elab.async false\nnamespace InitE.StackAnalysis\nopen Flapjack Flapjack.Compiler.Backend\n"
+text="".join(f"import InitECandidate.Proofs.StackAnalysis.RankFacts{g}\n" for g in range(26))+"import InitECandidate.Proofs.StackAnalysis.Aggregate\nset_option maxRecDepth 1000000\nset_option maxHeartbeats 0\nset_option cbv.maxSteps 1000000000\nset_option cbv.warning false\nset_option Elab.async false\nnamespace InitECandidate.Proofs.StackAnalysis\nopen Flapjack Flapjack.Compiler.Backend\n"
 text+="theorem frameMap_eq : sptFromAList frameEntries = certificateFrames := by cbv\n"
 text+="theorem domains_eq :\n  sptMap (fun (_ : Nat × WordLangProgHOL (BitVec 64)) => PUnit.unit) (sptFromAList slimEntries) =\n  sptMap (fun (_ : Nat) => PUnit.unit) certificateFrames := by\n  rw [sptMap_sptFromAList]\n  cbv\n"
 text+="theorem frames_small : allSmall certificateFrames = true := by cbv\n"
@@ -23,6 +23,6 @@ theorem depth_bounded : bounded (StackDepthComputation.depthOfWordOutputs output
   have entryLocation : BvlToBvi.initGlobalsLocation = 64 := by cbv
   simpa only [rank_entry, entryLocation] using bound
 #print axioms depth_bounded
-end InitE.StackAnalysis
+end InitECandidate.Proofs.StackAnalysis
 """
-Path("InitE/StackAnalysis/Closed.lean").write_text(text)
+Path("submission/InitECandidate/Proofs/StackAnalysis/Closed.lean").write_text(text)

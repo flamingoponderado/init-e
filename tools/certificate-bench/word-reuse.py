@@ -69,11 +69,11 @@ def main():
         env = os.environ.copy()
         env["LEAN_PATH"] = str(directory) + ":" + str(exporter / "lib/lean") + ":" + base_path
         environments[mode] = env
-        modules = [] if mode == "before" else ["InitE/WordStages/OracleReuse"]
+        modules = [] if mode == "before" else ["submission/InitECandidate/Proofs/WordStages/OracleReuse"]
         for first, shared in PAIRS:
-            modules += [f"InitE/SmallStages/Compact{shared}/Pass10", f"InitE/SmallStages/Compact{shared}/Complete",
-                        f"InitE/SmallStages/Compact{shared}/Exact", f"InitE/WordStages/Optimize{shared}",
-                        f"InitE/WordStages/Optimize{first}"]
+            modules += [f"submission/InitECandidate/Proofs/SmallStages/Compact{shared}/Pass10", f"submission/InitECandidate/Proofs/SmallStages/Compact{shared}/Complete",
+                        f"submission/InitECandidate/Proofs/SmallStages/Compact{shared}/Exact", f"submission/InitECandidate/Proofs/WordStages/Optimize{shared}",
+                        f"submission/InitECandidate/Proofs/WordStages/Optimize{first}"]
         for module in modules:
             file = module + ".lean"
             text = subprocess.check_output(["git", "show", args.base_revision + ":" + file], text=True) if mode == "before" else (ROOT / file).read_text()
@@ -84,13 +84,13 @@ def main():
                 out / (mode + "-" + module.replace("/", "-") + ".build.log"))
         for first, shared in PAIRS:
             case = f"Pair{first}"
-            template = (ROOT / f"InitE/WordStages/Optimize{first}.lean").read_text()
+            template = (ROOT / f"submission/InitECandidate/Proofs/WordStages/Optimize{first}.lean").read_text()
             goal = template.split(f"theorem optimize{first}_eq :", 1)[1].split(" := by", 1)[0]
             other = goal.replace(f"source{first}", f"source{shared}").replace(f"oracle{first}", f"oracle{shared}").replace(f"optimized{first}", f"optimized{shared}")
             source = directory / (case + ".lean")
-            source.write_text(f"import InitE.WordStages.Optimize{first}\nimport InitE.WordStages.Optimize{shared}\n"
+            source.write_text(f"import InitECandidate.Proofs.WordStages.Optimize{first}\nimport InitECandidate.Proofs.WordStages.Optimize{shared}\n"
                 "set_option maxRecDepth 1000000\nset_option maxHeartbeats 0\n"
-                "open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target InitE.WordStages\n"
+                "open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target InitECandidate.Proofs.WordStages\n"
                 f"theorem certificate : ({goal}) ∧ ({other}) := ⟨optimize{first}_eq, optimize{shared}_eq⟩\n#print axioms certificate\n")
             run(mode + case, "build", [lean, "-j1", "-o", str(source.with_suffix(".olean")), str(source)], env, directory / (case + ".build.log"))
             run(mode + case, "export", [str(exporter / "bin/lean4export"), case, "--", "certificate"], env, directory / (case + ".export.jsonl"))

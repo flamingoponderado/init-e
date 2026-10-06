@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Run Lake (or an entire verifier command) with project-local Lean admission locks.
 
-Example: python3 tools/limited-lake.py --slots 16 -- lake build InitE.WordBackend.FunctionsFacts
+Example: python3 tools/limited-lake.py --slots 16 -- lake build InitECandidate.Proofs.WordBackend.FunctionsFacts
 The installed toolchain is read only. This controls external Lean processes, not
 proof evaluation, trust levels, or native proposals. Child Lake phases that retain
 the launcher environment share its locks. Verifiers that sanitize environments

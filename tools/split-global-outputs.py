@@ -5,7 +5,7 @@ Run after GenWordStages --frontend-globals. Qualified definitions are preserved.
 from pathlib import Path
 import re
 root = Path(__file__).resolve().parent.parent
-base = root / "InitE/FrontendStages/Globals"
+base = root / "submission/InitECandidate/Proofs/FrontendStages/Globals"
 for path in base.glob("Translate*.lean"):
     index = path.stem.removeprefix("Translate")
     text = path.read_text()
@@ -14,8 +14,8 @@ for path in base.glob("Translate*.lean"):
         continue
     before, proofs = text.split(marker, 1)
     output = re.sub(r"^import InitE\.FrontendStages\.Globals\.Translate\d+\n", "", before, flags=re.M)
-    (base / f"Output{index}.lean").write_text(output + "end InitE.FrontendStages.Declarations\n")
+    (base / f"Output{index}.lean").write_text(output + "end InitECandidate.Proofs.FrontendStages.Declarations\n")
     prefix = before[:before.index(f"def globalBody{index}_")]
-    prefix = f"import InitE.FrontendStages.Globals.Output{index}\n" + prefix
+    prefix = f"import InitECandidate.Proofs.FrontendStages.Globals.Output{index}\n" + prefix
     path.write_text(prefix + marker + proofs)
 print("Global outputs separated from proof lanes")

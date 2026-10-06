@@ -22,11 +22,11 @@ work.mkdir(parents=True, exist_ok=True)
 labels = list(range(64, 890)) if args.all else args.labels
 prefix = ["rtk", "proxy", "taskset", "-c", "8-11", "timeout", "180", "lake", "env", "lean"]
 def check(label):
-    source = root / f"InitE/BackendStages/Function{label}.lean"
-    output = root / f".lake/build/lib/lean/InitE/BackendStages/Function{label}.olean"
+    source = root / f"submission/InitECandidate/Proofs/BackendStages/Function{label}.lean"
+    output = root / f".lake/build/lib/lean/InitECandidate/Proofs/BackendStages/Function{label}.olean"
     output.parent.mkdir(parents=True, exist_ok=True)
     started = time.monotonic()
-    result = subprocess.run(prefix + ["-o", str(output), str(source)], cwd=root, text=True, capture_output=True)
+    result = subprocess.run(prefix + ["-R", "submission", "-o", str(output), str(source)], cwd=root, text=True, capture_output=True)
     (work / f"Function{label}.check.log").write_text(result.stdout + result.stderr)
     (work / f"Function{label}.check.json").write_text(json.dumps({"label": label, "returncode": result.returncode, "seconds": time.monotonic() - started}))
     print(f"CHECK {label}: {result.returncode}", flush=True)
@@ -36,8 +36,8 @@ offset = args.offset
 for start in range(0, len(labels), args.batch_size):
     batch = labels[start:start + args.batch_size]
     runner = work / f"Generate{batch[0]}_{batch[-1]}.lean"
-    imports = "import Tools.GenBackendStages\n" + "".join(f"import InitE.StackAnalysis.Data{label}\n" for label in batch)
-    calls = "".join(f"  offset ← liftM (InitE.BackendGenerator.generate env {label} InitE.StackAnalysis.optimized{label} offset)\n" for label in batch)
+    imports = "import Tools.GenBackendStages\n" + "".join(f"import InitECandidate.Proofs.StackAnalysis.Data{label}\n" for label in batch)
+    calls = "".join(f"  offset ← liftM (InitE.BackendGenerator.generate env {label} InitECandidate.Proofs.StackAnalysis.optimized{label} offset)\n" for label in batch)
     runner.write_text(imports + f"run_meta do\n  let env ← Lean.getEnv\n  let mut offset := {offset}\n" + calls + '  pure ()\n')
     result = subprocess.run(prefix + [str(runner)], cwd=root, text=True, capture_output=True)
     (work / f"Generate{batch[0]}_{batch[-1]}.log").write_text(result.stdout + result.stderr)

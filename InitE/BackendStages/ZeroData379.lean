@@ -1,4 +1,0 @@
-import Flapjack.Misc.Sptree
-namespace InitE.BackendStages.ZeroData
-def keys379 : List Nat := [101, 5, 5, 117, 5, 142, 5, 101, 5, 5]
-end InitE.BackendStages.ZeroData

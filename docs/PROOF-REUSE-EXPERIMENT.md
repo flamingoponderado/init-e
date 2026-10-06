@@ -196,7 +196,7 @@ word bodies and proofs agree at baseline revisions `b2d063a22` and `7704dcf16`.
 
 ## Complete outside integration check
 
-`lake build InitE Submission InitE.Audit` passed all **53,269 jobs** with the
+`lake build InitE Submission InitECandidate.Proofs.Audit` passed all **53,269 jobs** with the
 retained production changes. The cache-disabled retry took **581.617 seconds
 (9 min 42 s)** with 16 Lean admission slots and a one-hour timeout. This reused
 existing common artifacts; it is not a cold-build performance comparison. Both

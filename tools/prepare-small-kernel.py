@@ -11,16 +11,16 @@ parser.add_argument("--seconds", type=int, default=120)
 args = parser.parse_args()
 root = Path(__file__).resolve().parents[1]
 logs = root / "work/lean-perf/small-optimizer"
-output = root / f".lake/build/lib/lean/InitE/SmallStages/KernelPass{args.label}"
+output = root / f".lake/build/lib/lean/InitECandidate/Proofs/SmallStages/KernelPass{args.label}"
 output.mkdir(parents=True, exist_ok=True)
 
 def check(index):
     name = f"kernel-pass{args.label}-{index}"
     with (logs / f"{name}.log").open("w") as log, (logs / f"{name}.time").open("w") as timing:
         command = ["rtk", "proxy", "/usr/bin/time", "-v", "timeout", "--kill-after=5s",
-            f"{args.seconds}s", "taskset", "-c", "0-3", "lake", "env", "lean", "-o",
+            f"{args.seconds}s", "taskset", "-c", "0-3", "lake", "env", "lean", "-R", "submission", "-o",
             str(output / f"Pass{index}.olean"),
-            f"InitE/SmallStages/KernelPass{args.label}/Pass{index}.lean"]
+            f"submission/InitECandidate/Proofs/SmallStages/KernelPass{args.label}/Pass{index}.lean"]
         result = subprocess.run(command, cwd=root, stdout=log, stderr=timing)
     print(f"Pass {index}: exit {result.returncode}", flush=True)
     return result.returncode

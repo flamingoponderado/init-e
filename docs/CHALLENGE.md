@@ -35,7 +35,7 @@ comments only. Compiler code, theorem statements, source/target semantics,
 and dependency/toolchain versions are unchanged. The literal baseline and
 its recorded Spike ELF therefore remain the same artifacts.
 
-Validation: `lake build InitE Submission InitE.Audit` passed, as did the three
+Validation: `lake build InitE Submission InitECandidate.Proofs.Audit` passed, as did the three
 changed Flapjack Lean parity modules and all 10 verifier tests. The trusted
 axiom closure still matches exactly the 49-name manifest. Of 1,068 upstream
 Python tests, 1,066 passed in the Lake checkout; the remaining two inventory
@@ -55,7 +55,7 @@ the submitted byte literals and recorded Spike artifacts remain applicable.
 The earlier isolated verification record retains its original revision.
 
 Validation at the new pin: `tools/build-lean.sh InitE.Challenge
-InitE.MachineWordMemory` passed; all 12 verifier regression tests passed; the
+InitECandidate.Proofs.MachineWordMemory` passed; all 12 verifier regression tests passed; the
 actual Linux isolation probe passed with the new unit settings. The full
 baseline certificate has not yet been rechecked during the ongoing
 standard-axiom conversion. EEST was not rerun for this documentation-only
@@ -213,11 +213,11 @@ required.
 Compiler correctness permits resource-limit termination unless its precision
 flag holds. The baseline proves a finite compiler stack depth of at most
 **7,480 words (59,840 bytes)** from the fixed program's acyclic call graph and
-checked frame sizes. `InitE/StackAnalysis/Closed.lean` certifies the independent
-optimized literals, and `InitE/SourceStackCertificate.lean` links them to the
+checked frame sizes. `submission/InitECandidate/Proofs/StackAnalysis/Closed.lean` certifies the independent
+optimized literals, and `submission/InitECandidate/Proofs/SourceStackCertificate.lean` links them to the
 checked optimizer and the compiler evaluator. This concrete linkage passes
 with the three standard axioms. The measured exact depth of 538 words is only
-diagnostic. `InitE/OracleBaselineCorrectness.lean` proves the strict inequality
+diagnostic. `submission/InitECandidate/Proofs/OracleBaselineCorrectness.lean` proves the strict inequality
 against `readLimits`, including compiler reservation margins, so the baseline
 can remove the resource-limit relaxation.
 
@@ -256,7 +256,7 @@ AST-based, standard-axiom version passes the full outside build and proof
 audit. The disk-spooling retry also passed its cold isolated trusted audit with
 exactly the three standard axioms. That old-pin comparator was stopped at the
 user's request; fresh verification of the ISA-alignment repin remains pending. `lake build` builds the fixed challenge and original submission;
-`lake build InitE.Audit` prints the proof dependencies. The initial certificate
+`lake build InitECandidate.Proofs.Audit` prints the proof dependencies. The initial certificate
 is `InitE.Challenge.certificate` in `submission/Solution.lean`. It has no
 assumed bootstrap execution, installed poststate, stack bound, compiler
 installation or functional-equivalence premise. The claimed score is the
@@ -275,7 +275,7 @@ oracle tests can use a separate `work/execution-specs` checkout.
 The submitted baseline image contains **950,336 bytes**, including the
 208-byte bootstrap, runtime stubs, native code, alignment padding and the
 ROM initializer for compiler data. Its native code contains 904,056 bytes;
-the 4,613 bitmap words contain 36,904 bytes. `InitE/ArtifactFacts.lean` checks
+the 4,613 bitmap words contain 36,904 bytes. `submission/InitECandidate/Proofs/ArtifactFacts.lean` checks
 that the native and bitmap literals equal the pinned compiler's artifact.
 The complete loaded ROM image is charged to the code-size limit.
 
@@ -287,28 +287,28 @@ this count is distinct from the full formal evaluator's clock. The challenge
 supplies zero ordinary RAM and zero integer registers at `0x80000000`.
 The copy includes zero ABI initializer cells; the following stores establish
 the bookkeeping values. Scratch, persistent heap, globals and stack remain
-zero before native execution, as proved in `InitE/BootstrapZeroing.lean`.
+zero before native execution, as proved in `submission/InitECandidate/Proofs/BootstrapZeroing.lean`.
 The complete EEST run was repeated successfully with this zero-RAM startup.
 
 The bootstrap proof checks its actual bytes against Flapjack's verified
 instruction encoder, proves the copy-loop invariant and all tail instruction
 checks, and composes them through the actual target evaluator.
-`InitE.BootstrapTrace.full_evaluator` reaches an installed native-entry state
-without assuming that execution. `InitE/PanInstallation.lean` proves the
+`InitECandidate.Proofs.BootstrapTrace.full_evaluator` reaches an installed native-entry state
+without assuming that execution. `submission/InitECandidate/Proofs/PanInstallation.lean` proves the
 concrete `panInstalled` relation, including source headers, source memory,
 compiler data and bitmap separation.
 
 The static source facts are checked in `InitE/SourceCodeFacts.lean`.
-`InitE/SourceStackCertificate.lean` links the checked optimizer outputs to the
+`submission/InitECandidate/Proofs/SourceStackCertificate.lean` links the checked optimizer outputs to the
 conservative stack certificate; the concrete linkage passes with the three
 standard axioms.
-`InitE/OracleBaselineCorrectness.lean` proves the strict bound against actual
+`submission/InitECandidate/Proofs/OracleBaselineCorrectness.lean` proves the strict bound against actual
 compiler reservation margins.
-`InitE/AllocationFacts.lean` proves that the fixed source's globals are
-allocatable and disjoint from ordinary memory. `InitE/BaselineCorrectness.lean`
+`submission/InitECandidate/Proofs/AllocationFacts.lean` proves that the fixed source's globals are
+allocatable and disjoint from ordinary memory. `submission/InitECandidate/Proofs/BaselineCorrectness.lean`
 uses the general compiler theorem through the validated allocation-tape
-specialization and removes its resource-limit relaxation. `InitE/BaselineArtifact.lean` establishes successful compilation
-and the full artifact. `InitE/FullBaseline.lean` combines compiler correctness
+specialization and removes its resource-limit relaxation. `submission/InitECandidate/Proofs/BaselineArtifact.lean` establishes successful compilation
+and the full artifact. `submission/InitECandidate/Proofs/FullBaseline.lean` combines compiler correctness
 with the proved startup, obtaining finite termination and identical outcomes
 and events for every terminating source execution. `InitE/TargetBudget.lean`
 proves the infinity equivalence using the actual evaluator's Halt witness.
@@ -361,7 +361,7 @@ outside continuation reused earlier stages and is not a cold build.
 
 Large computations use separately checked intermediate definitions and explicit
 equations. Closed compiler-pass computations now submit compact reflexivity
-terms through `InitE.CompactComputation.kernel_rfl`; the kernel computes the
+terms through `InitECandidate.Proofs.CompactComputation.kernel_rfl`; the kernel computes the
 conversion and rejects an incorrect proposed result. Symbolic frontend steps
 and cached checkpoint outputs use shared proved evaluator or equation bridges
 before reflexivity. The Loop shrink/fixed-point evaluator has a structurally
@@ -397,3 +397,26 @@ comparator acceptance with the exact three-name manifest counts as current
 verification. The historical 49-axiom acceptance described above is separate.
 Commands, isolation requirements and the submission format are in
 [SUBMISSIONS.md](SUBMISSIONS.md); `BASELINE.json` records current status.
+
+
+### Challenge and initial-submission proof boundary
+
+The challenge's fixed Pancake AST (`Guest/Ast.lean`), source semantics, memory
+layout, machine environment, observations and certificate statement remain in
+`Guest/` and `InitE/`. Independent facts about the fixed source also remain
+there; they do not import the initial submission.
+
+The initial submission owns its compiler configuration, generated pass
+certificates, compiled stack analysis, image and bitmap facts, bootstrap and
+installation proofs, and compiler-correctness application. These modules live
+under `submission/InitECandidate/Proofs/`. Their module names begin with
+`InitECandidate.Proofs`; existing public theorem names in `InitE` are retained
+where convenient. A declaration's namespace does not make its proof trusted.
+Generation-only label-position CSVs and their notes live in `tools/target-encoding/`;
+generation drivers live in `Tools/InitialSubmissionGenerators/`.
+Neither is part of the submitted proof package. The verifier freezes and audits only the challenge before compiling the
+submission. It no longer freezes a separate baseline bytecode namespace.
+
+Source-package limits are 65,536 filesystem entries, 16 MiB per file and 4 GiB
+overall, to accommodate the initial submission's generated certificates.
+The proved 128 MiB program-size limit is unchanged.

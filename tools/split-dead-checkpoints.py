@@ -34,8 +34,8 @@ parser.add_argument("label", type=int)
 args = parser.parse_args()
 label = args.label
 root = Path(__file__).resolve().parents[1]
-source = root / f"InitE/DeadStages{label}"
-aggregate = (root / f"InitE/DeadStages{label}.lean").read_text()
+source = root / f"submission/InitECandidate/Proofs/DeadStages{label}"
+aggregate = (root / f"submission/InitECandidate/Proofs/DeadStages{label}.lean").read_text()
 last = max(int(x) for x in re.findall(rf"import InitE\.DeadStages{label}\.Chunk(\d+)", aggregate))
 chunks = [source / f"Chunk{i:03}.lean" for i in range(last + 1)]
 pattern = re.compile(r"theorem node(\d+)_eq : (.*?) := by\n(.*?)(?=\n\n|\n#print|\nend)", re.S)
@@ -44,7 +44,7 @@ for chunk in chunks:
     for match in pattern.finditer(chunk.read_text()):
         types[match[1]] = match[2]
 
-namespace = f"InitE.DeadStages{label}.Parallel"
+namespace = f"InitECandidate.Proofs.DeadStages{label}.Parallel"
 base = source / "Parallel"
 for folder in ("Data", "Conditional", "Compose"):
     (base / folder).mkdir(parents=True, exist_ok=True)
@@ -55,16 +55,16 @@ set_option maxRecDepth 1000000
 set_option maxHeartbeats 0
 set_option cbv.maxSteps 1000000000
 set_option cbv.warning false
-open scoped InitE.CompilerComputation
+open scoped InitECandidate.Proofs.CompilerComputation
 """
 for index, chunk in enumerate(chunks):
     original = compact_dead(chunk.read_text())
     nodes = list(pattern.finditer(original))
-    body = original.split(f"namespace InitE.DeadStages{label}\n", 1)[1]
-    body = body.rsplit(f"end InitE.DeadStages{label}", 1)[0]
+    body = original.split(f"namespace InitECandidate.Proofs.DeadStages{label}\n", 1)[1]
+    body = body.rsplit(f"end InitECandidate.Proofs.DeadStages{label}", 1)[0]
     body = pattern.sub("", body)
     body = re.sub(r"^#print axioms node\d+_eq.*$", "", body, flags=re.M)
-    imports = "import InitE.CompactComputation\nimport InitE.DeadBranchComputation\nimport InitE.ComputationCache\n"
+    imports = "import InitECandidate.Proofs.CompactComputation\nimport InitECandidate.Proofs.DeadBranchComputation\nimport InitECandidate.Proofs.ComputationCache\n"
     if index:
         imports += f"import {namespace}.Data.Chunk{index - 1:03}\n"
     (base / "Data" / f"Chunk{index:03}.lean").write_text(
@@ -91,7 +91,7 @@ for index, chunk in enumerate(chunks):
     composed += [f"#print axioms node{nodes[-1][1]}_eq", f"end {namespace}"]
     (base / "Conditional" / f"Chunk{index:03}.lean").write_text("\n".join(conditional) + "\n")
     (base / "Compose" / f"Chunk{index:03}.lean").write_text("\n".join(composed) + "\n")
-(root / f"InitE/DeadStages{label}/Parallel.lean").write_text(
+(root / f"submission/InitECandidate/Proofs/DeadStages{label}/Parallel.lean").write_text(
     f"import {namespace}.Compose.Chunk{last:03}\n\n"
     f"#print axioms {namespace}.node{max(types, key=int)}_eq\n"
 )

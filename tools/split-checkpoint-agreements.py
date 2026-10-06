@@ -14,9 +14,9 @@ parser.add_argument("--parallel-cache", action="store_true")
 args = parser.parse_args()
 label = args.label
 root = Path(__file__).resolve().parents[1]
-cache_namespace = f"InitE.DeadStages{label}" + (".Parallel.Data" if args.parallel_cache else "")
-value_namespace = f"InitE.DeadStages{label}" + (".Parallel" if args.parallel_cache else "")
-agreement_namespace = f"InitE.WordStages.Parallel{label}." + ("AgreementsParallel" if args.parallel_cache else "Agreements")
+cache_namespace = f"InitECandidate.Proofs.DeadStages{label}" + (".Parallel.Data" if args.parallel_cache else "")
+value_namespace = f"InitECandidate.Proofs.DeadStages{label}" + (".Parallel" if args.parallel_cache else "")
+agreement_namespace = f"InitECandidate.Proofs.WordStages.Parallel{label}." + ("AgreementsParallel" if args.parallel_cache else "Agreements")
 cache = root / Path(*cache_namespace.split("."))
 output = root / Path(*agreement_namespace.split("."))
 output.mkdir(parents=True, exist_ok=True)
@@ -50,7 +50,7 @@ groups = [[name for name in nodes if name in needed] for nodes in groups]
 ref_pattern = rf"\b(?:word{label}_[23]_\d+|(?:input|output)\d+)\b"
 matched = {}
 for stage, kind in [(2, "input"), (3, "output")]:
-    text = (root / f"InitE/WordStages/Parallel{label}/Data{stage}.lean").read_text()
+    text = (root / f"submission/InitECandidate/Proofs/WordStages/Parallel{label}/Data{stage}.lean").read_text()
     dense = dict(re.findall(
         rf"def (word{label}_\d+_\d+) : WordLangProgHOL \(BitVec 64\) :=\n(.*?)(?=\n\ndef |\n\ndef pass)",
         text, re.S
@@ -88,8 +88,8 @@ for stage, kind in [(2, "input"), (3, "output")]:
             matched[name] = candidates[key]
 
 for index, nodes in enumerate(groups):
-    lines = [f"import InitE.WordStages.Parallel{label}.Data2",
-             f"import InitE.WordStages.Parallel{label}.Data3",
+    lines = [f"import InitECandidate.Proofs.WordStages.Parallel{label}.Data2",
+             f"import InitECandidate.Proofs.WordStages.Parallel{label}.Data3",
              f"import {cache_namespace}.Chunk{index:03}"]
     if index:
         lines.append(f"import {agreement_namespace}.Chunk{index - 1:03}")
@@ -99,7 +99,7 @@ for index, nodes in enumerate(groups):
     for name in nodes:
         candidate = matched[name]
         lines += [f"theorem {name}_eq : {value_namespace}.{name} =",
-                  f"    InitE.WordStages.Parallel{label}.{candidate} := by",
+                  f"    InitECandidate.Proofs.WordStages.Parallel{label}.{candidate} := by",
                   f"  rw [{value_namespace}.{name}_def]"]
         children = list(dict.fromkeys(re.findall(r"\b(?:input|output)\d+\b", raw[name])))
         if children:

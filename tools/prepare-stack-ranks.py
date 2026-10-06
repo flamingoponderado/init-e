@@ -36,13 +36,13 @@ def tree(values):
  t=None
  for k,v in reversed(list(values.items())):t=insert(t,k,v)
  return lit(t)
-root=Path("InitE/StackAnalysis")
-(root/"RankData.lean").write_text("import InitE.StackAnalysis.RankedBound\nnamespace InitE.StackAnalysis\nopen Flapjack\ndef rankTree : Spt Nat := "+tree(ranks)+"\ndef certificateFrames : Spt Nat := "+tree(frames)+"\ndef callRank (i : Nat) : Nat := (sptLookup i rankTree).getD 0\ndef present (i : Nat) : Bool := (sptLookup i certificateFrames).isSome\nend InitE.StackAnalysis\n")
+root=Path("submission/InitECandidate/Proofs/StackAnalysis")
+(root/"RankData.lean").write_text("import InitECandidate.Proofs.StackAnalysis.RankedBound\nnamespace InitECandidate.Proofs.StackAnalysis\nopen Flapjack\ndef rankTree : Spt Nat := "+tree(ranks)+"\ndef certificateFrames : Spt Nat := "+tree(frames)+"\ndef callRank (i : Nat) : Nat := (sptLookup i rankTree).getD 0\ndef present (i : Nat) : Bool := (sptLookup i certificateFrames).isSome\nend InitECandidate.Proofs.StackAnalysis\n")
 nums=sorted(frames)
 for group,start in enumerate(range(0,len(nums),32)):
  selected=nums[start:start+32]
- text="".join(f"import InitE.StackAnalysis.Facts{i}\n" for i in selected)+"import InitE.StackAnalysis.RankData\nimport Lean\nset_option maxRecDepth 1000000\nset_option maxHeartbeats 0\nset_option cbv.maxSteps 1000000000\nset_option cbv.warning false\nset_option Elab.async false\nnamespace InitE.StackAnalysis\n"
+ text="".join(f"import InitECandidate.Proofs.StackAnalysis.Facts{i}\n" for i in selected)+"import InitECandidate.Proofs.StackAnalysis.RankData\nimport Lean\nset_option maxRecDepth 1000000\nset_option maxHeartbeats 0\nset_option cbv.maxSteps 1000000000\nset_option cbv.warning false\nset_option Elab.async false\nnamespace InitECandidate.Proofs.StackAnalysis\n"
  for i in selected:text+=f"theorem ranked{i} : ranked callRank present {i} slim{i} = true := by cbv\n"
- text+=f"#print axioms ranked{selected[-1]}\nend InitE.StackAnalysis\n"
+ text+=f"#print axioms ranked{selected[-1]}\nend InitECandidate.Proofs.StackAnalysis\n"
  (root/f"RankFacts{group}.lean").write_text(text)
 print("ranks",max(ranks.values()),ranks[64],"frames",max(frames.values()))

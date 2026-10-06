@@ -19,13 +19,13 @@ os.environ["LAKE_ARTIFACT_CACHE"] = "false"
 root = pathlib.Path(__file__).resolve().parents[1]
 work = root / "work/lean-perf/backend-stages"
 labels = list(range(64,890)) if args.all else args.labels
-labels = [n for n in labels if not ((work/f"Section{n}.check.json").exists() and json.loads((work/f"Section{n}.check.json").read_text())["returncode"] == 0 and (root/f".lake/build/lib/lean/InitE/BackendStages/Section{n}.olean").exists())]
+labels = [n for n in labels if not ((work/f"Section{n}.check.json").exists() and json.loads((work/f"Section{n}.check.json").read_text())["returncode"] == 0 and (root/f".lake/build/lib/lean/InitECandidate/Proofs/BackendStages/Section{n}.olean").exists())]
 prefix = ["rtk","proxy","python3",str(root/"tools/prepare-backend-lean.py")]
 def check(n):
     started = time.monotonic()
-    source = root / f"InitE/BackendStages/Section{n}.lean"
-    output = root / f".lake/build/lib/lean/InitE/BackendStages/Section{n}.olean"
-    result = subprocess.run(["rtk","proxy","/usr/bin/time","-v","-o",str(work/f"Section{n}.timing.log")]+prefix[2:]+["-o",str(output),str(source)],cwd=root,text=True,capture_output=True)
+    source = root / f"submission/InitECandidate/Proofs/BackendStages/Section{n}.lean"
+    output = root / f".lake/build/lib/lean/InitECandidate/Proofs/BackendStages/Section{n}.olean"
+    result = subprocess.run(["rtk","proxy","/usr/bin/time","-v","-o",str(work/f"Section{n}.timing.log")]+prefix[2:]+["-R","submission","-o",str(output),str(source)],cwd=root,text=True,capture_output=True)
     seconds = time.monotonic()-started
     (work/f"Section{n}.check.log").write_text(result.stdout+result.stderr)
     (work/f"Section{n}.check.json").write_text(json.dumps({"label":n,"returncode":result.returncode,"seconds":seconds}))
@@ -35,10 +35,10 @@ failures = []
 for start in range(0,len(labels),args.batch_size):
     batch = labels[start:start+args.batch_size]
     for n in batch:
-        while not (root/f".lake/build/lib/lean/InitE/BackendStages/Named{n}.olean").exists(): time.sleep(1)
+        while not (root/f".lake/build/lib/lean/InitECandidate/Proofs/BackendStages/Named{n}.olean").exists(): time.sleep(1)
     runner = work/f"GenerateSection{batch[0]}_{batch[-1]}.lean"
-    imports = "import Tools.GenBackendStages\n" + "".join(f"import InitE.BackendStages.Named{n}\n" for n in batch)
-    calls = "".join(f"  liftM (InitE.BackendGenerator.generateSection env {n} InitE.BackendStages.Named{n})\n" for n in batch)
+    imports = "import Tools.GenBackendStages\n" + "".join(f"import InitECandidate.Proofs.BackendStages.Named{n}\n" for n in batch)
+    calls = "".join(f"  liftM (InitE.BackendGenerator.generateSection env {n} InitECandidate.Proofs.BackendStages.Named{n})\n" for n in batch)
     runner.write_text(imports+"run_meta do\n  let env ← Lean.getEnv\n"+calls)
     result = subprocess.run(prefix+[str(runner)],cwd=root,text=True,capture_output=True)
     (work/f"GenerateSection{batch[0]}_{batch[-1]}.log").write_text(result.stdout+result.stderr)

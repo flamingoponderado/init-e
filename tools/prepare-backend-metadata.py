@@ -36,7 +36,7 @@ def run_bounded(command,log):
 
 def check(module):
     name=module.rsplit('.',1)[-1]
-    source=root/(module.replace('.','/')+'.lean')
+    source=root/("submission" if module.startswith("InitECandidate.") else ".")/(module.replace('.','/')+'.lean')
     output=root/'.lake/build/lib/lean'/(module.replace('.','/')+'.olean')
     output.parent.mkdir(parents=True,exist_ok=True)
     state=work/(name+'.json')
@@ -49,14 +49,14 @@ def check(module):
     if output.exists() and state.exists() and json.loads(state.read_text()).get('returncode')==0 and output.stat().st_mtime_ns>=max(p.stat().st_mtime_ns for p in dependencies):return 0
     start=time.monotonic()
     with (work/(name+'.log')).open('w') as log:
-        code=run_bounded(['taskset','-c','12-15','/usr/bin/time','-v','-o',str(work/(name+'.time')),compiler,'-o',str(output),str(source)],log)
+        code=run_bounded(['taskset','-c','12-15','/usr/bin/time','-v','-o',str(work/(name+'.time')),compiler,'-R','submission','-o',str(output),str(source)],log)
     (work/(name+'.json')).write_text(json.dumps({'returncode':code,'wall_seconds':time.monotonic()-start}))
     print(name,code,round(time.monotonic()-start,2),flush=True)
     return code
 if a.generate:
     if check('Tools.GenBackendMetadata'):raise SystemExit(1)
     driver=work/'Generate.lean'
-    driver.write_text('import Tools.GenBackendMetadata\nimport InitE.BackendStages.Native\nset_option autoImplicit false\nrun_elab do\n  let env ← Lean.getEnv\n  liftM <| InitE.BackendMetadataGenerator.prepare env InitE.BackendStages.Native.stack\n')
+    driver.write_text('import Tools.GenBackendMetadata\nimport InitECandidate.Proofs.BackendStages.Native\nset_option autoImplicit false\nrun_elab do\n  let env ← Lean.getEnv\n  liftM <| InitE.BackendMetadataGenerator.prepare env InitECandidate.Proofs.BackendStages.Native.stack\n')
     with (work/'generate.log').open('w') as log:
         subprocess.run(['taskset','-c','12-15',compiler,str(driver)],cwd=root,env=env,stdout=log,stderr=subprocess.STDOUT,timeout=a.timeout,check=True)
 elif a.modules:
@@ -64,14 +64,14 @@ elif a.modules:
         results=list(pool.map(check,a.modules))
     if any(results):raise SystemExit(1)
 else:
-    data=root/'InitE/BackendStages/Metadata'
+    data=root/'submission/InitECandidate/Proofs/BackendStages/Metadata'
     labels=a.labels if a.labels else sorted(int(p.stem[4:]) for p in data.glob('Data*.lean'))
     def check_section(n):
-        if check(f'InitE.BackendStages.Metadata.Data{n}'):return 1
+        if check(f'InitECandidate.Proofs.BackendStages.Metadata.Data{n}'):return 1
         results=[]
         for stage,dependency in [('Ffi','Filtered'),('Shmem','Padded')]:
-            if (root/f'.lake/build/lib/lean/InitE/BackendStages/{dependency}{n}.olean').exists():
-                results.append(check(f'InitE.BackendStages.Metadata.{stage}{n}'))
+            if (root/f'.lake/build/lib/lean/InitECandidate/Proofs/BackendStages/{dependency}{n}.olean').exists():
+                results.append(check(f'InitECandidate.Proofs.BackendStages.Metadata.{stage}{n}'))
         return int(any(results))
     started=time.monotonic()
     while True:

@@ -11,13 +11,13 @@ args=parser.parse_args()
 root=pathlib.Path(__file__).resolve().parents[1]
 work=root/"work/lean-perf/backend-stages"
 labels=list(range(64,890)) if args.all else args.labels
-labels=[n for n in labels if not ((work/f"{args.stage}{n}.check.json").exists() and json.loads((work/f"{args.stage}{n}.check.json").read_text())["returncode"] == 0 and (root/f".lake/build/lib/lean/InitE/BackendStages/{args.stage}{n}.olean").exists())]
+labels=[n for n in labels if not ((work/f"{args.stage}{n}.check.json").exists() and json.loads((work/f"{args.stage}{n}.check.json").read_text())["returncode"] == 0 and (root/f".lake/build/lib/lean/InitECandidate/Proofs/BackendStages/{args.stage}{n}.olean").exists())]
 prefix=["rtk","proxy","python3",str(root/"tools/prepare-backend-lean.py")]
 env=dict(os.environ,LAKE_ARTIFACT_CACHE="false")
 def check(n):
  name=f"{args.stage}{n}"
  started=time.monotonic()
- result=subprocess.run(["rtk","proxy","/usr/bin/time","-v","-o",str(work/f"{name}.timing.log")]+prefix[2:]+["-o",str(root/f".lake/build/lib/lean/InitE/BackendStages/{name}.olean"),str(root/f"InitE/BackendStages/{name}.lean")],cwd=root,env=env,text=True,capture_output=True)
+ result=subprocess.run(["rtk","proxy","/usr/bin/time","-v","-o",str(work/f"{name}.timing.log")]+prefix[2:]+["-R","submission","-o",str(root/f".lake/build/lib/lean/InitECandidate/Proofs/BackendStages/{name}.olean"),str(root/f"submission/InitECandidate/Proofs/BackendStages/{name}.lean")],cwd=root,env=env,text=True,capture_output=True)
  seconds=time.monotonic()-started
  (work/f"{name}.check.log").write_text(result.stdout+result.stderr)
  (work/f"{name}.check.json").write_text(json.dumps(dict(label=n,returncode=result.returncode,seconds=seconds)))
@@ -28,9 +28,9 @@ for start in range(0,len(labels),16):
  batch=labels[start:start+16]
  previous={"Alloc":"Raw", "Removed":"Alloc", "Named":"Removed"}[args.stage]
  for n in batch:
-  while not (root/f".lake/build/lib/lean/InitE/BackendStages/{previous}{n}.olean").exists():
+  while not (root/f".lake/build/lib/lean/InitECandidate/Proofs/BackendStages/{previous}{n}.olean").exists():
    time.sleep(1)
- imports="import Tools.GenBackendStages\n"+"".join(f"import InitE.BackendStages.{previous}{n}\n" for n in batch)
+ imports="import Tools.GenBackendStages\n"+"".join(f"import InitECandidate.Proofs.BackendStages.{previous}{n}\n" for n in batch)
  calls=[]
  for n in batch:
   if args.stage=="Alloc":
@@ -39,7 +39,7 @@ for start in range(0,len(labels),16):
    expression=f"StackRemove.progComp false riscvConfig.addrOffset (riscvConfig.regCount - (riscvConfig.avoidRegs.length + 3)) Alloc{n}"
   else:
    expression=f"StackNames.progCompEntryHOL RiscVConfig.riscvNames Removed{n}"
-  calls.append(f'  liftM (InitE.BackendGenerator.generateLowerFunction env {n} "{args.stage}" "import InitE.BackendStages.{previous}{n}" "{expression}" ({expression.replace(" Alloc", " InitE.BackendStages.Alloc").replace(", raw", ", InitE.BackendStages.raw").replace(" Removed", " InitE.BackendStages.Removed")}))\n')
+  calls.append(f'  liftM (InitE.BackendGenerator.generateLowerFunction env {n} "{args.stage}" "import InitECandidate.Proofs.BackendStages.{previous}{n}" "{expression}" ({expression.replace(" Alloc", " InitECandidate.Proofs.BackendStages.Alloc").replace(", raw", ", InitECandidate.Proofs.BackendStages.raw").replace(" Removed", " InitECandidate.Proofs.BackendStages.Removed")}))\n')
  runner=work/f"Generate{args.stage}{batch[0]}_{batch[-1]}.lean"
  runner.write_text(imports+"open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target\nrun_meta do\n  let env ← Lean.getEnv\n"+"".join(calls))
  result=subprocess.run(prefix+[str(runner)],cwd=root,env=env,text=True,capture_output=True)

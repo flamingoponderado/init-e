@@ -7,7 +7,7 @@ limit the number of compiler environments loaded into memory.
 Run the build with the project-local limiter:
 
 ```sh
-rtk proxy timeout --kill-after=5s 1200s taskset -c 0-15 python3 tools/limited-lake.py --slots 16 -- lake build InitE.WordBackend.FunctionsFacts
+rtk proxy timeout --kill-after=5s 1200s taskset -c 0-15 python3 tools/limited-lake.py --slots 16 -- lake build InitECandidate.Proofs.WordBackend.FunctionsFacts
 ```
 
 The default is 16 slots; `--slots` accepts 1–16. Each small C launcher acquires a
@@ -47,7 +47,7 @@ the cold verifier rebuild runs. Smoke checks alone do not establish acceptance.
 For a local full build with the verifier's memory, CPU and compiler-slot caps:
 
 ```sh
-tools/build-lean.sh --constrained InitE Submission InitE.Audit
+tools/build-lean.sh --constrained InitE Submission InitECandidate.Proofs.Audit
 ```
 
 This uses 112 GiB with zero swap, at most 16 logical CPUs and 16 active Lean

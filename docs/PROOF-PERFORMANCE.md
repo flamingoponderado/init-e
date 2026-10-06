@@ -3,13 +3,13 @@
 Run from `init-e` after building the helper modules:
 
 ```sh
-lake build InitE.KernelComputation InitE.MetadataComputation InitE.NameComputation InitE.CompilerComputation
+lake build InitECandidate.Proofs.KernelComputation InitE.MetadataComputation InitE.NameComputation InitECandidate.Proofs.CompilerComputation
 python3 tools/bench-lean-computation.py --family utf8 --sizes 256 1024 4096 16384 --timeout 30
 python3 tools/bench-lean-computation.py --family lexer --sizes 1 4 16 --timeout 20
 python3 tools/bench-lean-computation.py --family parser --sizes 1 4 16 --timeout 30
 python3 tools/bench-lean-computation.py --family metadata --sizes 8 32 128 --depth 128 --timeout 30
 python3 tools/bench-lean-computation.py --family distinct --sizes 64 128 256 --depth 0 --timeout 30
-python3 tools/bench-lean-computation.py --family compiler --sizes 1 4 16 --timeout 60 --setup .lake/build/ir/InitE/ArtifactFacts.setup.json
+python3 tools/bench-lean-computation.py --family compiler --sizes 1 4 16 --timeout 60 --setup .lake/build/ir/InitECandidate/Proofs/ArtifactFacts.setup.json
 ```
 
 The runner writes the generated Lean fixtures, logs, timings and incremental
@@ -38,11 +38,11 @@ Measured on 2026-10-05, Lean 4.33.1 and Flapjack
 Both successful variants report exactly `propext` and `Quot.sound`.
 Retained raw results: `work/lean-perf/scaled-utf8-direct/results.json`.
 
-`InitE.KernelComputation.byteArray_toList` proves equivalence between the
+`InitECandidate.Proofs.KernelComputation.byteArray_toList` proves equivalence between the
 byte-array loop and its underlying array's list. The scoped simplifier proposes
 a byte-list literal and returns that proved equality. Native computation only
 constructs the proposed term; the kernel checks its relationship to the source
-string. Enable the rule with `open scoped InitE.KernelComputation`.
+string. Enable the rule with `open scoped InitECandidate.Proofs.KernelComputation`.
 ASCII and multibyte UTF-8 probes have also passed. This targets byte conversion,
 not the whole parser or compiler.
 
@@ -86,7 +86,7 @@ allocator produces successful kernel-checked proofs:
 | 64 | 44.98 s | 8,475 MiB |
 
 All passing proofs report only the three standard axioms. The helper is scoped
-as `InitE.CompilerComputation`; it changes proof evaluation, not the compiler's
+as `InitECandidate.Proofs.CompilerComputation`; it changes proof evaluation, not the compiler's
 output. Two identical proofs took 40.93 s / 5,947 MiB with asynchronous
 elaboration and 39.94 s / 5,785 MiB with serial elaboration, so this fixture
 shows no large concurrency effect within one module. The full source and
@@ -160,7 +160,7 @@ Splitting function 64 at pass boundaries isolated dead-code elimination: its
 first three pass proofs completed in 5.5, 3.2, and 5.4 seconds, while the fourth
 pass did not finish within the remaining four-minute experiment budget.
 A structural-recursion mirror of that pass is proved equal to Flapjack's pass
-in `InitE/DeadComputation.lean`, with only `propext` and `Quot.sound`, but the
+in `submission/InitECandidate/Proofs/DeadComputation.lean`, with only `propext` and `Quot.sound`, but the
 structural-only and sequence-constructor experiments also exceeded their
 120-second and 90-second limits. These are not successful verification results.
 
@@ -179,7 +179,7 @@ still need to pass. Do not run all proposed optimizer modules concurrently: the
 largest unsplit proof already exceeds tens of GiB.
 
 
-The subterm cache now uses `InitE.ComputationCache.boxedValue`: an opaque
+The subterm cache now uses `InitECandidate.Proofs.ComputationCache.boxedValue`: an opaque
 function returning a subtype containing its checked defining equation. Its
 body and equation are kernel checked, and `boxedValue_eq` depends on no axioms.
 This prevents even full-transparency kernel reduction from reopening a cached
@@ -208,7 +208,7 @@ passes and full compiler linkage still need measurement and certification.
 All eleven optimizer pass proofs for function 64 now pass. The remaining
 passes after dead-code removal took 19, 11, 2.0, 3.9, 8.5, 14, and 2.1 seconds.
 The complete `fullCompileSingleWith` theorem is assembled from these equations
-in `InitE/WordStages/Optimize64.lean`; it built in 1.8 seconds (2.62 seconds
+in `submission/InitECandidate/Proofs/WordStages/Optimize64.lean`; it built in 1.8 seconds (2.62 seconds
 including Lake), with the exact three standard axioms. The older single
 computation of the same theorem did not finish in four minutes. These module
 timings use already-built dependencies and do not claim a cold whole-project
@@ -373,7 +373,7 @@ Lake otherwise restores offline artifacts even into a fresh build directory;
 the 0.92-second cache-control run is not a cold build. The actual cold-root
 benchmark log is `work/lean-perf/word-stages/optimize713-cold-build.log`; its
 final result passed in **14:05.37**. The build recompiled the entire root-module
-dependency closure of `InitE.WordStages.Optimize713`, with 16 logical CPUs
+dependency closure of `InitECandidate.Proofs.WordStages.Optimize713`, with 16 logical CPUs
 and offline artifact restoration disabled. User CPU time was 3325.01s, system
 time 100.23s, and peak single-process RSS 28,986,804 KiB. The largest CSE
 proof took 633s, SSA 259s, allocation 294s, and the complete optimization
@@ -580,7 +580,7 @@ The full stage and the complete verifier remain pending.
 ### Complete exact frontend certified
 
 All 826 Loop-to-Word function equations and the aggregate map equation now
-pass. `InitE.FrontendStages.Pass5.frontend_eq` certifies the original
+pass. `InitECandidate.Proofs.FrontendStages.Pass5.frontend_eq` certifies the original
 `panToWordCompileProgHOL riscvConfig.isa sourceDeclarations` against the
 supplied per-function Word literals, composing all six frontend stages. Its
 printed axiom set is exactly `propext`, `Classical.choice`, and `Quot.sound`.
@@ -642,7 +642,7 @@ bound, artifact encoding and isolated verifier are still pending.
 
 ### Complete second-largest optimizer and stack-computation links
 
-`InitE.WordStages.Optimize240.optimize240_eq` now passes with exactly
+`InitECandidate.Proofs.WordStages.Optimize240.optimize240_eq` now passes with exactly
 `propext`, `Classical.choice`, and `Quot.sound`. All eleven pass equations
 and their composition are closed. With passes 0--4 and the dead-code graph
 previously cached, the remaining pass/composition build took 3:29.94, peak
@@ -662,7 +662,7 @@ The measured large functions now have eleven separately proposed pass equations
 and composed optimizer proofs; their remaining kernel checks are pending.
 `--large-only` filters functions with at least 1,000 measured Word nodes.
 
-`InitE.WordBackendComputation` provides checked structural composition of
+`InitECandidate.Proofs.WordBackendComputation` provides checked structural composition of
 per-function optimizer equations and consumes the provided oracle list using
 a generic length theorem, rather than computing its coloring values again.
 Both generic lemmas use only standard axioms.
@@ -1073,7 +1073,7 @@ certificate assumes it. The composition theorem has exactly the standard
 three axioms. Log: `artifact-composition-check.log`.
 
 The complete raw-call stage is now certified: all 826 functions and 52
-composition chunks feed `InitE.BackendStages.Raw.compile_eq`, whose axiom
+composition chunks feed `InitECandidate.Proofs.BackendStages.Raw.compile_eq`, whose axiom
 closure is `propext` and `Quot.sound`. The final aggregate checked in 3.78
 seconds. The resumed raw service completed successfully with 2,145,898,496
 bytes aggregate peak memory and 573.514 CPU seconds; it reused 710 checked
@@ -1089,7 +1089,7 @@ to eight shared compiler slots on CPUs 4–11. Each group has a
 and verifier still use the requested 112 GiB and 16-compiler caps.
 
 Allocation lowering is also complete: all 826 per-function certificates,
-chunk compositions and `InitE.BackendStages.Alloc.compile_eq` pass with the
+chunk compositions and `InitECandidate.Proofs.BackendStages.Alloc.compile_eq` pass with the
 three standard axioms. Later removal, naming, section and byte stages remain
 in the persistent bounded queues.
 
@@ -1213,7 +1213,7 @@ backend direct checks did not produce Lake traces.
 The actual full outside build is running as the persistent
 `init-e-outside-full-standard3.service`, invocation
 `83e73ad32c9b471280eed47d041ccd1f`, targeting `InitE`, `Submission` and
-`InitE.Audit`. It enforces 112 GiB, zero swap, CPUs 0–15, sixteen compiler
+`InitECandidate.Proofs.Audit`. It enforces 112 GiB, zero swap, CPUs 0–15, sixteen compiler
 slots and an eight-hour runtime. Logs are
 `work/lean-perf/outside-full-standard3-build.log`; final wall/CPU measurements
 will be in the matching `.time` file and retained service resource status.
@@ -1270,7 +1270,7 @@ Automatic PR and main-push triggers were removed in commit `535d76f`, since
 the hosted runner budget does not accommodate this proof build.
 
 The continuation passes `BaselineInstallationFacts`, compiler installation
-metadata, `FullBaseline` and the actual `InitE.Audit` Lake target. Every root
+metadata, `FullBaseline` and the actual `InitECandidate.Proofs.Audit` Lake target. Every root
 printed by the audit has exactly the three standard axioms, including full
 correctness, termination, final output, bootstrap evaluation and zero memory
 after headers. The submission admission facts remain active; the full target
@@ -1296,7 +1296,7 @@ active full build and its original source are unchanged pending its terminal
 result.
 
 At the user's request, the obsolete admission run was superseded and the
-verified small-list replacement installed in `InitE/BaselineSubmissionFacts`.
+verified small-list replacement installed in `submission/InitECandidate/Proofs/BaselineSubmissionFacts`.
 Its public theorem statement is unchanged. The prior service's final live
 resource snapshot is preserved in
 `work/lean-perf/outside-full-standard3-retry1-superseded.json`; it is not a
@@ -1310,7 +1310,7 @@ sixteen compiler slots, sixteen CPUs and eight-hour caps. Measurements and
 logs use `work/lean-perf/outside-full-standard3-retry2-build.{time,log}`.
 
 The complete actual outside continuation succeeds: all 53,272 Lake jobs,
-including `Solution` and `InitE.Audit`, pass. The certificate and infinity
+including `Solution` and `InitECandidate.Proofs.Audit`, pass. The certificate and infinity
 termination equivalence report exactly the three standard axioms. Continuation
 wall time is 1:33.65, user/system CPU 87.37/13.72 seconds, cgroup peak
 5,704,183,808 bytes, no swap. This incremental measurement includes the newly
@@ -1449,7 +1449,7 @@ The new pin is `034bb5a1ed0b757082768d5406206bd2f8e31b7c`; its semantics
 change requires a fresh isolated build and comparison. All 21 verifier
 regression tests passed in 8.463 seconds.
 The bounded compatibility build also passed all 3,616 jobs, including
-`InitE.Challenge`, `InitE.MachineWordMemory`, and
+`InitE.Challenge`, `InitECandidate.Proofs.MachineWordMemory`, and
 `Flapjack.RiscV.L3.Step.NoCompressed`. Its log is
 `work/lean-perf/flapjack-repin-034bb5a1-smoke.log`; it is not a full
 initial-submission or isolated comparator check.
@@ -1474,7 +1474,7 @@ watcher were stopped before replacing the computation certificates. The stopped
 run is not an acceptance result. Sources, journals and its pre-stop resource
 snapshot are retained under `work/lean-perf/full-verifier-riscv-im-034bb5a1-*`.
 
-`InitE.CompactComputation.kernel_rfl` submits an `Eq.refl` term without first
+`InitECandidate.Proofs.CompactComputation.kernel_rfl` submits an `Eq.refl` term without first
 repeating the conversion check in the elaborator. Lean's kernel still checks
 that the proposed result is definitionally equal to the computation. This
 changes the certificate representation, not the trust level. The regression
@@ -1546,7 +1546,7 @@ artifacts (`Pass184_7.olean` and `Optimize189.olean`), rather than proof failure
 Regenerating those artifacts from unchanged source and refreshing their Lake
 traces repaired both crashes.
 
-The final full-target continuation, `lake build InitE Submission InitE.Audit`,
+The final full-target continuation, `lake build InitE Submission InitECandidate.Proofs.Audit`,
 passed all **53,282 jobs**, including the full bootstrap/guest composition and
 submission certificate. It took 814.024 wall seconds and 1,702.500 CPU seconds,
 with a 32,581,480,448-byte (30.34-GiB) memory peak and zero swap. Earlier successful

@@ -86,7 +86,7 @@ class FreezeTests(unittest.TestCase):
             freeze_submission(source, root / "frozen")
             self.assertEqual((root / "frozen" / "Solution.lean").read_bytes(), b"0123456789")
 
-    def test_baseline_is_frozen_independently(self):
+    def test_challenge_is_frozen_independently_of_submissions(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             trusted, source = root / "trusted", root / "source"
@@ -98,7 +98,8 @@ class FreezeTests(unittest.TestCase):
             for name in ("lean-process-limit.c", "limited-lake.py"):
                 (trusted / "tools" / name).write_text("trusted limiter " + name)
             (trusted / "Guest" / "guest.pp.pnk").write_text("fixed original source")
-            (trusted / "InitE" / "Baseline.lean").write_text("import InitECandidate.Program\ndef trustedCode := InitECandidate.code\n")
+            (trusted / "InitE" / "Challenge.lean").write_text("def challenge := True\n")
+            (trusted / "InitE.lean").write_text("import InitE.Challenge\n")
             (trusted / "submission" / "InitECandidate" / "Program.lean").write_text("namespace InitECandidate\ndef code := [1,2]\n")
             (trusted / "verifier" / "TrustedAxioms.lean").write_text("audit")
             (trusted / "verifier" / "trusted-axioms.json").write_text("[]")
@@ -117,6 +118,17 @@ class FreezeTests(unittest.TestCase):
             for name in ("lean-process-limit.c", "limited-lake.py"):
                 self.assertEqual((project / "tools" / name).read_bytes(),
                                  (trusted / "tools" / name).read_bytes())
+            # Neither the checked-in initial submission nor submitted proof is trusted.
+            (trusted / "submission" / "InitECandidate" / "Program.lean").write_text("changed baseline")
+            (source / "InitECandidate" / "Program.lean").write_text("changed candidate")
+            with patch("verify.clone_project_cache", clone):
+                unchanged = prepare_project(trusted, source, root / "candidate-change", {"K":"infinity"})
+            self.assertEqual(digest, unchanged)
+            self.assertEqual((root / "candidate-change" / "submission" / "InitECandidate" / "Program.lean").read_text(), "changed candidate")
+            (trusted / "InitE" / "Challenge.lean").write_text("changed challenge")
+            with patch("verify.clone_project_cache", clone):
+                changed_challenge = prepare_project(trusted, source, root / "challenge-change", {"K":"infinity"})
+            self.assertNotEqual(digest, changed_challenge)
             (trusted / "tools" / "limited-lake.py").write_text("changed trusted limiter")
             with patch("verify.clone_project_cache", clone):
                 changed = prepare_project(trusted, source, root / "project2", {"K":"infinity"})
@@ -125,10 +137,10 @@ class FreezeTests(unittest.TestCase):
             with self.assertRaisesRegex(VerifyError, "trusted Lean limiter source missing"):
                 prepare_project(trusted, source, root / "project3", {"K":"infinity"})
             self.assertEqual((project / "verifier" / "trusted-axioms.json").read_text(), "[]")
-            baseline = (project / "baseline" / "InitEBaselineCandidate" / "Program.lean").read_text()
-            self.assertIn("InitEBaselineCandidate", baseline)
-            self.assertIn("[1,2]", baseline)
-            self.assertIn("InitEBaselineCandidate.code", (project / "InitE" / "Baseline.lean").read_text())
+            self.assertFalse((project / "baseline").exists())
+            self.assertNotIn("InitEBaselineCandidate", (project / "lakefile.toml").read_text())
+            self.assertEqual((project / "InitE.lean").read_text(), "import InitE.Challenge\n")
+            self.assertEqual((project / "InitE" / "Challenge.lean").read_text(), "def challenge := True\n")
             self.assertIn("[9]", (project / "submission" / "InitECandidate" / "Program.lean").read_text())
             self.assertEqual((project / "Guest" / "guest.pp.pnk").read_text(), "fixed original source")
             self.assertFalse((project / ".lake" / "build" / "lib" / "lean" / "InitE").exists())
@@ -298,3 +310,31 @@ class ComparatorSpoolTests(unittest.TestCase):
     def test_statfs_failure_fails_closed(self):
         with self.assertRaises(OSError):
             linux_filesystem_type(Path("/this-verifier-spool-does-not-exist"))
+
+
+class ProofBoundaryTests(unittest.TestCase):
+    def test_fixed_contract_cannot_import_submission_proofs(self):
+        from check_submission import contract_modules, imports
+        root = Path(__file__).resolve().parents[2]
+        modules = contract_modules(root)
+        self.assertNotIn("InitECandidate.Proofs.FullBaseline", modules)
+        for module in sorted(modules):
+            path = root / (module.replace(".", "/") + ".lean")
+            for dependency in imports(path.read_text()):
+                self.assertFalse(dependency.startswith("InitECandidate"),
+                                 f"{module} imports {dependency}")
+        for name in ("TrustedAxioms.lean", "Challenge.lean.in"):
+            source = (root / "verifier" / name).read_text()
+            self.assertTrue(all(not dep.startswith("InitECandidate")
+                                for dep in imports(source)), name)
+
+    def test_approved_layout_is_present(self):
+        root = Path(__file__).resolve().parents[2]
+        layout = json.loads((root / "tools" / "submission-proof-layout.json").read_text())
+        for name in layout["challenge_roots"]:
+            self.assertTrue((root / "InitE" / (name + ".lean")).is_file(), name)
+        for name in layout["moved_roots"]:
+            target = root / layout["destination"] / name
+            self.assertTrue(target.is_dir() or target.with_suffix(".lean").is_file(), name)
+            self.assertFalse((root / "InitE" / name).exists(), name)
+            self.assertFalse((root / "InitE" / (name + ".lean")).exists(), name)

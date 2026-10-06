@@ -8,7 +8,7 @@ import time
 root = pathlib.Path(__file__).resolve().parents[1]
 work = root / "work/lean-perf/backend-stages"
 def check(label):
-    source = root / f"InitE/BackendStages/Function{label}.lean"
+    source = root / f"submission/InitECandidate/Proofs/BackendStages/Function{label}.lean"
     old = source.read_text()
     new = old.replace("  conv => lhs; cbv\n  try rfl", "  with_unfolding_all rfl")
     if old == new:
@@ -17,9 +17,9 @@ def check(label):
     if log.exists():
         (work / f"Function{label}.eager.check.log").write_text(log.read_text())
     source.write_text(new)
-    output = root / f".lake/build/lib/lean/InitE/BackendStages/Function{label}.olean"
+    output = root / f".lake/build/lib/lean/InitECandidate/Proofs/BackendStages/Function{label}.olean"
     started = time.monotonic()
-    result = subprocess.run(["rtk", "proxy", "taskset", "-c", "8-11", "timeout", "180", "lake", "env", "lean", "-o", str(output), str(source)], cwd=root, text=True, capture_output=True)
+    result = subprocess.run(["rtk", "proxy", "taskset", "-c", "8-11", "timeout", "180", "lake", "env", "lean", "-R", "submission", "-o", str(output), str(source)], cwd=root, text=True, capture_output=True)
     seconds = time.monotonic() - started
     log.write_text(result.stdout + result.stderr)
     (work / f"Function{label}.lazy.check.json").write_text(json.dumps({"label":label,"returncode":result.returncode,"seconds":seconds}))

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check a frozen init-e submission against an independently frozen trusted baseline.
+"""Check a frozen init-e submission against the independently frozen challenge contract.
 
 Untrusted Lean is compiled only within the mandatory Linux systemd/Landlock sandbox.
 Structural checks alone never produce the status "verified".
@@ -280,7 +280,7 @@ def freeze_submission(source: Path, target: Path) -> None:
 
 
 REBUILT_NAMESPACES = (
-    "Guest", "InitE", "InitECandidate", "InitEBaselineCandidate", "Solution",
+    "Guest", "InitE", "InitECandidate", "Solution",
     "Submission", "TrustedAxioms", "VerifierChallenge",
 )
 
@@ -325,7 +325,7 @@ def clear_artifacts(project: Path, names: tuple[str, ...]) -> None:
 
 
 def prepare_project(trusted: Path, source: Path, project: Path, values: dict) -> str:
-    """Freeze baseline literals independently of the candidate namespace."""
+    """Freeze only the challenge contract, then copy the untrusted submission."""
     helpers = ("lean-process-limit.c", "limited-lake.py")
     for name in helpers:
         if not (trusted / "tools" / name).is_file():
@@ -336,32 +336,25 @@ def prepare_project(trusted: Path, source: Path, project: Path, values: dict) ->
         shutil.copy2(trusted / "tools" / name, project / "tools" / name)
     for name in ("lean-toolchain", "lakefile.toml", "lake-manifest.json", "Guest.lean"):
         shutil.copy2(trusted / name, project / name)
-    rename = re.compile(r"(?<![A-Za-z0-9_'])InitECandidate(?![A-Za-z0-9_'])")
     if (trusted / "InitE.lean").is_file():
-        (project / "InitE.lean").write_text(rename.sub("InitEBaselineCandidate", (trusted / "InitE.lean").read_text()))
-    for directory in ("Guest", "InitE", "Tools"):
+        shutil.copy2(trusted / "InitE.lean", project / "InitE.lean")
+    for directory in ("Guest", "InitE"):
         if not (trusted / directory).is_dir():
             continue
         for path in (trusted / directory).rglob("*.lean"):
             destination = project / path.relative_to(trusted)
             destination.parent.mkdir(parents=True, exist_ok=True)
-            destination.write_text(rename.sub("InitEBaselineCandidate", path.read_text()))
+            shutil.copy2(path, destination)
     (project / "Guest").mkdir(exist_ok=True)
     shutil.copy2(trusted / "Guest" / "guest.pp.pnk", project / "Guest" / "guest.pp.pnk")
-    for path in (trusted / "submission" / "InitECandidate").rglob("*.lean"):
-        destination = project / "baseline" / "InitEBaselineCandidate" / path.relative_to(trusted / "submission" / "InitECandidate")
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        destination.write_text(rename.sub("InitEBaselineCandidate", path.read_text()))
     with (project / "lakefile.toml").open("a") as out:
-        out.write('\n[[lean_lib]]\nname = "InitEBaselineCandidate"\nsrcDir = "baseline"\n'
-                  '\n[[lean_lib]]\nname = "TrustedAxioms"\nsrcDir = "verifier"\n'
-                  '\n[[lean_lib]]\nname = "VerifierChallenge"\nsrcDir = "verifier"\n')
+        out.write('\n[[lean_lib]]\nname = "VerifierChallenge"\nsrcDir = "verifier"\n')
     (project / "verifier").mkdir()
     for name in ("TrustedAxioms.lean", "trusted-axioms.json", "comparator.json"):
         shutil.copy2(trusted / "verifier" / name, project / "verifier" / name)
     template = (trusted / "verifier" / "Challenge.lean.in").read_text()
     (project / "verifier" / "VerifierChallenge.lean").write_text(template.replace("{{SCORE}}", score_literal(values)))
-    # Hash exactly the staged trusted source, configuration and fixed literal image.
+    # Hash only trusted challenge source/configuration, before copying candidate files.
     digest = hashlib.sha256()
     for path in sorted(project.rglob("*")):
         if path.is_file():
@@ -395,7 +388,7 @@ def trusted_axioms(log: str, manifest: Path | None = None) -> list[str]:
         raise VerifyError("pinned trusted axiom manifest is malformed")
     if len(pinned) != len(set(pinned)) or set(pinned) != STANDARD_AXIOMS:
         raise VerifyError("trusted manifest must contain exactly the three standard Lean axioms")
-    # Exact equality with the standard axioms: neither baseline computations
+    # Exact equality with the standard axioms: neither challenge computations
     # nor candidate names can add an axiom permission.
     if set(names) != set(pinned):
         unexpected = sorted(set(names) - set(pinned))
@@ -437,7 +430,7 @@ def verify(args: argparse.Namespace) -> dict:
         sandbox_probe(env)
         project = work / "project"
         result["contract_sha256"] = prepare_project(args.trusted, source, project, policy["claim"])
-        # Trusted audit runs first and imports only the independently frozen baseline.
+        # Trusted audit runs first and imports only the independently frozen challenge.
         audit_log = work / "trusted-audit.log"
         audit_command = limited_lake_command(project, ["lake", "build", "TrustedAxioms"])
         command, clean = linux_command(audit_command, project, env,

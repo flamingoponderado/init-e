@@ -1,8 +1,0 @@
-import Flapjack.Compiler.Backend.LabToTarget.Compile
-set_option autoImplicit false
-set_option maxRecDepth 1000000
-set_option maxHeartbeats 0
-namespace InitE.BackendStages.ByteData
-def bytes791 : List (BitVec 8) :=
-[19#8, 5#8, 5#8, 12#8, 111#8, 16#8, 79#8, 231#8]
-end InitE.BackendStages.ByteData

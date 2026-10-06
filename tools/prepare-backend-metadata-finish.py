@@ -3,7 +3,7 @@
 import concurrent.futures,json,pathlib,subprocess,sys,time,os,signal
 root=pathlib.Path(__file__).resolve().parents[1]
 work=root/'work/lean-perf/backend-metadata'
-base=root/'InitE/BackendStages/Metadata'
+base=root/'submission/InitECandidate/Proofs/BackendStages/Metadata'
 ids=[int(p.stem[4:]) for p in base.glob('Data*.lean')]
 start=time.monotonic()
 def successful(name):
@@ -15,12 +15,12 @@ while not all(successful(stage+str(n)) for n in ids for stage in ['Ffi','Shmem']
     time.sleep(10)
 # Give the section watcher time to drain its final two compiler processes.
 time.sleep(10)
-modules=['InitE.BackendStages.Metadata.'+p.stem for p in sorted(base.glob('Chunk*.lean'))]
+modules=['InitECandidate.Proofs.BackendStages.Metadata.'+p.stem for p in sorted(base.glob('Chunk*.lean'))]
 subprocess.run([sys.executable,str(root/'tools/prepare-backend-metadata.py'),'--modules',*modules],cwd=root,check=True)
-subprocess.run([sys.executable,str(root/'tools/prepare-backend-metadata.py'),'--modules','InitE.BackendStages.Metadata.FinalData'],cwd=root,check=True)
-subprocess.run([sys.executable,str(root/'tools/prepare-backend-metadata.py'),'--modules','InitE.BackendStages.Metadata.LiteralFacts','--timeout','600'],cwd=root,check=True)
-while not all((root/('.lake/build/lib/lean/InitE/BackendStages/'+name+'.olean')).exists() for name in ['Filtered','Final']):
+subprocess.run([sys.executable,str(root/'tools/prepare-backend-metadata.py'),'--modules','InitECandidate.Proofs.BackendStages.Metadata.FinalData'],cwd=root,check=True)
+subprocess.run([sys.executable,str(root/'tools/prepare-backend-metadata.py'),'--modules','InitECandidate.Proofs.BackendStages.Metadata.LiteralFacts','--timeout','600'],cwd=root,check=True)
+while not all((root/('.lake/build/lib/lean/InitECandidate/Proofs/BackendStages/'+name+'.olean')).exists() for name in ['Filtered','Final']):
     if time.monotonic()-start>28800:raise SystemExit('canonical Filtered/Final modules still pending after eight hours')
     time.sleep(10)
-subprocess.run([sys.executable,str(root/'tools/prepare-backend-metadata.py'),'--modules','InitE.BackendStages.Metadata.Facts','--timeout','600'],cwd=root,check=True)
+subprocess.run([sys.executable,str(root/'tools/prepare-backend-metadata.py'),'--modules','InitECandidate.Proofs.BackendStages.Metadata.Facts','--timeout','600'],cwd=root,check=True)
 print('METADATA_ALL_ENDPOINTS_PASSED',flush=True)

@@ -18,13 +18,13 @@ os.environ["LAKE_ARTIFACT_CACHE"] = "false"
 root = pathlib.Path(__file__).resolve().parents[1]
 work = root / "work/lean-perf/backend-stages"
 labels = list(range(64,890)) if args.all else args.labels
-labels = [n for n in labels if not ((work/f"Raw{n}.check.json").exists() and json.loads((work/f"Raw{n}.check.json").read_text())["returncode"] == 0 and (root/f".lake/build/lib/lean/InitE/BackendStages/Raw{n}.olean").exists())]
+labels = [n for n in labels if not ((work/f"Raw{n}.check.json").exists() and json.loads((work/f"Raw{n}.check.json").read_text())["returncode"] == 0 and (root/f".lake/build/lib/lean/InitECandidate/Proofs/BackendStages/Raw{n}.olean").exists())]
 prefix = ["rtk","proxy","taskset","-c","8-11","timeout","180","lake","env","lean"]
 def check(n):
     started = time.monotonic()
-    source = root / f"InitE/BackendStages/Raw{n}.lean"
-    output = root / f".lake/build/lib/lean/InitE/BackendStages/Raw{n}.olean"
-    result = subprocess.run(["rtk","proxy","/usr/bin/time","-v","-o",str(work/f"Raw{n}.timing.log")]+prefix[2:]+["-o",str(output),str(source)],cwd=root,text=True,capture_output=True)
+    source = root / f"submission/InitECandidate/Proofs/BackendStages/Raw{n}.lean"
+    output = root / f".lake/build/lib/lean/InitECandidate/Proofs/BackendStages/Raw{n}.olean"
+    result = subprocess.run(["rtk","proxy","/usr/bin/time","-v","-o",str(work/f"Raw{n}.timing.log")]+prefix[2:]+["-R","submission","-o",str(output),str(source)],cwd=root,text=True,capture_output=True)
     seconds = time.monotonic()-started
     (work/f"Raw{n}.check.log").write_text(result.stdout+result.stderr)
     (work/f"Raw{n}.check.json").write_text(json.dumps({"label":n,"returncode":result.returncode,"seconds":seconds}))
@@ -34,8 +34,8 @@ failures = []
 for start in range(0,len(labels),args.batch_size):
     batch = labels[start:start+args.batch_size]
     runner = work/f"GenerateRaw{batch[0]}_{batch[-1]}.lean"
-    imports = "import Tools.GenBackendStages\nimport InitE.BackendStages.RawInfoData\n" + "".join(f"import InitE.BackendStages.Function{n}\n" for n in batch)
-    calls = "".join(f"  liftM (InitE.BackendGenerator.generateRawFunction env {n} InitE.BackendStages.RawInfo.rawInfo (InitE.BackendStages.function{n} (.list [])).1)\n" for n in batch)
+    imports = "import Tools.GenBackendStages\nimport InitECandidate.Proofs.BackendStages.RawInfoData\n" + "".join(f"import InitECandidate.Proofs.BackendStages.Function{n}\n" for n in batch)
+    calls = "".join(f"  liftM (InitE.BackendGenerator.generateRawFunction env {n} InitECandidate.Proofs.BackendStages.RawInfo.rawInfo (InitECandidate.Proofs.BackendStages.function{n} (.list [])).1)\n" for n in batch)
     runner.write_text(imports+"run_meta do\n  let env ← Lean.getEnv\n"+calls)
     result = subprocess.run(prefix+[str(runner)],cwd=root,text=True,capture_output=True)
     (work/f"GenerateRaw{batch[0]}_{batch[-1]}.log").write_text(result.stdout+result.stderr)

@@ -76,3 +76,15 @@ as `docs/CHALLENGE.md` states. The following can still go wrong.
   around it, could accept a false theorem.
 * **Lean's type theory might be inconsistent.** Everything proved in it is
   conditional on its consistency.
+
+
+## Trusted challenge boundary
+
+The verifier's trusted workspace includes `Guest/`, `InitE/` and the fixed
+challenge template. It excludes the initial submission's bytecode and compiler,
+bootstrap, installation and correctness certificates. Those proofs now live
+under `submission/InitECandidate/Proofs/` and must pass the same comparator
+checks as other submissions. The challenge-only axiom audit still allows exactly
+`propext`, `Classical.choice` and `Quot.sound`; the move grants no new axioms.
+The namespace of a theorem does not determine whether it is trusted: some
+candidate-owned modules retain public theorem names beginning with `InitE`.

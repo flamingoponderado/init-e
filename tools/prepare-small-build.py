@@ -39,7 +39,7 @@ logs=root/"work/lean-perf/small-optimizer"
 started=time.monotonic()
 for offset in range(0,len(labels),args.groups):
     wave=labels[offset:offset+args.groups]
-    modules=[f"InitE.SmallStages.Compact{label}.Exact" for label in wave]
+    modules=[f"InitECandidate.Proofs.SmallStages.Compact{label}.Exact" for label in wave]
     command=["rtk","proxy","/usr/bin/time","-v","timeout","--kill-after=5s",f"{args.wave_seconds}s","taskset","-c",args.cpus,"lake","build",*modules]
     if args.list:
         print(" ".join(command))

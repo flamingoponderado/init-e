@@ -1,11 +1,11 @@
 import Tools.GenBackendStages
-import InitE.BackendStages.Metadata.Computation
+import InitECandidate.Proofs.BackendStages.Metadata.Computation
 set_option maxRecDepth 1000000
 set_option maxHeartbeats 0
 namespace InitE.BackendMetadataGenerator
 open Lean Flapjack Flapjack.Compiler.Backend
 open Flapjack.Compiler.Encoders.RiscV.Target
-open InitE.BackendStages.Metadata
+open InitECandidate.Proofs.BackendStages.Metadata
 
 instance : ToExpr LabToTarget.ShmemInfoNum where
   toTypeExpr := mkConst ``LabToTarget.ShmemInfoNum
@@ -13,10 +13,10 @@ instance : ToExpr LabToTarget.ShmemInfoNum where
     #[toExpr r.entryPc, toExpr r.nbytes, toExpr r.addrReg, toExpr r.addrOff,
       toExpr r.reg, toExpr r.exitPc]
 
-private def common := "set_option autoImplicit false\nset_option Elab.async false\nset_option maxRecDepth 1000000\nset_option maxHeartbeats 0\nopen Flapjack Flapjack.Compiler.Backend\nopen InitE.BackendStages\nnamespace InitE.BackendStages.Metadata\n"
-private def ending := "end InitE.BackendStages.Metadata\n"
+private def common := "set_option autoImplicit false\nset_option Elab.async false\nset_option maxRecDepth 1000000\nset_option maxHeartbeats 0\nopen Flapjack Flapjack.Compiler.Backend\nopen InitECandidate.Proofs.BackendStages\nnamespace InitECandidate.Proofs.BackendStages.Metadata\n"
+private def ending := "end InitECandidate.Proofs.BackendStages.Metadata\n"
 private def emit (name text : String) : IO Unit :=
-  IO.FS.writeFile s!"InitE/BackendStages/Metadata/{name}.lean" text
+  IO.FS.writeFile s!"submission/InitECandidate/Proofs/BackendStages/Metadata/{name}.lean" text
 
 partial def stable (program : LabSem.LabProgHOL 64) (ffis : List HolFfiName)
     (clock : Nat) : IO (LabSem.LabProgHOL 64) := do
@@ -27,7 +27,7 @@ partial def stable (program : LabSem.LabProgHOL 64) (ffis : List HolFfiName)
   stable output ffis (clock-1)
 
 def prepare (env : Environment) (stack : List (Nat × StackLang.HolProg 64)) : IO Unit := do
-  IO.FS.createDirAll "InitE/BackendStages/Metadata"
+  IO.FS.createDirAll "submission/InitECandidate/Proofs/BackendStages/Metadata"
   let cfg := RiscVConfig.pancakeRiscVBackendConfig
   let sections := StackToLab.compile cfg.stackConf cfg.dataConf
     (2 * DataToWord.maxHeapLimit 64 cfg.dataConf - 1)
@@ -61,12 +61,12 @@ def prepare (env : Environment) (stack : List (Nat × StackLang.HolProg 64)) : I
     let afterMT ← renderWordStage env (toExpr afterM)
     let length := LabToTarget.secLength pad.lines 0
     let next := position + (LabToTarget.progToBytes [pad]).length
-    emit s!"Data{identifier}" ("import InitE.BackendStages.Metadata.Computation\n" ++ common ++
+    emit s!"Data{identifier}" ("import InitECandidate.Proofs.BackendStages.Metadata.Computation\n" ++ common ++
       s!"def localFfis{identifier} : List HolFfiName  := {localText}\ndef suffixFfis{identifier} : List HolFfiName := {suffix}\ndef nextFfis{identifier} : List HolFfiName := {nextSuffix}\n" ++
       s!"def beforeFfis{identifier} : List HolFfiName := {beforeFT}\ndef beforeShmem{identifier} : List LabToTarget.ShmemInfoNum := {beforeMT}\ndef afterFfis{identifier} : List HolFfiName := {afterFT}\ndef afterShmem{identifier} : List LabToTarget.ShmemInfoNum := {afterMT}\n" ++ ending)
-    emit s!"Ffi{identifier}" (s!"import InitE.BackendStages.Metadata.Data{identifier}\nimport InitE.BackendStages.Filtered{identifier}\n" ++ common ++
+    emit s!"Ffi{identifier}" (s!"import InitECandidate.Proofs.BackendStages.Metadata.Data{identifier}\nimport InitECandidate.Proofs.BackendStages.Filtered{identifier}\n" ++ common ++
       s!"theorem localFfis{identifier}_eq : ffiLines Filtered{identifier}.lines = localFfis{identifier} := by\n  with_unfolding_all rfl\ntheorem ffiStep{identifier} (rest : LabSem.LabProgHOL 64) (h : LabToTarget.findFfiNames rest = nextFfis{identifier}) : LabToTarget.findFfiNames (Filtered{identifier} :: rest) = suffixFfis{identifier} := by\n  rw [findFfiNames_section, localFfis{identifier}_eq, h]\n  with_unfolding_all rfl\n#print axioms ffiStep{identifier}\n" ++ ending)
-    emit s!"Shmem{identifier}" (s!"import InitE.BackendStages.Metadata.Data{identifier}\nimport InitE.BackendStages.Padded{identifier}\n" ++ common ++
+    emit s!"Shmem{identifier}" (s!"import InitECandidate.Proofs.BackendStages.Metadata.Data{identifier}\nimport InitECandidate.Proofs.BackendStages.Padded{identifier}\n" ++ common ++
       s!"theorem walkStep{identifier} : walkShmemLines Padded{identifier}.lines {position} beforeFfis{identifier} beforeShmem{identifier} = ({next}, afterFfis{identifier}, afterShmem{identifier}) := by\n  with_unfolding_all rfl\ntheorem shmemStep{identifier} (rest : LabSem.LabProgHOL 64) : LabToTarget.getShmemInfo (Padded{identifier} :: rest) {position} beforeFfis{identifier} beforeShmem{identifier} = LabToTarget.getShmemInfo rest {next} afterFfis{identifier} afterShmem{identifier} := by\n  rw [getShmemInfo_section, walkStep{identifier}]\ntheorem symbolLength{identifier} : LabToTarget.secLength Padded{identifier}.lines 0 = {length} := by\n  with_unfolding_all rfl\n#print axioms shmemStep{identifier}\n#print axioms symbolLength{identifier}\n" ++ ending)
     csv := csv ++ [s!"{identifier},{position},{next},{length}"]
     position := next
@@ -74,7 +74,7 @@ def prepare (env : Environment) (stack : List (Nat × StackLang.HolProg 64)) : I
     beforeM := afterM
   IO.FS.writeFile "work/lean-perf/backend-metadata/positions.csv" (String.intercalate "\n" csv)
   let newFfis ← renderWordStage env (toExpr beforeF)
-  emit "FinalData" ("import InitE.BackendStages.Metadata.Computation\n" ++ common ++
+  emit "FinalData" ("import InitECandidate.Proofs.BackendStages.Metadata.Computation\n" ++ common ++
     s!"def shmemFfis : List HolFfiName := {newFfis}\n" ++ ending)
   IO.println s!"Prepared {filtered.length} metadata sections; {position} bytes; {beforeF.length} shared names, {beforeM.length} records"
 end InitE.BackendMetadataGenerator

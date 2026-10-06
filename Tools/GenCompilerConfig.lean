@@ -2,7 +2,7 @@ import Guest.Ast
 import Flapjack.RiscV.NativeSource
 
 /-! Propose literal compiler metadata. Native execution generates the candidate;
-`InitE.ArtifactFacts` must prove its equality to the logical compiler output. -/
+`InitECandidate.Proofs.ArtifactFacts` must prove its equality to the logical compiler output. -/
 namespace GenCompilerConfig
 open Flapjack Flapjack.Compiler.Backend
 open Flapjack.Basis.Pure.MlString
@@ -61,6 +61,6 @@ end GenCompilerConfig
 def main (args : List String) : IO Unit := do
   let some (_, _, config) := Flapjack.RiscV.NativeSource.compileDeclarations Guest.guestAst
     | throw (IO.userError "guest compilation failed")
-  IO.FS.writeFile (args.headD "InitE/CompilerConfigLiteral.lean")
+  IO.FS.writeFile (args.headD "submission/InitECandidate/Proofs/CompilerConfigLiteral.lean")
     (GenCompilerConfig.output config)
   IO.println s!"Generated {config.labConf.secPosLen.length} sections and {config.labConf.shmemExtra.length} shared-memory records"

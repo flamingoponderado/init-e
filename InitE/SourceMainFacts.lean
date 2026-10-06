@@ -1,6 +1,5 @@
 import InitE.SourceExceptionFacts
 
-open scoped InitE.CompilerComputation
 
 set_option Elab.async false
 set_option maxRecDepth 1000000
@@ -9,7 +8,7 @@ set_option cbv.maxSteps 1000000000
 set_option cbv.warning false
 
 /-! Static facts about the fixed source. Computation proofs use proof-producing `decide_cbv` and are checked by the kernel.
-The executable stack analyzer is linked to the logical compiler by kernel equalities. -/
+These properties depend only on the fixed source AST. -/
 namespace InitE
 open Flapjack Flapjack.Pancake.PanLang Flapjack.Compiler.Backend
 open Flapjack.Pancake.Proofs.PanToTarget

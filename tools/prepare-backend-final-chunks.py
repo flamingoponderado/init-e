@@ -13,20 +13,20 @@ for ids,suffix in chunks:
    if json.loads(dep.read_text())["returncode"]:raise RuntimeError(str(dep))
  pos=[];end=[]
  for n in ids:
-  src=(root/f"InitE/BackendStages/Alignment{n}.lean").read_text()
+  src=(root/f"submission/InitECandidate/Proofs/BackendStages/Alignment{n}.lean").read_text()
   pos.append(int(re.search(r"linesUpdLabLen (\d+)",src).group(1)));end.append(int(re.search(r"Alignment\d+\.lines, (\d+)\)",src).group(1)))
- s="import InitE.BackendComputation\n"+"".join(f"import InitE.BackendStages.Padded{n}\n" for n in ids)
- s+="set_option maxRecDepth 1000000\nset_option maxHeartbeats 0\nopen Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target\nnamespace InitE.BackendStages."+name+"\n"
+ s="import InitECandidate.Proofs.BackendComputation\n"+"".join(f"import InitECandidate.Proofs.BackendStages.Padded{n}\n" for n in ids)
+ s+="set_option maxRecDepth 1000000\nset_option maxHeartbeats 0\nopen Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target\nnamespace InitECandidate.Proofs.BackendStages."+name+"\n"
  for label,base in [("input","TargetChecks.Reencode1_"),("aligned","Alignment"),("final","FinalReencode"),("padded","Padded")]:
   s+=f"def {label} : LabSem.LabProgHOL 64 := ["+", ".join(((base+str(n)) if label != "input" or n < 596 else "TargetChecks.Correct.Reencode1_"+str(n)) for n in ids)+"]\n"
  s+=f"theorem alignment_eq (rest output : LabSem.LabProgHOL 64) (tail : LabToTarget.updLabLen {end[-1]} rest = output) : LabToTarget.updLabLen {pos[0]} (input ++ rest) = aligned ++ output := by\n  unfold input aligned\n  simp only [List.cons_append, List.nil_append]\n"
- for n in ids:s+=f"  apply InitE.BackendComputation.updLabLen_cons (head := Alignment{n}_eq)\n"
+ for n in ids:s+=f"  apply InitECandidate.Proofs.BackendComputation.updLabLen_cons (head := Alignment{n}_eq)\n"
  s+="  exact tail\n"
  s+=f"theorem rewrite_eq (rest output : LabSem.LabProgHOL 64) (tail : LabToTarget.encSecsAgain {end[-1]} Target.labelsFinal Target.ffis riscvConfig.encode rest = (output, true)) : LabToTarget.encSecsAgain {pos[0]} Target.labelsFinal Target.ffis riscvConfig.encode (aligned ++ rest) = (final ++ output, true) := by\n  unfold aligned final\n  simp only [List.cons_append, List.nil_append]\n"
- for n in ids:s+=f"  apply InitE.BackendComputation.encSecsAgain_cons (head := FinalReencode{n}_eq)\n"
+ for n in ids:s+=f"  apply InitECandidate.Proofs.BackendComputation.encSecsAgain_cons (head := FinalReencode{n}_eq)\n"
  s+="  exact tail\n"
  s+="theorem padding_eq : LabToTarget.padCode (riscvConfig.encode (.inst .skip)) final = padded := by\n  unfold final padded\n  simp only [LabToTarget.padCode]\n  rw ["+", ".join(f"Padded{n}_eq" for n in ids)+"]\n  rfl\n"
- s+="theorem valid : LabToTarget.allEncOkLight riscvConfig padded = true := by\n  unfold padded LabToTarget.allEncOkLight\n  simp only [List.all_cons, List.all_nil, "+", ".join(f"Padded{n}_valid" for n in ids)+"]\n  rfl\n#print axioms alignment_eq\n#print axioms rewrite_eq\n#print axioms padding_eq\n#print axioms valid\nend InitE.BackendStages."+name+"\n"
- source=root/f"InitE/BackendStages/{name}.lean";source.write_text(s);start=time.monotonic()
- r=subprocess.run(["rtk","proxy","python3",str(root/"tools/prepare-backend-lean.py"),"-o",str(root/f".lake/build/lib/lean/InitE/BackendStages/{name}.olean"),str(source)],cwd=root,text=True,capture_output=True)
+ s+="theorem valid : LabToTarget.allEncOkLight riscvConfig padded = true := by\n  unfold padded LabToTarget.allEncOkLight\n  simp only [List.all_cons, List.all_nil, "+", ".join(f"Padded{n}_valid" for n in ids)+"]\n  rfl\n#print axioms alignment_eq\n#print axioms rewrite_eq\n#print axioms padding_eq\n#print axioms valid\nend InitECandidate.Proofs.BackendStages."+name+"\n"
+ source=root/f"submission/InitECandidate/Proofs/BackendStages/{name}.lean";source.write_text(s);start=time.monotonic()
+ r=subprocess.run(["rtk","proxy","python3",str(root/"tools/prepare-backend-lean.py"),"-o",str(root/f".lake/build/lib/lean/InitECandidate/Proofs/BackendStages/{name}.olean"),str(source)],cwd=root,text=True,capture_output=True)
  (work/f"{name}.check.log").write_text(r.stdout+r.stderr);cert.write_text(json.dumps(dict(returncode=r.returncode,seconds=time.monotonic()-start)));print(name,r.returncode,r.stdout+r.stderr,flush=True);r.check_returncode()

@@ -8,13 +8,13 @@ from pathlib import Path
 import re
 root = Path(__file__).resolve().parent.parent
 count = 0
-for path in (root / "InitE/FrontendStages/Word").glob("Checkpoints*/Conditional/Chunk*.lean"):
+for path in (root / "submission/InitECandidate/Proofs/FrontendStages/Word").glob("Checkpoints*/Conditional/Chunk*.lean"):
     index = int(path.parents[1].name.removeprefix("Checkpoints"))
     text = path.read_text()
     blocks = re.split(r"(?=^theorem )", text, flags=re.M)
     changed = False
     for k, block in enumerate(blocks):
-        pattern = r"  exact InitE.LoopWordComputation.comp_loop_checked _ _ _ _ _ _ _ (child\d+)\n"
+        pattern = r"  exact InitECandidate.Proofs.LoopWordComputation.comp_loop_checked _ _ _ _ _ _ _ (child\d+)\n"
         match = re.search(pattern, block)
         if not match:
             continue
@@ -22,7 +22,7 @@ for path in (root / "InitE/FrontendStages/Word").glob("Checkpoints*/Conditional/
         source = inputs[-1]
         child = match[1]
         proof = (
-            f"  have h := InitE.LoopWordComputation.comp_loop_checked Word.context{index} "
+            f"  have h := InitECandidate.Proofs.LoopWordComputation.comp_loop_checked Word.context{index} "
             f"(match Loop.{source} with | .loop live _ _ => live | _ => .ln) "
             f"(match Loop.{source} with | .loop _ _ live => live | _ => .ln) _ _ _ _ {child}\n"
             "  conv at h => rhs; cbv\n  exact h\n"

@@ -56,7 +56,7 @@ python3 -m unittest discover -s verifier/tests -v
 These validate the file tree, imports and claim. The result `structural_pass`
 means that no proof verification was performed. Files must be ordinary UTF-8
 Lean sources; symlinks, special files and alternate module headers are refused.
-The source/proof package limits are 4,096 entries, 8 MiB per file and 2 GiB
+The source/proof package limits are 65,536 entries (including directories), 16 MiB per file and 4 GiB
 in total. Shard large literal images across modules. These transport limits are
 separate from the challenge's 128 MiB ROM limit. Only trusted
 `InitE`/`Guest` modules, the pinned proof libraries, and submitted helper modules
@@ -85,12 +85,14 @@ kernel replay. The verifier requires disk space for both exports in addition
 to the staged build cache. Its private mode-0700 spool directory is outside the
 staged project, and tmpfs/ramfs are rejected.
 
-Baseline literal modules are copied to an immutable `InitEBaselineCandidate`
-namespace in the checking workspace. Trusted baseline references are rewritten
-to that namespace. Submitted `InitECandidate` modules therefore cannot change
-the baseline code or its precomputed facts.
+The trusted workspace contains the fixed challenge, AST, source semantics and
+source facts. It does not copy any initial-submission proofs or bytecode into
+a privileged namespace. All compiler certificates, installation and bootstrap
+proofs for the initial submission live under `submission/InitECandidate/Proofs`
+and are checked as part of that submission, just like another contestant's
+proofs. Changing these files does not change the trusted contract fingerprint.
 
-The trusted baseline is built before any candidate Lean is compiled. Its exact
+The challenge-only axiom audit is built before any candidate Lean is compiled. Its exact
 axiom names are collected directly from Lean's environment; pretty-printed
 names are not parsed. The allowlist contains exactly the three standard axioms
 `propext`, `Quot.sound`, and `Classical.choice`. Comparator also compares each

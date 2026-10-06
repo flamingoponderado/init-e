@@ -70,3 +70,8 @@ root = "Tools.GenCompilerConfig"
 [[lean_exe]]
 name = "gen-word-stages"
 root = "Tools.GenWordStages"
+
+# Audit only the fixed challenge; initial-submission certificates live in InitECandidate.
+[[lean_lib]]
+name = "TrustedAxioms"
+srcDir = "verifier"

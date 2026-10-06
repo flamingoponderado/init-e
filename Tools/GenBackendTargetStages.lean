@@ -86,24 +86,24 @@ def prepare (env : Environment) (phase identifier position : Nat)
   let localText ← renderWordStage env (toExpr localLabels)
   let unchanged := toExpr output == toExpr sec
   let outputText ← if unchanged then pure "" else renderWordStage env (toExpr output)
-  let dir := "InitE/BackendStages/TargetChecks"
+  let dir := "submission/InitECandidate/Proofs/BackendStages/TargetChecks"
   IO.FS.createDirAll dir
   let previous := if phase == 0 then s!"Initial{identifier}" else s!"Reencode{phase-1}_{identifier}"
-  let inputImport := if phase == 0 then s!"InitE.BackendStages.TargetChecks.Initial{identifier}" else s!"InitE.BackendStages.TargetChecks.Data{phase-1}_{identifier}"
-  let common := "set_option autoImplicit false\nset_option Elab.async false\nset_option maxRecDepth 1000000\nset_option maxHeartbeats 0\nopen Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target\nopen InitE.BackendStages\nnamespace InitE.BackendStages.TargetChecks\n"
-  let ending := "end InitE.BackendStages.TargetChecks\n"
-  let data := s!"import {inputImport}\nimport InitE.BackendStages.TargetLabels{phase}\nimport InitE.BackendStages.TargetFfis\nimport Flapjack.Compiler.Encoders.RiscV.Target.Configuration\n" ++ common ++
+  let inputImport := if phase == 0 then s!"InitECandidate.Proofs.BackendStages.TargetChecks.Initial{identifier}" else s!"InitECandidate.Proofs.BackendStages.TargetChecks.Data{phase-1}_{identifier}"
+  let common := "set_option autoImplicit false\nset_option Elab.async false\nset_option maxRecDepth 1000000\nset_option maxHeartbeats 0\nopen Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target\nopen InitECandidate.Proofs.BackendStages\nnamespace InitECandidate.Proofs.BackendStages.TargetChecks\n"
+  let ending := "end InitECandidate.Proofs.BackendStages.TargetChecks\n"
+  let data := s!"import {inputImport}\nimport InitECandidate.Proofs.BackendStages.TargetLabels{phase}\nimport InitECandidate.Proofs.BackendStages.TargetFfis\nimport Flapjack.Compiler.Encoders.RiscV.Target.Configuration\n" ++ common ++
     s!"def localLabels{phase}_{identifier} : List (Nat × Nat) :=\n{localText}\ndef Reencode{phase}_{identifier} : LabSem.LabSectionHOL 64 :=\n{if unchanged then previous else outputText}\n" ++ ending
   IO.FS.writeFile s!"{dir}/Data{phase}_{identifier}.lean" data
-  let labelsProof := s!"import InitE.BackendStages.TargetChecks.Data{phase}_{identifier}\n" ++ common ++
+  let labelsProof := s!"import InitECandidate.Proofs.BackendStages.TargetChecks.Data{phase}_{identifier}\n" ++ common ++
     s!"theorem localLabels{phase}_{identifier}_eq : LabToTarget.sectionLabels {labelPosition} {previous}.lines [] = ({localNext}, localLabels{phase}_{identifier}) := by\n  with_unfolding_all rfl\n#print axioms localLabels{phase}_{identifier}_eq\n" ++ ending
   IO.FS.writeFile s!"{dir}/Labels{phase}_{identifier}.lean" labelsProof
-  let encodingProof := s!"import InitE.BackendStages.TargetChecks.Data{phase}_{identifier}\n" ++ common ++
+  let encodingProof := s!"import InitECandidate.Proofs.BackendStages.TargetChecks.Data{phase}_{identifier}\n" ++ common ++
     s!"theorem Reencode{phase}_{identifier}_eq : LabToTarget.encLinesAgain Target.labels{phase} Target.ffis {position} riscvConfig.encode {previous}.lines [] true = (Reencode{phase}_{identifier}.lines, {next}, {ok}) := by\n  with_unfolding_all rfl\n#print axioms Reencode{phase}_{identifier}_eq\n" ++ ending
   IO.FS.writeFile s!"{dir}/Encode{phase}_{identifier}.lean" encodingProof
-  let prior := if phase == 0 then "" else s!"import InitE.BackendStages.TargetChecks.Phase{phase-1}_{identifier}\n"
+  let prior := if phase == 0 then "" else s!"import InitECandidate.Proofs.BackendStages.TargetChecks.Phase{phase-1}_{identifier}\n"
   IO.FS.writeFile s!"{dir}/Phase{phase}_{identifier}.lean"
-    (prior ++ s!"import InitE.BackendStages.TargetChecks.Labels{phase}_{identifier}\nimport InitE.BackendStages.TargetChecks.Encode{phase}_{identifier}\nset_option autoImplicit false\n")
+    (prior ++ s!"import InitECandidate.Proofs.BackendStages.TargetChecks.Labels{phase}_{identifier}\nimport InitECandidate.Proofs.BackendStages.TargetChecks.Encode{phase}_{identifier}\nset_option autoImplicit false\n")
   IO.println s!"Target {phase}/{identifier}: labels {position}→{localNext}, encoding→{next}, stable={ok}; {data.utf8ByteSize} bytes"
 
 def prepareCorrect (env : Environment) (phase identifier position labelPosition : Nat)
@@ -115,14 +115,14 @@ def prepareCorrect (env : Environment) (phase identifier position labelPosition 
   let localText ← renderWordStage env (toExpr localLabels)
   let unchanged := toExpr output == toExpr sec
   let outputText ← if unchanged then pure "" else renderWordStage env (toExpr output)
-  let dir := "InitE/BackendStages/TargetChecks"
+  let dir := "submission/InitECandidate/Proofs/BackendStages/TargetChecks"
   IO.FS.createDirAll dir
   let previous := if phase == 0 then s!"Initial{identifier}" else s!"Reencode{phase-1}_{identifier}"
-  let inputImport := if phase == 0 then s!"InitE.BackendStages.TargetChecks.Initial{identifier}" else s!"InitE.BackendStages.TargetChecks.CorrectData{phase-1}_{identifier}"
-  let common := "set_option autoImplicit false\nset_option Elab.async false\nset_option maxRecDepth 1000000\nset_option maxHeartbeats 0\nopen Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target\nopen InitE.BackendStages\nnamespace InitE.BackendStages.TargetChecks.Correct\n"
-  let ending := "end InitE.BackendStages.TargetChecks.Correct\n"
+  let inputImport := if phase == 0 then s!"InitECandidate.Proofs.BackendStages.TargetChecks.Initial{identifier}" else s!"InitECandidate.Proofs.BackendStages.TargetChecks.CorrectData{phase-1}_{identifier}"
+  let common := "set_option autoImplicit false\nset_option Elab.async false\nset_option maxRecDepth 1000000\nset_option maxHeartbeats 0\nopen Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target\nopen InitECandidate.Proofs.BackendStages\nnamespace InitECandidate.Proofs.BackendStages.TargetChecks.Correct\n"
+  let ending := "end InitECandidate.Proofs.BackendStages.TargetChecks.Correct\n"
   if identifier <= 595 then
-    let rootName := "InitE.BackendStages.TargetChecks"
+    let rootName := "InitECandidate.Proofs.BackendStages.TargetChecks"
     IO.FS.writeFile s!"{dir}/CorrectData{phase}_{identifier}.lean"
       (s!"import {rootName}.Data{phase}_{identifier}\n" ++ common ++
        s!"def localLabels{phase}_{identifier} := {rootName}.localLabels{phase}_{identifier}\ndef Reencode{phase}_{identifier} := {rootName}.Reencode{phase}_{identifier}\n" ++ ending)
@@ -135,18 +135,18 @@ def prepareCorrect (env : Environment) (phase identifier position labelPosition 
     IO.FS.writeFile s!"{dir}/CorrectPhase{phase}_{identifier}.lean"
       (s!"import {rootName}.CorrectLabels{phase}_{identifier}\nimport {rootName}.CorrectEncode{phase}_{identifier}\nset_option autoImplicit false\n")
     return
-  let data := s!"import {inputImport}\nimport InitE.BackendStages.TargetLabels{phase}\nimport InitE.BackendStages.TargetFfis\nimport Flapjack.Compiler.Encoders.RiscV.Target.Configuration\n" ++ common ++
+  let data := s!"import {inputImport}\nimport InitECandidate.Proofs.BackendStages.TargetLabels{phase}\nimport InitECandidate.Proofs.BackendStages.TargetFfis\nimport Flapjack.Compiler.Encoders.RiscV.Target.Configuration\n" ++ common ++
     s!"def localLabels{phase}_{identifier} : List (Nat × Nat) :=\n{localText}\ndef Reencode{phase}_{identifier} : LabSem.LabSectionHOL 64 :=\n{if unchanged then previous else outputText}\n" ++ ending
   IO.FS.writeFile s!"{dir}/CorrectData{phase}_{identifier}.lean" data
-  let labelsProof := s!"import InitE.BackendStages.TargetChecks.CorrectData{phase}_{identifier}\n" ++ common ++
+  let labelsProof := s!"import InitECandidate.Proofs.BackendStages.TargetChecks.CorrectData{phase}_{identifier}\n" ++ common ++
     s!"theorem localLabels{phase}_{identifier}_eq : LabToTarget.sectionLabels {labelPosition} {previous}.lines [] = ({localNext}, localLabels{phase}_{identifier}) := by\n  with_unfolding_all rfl\n#print axioms localLabels{phase}_{identifier}_eq\n" ++ ending
   IO.FS.writeFile s!"{dir}/CorrectLabels{phase}_{identifier}.lean" labelsProof
-  let encodingProof := s!"import InitE.BackendStages.TargetChecks.CorrectData{phase}_{identifier}\n" ++ common ++
+  let encodingProof := s!"import InitECandidate.Proofs.BackendStages.TargetChecks.CorrectData{phase}_{identifier}\n" ++ common ++
     s!"theorem Reencode{phase}_{identifier}_eq : LabToTarget.encLinesAgain Target.labels{phase} Target.ffis {position} riscvConfig.encode {previous}.lines [] true = (Reencode{phase}_{identifier}.lines, {next}, {ok}) := by\n  with_unfolding_all rfl\n#print axioms Reencode{phase}_{identifier}_eq\n" ++ ending
   IO.FS.writeFile s!"{dir}/CorrectEncode{phase}_{identifier}.lean" encodingProof
-  let prior := if phase == 0 then "" else s!"import InitE.BackendStages.TargetChecks.CorrectPhase{phase-1}_{identifier}\n"
+  let prior := if phase == 0 then "" else s!"import InitECandidate.Proofs.BackendStages.TargetChecks.CorrectPhase{phase-1}_{identifier}\n"
   IO.FS.writeFile s!"{dir}/CorrectPhase{phase}_{identifier}.lean"
-    (prior ++ s!"import InitE.BackendStages.TargetChecks.CorrectLabels{phase}_{identifier}\nimport InitE.BackendStages.TargetChecks.CorrectEncode{phase}_{identifier}\nset_option autoImplicit false\n")
+    (prior ++ s!"import InitECandidate.Proofs.BackendStages.TargetChecks.CorrectLabels{phase}_{identifier}\nimport InitECandidate.Proofs.BackendStages.TargetChecks.CorrectEncode{phase}_{identifier}\nset_option autoImplicit false\n")
   IO.println s!"Target {phase}/{identifier}: labels {position}→{localNext}, encoding→{next}, stable={ok}; {data.utf8ByteSize} bytes"
 
 
@@ -159,7 +159,7 @@ def prepareAll (env : Environment) (stack : List (Nat × StackLang.HolProg 64))
     (2 * DataToWord.maxHeapLimit 64 cfg.dataConf - 1)
     (riscvConfig.regCount - (riscvConfig.avoidRegs.length + 3)) riscvConfig.addrOffset stack
   let initial := LabToTarget.encSecList riscvConfig.encode (LabFilter.filterSkip sections)
-  let dir := "InitE/BackendStages/TargetChecks"
+  let dir := "submission/InitECandidate/Proofs/BackendStages/TargetChecks"
   IO.FS.createDirAll dir
   let mut position := 0
   let mut labelPosition := 0
@@ -167,10 +167,10 @@ def prepareAll (env : Environment) (stack : List (Nat × StackLang.HolProg 64))
     let n := sec.sectionId
     let text ← renderWordStage env (toExpr sec)
     IO.FS.writeFile s!"{dir}/Initial{n}.lean"
-      ("import Flapjack.Compiler.Backend.LabToTarget.Compile\nset_option autoImplicit false\nset_option maxRecDepth 1000000\nset_option maxHeartbeats 0\nopen Flapjack Flapjack.Compiler.Backend\nnamespace InitE.BackendStages.TargetChecks\n" ++
-       s!"def Initial{n} : LabSem.LabSectionHOL 64 :=\n{text}\nend InitE.BackendStages.TargetChecks\n")
+      ("import Flapjack.Compiler.Backend.LabToTarget.Compile\nset_option autoImplicit false\nset_option maxRecDepth 1000000\nset_option maxHeartbeats 0\nopen Flapjack Flapjack.Compiler.Backend\nnamespace InitECandidate.Proofs.BackendStages.TargetChecks\n" ++
+       s!"def Initial{n} : LabSem.LabSectionHOL 64 :=\n{text}\nend InitECandidate.Proofs.BackendStages.TargetChecks\n")
     IO.FS.writeFile s!"{dir}/InitialBridge{n}.lean"
-      (s!"import InitE.BackendStages.Encoded{n}\nimport InitE.BackendStages.TargetChecks.Initial{n}\nset_option autoImplicit false\nset_option maxRecDepth 1000000\nset_option maxHeartbeats 0\nnamespace InitE.BackendStages.TargetChecks\ntheorem Initial{n}_eq : InitE.BackendStages.Encoded{n} = Initial{n} := by\n  with_unfolding_all rfl\n#print axioms Initial{n}_eq\nend InitE.BackendStages.TargetChecks\n")
+      (s!"import InitECandidate.Proofs.BackendStages.Encoded{n}\nimport InitECandidate.Proofs.BackendStages.TargetChecks.Initial{n}\nset_option autoImplicit false\nset_option maxRecDepth 1000000\nset_option maxHeartbeats 0\nnamespace InitECandidate.Proofs.BackendStages.TargetChecks\ntheorem Initial{n}_eq : InitECandidate.Proofs.BackendStages.Encoded{n} = Initial{n} := by\n  with_unfolding_all rfl\n#print axioms Initial{n}_eq\nend InitECandidate.Proofs.BackendStages.TargetChecks\n")
     prepare env 0 n position labels0 ffis sec (some labelPosition)
     position := (LabToTarget.encLinesAgain labels0 ffis position riscvConfig.encode sec.lines [] true).2.1
     labelPosition := (LabToTarget.sectionLabels labelPosition sec.lines []).1

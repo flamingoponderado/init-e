@@ -15,7 +15,7 @@ import re
 import time
 
 ROOT = Path(__file__).resolve().parents[1]
-HEADER = """import InitE.KernelComputation
+HEADER = """import InitECandidate.Proofs.KernelComputation
 import InitE.MetadataComputation
 import InitE.NameComputation
 import Flapjack.Pancake.PanLang
@@ -28,7 +28,7 @@ set_option maxHeartbeats 0
 def fixture(family, size, shortcut, depth=32, expected=None, batch=1, elab_async=True):
     text = HEADER + f"set_option Elab.async {str(elab_async).lower()}\n"
     if shortcut:
-        text += "open scoped InitE.KernelComputation\n"
+        text += "open scoped InitECandidate.Proofs.KernelComputation\n"
     if family == "compiler":
         declarations = [
             '.function { name := "%s", inline := false, exported := false, '
@@ -36,11 +36,11 @@ def fixture(family, size, shortcut, depth=32, expected=None, batch=1, elab_async
             % ("main" if i == 0 else f"f{i}", i) for i in range(size)]
         text += "open Flapjack\n"
         text += "def ast : List (Decl (BitVec 64)) := [" + ", ".join(declarations) + "]\n"
-        text = "import InitE.CompilerComputation\n" + text
+        text = "import InitECandidate.Proofs.CompilerComputation\n" + text
         if expected is None:
             return text + '#eval IO.println ("expected:" ++ reprStr ((RiscV.NativeSource.compileDeclarations ast).map (fun out => out.1.length)))\n'
         if shortcut:
-            text += "open scoped InitE.CompilerComputation\n"
+            text += "open scoped InitECandidate.Proofs.CompilerComputation\n"
         text += "theorem measured : (RiscV.NativeSource.compileDeclarations ast).map (fun out => out.1.length) = " + expected + " := by\n"
     elif family in ("metadata", "distinct"):
         if family == "distinct":

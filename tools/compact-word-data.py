@@ -13,8 +13,8 @@ p.add_argument("label", type=int)
 p.add_argument("--bytes", type=int, default=1024)
 a=p.parse_args()
 root=Path(__file__).resolve().parent.parent
-source=root/f"InitE/WordStages/Parallel{a.label}"
-output=root/f"InitE/WordStages/Sparse{a.label}"
+source=root/f"submission/InitECandidate/Proofs/WordStages/Parallel{a.label}"
+output=root/f"submission/InitECandidate/Proofs/WordStages/Sparse{a.label}"
 output.mkdir(exist_ok=True)
 token=re.compile(rf"\bword{a.label}_\d+_\d+\b")
 for n in range(11):

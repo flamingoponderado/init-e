@@ -7,9 +7,9 @@ import json
 import re
 from pathlib import Path
 
-MAX_FILES = 4096
-MAX_FILE_BYTES = 8 * 1024 * 1024
-MAX_TOTAL_BYTES = 2 * 1024 * 1024 * 1024
+MAX_FILES = 65536
+MAX_FILE_BYTES = 16 * 1024 * 1024
+MAX_TOTAL_BYTES = 4 * 1024 * 1024 * 1024
 MODULE = re.compile(r"[A-Za-z_][A-Za-z0-9_']*(?:\.[A-Za-z_][A-Za-z0-9_']*)*")
 INTEGER = re.compile(r"0|[1-9][0-9]*")
 CLAIM_KEYS = {"K"}
@@ -123,9 +123,9 @@ def check(root: Path, trusted: Path = TRUSTED_ROOT) -> dict:
         size = path.stat().st_size
         total += size
         if size > MAX_FILE_BYTES:
-            errors.append(f"{rel}: file exceeds 8 MiB")
+            errors.append(f"{rel}: file exceeds 16 MiB")
     if total > MAX_TOTAL_BYTES:
-        errors.append("submission exceeds 2 GiB")
+        errors.append("submission exceeds 4 GiB")
     if not (root / "Solution.lean").is_file():
         errors.append("Solution.lean is required")
     try:

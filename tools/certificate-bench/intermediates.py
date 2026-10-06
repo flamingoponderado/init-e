@@ -12,7 +12,7 @@ import time
 
 ROOT = Path(__file__).resolve().parents[2]
 NODE = re.compile(r"\b(?:word79_[345]_\d+|pass79_[345])\b")
-HEADER = """import InitE.CompactComputation
+HEADER = """import InitECandidate.Proofs.CompactComputation
 import Flapjack.Compiler.Backend.WordCse.Transform
 import Flapjack.Compiler.Backend.WordCopy
 set_option Elab.async false
@@ -22,7 +22,7 @@ open Flapjack Flapjack.Compiler.Backend
 """
 
 def definitions():
-    paths = ["InitE/WordStages/Parallel79/Data3.lean", "InitE/WordStages/Pass79_4.lean", "InitE/WordStages/Pass79_5.lean"]
+    paths = ["submission/InitECandidate/Proofs/WordStages/Parallel79/Data3.lean", "submission/InitECandidate/Proofs/WordStages/Pass79_4.lean", "submission/InitECandidate/Proofs/WordStages/Pass79_5.lean"]
     ds = []
     hashes = {}
     for file in paths:

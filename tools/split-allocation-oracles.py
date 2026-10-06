@@ -44,7 +44,7 @@ def main():
     if len(entries) != args.expected_count or args.chunk_size <= 0:
         raise ValueError("unexpected count or invalid chunk size")
     root = Path(__file__).resolve().parents[1]
-    out = root / "InitE/AllocationOracles"
+    out = root / "submission/InitECandidate/Proofs/AllocationOracles"
     out.mkdir(exist_ok=True)
     imports, names, lengths = [], [], []
     for index, offset in enumerate(range(0, len(entries), args.chunk_size)):
@@ -52,14 +52,14 @@ def main():
         module = f"Chunk{index:03d}"
         chunk = entries[offset:offset + args.chunk_size]
         content = ("import Flapjack.Misc.Sptree\n\nset_option maxRecDepth 1000000\n"
-                   "set_option maxHeartbeats 0\nnamespace InitE.AllocationOracles\n"
+                   "set_option maxHeartbeats 0\nnamespace InitECandidate.Proofs.AllocationOracles\n"
                    "-- Native proposals; compiler validation is required in the stage proofs.\n"
                    f"def {name} : List (Option (Flapjack.Spt Nat)) :=\n[" +
                    ",\n".join(chunk) + "]\n" +
                    f"theorem {name}_length : {name}.length = {len(chunk)} := by rfl\n"
-                   "end InitE.AllocationOracles\n")
+                   "end InitECandidate.Proofs.AllocationOracles\n")
         (out / f"{module}.lean").write_text(content)
-        imports.append(f"import InitE.AllocationOracles.{module}")
+        imports.append(f"import InitECandidate.Proofs.AllocationOracles.{module}")
         names.append(f"AllocationOracles.{name}")
         lengths.append(f"AllocationOracles.{name}_length")
     content = ("\n".join(imports) + "\n\nnamespace InitE\n"
@@ -67,7 +67,7 @@ def main():
                ", ".join(names) + "].flatten\n"
                f"theorem allocationOracles_length : allocationOracles.length = {len(entries)} := by\n"
                "  simp [allocationOracles, " + ", ".join(lengths) + "]\nend InitE\n")
-    (root / "InitE/AllocationOracles.lean").write_text(content)
+    (root / "submission/InitECandidate/Proofs/AllocationOracles.lean").write_text(content)
     print(f"Wrote {len(names)} chunks containing {len(entries)} checked-hint proposals")
 
 

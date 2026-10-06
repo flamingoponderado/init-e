@@ -1,4 +1,4 @@
-import InitE.CompactComputation
+import InitECandidate.Proofs.CompactComputation
 import Flapjack.Compiler.Backend.WordCopy
 open Flapjack Flapjack.Compiler.Backend
 namespace CheckerExperiment
