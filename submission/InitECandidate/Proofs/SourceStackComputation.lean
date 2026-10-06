@@ -4,6 +4,7 @@ import Flapjack.Pancake.Proofs.PanToTarget.ExecutableCompileProgMaxDepth
 import InitECandidate.Proofs.FrontendStages.Pass5
 
 namespace InitE
+open InitECandidate.Proofs
 open Flapjack Flapjack.Pancake.PanLang Flapjack.Compiler.Backend
 open Flapjack.Compiler.Encoders.RiscV.Target
 

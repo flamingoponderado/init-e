@@ -1382,7 +1382,7 @@ unsafe def main (args : List String) : IO Unit := do
     if text.contains '⋯' then throw (IO.userError "incomplete oracle-list output")
     writeCompactCertificate "work/lean-perf/word-stages/AllocationOracles.lean"
       ("import InitECandidate.Proofs.CompilerOracles\n\nset_option maxRecDepth 1000000\n" ++
-       "set_option maxHeartbeats 0\nnamespace InitE\n" ++
+       "set_option maxHeartbeats 0\nnamespace InitE\nopen InitECandidate.Proofs\n" ++
        "-- Native proposals, checked by the compiler's oracle validator in subsequent proofs.\n" ++
        "def allocationOracles : List (Option (Flapjack.Spt Nat)) :=\n" ++ text ++ "\nend InitE\n")
     IO.println s!"Proposed allocation oracles: {proposedColors.length}; accepted: {(proposedColors.filter Option.isSome).length}; {text.utf8ByteSize} bytes"

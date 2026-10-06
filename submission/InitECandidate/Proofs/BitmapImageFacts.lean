@@ -11,6 +11,7 @@ set_option cbv.maxSteps 1000000000
 set_option cbv.warning false
 
 namespace InitE
+open InitECandidate.Proofs
 open Flapjack
 
 def bitmapBytes : List (BitVec 8) :=

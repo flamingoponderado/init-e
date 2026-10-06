@@ -62,7 +62,7 @@ def main():
         imports.append(f"import InitECandidate.Proofs.AllocationOracles.{module}")
         names.append(f"AllocationOracles.{name}")
         lengths.append(f"AllocationOracles.{name}_length")
-    content = ("\n".join(imports) + "\n\nnamespace InitE\n"
+    content = ("\n".join(imports) + "\n\nnamespace InitE\nopen InitECandidate.Proofs\n"
                "def allocationOracles : List (Option (Flapjack.Spt Nat)) :=\n  [" +
                ", ".join(names) + "].flatten\n"
                f"theorem allocationOracles_length : allocationOracles.length = {len(entries)} := by\n"

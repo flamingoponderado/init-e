@@ -6,6 +6,7 @@ import InitECandidate.Proofs.SourceStackCertificate
 witness is a premise of this reusable theorem. Concrete source, artifact,
 register, memory and bootstrap proofs instantiate it for the baseline. -/
 namespace InitE
+open InitECandidate.Proofs
 open Flapjack Flapjack.Pancake.Proofs.PanToTarget
 open Flapjack.Compiler.Backend Flapjack.Compiler.Backend.BackendProof
 open Flapjack.Compiler.Backend.RiscVConfig Flapjack.Compiler.Encoders.RiscV.Target

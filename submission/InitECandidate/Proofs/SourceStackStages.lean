@@ -5,6 +5,7 @@ import InitECandidate.Proofs.StackDepthComputation
 /-! Link the ranked stack certificate to the compiler evaluator through an exact
 word-optimizer stage. Allocation proposals remain subject to kernel checks. -/
 namespace InitE
+open InitECandidate.Proofs
 open Flapjack Flapjack.Compiler.Backend
 open Flapjack.Compiler.Encoders.RiscV.Target
 open Flapjack.Pancake.Proofs.PanToTarget

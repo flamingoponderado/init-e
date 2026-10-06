@@ -1,6 +1,7 @@
 import InitECandidate.Proofs.BootstrapTrace
 
 namespace InitE
+open InitECandidate.Proofs
 open Flapjack
 
 /-- The bootstrap leaves every byte above the five source headers zero,

@@ -4,6 +4,7 @@ import InitECandidate.Proofs.BootstrapTrace
 import InitECandidate.Proofs.BootstrapComposition
 
 namespace InitE
+open InitECandidate.Proofs
 open Flapjack
 
 /-- The original submitted image, including its real zero-RAM bootstrap,

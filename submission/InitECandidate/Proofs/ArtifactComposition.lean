@@ -9,6 +9,7 @@ set_option maxRecDepth 1000000
 set_option maxHeartbeats 0
 
 namespace InitE
+open InitECandidate.Proofs
 open Flapjack Flapjack.Compiler.Backend
 open Flapjack.Compiler.Encoders.RiscV.Target
 open Flapjack.Pancake.Proofs.PanToTarget

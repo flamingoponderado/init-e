@@ -3,6 +3,7 @@ import InitECandidate.Proofs.CompilerOracles
 import InitECandidate.Proofs.WordBackend.StackAgreement
 
 namespace InitE
+open InitECandidate.Proofs
 open Flapjack Flapjack.Compiler.Backend
 open Flapjack.Compiler.Encoders.RiscV.Target
 open Flapjack.Pancake.Proofs.PanToTarget

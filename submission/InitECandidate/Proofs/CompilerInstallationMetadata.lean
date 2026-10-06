@@ -9,6 +9,7 @@ set_option cbv.maxSteps 1000000000
 set_option cbv.warning false
 
 namespace InitE
+open InitECandidate.Proofs
 open Flapjack Flapjack.Compiler.Backend.LabToTarget
 
 set_option maxRecDepth 1000000 in
