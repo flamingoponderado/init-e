@@ -146,3 +146,48 @@ that simply computes `pass src` and compares it with `tgt` would not establish
 this benefit. For checkpoints, identify real repeated prefixes, state lookups or
 shared subtrees first. Preserve the fixed pass equations and count helper proofs,
 intermediate state literals and full exports when comparing candidates.
+
+## Comparator-first follow-up: reuse versus smaller exports
+
+The current priority is comparator replay time, followed by preserving build
+time, with export size after those. The
+[intermediate-pruning experiment](INTERMEDIATE-PRUNING-EXPERIMENT.md) reduces
+export size by 10.2% on an actual guest function but leaves replay near 3.6
+seconds. That alone is not a rollout priority.
+
+A controlled reuse experiment uses guest function 79's actual pre-CSE and
+post-copy ASTs. It presents either one or four identical pass obligations. The
+control rechecks each with `kernel_rfl`; the reuse variant checks the first and
+references that opaque theorem for the others. A conjunction certificate keeps
+all four obligations in the export so none are discarded as unused.
+
+Single exploratory runs on the same toolchain and limits:
+
+| Four obligations | Build | Kernel replay | Complete export | Replay process wall time |
+| --- | ---: | ---: | ---: | ---: |
+| Each evaluated separately | 16.077 s | 14.002 s | 6,569,936 bytes | 15.610 s |
+| One proof reused | 4.564 s | 3.621 s | 6,569,936 bytes | 5.201 s |
+
+The one-obligation controls have kernel replay times of 3.692 and 3.682 seconds.
+All certificates pass independent replay and have only `[propext, Quot.sound]`.
+This demonstrates repeated checking across declarations despite equally compact
+proofs and identical export sizes. Reusing checked equations reduces both
+replay and build time here. Ordinary kernel checking remains enabled throughout.
+
+This deliberately repeats the same obligation. It does not establish that the
+current guest repeats this whole-function equation. Before production changes,
+identify actual repeated closed subcomputations or reusable parameterized
+relations: shared compiler states, AST subtrees, label lookups, encoding results
+or overlapping prefixes. Reuse their checked equations instead of merely giving
+each occurrence another compact reflexivity proof. Retain sharing and benchmark
+replay with the full used helper closure.
+
+Reproduce the exploratory run with:
+
+```sh
+python3 tools/certificate-bench/reuse.py --trials 1
+```
+
+The harness defaults to three trials; use a fresh `--work` directory. Raw results
+and source hashes are preserved in
+[reuse-results.json](../tools/certificate-bench/reuse-results.json).
