@@ -191,3 +191,6 @@ python3 tools/certificate-bench/reuse.py --trials 1
 The harness defaults to three trials; use a fresh `--work` directory. Raw results
 and source hashes are preserved in
 [reuse-results.json](../tools/certificate-bench/reuse-results.json).
+
+The subsequent production rollout and real multi-function measurements are
+documented in [PROOF-REUSE-EXPERIMENT.md](PROOF-REUSE-EXPERIMENT.md).
