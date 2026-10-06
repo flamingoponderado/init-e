@@ -30,6 +30,13 @@ discharged for the zkVM actually used (it is a trust boundary of the
 challenge, alongside the proof that the RISC-V semantics in the challenge
 refines the zkVM's).
 
+The [riscv-im-compare README](https://github.com/flamingoponderado/riscv-im-compare#readme)
+compares Flapjack's L3-derived RISC-V model with riscv-zkvm. Evaluate its proved
+results, explicit side conditions and remaining gaps alongside this challenge.
+In particular, check memory-map and alignment assumptions, protection of
+instruction bytes, state and oracle correspondence, and the outstanding
+FFI/syscall, termination and Sail connections for the intended execution platform.
+
 ## What a passing submission does not guarantee
 
 A submission that passes the challenge is equivalent to the Pancake source only
