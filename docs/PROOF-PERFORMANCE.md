@@ -1557,3 +1557,17 @@ Unit `init-e-compact-full-outside-retry2-20261006.service`, invocation
 `a1c28505d6574a75bec188ea4ddeb8bf`, and its terminal journal are recorded in
 `work/lean-perf/compact-guest/full-outside-retry2-build-result.json`.
 Fresh isolated comparator acceptance remains pending.
+
+
+The fresh isolated run started from commit
+`1f8d0751a704daacaeeb7e39d1524469536275fb` in
+`init-e-full-verifier-compact-5e0e78c2.service`, invocation
+`c4626cb5d8ae43c6b326a84e09cfd02c`. Mandatory Linux isolation passed before
+project staging. The run rebuilds the trusted challenge namespaces cold and
+then exports/replays the candidate with the comparator. Its work directory is
+`verifier/runs/full-compact-5e0e78c2-20261006`; outer log/time and exact launch
+metadata are under `work/lean-perf/full-verifier-compact-5e0e78c2*`.
+The limits remain 16 CPUs/compiler slots, 112 GiB, zero swap and eight hours
+per phase, with eighteen hours for the outer runner. The herdr completion
+watcher is armed for this exact invocation and session. Full isolated
+acceptance remains pending.

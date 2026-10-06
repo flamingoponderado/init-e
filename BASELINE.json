@@ -381,7 +381,7 @@
     }
   ],
   "current_standard_axiom_verification": {
-    "status": "outside_passed_isolated_pending",
+    "status": "running",
     "flapjack_revision": "034bb5a1ed0b757082768d5406206bd2f8e31b7c",
     "branch": "perf/compact-computation-proofs",
     "axiom_count": 3,
@@ -389,9 +389,19 @@
     "logical_cpus": 16,
     "active_lean_compilers": 16,
     "inner_runtime_limit_seconds": 28800,
-    "stage": "Complete outside InitE, Submission and InitE.Audit build passed 53282 jobs; fresh isolated comparator pending",
-    "scope": "No current full isolated acceptance. The previous verifier was stopped by explicit user request.",
-    "outside_build_unit": "init-e-compact-full-outside-retry2-20261006.service"
+    "stage": "Mandatory isolation probe passed; fresh isolated project is staging before cold TrustedAxioms build and comparator replay",
+    "scope": "Outside full-target continuation passed. Fresh isolated comparator acceptance remains pending.",
+    "outside_build_unit": "init-e-compact-full-outside-retry2-20261006.service",
+    "unit": "init-e-full-verifier-compact-5e0e78c2.service",
+    "invocation_id": "c4626cb5d8ae43c6b326a84e09cfd02c",
+    "source_commit": "1f8d0751a704daacaeeb7e39d1524469536275fb",
+    "work": "verifier/runs/full-compact-5e0e78c2-20261006",
+    "outer_runtime_limit_seconds": 64800,
+    "completion_waker": {
+      "unit": "init-e-full-verifier-compact-5e0e78c2-waker.service",
+      "target_thread": "01a107bb-47af-7960-b576-efd9678059da",
+      "exact_invocation": "c4626cb5d8ae43c6b326a84e09cfd02c"
+    }
   },
   "published_standard_axiom_snapshot": {
     "commit": "1eecd1778a5646c9613097220e21e25a4bb67103",
