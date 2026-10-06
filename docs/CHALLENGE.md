@@ -8,7 +8,7 @@ Assumptions
 * **(initial pc)** Execution starts from the fixed program counter 0x8000_0000 (Zisk's `ROM_ADDR`, where Zisk's own program starts after its BIOS)
 * **(RAM)** 29 GiB in `[0xa000_0000, 0x7_e000_0000)` (exclusive end, 4 KiB aligned), initially zero outside the public input. Integer registers initially contain zero. Every submission includes its own startup code.
 * **(gas)** if the block gas limit parses from the input (by a fixed-position reader, `Guest/GasLimit.lean`), it is at most 200M (formally: `Guest.GasLimit.declaredGasLimit input ≤ 200000000`). The input might not parse; that case fits the assumption, and the conclusion below applies as usual
-* **(RISC-V?)** Flapjack's integer RISC-V model on the `riscv-im` branch is used, pinned to `7981f765cdadecf9b2857f326a65bae47371ab15`. Execution starts in machine mode, with identity physical address translation.
+* **(RISC-V?)** Flapjack's integer RISC-V model on the `riscv-im` branch is used, pinned to `034bb5a1ed0b757082768d5406206bd2f8e31b7c`. Execution starts in machine mode, with identity physical address translation.
   The formal machine setup must enforce `mstatus.MPRV = 3`;
   `isRiscvMachineConfig` alone does not imply this. Address translation in the
   pinned `riscv-im` model is identity by definition. Accelerators are foreign calls with the specifications in `Guest/AccelFfi.lean`, not extra instructions in the integer ISA.
@@ -46,7 +46,7 @@ At repin time isolated verification remained pending the host upgrade.
 
 ## Flapjack branch rename and repin (2026-10-05)
 
-The branch is now named `riscv-im`. The current dependency pin is
+The branch was renamed to `riscv-im`. That repin used
 `7981f765cdadecf9b2857f326a65bae47371ab15`, advancing from
 `7ef58a0e940088c06e6a283bde681c5754fce262`. Only upstream `README.md` and
 `docs/SOUNDNESS.md` changed, documenting the comparison with Sail RISC-V.
@@ -60,6 +60,31 @@ actual Linux isolation probe passed with the new unit settings. The full
 baseline certificate has not yet been rechecked during the ongoing
 standard-axiom conversion. EEST was not rerun for this documentation-only
 upstream change.
+
+## Flapjack ISA alignment repin (2026-10-06)
+
+The dependency now uses `riscv-im` revision
+`034bb5a1ed0b757082768d5406206bd2f8e31b7c`, advancing from
+`7981f765cdadecf9b2857f326a65bae47371ab15` after PR #14 was merged.
+This is a model change: upstream removes RV64 word arithmetic, shifts,
+multiplication and division instructions absent from `riscv-zkvm`, retaining
+`ADDIW`. It also adds proofs that every compressed instruction decodes as
+unknown and cannot step successfully. Compiler passes and the dependency
+versions are unchanged. The submitted bytes and source AST are unchanged;
+the changed evaluator and encoding models require fresh proof validation.
+
+The old-pin full verifier was stopped at the user's request before complete
+comparison or kernel acceptance. Its cold trusted audit had passed with the
+three standard axioms. The stopped comparator reached a 103.9 GiB peak with
+zero swap; it is recorded as superseded, not an accepted or failed proof.
+Historical old-pin evidence does not certify this revision. A fresh full
+isolated verifier is running at the new pin with the same resource limits.
+All 21 verifier regression tests pass (8.463 seconds). The ten-minute bounded
+compatibility build passed all 3,616 jobs, including the challenge,
+machine-memory lemmas and upstream `Flapjack.RiscV.L3.Step.NoCompressed`.
+Full initial-submission and comparator acceptance at the new pin remain pending.
+EEST has not been rerun for this repin; the earlier runtime record remains
+associated with its original revision.
 
 Future isolated verification units use up to 16 logical CPUs, a 112 GiB memory
 cap with no swap, and an eight-hour runtime limit for each trusted build and
@@ -229,8 +254,8 @@ The challenge and initial submission are implemented. The previous version
 passed isolated verification with native-computation axioms. The current
 AST-based, standard-axiom version passes the full outside build and proof
 audit. The disk-spooling retry also passed its cold isolated trusted audit with
-exactly the three standard axioms; its full comparator is running and acceptance
-remains pending. `lake build` builds the fixed challenge and original submission;
+exactly the three standard axioms. That old-pin comparator was stopped at the
+user's request; fresh verification of the ISA-alignment repin remains pending. `lake build` builds the fixed challenge and original submission;
 `lake build InitE.Audit` prints the proof dependencies. The initial certificate
 is `InitE.Challenge.certificate` in `submission/Solution.lean`. It has no
 assumed bootstrap execution, installed poststate, stack bound, compiler
@@ -328,7 +353,8 @@ pass under the final resource caps. Admission metadata uses small checked
 literal tables and ordinary kernel computation. Full isolated verification
 remains pending: the original buffered comparator export failed with OOM.
 The disk-spooling retry passed its cold trusted audit in 2h 38m 23s with a
-110.0 GiB memory peak and zero swap; its full comparator is still running. The measured
+110.0 GiB memory peak and zero swap; its comparator was later stopped at the
+user's request for the new pin. Fresh isolated acceptance remains pending. The measured
 outside continuation reused earlier stages and is not a cold build.
 
 Large computations use separately checked intermediate definitions, explicit

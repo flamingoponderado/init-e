@@ -1431,3 +1431,35 @@ it after success or failure. It does not interrupt or restart the verifier.
 The Flapjack dependency remains pinned to `riscv-im` revision
 `7981f765cdadecf9b2857f326a65bae47371ab15`; the user plans a separate repin PR
 after merging PR #14.
+
+### Old-pin retry superseded for the ISA-alignment repin
+
+After PR #14 was merged, the user requested repinning Flapjack and stopping
+the old full verifier. The outer run and comparator were stopped explicitly,
+and the completion waker was disarmed first. This is a superseded run, not
+full acceptance or an OOM failure. The comparator used 6,555.527439 CPU seconds
+over 6,612.445188 wall seconds, with 111,525,384,192 bytes (103.9 GiB) peak
+and zero swap. The passed trusted audit remains valid evidence for the old pin.
+Terminal journal accounting is retained in
+`work/lean-perf/full-verifier-spool-standard3-superseded.json`.
+
+The stopped run's generated Lake cache and private spool files were reclaimed
+after a process-reference audit found no users. Frozen sources and logs remain.
+The new pin is `034bb5a1ed0b757082768d5406206bd2f8e31b7c`; its semantics
+change requires a fresh isolated build and comparison. All 21 verifier
+regression tests passed in 8.463 seconds.
+The bounded compatibility build also passed all 3,616 jobs, including
+`InitE.Challenge`, `InitE.MachineWordMemory`, and
+`Flapjack.RiscV.L3.Step.NoCompressed`. Its log is
+`work/lean-perf/flapjack-repin-034bb5a1-smoke.log`; it is not a full
+initial-submission or isolated comparator check.
+
+The fresh full verifier is running in
+`init-e-full-verifier-riscv-im-034bb5a1.service`, invocation
+`92688cf3b01a454d82aadb8e857bdeb4`, with source snapshot
+`be28eb472322c3e0af7c420e6ffc4d5abb505293`. Its work directory is
+`verifier/runs/full-riscv-im-034bb5a1-20261006`, with outer log/time files
+`work/lean-perf/full-verifier-riscv-im-034bb5a1.{log,time}`. The same
+112-GiB, zero-swap, 16-CPU/16-compiler-slot and eight-hour inner limits apply;
+the outer allowance is eighteen hours. The session-specific herdr completion
+waker is armed for this exact invocation. Full acceptance remains pending.
