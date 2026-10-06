@@ -57,7 +57,10 @@ Install the pinned verifier tools as documented in
 [docs/SUBMISSIONS.md](docs/SUBMISSIONS.md) before the second command, and choose a
 work directory that does not already exist. File/import checks and Lean builds
 are preliminary checks; isolated verification succeeds only with a `verified`
-result after comparator kernel replay.
+result after comparator kernel replay. The comparator invocation is currently
+commented out; normal verifier runs stop after the trusted audit with
+`comparator_disabled` and exit status 1. See
+[the soundness note](docs/SOUNDNESS.md#comparator-temporarily-disabled).
 
 ## Source program and initial submission
 
