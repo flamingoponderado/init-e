@@ -44,6 +44,15 @@ A tiny proof can ask the kernel to perform an enormous computation. Conversely,
 a computation that builds quickly can produce a large proof that is expensive
 to export, parse, inspect, and replay. Record CPU time and peak memory as well.
 
+**Execution mode matters.** The earlier image, metadata, and stage-reuse
+benchmarks run `CompareReplay.lean` through `lean --run`. They execute the
+actual comparator checks, but their absolute timings and phase proportions
+are not those of the compiled production comparator. For new experiments,
+prefer a compiled fragment runner. The value-sharing experiment below builds
+one against the installed native comparator/exporter objects and measures
+native and interpreted execution on the same export pair. Compilation alone
+is not a proposed production optimization: production is already compiled.
+
 ## 1. Choose an actual bottleneck
 
 Start with [PROOF-PERFORMANCE.md](PROOF-PERFORMANCE.md) and the existing
@@ -260,6 +269,54 @@ The checked results and setup costs are recorded in
 [stage-reuse-results.json](../tools/certificate-bench/stage-reuse-results.json).
 `tools/reuse-word-functions.py` preserves the change after regeneration and
 checks that the source bodies and argument counts still match.
+
+### Shared values versus shared equations, measured natively
+
+`tools/certificate-bench/value-sharing.py` reconstructs four real optimizer
+certificates (functions 373, 375, 376, and 378) from revision `c2f6c8f5f`.
+Their identical bodies, allocator oracles, and outputs form a common
+specification. The experiment compares the original separate data declarations,
+aliases to shared data with independently checked equations, and shared data
+plus one optimizer equation generalized over the function name. It does not
+manufacture additional repeated functions or change the challenge.
+
+Three trials rotate the order of the variants. Every native comparison includes
+the complete exported closure and passes declaration comparison, primitive
+checks, axiom auditing, and kernel replay:
+
+| Variant | Export bytes | Median parse | Median replay | Median process wall |
+| --- | ---: | ---: | ---: | ---: |
+| Original repeated values/equations | 51,864,106 | 1.811 s | 5.968 s | 8.358 s |
+| Shared values, separate equations | 51,853,929 | 1.833 s | 5.968 s | 8.371 s |
+| Shared values and equation | 51,839,454 | 1.808 s | 5.373 s | 7.761 s |
+
+Value sharing alone saves only 0.020% of the export and gives no useful timing
+improvement here. The exporter already deduplicates identical expression nodes
+through `visitedExprs` in `lean4export/Export.lean`; introducing names does not
+automatically remove additional exported data. Sharing the checked equation
+reduces replay by about 10% and total process wall time by about 7% in this
+sample. These results support equation reuse, not a broad data-alias rollout.
+Larger repeated structures with different internal names remain untested.
+
+The same original export pair took 19.748 s through `lean --run` in a separate
+single run: parsing took 12.110 s and replay 6.105 s. Thus the earlier
+parsing-dominated interpreted breakdown should not be used to predict production
+costs. This native sample is replay-dominated. Export generation and fixture
+compilation are measured separately and excluded from the table's process wall
+time; all dependencies are warm. Native runner setup took 1.78 s. The runner
+also rejected the theorem-hole challenge when presented as a solution, reporting
+the forbidden `sorryAx` dependency.
+
+```sh
+rtk proxy python3 tools/certificate-bench/value-sharing.py \
+  --work work/lean-perf/value-sharing-confirmation --trials 3
+```
+
+Every subprocess has a 180-second default cap. No production proof was changed
+for this experiment and no whole-submission comparator was run. Source hashes,
+native object hashes, build/export timings, individual trials, and the rejection
+check are retained in
+[value-sharing-results.json](../tools/certificate-bench/value-sharing-results.json).
 
 ## 6. Retain only validated changes
 
