@@ -386,7 +386,7 @@
     "work": "verifier/runs/full-spool-standard3-20261006",
     "log": "work/lean-perf/full-verifier-spool-standard3.log",
     "time_log": "work/lean-perf/full-verifier-spool-standard3.time",
-    "stage": "Fresh isolation preflight and cold workspace staging; disk-spooling comparator",
+    "stage": "Cold trusted audit passed; full disk-spooling comparator running",
     "axiom_count": 3,
     "memory_limit_gib": 112,
     "logical_cpus": 16,
@@ -396,19 +396,59 @@
     "source_commit": "e6bb936d",
     "resource_snapshots": "work/lean-perf/full-verifier-spool-standard3-resources.jsonl",
     "transport_patch_sha256": "de157a76ea8749d19456b32b48fab4ba60cf2ac1615d907a0e395b75ac7d2d4a",
-    "scope": "Fresh cold rebuild of workspace proof namespaces, upstream caches reused. No full acceptance claimed."
+    "scope": "Fresh cold rebuild of workspace proof namespaces, upstream caches reused. No full acceptance claimed.",
+    "trusted_audit": {
+      "status": "passed",
+      "observed_at": "2026-10-06T07:09:49.769751+00:00",
+      "unit": "init-e-verify-347a1343b753.service",
+      "invocation_id": "e2229476ed104caeb07e4d2a917761a4",
+      "jobs": 53263,
+      "permitted_axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "cpu_seconds": 143573.824268,
+      "memory_peak_bytes": 118107770880,
+      "memory_swap_peak_bytes": 0,
+      "elapsed_seconds": 9502.804642,
+      "accounting_message": "init-e-verify-347a1343b753.service: Consumed 1d 15h 52min 53.824s CPU time over 2h 38min 22.804s wall clock time, 109.9G memory peak.",
+      "scope": "Cold rebuild of workspace proof namespaces; upstream dependencies and trusted tool caches reused. Full disk-spooling comparator acceptance remains pending."
+    },
+    "comparator_snapshot": {
+      "status": "running",
+      "observed_at": "2026-10-06T08:56:01.153250+00:00",
+      "unit": "init-e-verify-bed444a03767.service",
+      "invocation_id": "bbefec5ce3e64843a60cd3c3f193354b",
+      "memory_current_bytes": 103270871040,
+      "memory_peak_bytes": 111525384192,
+      "cpu_seconds": 6445.408146,
+      "spool_file_sizes_bytes": {
+        "tmp.XXU0W8m6": 49470701568,
+        "tmp.XXPL3MWI": 29505716
+      },
+      "disk_free_bytes": 64068276224,
+      "scope": "Interim live measurements, not terminal accounting or acceptance."
+    },
+    "completion_waker": {
+      "unit": "init-e-full-verifier-spool-standard3-waker.service",
+      "invocation_id": "15052944d6f0471a890f9566c55fb549",
+      "target_thread": "01a107bb-47af-7960-b576-efd9678059da",
+      "scope": "One-shot herdr prompt after the exact outer verifier invocation terminates"
+    }
   },
   "published_standard_axiom_snapshot": {
     "commit": "1eecd1778a5646c9613097220e21e25a4bb67103",
     "pr": 14,
-    "state": "open_draft",
+    "state": "open_ready_for_review",
     "source_agreement": {
       "trusted_and_configuration_files_checked": 56470,
       "supplement_files_checked": 241,
       "mismatches": 0,
       "evidence": "work/lean-perf/published-frozen-source-agreement.json",
       "scope": "Frozen sources and submission agree; this is not verifier acceptance"
-    }
+    },
+    "readiness_note": "User requested ready status while full comparator acceptance remains pending."
   },
   "standard_axiom_verification_attempts": [
     {

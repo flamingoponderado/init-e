@@ -228,7 +228,9 @@ optional stepped testing evaluator is required.
 The challenge and initial submission are implemented. The previous version
 passed isolated verification with native-computation axioms. The current
 AST-based, standard-axiom version passes the full outside build and proof
-audit. Its full isolated verifier is running; acceptance remains pending. `lake build` builds the fixed challenge and original submission;
+audit. The disk-spooling retry also passed its cold isolated trusted audit with
+exactly the three standard axioms; its full comparator is running and acceptance
+remains pending. `lake build` builds the fixed challenge and original submission;
 `lake build InitE.Audit` prints the proof dependencies. The initial certificate
 is `InitE.Challenge.certificate` in `submission/Solution.lean`. It has no
 assumed bootstrap execution, installed poststate, stack bound, compiler
@@ -324,8 +326,9 @@ now pass direct kernel checks with only `propext`, `Classical.choice`, and
 `Quot.sound`. The actual combined Lake build, submission and axiom audit now
 pass under the final resource caps. Admission metadata uses small checked
 literal tables and ordinary kernel computation. Full isolated verification
-remains pending after a successful cold workspace build and an OOM failure
-in the comparator’s buffered proof export. A file-spooling retry follows. The measured
+remains pending: the original buffered comparator export failed with OOM.
+The disk-spooling retry passed its cold trusted audit in 2h 38m 23s with a
+110.0 GiB memory peak and zero swap; its full comparator is still running. The measured
 outside continuation reused earlier stages and is not a cold build.
 
 Large computations use separately checked intermediate definitions, explicit

@@ -1404,3 +1404,30 @@ It repeats the cold workspace trusted audit and full comparator under the same
 outer allowance remains eighteen hours. All 21 verifier regression tests pass
 in 7.733 seconds, and the real sandbox temporary-file probe confirms that Lean
 uses the supplied private disk directory. Full acceptance remains pending.
+
+### PR #14 ready for review; full comparator still running
+
+At the user's request, PR #14 is ready for review while isolated comparator
+acceptance remains pending. This readiness status does not certify completion
+of the verifier. The current retry's cold trusted audit passed all 53,263 jobs
+with exactly `propext`, `Classical.choice`, and `Quot.sound`: wall time
+9,502.804642 seconds (2h 38m 23s), CPU time 143,573.824268 seconds,
+peak memory 118,107,770,880 bytes (110.0 GiB), zero swap. Upstream dependencies
+and trusted tool caches were reused. Exact terminal accounting is retained in
+`work/lean-perf/full-verifier-spool-standard3-trusted-audit-result.json`.
+
+The comparator is running in `init-e-verify-bed444a03767.service`, invocation
+`bbefec5ce3e64843a60cd3c3f193354b`. At 2026-10-06T08:56:01.153250+00:00, the larger
+private export file contained 49,470,701,568 bytes and comparator peak memory was
+111,525,384,192 bytes (103.9 GiB), below the 112-GiB cap.
+These are interim measurements; export, parsing, comparison and full kernel
+replay must all finish before acceptance can be claimed. The exact snapshot is
+`work/lean-perf/full-verifier-spool-standard3-pr14-status.json`.
+
+A one-shot completion watcher,
+`init-e-full-verifier-spool-standard3-waker.service`, checks the exact outer
+verifier invocation and this session's herdr thread identity before prompting
+it after success or failure. It does not interrupt or restart the verifier.
+The Flapjack dependency remains pinned to `riscv-im` revision
+`7981f765cdadecf9b2857f326a65bae47371ab15`; the user plans a separate repin PR
+after merging PR #14.
