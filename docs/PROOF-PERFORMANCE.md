@@ -1538,9 +1538,22 @@ The repaired `Pass875_2` checked in 65.80 wall seconds; the tiny failing
 optimizer proofs expose the pipeline before applying this bridge; proofs that
 already compose checked stages only need the final tuple conversion.
 
-The original bulk Word/Small build and frontend discovery build found these
-cases and exited with errors; they are not acceptance results. Their corrected
-proofs passed focused checks, and an actual full
-`lake build InitE Submission InitE.Audit` is now in progress. A few staged
-optimizer tails were corrected during that pass and require a final retry.
-The full integration result and fresh isolated comparison remain pending.
+The original bulk Word/Small and frontend discovery builds found these cases
+and exited with errors; they are not acceptance results. The first full outside
+integration pass also found staged optimizer tails that needed correction, plus
+a brief disk-space failure. Two later import crashes came from truncated cached
+artifacts (`Pass184_7.olean` and `Optimize189.olean`), rather than proof failures.
+Regenerating those artifacts from unchanged source and refreshing their Lake
+traces repaired both crashes.
+
+The final full-target continuation, `lake build InitE Submission InitE.Audit`,
+passed all **53,282 jobs**, including the full bootstrap/guest composition and
+submission certificate. It took 814.024 wall seconds and 1,702.500 CPU seconds,
+with a 32,581,480,448-byte (30.34-GiB) memory peak and zero swap. Earlier successful
+stages were cached; this is the completed incremental outside build, not a cold
+build timing. The audit and both submission theorems report exactly `propext`,
+`Classical.choice` and `Quot.sound`. No additional outside rebuild is required.
+Unit `init-e-compact-full-outside-retry2-20261006.service`, invocation
+`a1c28505d6574a75bec188ea4ddeb8bf`, and its terminal journal are recorded in
+`work/lean-perf/compact-guest/full-outside-retry2-build-result.json`.
+Fresh isolated comparator acceptance remains pending.

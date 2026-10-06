@@ -117,7 +117,8 @@
       "Classical.choice",
       "Quot.sound"
     ],
-    "cold_build": false
+    "cold_build": false,
+    "superseded_by_compact_certificates": true
   },
   "stack_bound_is_upper_bound": true,
   "stack_bound_exact_diagnostic_words": 538,
@@ -380,7 +381,7 @@
     }
   ],
   "current_standard_axiom_verification": {
-    "status": "pending_compact_certificate_integration",
+    "status": "outside_passed_isolated_pending",
     "flapjack_revision": "034bb5a1ed0b757082768d5406206bd2f8e31b7c",
     "branch": "perf/compact-computation-proofs",
     "axiom_count": 3,
@@ -388,9 +389,9 @@
     "logical_cpus": 16,
     "active_lean_compilers": 16,
     "inner_runtime_limit_seconds": 28800,
-    "stage": "Full outside Lake build of InitE, Submission and InitE.Audit is running; representative frontend and SSA bridge checks passed; repaired staged optimizer tails require a final retry",
+    "stage": "Complete outside InitE, Submission and InitE.Audit build passed 53282 jobs; fresh isolated comparator pending",
     "scope": "No current full isolated acceptance. The previous verifier was stopped by explicit user request.",
-    "outside_build_unit": "init-e-compact-full-outside-20261006.service"
+    "outside_build_unit": "init-e-compact-full-outside-retry2-20261006.service"
   },
   "published_standard_axiom_snapshot": {
     "commit": "1eecd1778a5646c9613097220e21e25a4bb67103",
@@ -588,13 +589,36 @@
     "full_verifier_status": "pending_compact_certificate_integration"
   },
   "compact_computation_certificates": {
-    "status": "full_stage_checks_passed_integration_pending",
+    "status": "outside_full_build_and_standard_axiom_audit_passed",
     "tactic": "InitE.CompactComputation.kernel_rfl",
     "kernel_regression": "Tools/KernelComputationCheck.lean",
     "evidence": "work/lean-perf/compact-guest/root-full-stage-results.json",
     "scope": "Submitted Eq.refl terms are fully checked by the kernel. Shared bridge lemmas preserve original evaluators where direct conversion is unsuitable.",
     "frontend_evidence": "work/lean-perf/compact-frontend/structural-bridge-results.json",
     "ssa_evidence": "work/lean-perf/compact-small-ssa/word-results.json",
-    "contract_audit": "work/lean-perf/compact-frontend/PROPAGATION-AUDIT.md"
+    "contract_audit": "work/lean-perf/compact-frontend/PROPAGATION-AUDIT.md",
+    "outside_result": "work/lean-perf/compact-guest/full-outside-retry2-build-result.json"
+  },
+  "compact_outside_verification": {
+    "status": "passed",
+    "implementation_commit": "5e0e78c20d44e80bba14f7340a67db491a08855b",
+    "unit": "init-e-compact-full-outside-retry2-20261006.service",
+    "invocation_id": "a1c28505d6574a75bec188ea4ddeb8bf",
+    "targets": [
+      "InitE",
+      "Submission",
+      "InitE.Audit"
+    ],
+    "jobs": 53282,
+    "elapsed_seconds": 814.023806810379,
+    "cpu_seconds": 1702.500435,
+    "memory_peak_bytes": 32581480448,
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "log": "work/lean-perf/compact-guest/full-outside-retry2-build.log",
+    "scope": "Successful full-target incremental continuation; earlier successful stages cached. Two truncated disk-full artifacts were regenerated from unchanged source before this pass."
   }
 }
