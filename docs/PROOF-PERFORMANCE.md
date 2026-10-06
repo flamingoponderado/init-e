@@ -1339,3 +1339,38 @@ Upstream dependencies and trusted tool caches were reused. The final comparator
 is running separately inside PrivatePIDs with the same limits; trusted audit
 success alone is not submission acceptance. Exact service accounting is retained
 in `work/lean-perf/full-verifier-standard3-trusted-audit-result.json`.
+
+### Comparator text-buffer experiment (not adopted)
+
+The live full comparator reached its 112-GiB cap while exporting Solution.
+The pinned comparator captures all stdout with `IO.Process.output`; Lean
+reads it into one byte array before UTF-8 conversion and export parsing.
+A separate prototype copies stdout to private disk-backed temporary handles
+in 64-KiB chunks and parses those handles after both exporters finish.
+The installed comparator and running verification were not changed.
+
+Synthetic ASCII producers were measured sequentially with one CPU, 2 GiB,
+zero swap and a 600-second limit. Sampled anonymous memory includes the Lean
+harness; file cache is separately charged and reclaimable. RSS also includes
+shared tool mappings, so it is not the anonymous-memory measurement below.
+
+| Output | Buffered wall / sampled anon | Spool wall / sampled anon |
+| --- | --- | --- |
+| 64 MiB | 1.68 s / 347.7 MiB | 1.10 s / 118.8 MiB |
+| 256 MiB | 2.62 s / 1117.5 MiB | 1.31 s / 121.0 MiB |
+| 512 MiB | OOM at 2 GiB (3.35 s) | 1.11 s / 121.2 MiB |
+
+All 14 pinned comparator fixtures matched their expected results, including
+full kernel acceptance of valid proofs and rejection of illegal theorem or
+submission axioms, altered primitives, type mismatches and invalid kernel
+terms. String/file parser agreement, malformed and truncated exports, UTF-8
+chunk boundaries, exporter exit 7, write failure and large stderr were checked.
+The prototype retains the original nanoda-enabled path unchanged; its
+execution and full-size parser/kernel memory remain untested. The 512-MiB
+buffered OOM is a measured transport failure, not proof acceptance.
+
+Exact measurements, commands, source hashes and initial setup failures are
+in `work/lean-perf/comparator-spool/experiment-results.json`; the proposed
+patch is `spool.patch` in that directory (SHA256
+`de157a76ea8749d19456b32b48fab4ba60cf2ac1615d907a0e395b75ac7d2d4a`). These are exploratory checks,
+not the initial submission verification result.
