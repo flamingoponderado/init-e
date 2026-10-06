@@ -394,6 +394,135 @@ consumer compiled successfully. The proof change is retained only for this
 measured function; its behavior under the full submission's memory load remains
 unmeasured.
 
+### Reflection and removing intermediate stages
+
+[LeanSSR](https://github.com/verse-lab/lean-ssr) supports computational
+reflection: connect a Boolean computation to a proposition through a proved
+soundness theorem. Its [paper](https://arxiv.org/html/2403.12733v1) studies proof
+engineering and shorter scripts; it does not establish faster comparator
+replay for this compiler. Installing the tactic language alone is not the
+optimization. The checker must avoid expensive computation, and its correctness
+proof must amortize over the measured dependency closure.
+
+The bounded prototype in
+[StackReflection.lean](../tools/certificate-bench/StackReflection.lean) proves
+that the allocation pass is the identity when a Boolean scan accepts a program.
+The scan excludes allocation, store-constant calls, and non-returning calls with
+exception handlers, which the original pass discards. This lets the proof skip
+the pass's fresh-label calculation and output-tree construction. The soundness
+theorem is kernel checked, and the original compiler definition is unchanged.
+Kernel reduction may already skip an unused result field; removing a source-level
+calculation does not by itself establish saved replay work.
+
+[stack-reflection.py](../tools/certificate-bench/stack-reflection.py) measures
+one to eight selected functions with the native comparator harness. In
+`allocation` mode it compares the original equations with the reflected proof.
+In `backend` mode the public endpoint runs seven passes from a stack function
+to its initially encoded section. `Fused` proves that endpoint directly;
+`Reflected` replaces allocation with the identity theorem and checks the next
+pass from the raw input, eliminating the separate allocation-result tree.
+The allocation-reflection and fusion candidates are experimental fixtures, not
+replacements imported by the submission. The separately measured `section`
+mode below tests a retained structural evaluator.
+
+```sh
+rtk proxy python3 tools/certificate-bench/stack-reflection.py \
+  --mode backend --labels 156 746 855 --variants Original Fused \
+  --work work/lean-perf/backend-fusion-confirmation --trials 3
+rtk proxy python3 tools/certificate-bench/stack-reflection.py \
+  --mode allocation --labels 79 121 276 664 713 \
+  --work work/lean-perf/allocation-reflection-confirmation --trials 3
+```
+
+Prebuilt imported modules must match the working tree. Each build, export,
+and comparator process is capped at 90 seconds by default. The runner records
+source hashes and memory, includes used generic proofs in replay, and checks
+that a `sorryAx` solution is rejected. It never exports the whole submission.
+
+Three alternating screening trials gave:
+
+| Fragment and change | Original replay | Candidate replay | Original wall | Candidate wall |
+| --- | ---: | ---: | ---: | ---: |
+| Seven backend passes, 156/746/855: fuse checkpoints | 1.524 s | 1.513 s | 1.962 s | 1.915 s |
+| Allocation, 79/121/276/664/713: Boolean reflection | 3.613 s | 3.461 s | 4.427 s | 4.354 s |
+| Seven backend passes, same five functions: reflection and remove allocation tree | 28.896 s | 27.173 s | 30.527 s | 28.668 s |
+
+The first experiment removes over half the exported declarations (7,172 →
+3,435), yet barely changes replay. It also increases peak replay RSS from about
+227 MiB or less to about 416 MiB. The last experiment reduces declarations from
+95,382 to 77,133, but saves only about 6% of wall time. Small percentage
+differences here are screening results; none approaches a factor of two.
+The raw rows are retained in
+[stack-reflection-results.json](../tools/certificate-bench/stack-reflection-results.json).
+
+Do not infer speed from file counts, declaration counts, or shorter proof
+scripts. A source comparison found identical input/output trees for 794 of
+826 raw-call modules; a syntax scan found no allocation nodes in the 826 raw
+bodies. These observations identify candidates, not proof of applicability:
+the checker must still accept every selected body, including its handlers.
+On the five-function backend sample, profiling instead identified section
+lowering and initial instruction encoding as the largest individual equations
+(about 5.24 s and 4.03 s for function 713). Optimizing only identity passes
+cannot eliminate those costs.
+
+Further structural experiments should aim to replace repeated traversals or
+large intermediate representations, prove the replacement correct once, and
+measure the resulting *public endpoint*. Comparing a candidate whose theorem
+mentions a new output alias with a reference mentioning the old output is not
+a valid shortcut: the comparator can reject the changed statement even when
+Lean regards the values as definitionally equal.
+
+### Retained section-lowering rewrite
+
+The more expensive section-lowering computation did improve with a verified
+structural evaluator. The submission-side
+[StackToLabKernelComputation.lean](../submission/InitECandidate/Proofs/StackToLabKernelComputation.lean)
+mirrors `flattenHOL` with structural recursion and proves equality to the
+original, well-founded definition. Its `progToSection_eq` theorem lifts that
+equality to the whole compiler pass. Concrete certificates apply this theorem
+once and finish with `kernel_rfl`.
+
+On the unchanged section equations for 79/121/276/664/713, three alternating
+trials measured:
+
+| Variant | Median replay | Median comparator wall | Largest replay peak RSS |
+| --- | ---: | ---: | ---: |
+| Original direct equations | 8.824 s | 9.405 s | 2,464,296 KiB |
+| Structural evaluator, whole-pass rewrite | 7.562 s | 8.295 s | 1,927,696 KiB |
+
+This saves **14.3% replay and 11.8% wall time**, while reducing peak replay
+memory by about 22%. The export grows from 10,435,870 to 17,053,492 bytes because
+it now includes the generic equivalence proof. Export size alone would have
+predicted the wrong outcome. The five measured production proofs and
+`Tools.GenBackendStages.generateSection` retain this rewrite; their statements
+and all literal inputs/outputs remain unchanged. Performance on other functions
+and the full submission remains unmeasured.
+
+The shared-proof cost matters: a one-trial harness check on section 79 alone
+regressed from 0.602 s to 0.890 s replay. The retained improvement is for the
+five-function dependency closure, where the helper is checked once, not a claim
+that every individual file gets faster in isolation. The actual five public
+theorems also passed against saved original exports (8.806 → 7.572 s replay,
+9.394 → 8.299 s wall). The generator and a selected aggregate consumer compiled.
+
+The proof boundary is essential: unfolding a concrete section and rewriting
+`flattenHOL` inside it instead increased replay from 8.817 s to 19.861 s.
+Adding a structural mirror of label numbering also regressed relative to the
+retained variant (8.092 s replay, versus 7.562 s). Do not deploy either rejected
+variant just because its recursive function looks simpler.
+
+```sh
+rtk proxy python3 tools/certificate-bench/stack-reflection.py \
+  --mode section --labels 79 121 276 664 713 \
+  --work work/lean-perf/section-structural-confirmation --trials 3
+```
+
+In `section` mode, `Original` reconstructs the original direct proof rather
+than referencing the now-optimized public theorem. All modes include generic
+helper costs in replay. For the earlier backend screening numbers, use the
+recorded baseline revision and matching prebuilt dependencies: backend mode's
+`Original` composes the public stage proofs in the current checkout.
+
 A separate combined screening run on functions 156, 746, and 855 measured
 11.185 → 10.121 s replay and 13.613 → 12.453 s wall for direct computation, with
 peak RSS increasing from 505,644 to 1,291,608 KiB. Keeping the structural SSA
