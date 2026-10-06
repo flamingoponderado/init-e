@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Parallel240.Data2
 import InitE.WordStages.Parallel240.Data1
 set_option Elab.async false
@@ -9,7 +10,6 @@ open scoped InitE.CompilerComputation
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 namespace InitE.WordStages.Parallel240
 theorem pass240_2_eq : WordAlloc.fullSsaCcTrans 1 (pass240_1) = pass240_2 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass240_2_eq
 end InitE.WordStages.Parallel240

@@ -1,3 +1,6 @@
+import InitE.CompactComputation
+import InitE.SmallSsaKernelComputation
+import InitE.CompilerStages
 import InitE.WordStages.Optimize139
 import InitE.ClashComputation
 import InitE.WordStages.Source155
@@ -191,7 +194,9 @@ theorem optimize155_eq : WordToWord.fullCompileSingleWith
   (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
   RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
   riscvConfig (source155, oracle155) = optimized155 := by
-  conv => lhs; cbv
-  try rfl
+  rw [InitE.CompilerStages.fullCompile_expanded]
+  dsimp only
+  rw [InitE.SmallSsaKernelComputation.fullSsaStructural_eq]
+  kernel_rfl
 #print axioms optimize155_eq
 end InitE.WordStages

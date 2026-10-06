@@ -1,3 +1,4 @@
+import InitE.FrontendStages.Globals.KernelContext
 import InitE.FrontendStages.Globals.Output392
 import InitE.FrontendStages.Declarations.Data392
 import InitE.FrontendStages.Globals.Context
@@ -5,8 +6,6 @@ import InitE.FrontendStages.Globals.Translate376
 set_option Elab.async false
 set_option maxRecDepth 1000000
 set_option maxHeartbeats 0
-set_option cbv.maxSteps 1000000000
-set_option cbv.warning false
 open scoped InitE.FrontendComputation
 namespace InitE.FrontendStages.Declarations
 open Flapjack
@@ -14,9 +13,14 @@ theorem globalTranslate392_eq :
     InitE.GlobalsComputation.compiledFunction globalContext
       (InitE.GlobalsComputation.renameDeclaration globalStart globalNewStart simplified392) =
         some globalOutput392 := by
-  conv => lhs; cbv
-  conv => rhs; cbv
-  try rfl
+  dsimp only [simplified392, globalOutput392]
+  rw [InitE.FrontendCodecComputation.declToHOL_function_eq]
+  simp only [InitE.GlobalsComputation.compiledFunction,
+    InitE.GlobalsComputation.renameDeclaration,
+    InitE.GlobalsKernelComputation.compileProg_function_eq,
+    InitE.GlobalsKernelComputation.fperm_function_eq]
+  rw [globalContext_structural_eq]
+  kernel_rfl
 theorem globalNonGlobal392 : InitE.GlobalsComputation.nonGlobal
     (InitE.GlobalsComputation.renameDeclaration globalStart globalNewStart simplified392) := by trivial
 theorem globalException392_eq : InitE.GlobalsComputation.exceptionDeclaration

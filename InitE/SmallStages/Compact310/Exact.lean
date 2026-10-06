@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.SmallStages.Compact310.Complete
 import InitE.SmallStages.Oracles310
 set_option autoImplicit false
@@ -11,6 +12,6 @@ theorem optimize310_exact : WordToWord.fullCompileSingleWith
   (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
   RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
   riscvConfig (source310, oracle310) = optimized310 := by
-  exact optimize310_eq.trans (by with_unfolding_all rfl)
+  exact optimize310_eq.trans (by kernel_rfl)
 #print axioms optimize310_exact
 end InitE.SmallStages.Compact310

@@ -1,3 +1,5 @@
+import InitE.CompactComputation
+import InitE.CompilerStages
 import InitE.WordStages.Source121
 import InitE.WordStages.Pass121_10
 import InitE.CompilerStages
@@ -2456,8 +2458,8 @@ theorem optimize121_eq : WordToWord.fullCompileSingleWith
   dsimp only
   have name_eq : source121.1 = 121 := by rfl
   have argc_eq : source121.2.1 = 9 := by rfl
-  have oracle_eq : oracle121 = proposed121 := by with_unfolding_all rfl
+  have oracle_eq : oracle121 = proposed121 := by kernel_rfl
   rw [name_eq, argc_eq, oracle_eq, pass121_0_eq, pass121_1_eq, pass121_2_eq, pass121_3_eq, pass121_4_eq, pass121_5_eq, pass121_6_eq, pass121_7_eq, pass121_8_eq, pass121_9_eq, pass121_10_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 #print axioms optimize121_eq
 end InitE.WordStages

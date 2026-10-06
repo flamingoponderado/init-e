@@ -1,11 +1,10 @@
+import InitE.CompactComputation
 import InitE.FrontendStages.Loop.Data583
 import InitE.WordFrontendComputation
 set_option autoImplicit false
 set_option Elab.async false
 set_option maxRecDepth 1000000
 set_option maxHeartbeats 0
-set_option cbv.maxSteps 1000000000
-set_option cbv.warning false
 open Flapjack
 namespace InitE.FrontendStages.Word
 def assigned583 : NumSet := Flapjack.Spt.bn
@@ -73,22 +72,16 @@ def context583 : Spt Nat := Flapjack.Spt.bs
       (Flapjack.Spt.bs (Flapjack.Spt.bs (Flapjack.Spt.ls 24) 22 (Flapjack.Spt.ls 20)) 18
         (Flapjack.Spt.bs (Flapjack.Spt.ls 16) 14 (Flapjack.Spt.bs Flapjack.Spt.ln 12 (Flapjack.Spt.ls 10))))))
 theorem assigned583_eq : accVarsHOL Loop.output583.2.2 (.ln : Spt Unit) = assigned583 := by
-  conv => lhs; cbv
-  conv => rhs; cbv
-  try rfl
+  kernel_rfl
 theorem variables583_eq : Flapjack.LoopToWord.fromNumSetHOL (sptDifference (accVarsHOL Loop.output583.2.2 (.ln : Spt Unit))
     (Flapjack.LoopToWord.toNumSetHOL Loop.output583.2.1)) = variables583 := by
   rw [assigned583_eq]
-  conv => lhs; cbv
-  conv => rhs; cbv
-  try rfl
+  kernel_rfl
 theorem context583_eq : makeCtxtHOL 2 (Loop.output583.2.1 ++
     Flapjack.LoopToWord.fromNumSetHOL (sptDifference (accVarsHOL Loop.output583.2.2 (.ln : Spt Unit)) (Flapjack.LoopToWord.toNumSetHOL Loop.output583.2.1)))
     (.ln : Spt Nat) = context583 := by
   rw [variables583_eq]
-  conv => lhs; cbv
-  conv => rhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms assigned583_eq
 #print axioms variables583_eq
 #print axioms context583_eq

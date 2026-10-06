@@ -1,3 +1,5 @@
+import InitE.CompactComputation
+import InitE.CompilerStages
 import InitE.WordStages.Source623
 import InitE.WordStages.Pass623_10
 import InitE.CompilerStages
@@ -4050,8 +4052,8 @@ theorem optimize623_eq : WordToWord.fullCompileSingleWith
   dsimp only
   have name_eq : source623.1 = 623 := by rfl
   have argc_eq : source623.2.1 = 1 := by rfl
-  have oracle_eq : oracle623 = proposed623 := by with_unfolding_all rfl
+  have oracle_eq : oracle623 = proposed623 := by kernel_rfl
   rw [name_eq, argc_eq, oracle_eq, pass623_0_eq, pass623_1_eq, pass623_2_eq, pass623_3_eq, pass623_4_eq, pass623_5_eq, pass623_6_eq, pass623_7_eq, pass623_8_eq, pass623_9_eq, pass623_10_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 #print axioms optimize623_eq
 end InitE.WordStages

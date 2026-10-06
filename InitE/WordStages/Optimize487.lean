@@ -1,3 +1,6 @@
+import InitE.CompactComputation
+import InitE.SmallSsaKernelComputation
+import InitE.CompilerStages
 import InitE.WordStages.Optimize471
 import InitE.ClashComputation
 import InitE.WordStages.Source487
@@ -954,7 +957,9 @@ theorem optimize487_eq : WordToWord.fullCompileSingleWith
   (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
   RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
   riscvConfig (source487, oracle487) = optimized487 := by
-  conv => lhs; cbv
-  try rfl
+  rw [InitE.CompilerStages.fullCompile_expanded]
+  dsimp only
+  rw [InitE.SmallSsaKernelComputation.fullSsaStructural_eq]
+  kernel_rfl
 #print axioms optimize487_eq
 end InitE.WordStages

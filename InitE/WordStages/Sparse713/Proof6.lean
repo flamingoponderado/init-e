@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Sparse713.Data6
 import InitE.WordStages.Sparse713.Data5
 set_option Elab.async false
@@ -9,7 +10,6 @@ open scoped InitE.CompilerComputation
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 namespace InitE.WordStages.Sparse713
 theorem pass713_6_eq : WordInst.threeToTwoRegProg riscvConfig.twoRegArith (pass713_5) = pass713_6 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass713_6_eq
 end InitE.WordStages.Sparse713

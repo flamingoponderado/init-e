@@ -1,3 +1,6 @@
+import InitE.CompactComputation
+import InitE.SmallSsaKernelComputation
+import InitE.CompilerStages
 import InitE.WordStages.Optimize426
 import InitE.ClashComputation
 import InitE.WordStages.Source442
@@ -304,7 +307,9 @@ theorem optimize442_eq : WordToWord.fullCompileSingleWith
   (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
   RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
   riscvConfig (source442, oracle442) = optimized442 := by
-  conv => lhs; cbv
-  try rfl
+  rw [InitE.CompilerStages.fullCompile_expanded]
+  dsimp only
+  rw [InitE.SmallSsaKernelComputation.fullSsaStructural_eq]
+  kernel_rfl
 #print axioms optimize442_eq
 end InitE.WordStages

@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Parallel713.Data9
 import InitE.WordStages.Parallel713.Data8
 set_option Elab.async false
@@ -9,7 +10,6 @@ open scoped InitE.CompilerComputation
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 namespace InitE.WordStages.Parallel713
 theorem pass713_9_eq : WordToWord.wordAllocWith RegAlloc.regAllocExecutable 713 riscvConfig RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length)) (pass713_8) proposed713 = pass713_9 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass713_9_eq
 end InitE.WordStages.Parallel713

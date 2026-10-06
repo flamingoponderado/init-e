@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.SmallStages.Compact548.Complete
 import InitE.SmallStages.Oracles548
 set_option autoImplicit false
@@ -11,6 +12,6 @@ theorem optimize548_exact : WordToWord.fullCompileSingleWith
   (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
   RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
   riscvConfig (source548, oracle548) = optimized548 := by
-  exact optimize548_eq.trans (by with_unfolding_all rfl)
+  exact optimize548_eq.trans (by kernel_rfl)
 #print axioms optimize548_exact
 end InitE.SmallStages.Compact548

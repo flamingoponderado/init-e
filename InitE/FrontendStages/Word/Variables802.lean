@@ -1,11 +1,10 @@
+import InitE.CompactComputation
 import InitE.FrontendStages.Loop.Data802
 import InitE.WordFrontendComputation
 set_option autoImplicit false
 set_option Elab.async false
 set_option maxRecDepth 1000000
 set_option maxHeartbeats 0
-set_option cbv.maxSteps 1000000000
-set_option cbv.warning false
 open Flapjack
 namespace InitE.FrontendStages.Word
 def assigned802 : NumSet := Flapjack.Spt.bn
@@ -70,22 +69,16 @@ def context802 : Spt Nat := Flapjack.Spt.bs
       (Flapjack.Spt.bs (Flapjack.Spt.bs (Flapjack.Spt.ls 16) 14 (Flapjack.Spt.ls 12)) 10
         (Flapjack.Spt.bs (Flapjack.Spt.ls 8) 6 (Flapjack.Spt.ls 4)))))
 theorem assigned802_eq : accVarsHOL Loop.output802.2.2 (.ln : Spt Unit) = assigned802 := by
-  conv => lhs; cbv
-  conv => rhs; cbv
-  try rfl
+  kernel_rfl
 theorem variables802_eq : Flapjack.LoopToWord.fromNumSetHOL (sptDifference (accVarsHOL Loop.output802.2.2 (.ln : Spt Unit))
     (Flapjack.LoopToWord.toNumSetHOL Loop.output802.2.1)) = variables802 := by
   rw [assigned802_eq]
-  conv => lhs; cbv
-  conv => rhs; cbv
-  try rfl
+  kernel_rfl
 theorem context802_eq : makeCtxtHOL 2 (Loop.output802.2.1 ++
     Flapjack.LoopToWord.fromNumSetHOL (sptDifference (accVarsHOL Loop.output802.2.2 (.ln : Spt Unit)) (Flapjack.LoopToWord.toNumSetHOL Loop.output802.2.1)))
     (.ln : Spt Nat) = context802 := by
   rw [variables802_eq]
-  conv => lhs; cbv
-  conv => rhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms assigned802_eq
 #print axioms variables802_eq
 #print axioms context802_eq

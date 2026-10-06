@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.SmallStages.Compact434.Complete
 import InitE.SmallStages.Oracles434
 set_option autoImplicit false
@@ -11,6 +12,6 @@ theorem optimize434_exact : WordToWord.fullCompileSingleWith
   (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
   RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
   riscvConfig (source434, oracle434) = optimized434 := by
-  exact optimize434_eq.trans (by with_unfolding_all rfl)
+  exact optimize434_eq.trans (by kernel_rfl)
 #print axioms optimize434_exact
 end InitE.SmallStages.Compact434

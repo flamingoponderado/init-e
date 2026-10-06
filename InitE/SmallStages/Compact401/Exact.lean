@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.SmallStages.Compact401.Complete
 import InitE.SmallStages.Oracles401
 set_option autoImplicit false
@@ -11,6 +12,6 @@ theorem optimize401_exact : WordToWord.fullCompileSingleWith
   (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
   RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
   riscvConfig (source401, oracle401) = optimized401 := by
-  exact optimize401_eq.trans (by with_unfolding_all rfl)
+  exact optimize401_eq.trans (by kernel_rfl)
 #print axioms optimize401_exact
 end InitE.SmallStages.Compact401

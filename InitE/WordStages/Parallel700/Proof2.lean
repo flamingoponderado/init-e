@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Parallel700.Data2
 import InitE.WordStages.Parallel700.Data1
 set_option Elab.async false
@@ -9,7 +10,6 @@ open scoped InitE.CompilerComputation
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 namespace InitE.WordStages.Parallel700
 theorem pass700_2_eq : WordAlloc.fullSsaCcTrans 3 (pass700_1) = pass700_2 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass700_2_eq
 end InitE.WordStages.Parallel700

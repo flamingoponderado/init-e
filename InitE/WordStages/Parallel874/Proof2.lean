@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Parallel874.Data2
 import InitE.WordStages.Parallel874.Data1
 set_option Elab.async false
@@ -9,7 +10,6 @@ open scoped InitE.CompilerComputation
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 namespace InitE.WordStages.Parallel874
 theorem pass874_2_eq : WordAlloc.fullSsaCcTrans 3 (pass874_1) = pass874_2 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass874_2_eq
 end InitE.WordStages.Parallel874

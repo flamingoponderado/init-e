@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.ClashStages233.Data
 import InitE.WordStages.Parallel233.Data8
 import InitE.WordStages.Parallel233.Data9
@@ -10,7 +11,6 @@ open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 open InitE.WordStages.Parallel233
 namespace InitE.ClashStages233
 theorem even_eq : WordAlloc.everyEvenColour colour = true := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms even_eq
 end InitE.ClashStages233

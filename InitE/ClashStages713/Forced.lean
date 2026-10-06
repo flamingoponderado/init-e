@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.ClashStages713.Data
 import InitE.WordStages.Sparse713.Data8
 import InitE.WordStages.Sparse713.Data9
@@ -10,7 +11,6 @@ open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 open InitE.WordStages.Sparse713
 namespace InitE.ClashStages713
 theorem forced_eq : (WordAlloc.getForced riscvConfig pass713_8 []).all (fun (x, y) => WordAlloc.totalColour colour x != WordAlloc.totalColour colour y) = true := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms forced_eq
 end InitE.ClashStages713

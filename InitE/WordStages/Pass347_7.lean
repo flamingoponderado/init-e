@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Pass347_6
 import InitE.CompilerComputation
 set_option Elab.async false
@@ -3978,7 +3979,6 @@ def word347_7_919 : WordLangProgHOL (BitVec 64) :=
 def pass347_7 : WordLangProgHOL (BitVec 64) :=
 word347_7_919
 theorem pass347_7_eq : WordUnreach.removeUnreach (pass347_6) = pass347_7 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass347_7_eq
 end InitE.WordStages

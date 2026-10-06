@@ -1,10 +1,9 @@
+import InitE.CompactComputation
 import InitE.FrontendStages.Word.Checkpoints120.Data.Chunk002
 set_option autoImplicit false
 set_option Elab.async false
 set_option maxRecDepth 1000000
 set_option maxHeartbeats 0
-set_option cbv.maxSteps 1000000000
-set_option cbv.warning false
 open Flapjack
 namespace InitE.FrontendStages.Word.Checkpoints120
 theorem node768_conditional
@@ -29,15 +28,12 @@ theorem node770_conditional
     Loop.loopBody120_770 (184, 2) = (output770, (184, 2)) := by
   rw [output770_def]
   have h := InitE.LoopWordComputation.comp_loop_checked Word.context120 (match Loop.loopBody120_770 with | .loop live _ _ => live | _ => .ln) (match Loop.loopBody120_770 with | .loop _ _ live => live | _ => .ln) _ _ _ _ child769
-  conv at h => rhs; cbv
-  exact h
+  exact h.trans (by kernel_rfl)
 
 theorem node771_conditional : Flapjack.LoopToWord.compHOL Word.context120
     Loop.loopBody120_771 (184, 2) = (output771, (184, 2)) := by
   rw [output771_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node772_conditional
     (child771 : Flapjack.LoopToWord.compHOL Word.context120
@@ -49,9 +45,7 @@ theorem node772_conditional
 theorem node773_conditional : Flapjack.LoopToWord.compHOL Word.context120
     Loop.loopBody120_773 (184, 2) = (output773, (184, 2)) := by
   rw [output773_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node774_conditional
     (child773 : Flapjack.LoopToWord.compHOL Word.context120
@@ -111,9 +105,7 @@ theorem node780_conditional
 theorem node781_conditional : Flapjack.LoopToWord.compHOL Word.context120
     Loop.loopBody120_781 (184, 2) = (output781, (184, 2)) := by
   rw [output781_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node782_conditional
     (child781 : Flapjack.LoopToWord.compHOL Word.context120
@@ -125,9 +117,7 @@ theorem node782_conditional
 theorem node783_conditional : Flapjack.LoopToWord.compHOL Word.context120
     Loop.loopBody120_783 (184, 2) = (output783, (184, 2)) := by
   rw [output783_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node784_conditional
     (child783 : Flapjack.LoopToWord.compHOL Word.context120
@@ -203,9 +193,7 @@ theorem node792_conditional
 theorem node793_conditional : Flapjack.LoopToWord.compHOL Word.context120
     Loop.loopBody120_793 (184, 2) = (output793, (184, 2)) := by
   rw [output793_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node794_conditional
     (child793 : Flapjack.LoopToWord.compHOL Word.context120
@@ -380,8 +368,7 @@ theorem node815_conditional
     Loop.loopBody120_815 (184, 2) = (output815, (184, 2)) := by
   rw [output815_def]
   have h := InitE.LoopWordComputation.comp_loop_checked Word.context120 (match Loop.loopBody120_815 with | .loop live _ _ => live | _ => .ln) (match Loop.loopBody120_815 with | .loop _ _ live => live | _ => .ln) _ _ _ _ child814
-  conv at h => rhs; cbv
-  exact h
+  exact h.trans (by kernel_rfl)
 
 theorem node816_conditional
     (child770 : Flapjack.LoopToWord.compHOL Word.context120
@@ -395,9 +382,7 @@ theorem node816_conditional
 theorem node817_conditional : Flapjack.LoopToWord.compHOL Word.context120
     Loop.loopBody120_817 (184, 2) = (output817, (184, 2)) := by
   rw [output817_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node818_conditional
     (child817 : Flapjack.LoopToWord.compHOL Word.context120
@@ -450,9 +435,7 @@ theorem node823_conditional
 theorem node824_conditional : Flapjack.LoopToWord.compHOL Word.context120
     Loop.loopBody120_824 (184, 2) = (output824, (184, 2)) := by
   rw [output824_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node825_conditional
     (child824 : Flapjack.LoopToWord.compHOL Word.context120
@@ -464,9 +447,7 @@ theorem node825_conditional
 theorem node826_conditional : Flapjack.LoopToWord.compHOL Word.context120
     Loop.loopBody120_826 (184, 2) = (output826, (184, 2)) := by
   rw [output826_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node827_conditional
     (child826 : Flapjack.LoopToWord.compHOL Word.context120
@@ -478,9 +459,7 @@ theorem node827_conditional
 theorem node828_conditional : Flapjack.LoopToWord.compHOL Word.context120
     Loop.loopBody120_828 (184, 2) = (output828, (184, 2)) := by
   rw [output828_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node829_conditional
     (child828 : Flapjack.LoopToWord.compHOL Word.context120
@@ -540,9 +519,7 @@ theorem node835_conditional
 theorem node836_conditional : Flapjack.LoopToWord.compHOL Word.context120
     Loop.loopBody120_836 (184, 2) = (output836, (184, 2)) := by
   rw [output836_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node837_conditional
     (child836 : Flapjack.LoopToWord.compHOL Word.context120
@@ -554,9 +531,7 @@ theorem node837_conditional
 theorem node838_conditional : Flapjack.LoopToWord.compHOL Word.context120
     Loop.loopBody120_838 (184, 2) = (output838, (184, 2)) := by
   rw [output838_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node839_conditional
     (child838 : Flapjack.LoopToWord.compHOL Word.context120
@@ -641,9 +616,7 @@ theorem node848_conditional
 theorem node849_conditional : Flapjack.LoopToWord.compHOL Word.context120
     Loop.loopBody120_849 (184, 2) = (output849, (184, 2)) := by
   rw [output849_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node850_conditional
     (child849 : Flapjack.LoopToWord.compHOL Word.context120
@@ -655,9 +628,7 @@ theorem node850_conditional
 theorem node851_conditional : Flapjack.LoopToWord.compHOL Word.context120
     Loop.loopBody120_851 (184, 2) = (output851, (184, 2)) := by
   rw [output851_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node852_conditional
     (child851 : Flapjack.LoopToWord.compHOL Word.context120

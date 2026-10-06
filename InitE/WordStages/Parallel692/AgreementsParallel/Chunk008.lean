@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Parallel692.Data2
 import InitE.WordStages.Parallel692.Data3
 import InitE.DeadStages692.Parallel.Data.Chunk008
@@ -13,1375 +14,1375 @@ theorem input2048_eq : InitE.DeadStages692.Parallel.input2048 =
     InitE.WordStages.Parallel692.word692_2_2074 := by
   rw [InitE.DeadStages692.Parallel.input2048_def]
   simp only [input2047_eq, input514_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2048_eq : InitE.DeadStages692.Parallel.output2048 =
     InitE.WordStages.Parallel692.word692_3_1503 := by
   rw [InitE.DeadStages692.Parallel.output2048_def]
   simp only [output2047_eq, output514_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2049_eq : InitE.DeadStages692.Parallel.input2049 =
     InitE.WordStages.Parallel692.word692_2_2075 := by
   rw [InitE.DeadStages692.Parallel.input2049_def]
   simp only [input2048_eq, input509_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2049_eq : InitE.DeadStages692.Parallel.output2049 =
     InitE.WordStages.Parallel692.word692_3_1504 := by
   rw [InitE.DeadStages692.Parallel.output2049_def]
   simp only [output2048_eq, output509_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2050_eq : InitE.DeadStages692.Parallel.input2050 =
     InitE.WordStages.Parallel692.word692_2_2077 := by
   rw [InitE.DeadStages692.Parallel.input2050_def]
   simp only [input2049_eq, input508_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2050_eq : InitE.DeadStages692.Parallel.output2050 =
     InitE.WordStages.Parallel692.word692_3_1506 := by
   rw [InitE.DeadStages692.Parallel.output2050_def]
   simp only [output2049_eq, output508_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2051_eq : InitE.DeadStages692.Parallel.input2051 =
     InitE.WordStages.Parallel692.word692_2_2079 := by
   rw [InitE.DeadStages692.Parallel.input2051_def]
   simp only [input2050_eq, input507_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2051_eq : InitE.DeadStages692.Parallel.output2051 =
     InitE.WordStages.Parallel692.word692_3_1508 := by
   rw [InitE.DeadStages692.Parallel.output2051_def]
   simp only [output2050_eq, output507_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2052_eq : InitE.DeadStages692.Parallel.input2052 =
     InitE.WordStages.Parallel692.word692_2_2081 := by
   rw [InitE.DeadStages692.Parallel.input2052_def]
   simp only [input2051_eq, input506_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2052_eq : InitE.DeadStages692.Parallel.output2052 =
     InitE.WordStages.Parallel692.word692_3_1510 := by
   rw [InitE.DeadStages692.Parallel.output2052_def]
   simp only [output2051_eq, output506_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2053_eq : InitE.DeadStages692.Parallel.input2053 =
     InitE.WordStages.Parallel692.word692_2_2083 := by
   rw [InitE.DeadStages692.Parallel.input2053_def]
   simp only [input2052_eq, input505_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2053_eq : InitE.DeadStages692.Parallel.output2053 =
     InitE.WordStages.Parallel692.word692_3_1512 := by
   rw [InitE.DeadStages692.Parallel.output2053_def]
   simp only [output2052_eq, output505_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2054_eq : InitE.DeadStages692.Parallel.input2054 =
     InitE.WordStages.Parallel692.word692_2_2110 := by
   rw [InitE.DeadStages692.Parallel.input2054_def]
   simp only [input2053_eq, input504_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2054_eq : InitE.DeadStages692.Parallel.output2054 =
     InitE.WordStages.Parallel692.word692_3_1524 := by
   rw [InitE.DeadStages692.Parallel.output2054_def]
   simp only [output2053_eq, output504_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2055_eq : InitE.DeadStages692.Parallel.input2055 =
     InitE.WordStages.Parallel692.word692_2_2111 := by
   rw [InitE.DeadStages692.Parallel.input2055_def]
   simp only [input2054_eq, input499_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2055_eq : InitE.DeadStages692.Parallel.output2055 =
     InitE.WordStages.Parallel692.word692_3_1525 := by
   rw [InitE.DeadStages692.Parallel.output2055_def]
   simp only [output2054_eq, output499_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2056_eq : InitE.DeadStages692.Parallel.input2056 =
     InitE.WordStages.Parallel692.word692_2_2113 := by
   rw [InitE.DeadStages692.Parallel.input2056_def]
   simp only [input2055_eq, input498_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2056_eq : InitE.DeadStages692.Parallel.output2056 =
     InitE.WordStages.Parallel692.word692_3_1527 := by
   rw [InitE.DeadStages692.Parallel.output2056_def]
   simp only [output2055_eq, output498_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2057_eq : InitE.DeadStages692.Parallel.input2057 =
     InitE.WordStages.Parallel692.word692_2_2115 := by
   rw [InitE.DeadStages692.Parallel.input2057_def]
   simp only [input2056_eq, input497_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2057_eq : InitE.DeadStages692.Parallel.output2057 =
     InitE.WordStages.Parallel692.word692_3_1529 := by
   rw [InitE.DeadStages692.Parallel.output2057_def]
   simp only [output2056_eq, output497_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2058_eq : InitE.DeadStages692.Parallel.input2058 =
     InitE.WordStages.Parallel692.word692_2_2117 := by
   rw [InitE.DeadStages692.Parallel.input2058_def]
   simp only [input2057_eq, input496_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2058_eq : InitE.DeadStages692.Parallel.output2058 =
     InitE.WordStages.Parallel692.word692_3_1531 := by
   rw [InitE.DeadStages692.Parallel.output2058_def]
   simp only [output2057_eq, output496_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2059_eq : InitE.DeadStages692.Parallel.input2059 =
     InitE.WordStages.Parallel692.word692_2_2119 := by
   rw [InitE.DeadStages692.Parallel.input2059_def]
   simp only [input2058_eq, input495_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2059_eq : InitE.DeadStages692.Parallel.output2059 =
     InitE.WordStages.Parallel692.word692_3_1533 := by
   rw [InitE.DeadStages692.Parallel.output2059_def]
   simp only [output2058_eq, output495_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2060_eq : InitE.DeadStages692.Parallel.input2060 =
     InitE.WordStages.Parallel692.word692_2_2146 := by
   rw [InitE.DeadStages692.Parallel.input2060_def]
   simp only [input2059_eq, input494_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2060_eq : InitE.DeadStages692.Parallel.output2060 =
     InitE.WordStages.Parallel692.word692_3_1545 := by
   rw [InitE.DeadStages692.Parallel.output2060_def]
   simp only [output2059_eq, output494_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2061_eq : InitE.DeadStages692.Parallel.input2061 =
     InitE.WordStages.Parallel692.word692_2_2147 := by
   rw [InitE.DeadStages692.Parallel.input2061_def]
   simp only [input2060_eq, input489_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2061_eq : InitE.DeadStages692.Parallel.output2061 =
     InitE.WordStages.Parallel692.word692_3_1546 := by
   rw [InitE.DeadStages692.Parallel.output2061_def]
   simp only [output2060_eq, output489_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2062_eq : InitE.DeadStages692.Parallel.input2062 =
     InitE.WordStages.Parallel692.word692_2_2149 := by
   rw [InitE.DeadStages692.Parallel.input2062_def]
   simp only [input2061_eq, input488_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2062_eq : InitE.DeadStages692.Parallel.output2062 =
     InitE.WordStages.Parallel692.word692_3_1548 := by
   rw [InitE.DeadStages692.Parallel.output2062_def]
   simp only [output2061_eq, output488_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2063_eq : InitE.DeadStages692.Parallel.input2063 =
     InitE.WordStages.Parallel692.word692_2_2151 := by
   rw [InitE.DeadStages692.Parallel.input2063_def]
   simp only [input2062_eq, input487_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2063_eq : InitE.DeadStages692.Parallel.output2063 =
     InitE.WordStages.Parallel692.word692_3_1550 := by
   rw [InitE.DeadStages692.Parallel.output2063_def]
   simp only [output2062_eq, output487_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2064_eq : InitE.DeadStages692.Parallel.input2064 =
     InitE.WordStages.Parallel692.word692_2_2153 := by
   rw [InitE.DeadStages692.Parallel.input2064_def]
   simp only [input2063_eq, input486_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2064_eq : InitE.DeadStages692.Parallel.output2064 =
     InitE.WordStages.Parallel692.word692_3_1552 := by
   rw [InitE.DeadStages692.Parallel.output2064_def]
   simp only [output2063_eq, output486_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2065_eq : InitE.DeadStages692.Parallel.input2065 =
     InitE.WordStages.Parallel692.word692_2_2155 := by
   rw [InitE.DeadStages692.Parallel.input2065_def]
   simp only [input2064_eq, input485_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2065_eq : InitE.DeadStages692.Parallel.output2065 =
     InitE.WordStages.Parallel692.word692_3_1554 := by
   rw [InitE.DeadStages692.Parallel.output2065_def]
   simp only [output2064_eq, output485_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2066_eq : InitE.DeadStages692.Parallel.input2066 =
     InitE.WordStages.Parallel692.word692_2_2182 := by
   rw [InitE.DeadStages692.Parallel.input2066_def]
   simp only [input2065_eq, input484_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2066_eq : InitE.DeadStages692.Parallel.output2066 =
     InitE.WordStages.Parallel692.word692_3_1566 := by
   rw [InitE.DeadStages692.Parallel.output2066_def]
   simp only [output2065_eq, output484_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2067_eq : InitE.DeadStages692.Parallel.input2067 =
     InitE.WordStages.Parallel692.word692_2_2183 := by
   rw [InitE.DeadStages692.Parallel.input2067_def]
   simp only [input2066_eq, input479_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2067_eq : InitE.DeadStages692.Parallel.output2067 =
     InitE.WordStages.Parallel692.word692_3_1567 := by
   rw [InitE.DeadStages692.Parallel.output2067_def]
   simp only [output2066_eq, output479_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2068_eq : InitE.DeadStages692.Parallel.input2068 =
     InitE.WordStages.Parallel692.word692_2_2185 := by
   rw [InitE.DeadStages692.Parallel.input2068_def]
   simp only [input2067_eq, input478_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2068_eq : InitE.DeadStages692.Parallel.output2068 =
     InitE.WordStages.Parallel692.word692_3_1569 := by
   rw [InitE.DeadStages692.Parallel.output2068_def]
   simp only [output2067_eq, output478_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2069_eq : InitE.DeadStages692.Parallel.input2069 =
     InitE.WordStages.Parallel692.word692_2_2187 := by
   rw [InitE.DeadStages692.Parallel.input2069_def]
   simp only [input2068_eq, input477_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2069_eq : InitE.DeadStages692.Parallel.output2069 =
     InitE.WordStages.Parallel692.word692_3_1571 := by
   rw [InitE.DeadStages692.Parallel.output2069_def]
   simp only [output2068_eq, output477_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2070_eq : InitE.DeadStages692.Parallel.input2070 =
     InitE.WordStages.Parallel692.word692_2_2189 := by
   rw [InitE.DeadStages692.Parallel.input2070_def]
   simp only [input2069_eq, input476_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2070_eq : InitE.DeadStages692.Parallel.output2070 =
     InitE.WordStages.Parallel692.word692_3_1573 := by
   rw [InitE.DeadStages692.Parallel.output2070_def]
   simp only [output2069_eq, output476_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2071_eq : InitE.DeadStages692.Parallel.input2071 =
     InitE.WordStages.Parallel692.word692_2_2191 := by
   rw [InitE.DeadStages692.Parallel.input2071_def]
   simp only [input2070_eq, input475_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2071_eq : InitE.DeadStages692.Parallel.output2071 =
     InitE.WordStages.Parallel692.word692_3_1575 := by
   rw [InitE.DeadStages692.Parallel.output2071_def]
   simp only [output2070_eq, output475_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2072_eq : InitE.DeadStages692.Parallel.input2072 =
     InitE.WordStages.Parallel692.word692_2_2218 := by
   rw [InitE.DeadStages692.Parallel.input2072_def]
   simp only [input2071_eq, input474_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2072_eq : InitE.DeadStages692.Parallel.output2072 =
     InitE.WordStages.Parallel692.word692_3_1587 := by
   rw [InitE.DeadStages692.Parallel.output2072_def]
   simp only [output2071_eq, output474_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2073_eq : InitE.DeadStages692.Parallel.input2073 =
     InitE.WordStages.Parallel692.word692_2_2219 := by
   rw [InitE.DeadStages692.Parallel.input2073_def]
   simp only [input2072_eq, input469_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2073_eq : InitE.DeadStages692.Parallel.output2073 =
     InitE.WordStages.Parallel692.word692_3_1588 := by
   rw [InitE.DeadStages692.Parallel.output2073_def]
   simp only [output2072_eq, output469_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2074_eq : InitE.DeadStages692.Parallel.input2074 =
     InitE.WordStages.Parallel692.word692_2_2221 := by
   rw [InitE.DeadStages692.Parallel.input2074_def]
   simp only [input2073_eq, input468_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2074_eq : InitE.DeadStages692.Parallel.output2074 =
     InitE.WordStages.Parallel692.word692_3_1590 := by
   rw [InitE.DeadStages692.Parallel.output2074_def]
   simp only [output2073_eq, output468_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2075_eq : InitE.DeadStages692.Parallel.input2075 =
     InitE.WordStages.Parallel692.word692_2_2223 := by
   rw [InitE.DeadStages692.Parallel.input2075_def]
   simp only [input2074_eq, input467_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2075_eq : InitE.DeadStages692.Parallel.output2075 =
     InitE.WordStages.Parallel692.word692_3_1592 := by
   rw [InitE.DeadStages692.Parallel.output2075_def]
   simp only [output2074_eq, output467_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2076_eq : InitE.DeadStages692.Parallel.input2076 =
     InitE.WordStages.Parallel692.word692_2_2225 := by
   rw [InitE.DeadStages692.Parallel.input2076_def]
   simp only [input2075_eq, input466_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2076_eq : InitE.DeadStages692.Parallel.output2076 =
     InitE.WordStages.Parallel692.word692_3_1594 := by
   rw [InitE.DeadStages692.Parallel.output2076_def]
   simp only [output2075_eq, output466_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2077_eq : InitE.DeadStages692.Parallel.input2077 =
     InitE.WordStages.Parallel692.word692_2_2252 := by
   rw [InitE.DeadStages692.Parallel.input2077_def]
   simp only [input2076_eq, input465_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2077_eq : InitE.DeadStages692.Parallel.output2077 =
     InitE.WordStages.Parallel692.word692_3_1612 := by
   rw [InitE.DeadStages692.Parallel.output2077_def]
   simp only [output2076_eq, output465_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2078_eq : InitE.DeadStages692.Parallel.input2078 =
     InitE.WordStages.Parallel692.word692_2_2253 := by
   rw [InitE.DeadStages692.Parallel.input2078_def]
   simp only [input2077_eq, input460_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2078_eq : InitE.DeadStages692.Parallel.output2078 =
     InitE.WordStages.Parallel692.word692_3_1613 := by
   rw [InitE.DeadStages692.Parallel.output2078_def]
   simp only [output2077_eq, output460_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2079_eq : InitE.DeadStages692.Parallel.input2079 =
     InitE.WordStages.Parallel692.word692_2_2255 := by
   rw [InitE.DeadStages692.Parallel.input2079_def]
   simp only [input2078_eq, input459_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2079_eq : InitE.DeadStages692.Parallel.output2079 =
     InitE.WordStages.Parallel692.word692_3_1615 := by
   rw [InitE.DeadStages692.Parallel.output2079_def]
   simp only [output2078_eq, output459_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2080_eq : InitE.DeadStages692.Parallel.input2080 =
     InitE.WordStages.Parallel692.word692_2_2257 := by
   rw [InitE.DeadStages692.Parallel.input2080_def]
   simp only [input2079_eq, input458_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2080_eq : InitE.DeadStages692.Parallel.output2080 =
     InitE.WordStages.Parallel692.word692_3_1617 := by
   rw [InitE.DeadStages692.Parallel.output2080_def]
   simp only [output2079_eq, output458_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2081_eq : InitE.DeadStages692.Parallel.input2081 =
     InitE.WordStages.Parallel692.word692_2_2510 := by
   rw [InitE.DeadStages692.Parallel.input2081_def]
   simp only [input2080_eq, input457_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2081_eq : InitE.DeadStages692.Parallel.output2081 =
     InitE.WordStages.Parallel692.word692_3_1770 := by
   rw [InitE.DeadStages692.Parallel.output2081_def]
   simp only [output2080_eq, output457_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2082_eq : InitE.DeadStages692.Parallel.input2082 =
     InitE.WordStages.Parallel692.word692_2_2511 := by
   rw [InitE.DeadStages692.Parallel.input2082_def]
   simp only [input2081_eq, input274_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2082_eq : InitE.DeadStages692.Parallel.output2082 =
     InitE.WordStages.Parallel692.word692_3_1771 := by
   rw [InitE.DeadStages692.Parallel.output2082_def]
   simp only [output2081_eq, output274_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2083_eq : InitE.DeadStages692.Parallel.input2083 =
     InitE.WordStages.Parallel692.word692_2_2513 := by
   rw [InitE.DeadStages692.Parallel.input2083_def]
   simp only [input2082_eq, input273_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2083_eq : InitE.DeadStages692.Parallel.output2083 =
     InitE.WordStages.Parallel692.word692_3_1773 := by
   rw [InitE.DeadStages692.Parallel.output2083_def]
   simp only [output2082_eq, output273_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2084_eq : InitE.DeadStages692.Parallel.input2084 =
     InitE.WordStages.Parallel692.word692_2_2540 := by
   rw [InitE.DeadStages692.Parallel.input2084_def]
   simp only [input2083_eq, input272_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2084_eq : InitE.DeadStages692.Parallel.output2084 =
     InitE.WordStages.Parallel692.word692_3_1791 := by
   rw [InitE.DeadStages692.Parallel.output2084_def]
   simp only [output2083_eq, output272_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2085_eq : InitE.DeadStages692.Parallel.input2085 =
     InitE.WordStages.Parallel692.word692_2_2541 := by
   rw [InitE.DeadStages692.Parallel.input2085_def]
   simp only [input2084_eq, input267_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2085_eq : InitE.DeadStages692.Parallel.output2085 =
     InitE.WordStages.Parallel692.word692_3_1792 := by
   rw [InitE.DeadStages692.Parallel.output2085_def]
   simp only [output2084_eq, output267_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2086_eq : InitE.DeadStages692.Parallel.input2086 =
     InitE.WordStages.Parallel692.word692_2_2543 := by
   rw [InitE.DeadStages692.Parallel.input2086_def]
   simp only [input2085_eq, input266_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2086_eq : InitE.DeadStages692.Parallel.output2086 =
     InitE.WordStages.Parallel692.word692_3_1794 := by
   rw [InitE.DeadStages692.Parallel.output2086_def]
   simp only [output2085_eq, output266_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2087_eq : InitE.DeadStages692.Parallel.input2087 =
     InitE.WordStages.Parallel692.word692_2_2570 := by
   rw [InitE.DeadStages692.Parallel.input2087_def]
   simp only [input2086_eq, input265_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2087_eq : InitE.DeadStages692.Parallel.output2087 =
     InitE.WordStages.Parallel692.word692_3_1812 := by
   rw [InitE.DeadStages692.Parallel.output2087_def]
   simp only [output2086_eq, output265_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2088_eq : InitE.DeadStages692.Parallel.input2088 =
     InitE.WordStages.Parallel692.word692_2_2571 := by
   rw [InitE.DeadStages692.Parallel.input2088_def]
   simp only [input2087_eq, input260_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2088_eq : InitE.DeadStages692.Parallel.output2088 =
     InitE.WordStages.Parallel692.word692_3_1813 := by
   rw [InitE.DeadStages692.Parallel.output2088_def]
   simp only [output2087_eq, output260_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2089_eq : InitE.DeadStages692.Parallel.input2089 =
     InitE.WordStages.Parallel692.word692_2_2573 := by
   rw [InitE.DeadStages692.Parallel.input2089_def]
   simp only [input2088_eq, input259_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2089_eq : InitE.DeadStages692.Parallel.output2089 =
     InitE.WordStages.Parallel692.word692_3_1815 := by
   rw [InitE.DeadStages692.Parallel.output2089_def]
   simp only [output2088_eq, output259_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2090_eq : InitE.DeadStages692.Parallel.input2090 =
     InitE.WordStages.Parallel692.word692_2_2600 := by
   rw [InitE.DeadStages692.Parallel.input2090_def]
   simp only [input2089_eq, input258_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2090_eq : InitE.DeadStages692.Parallel.output2090 =
     InitE.WordStages.Parallel692.word692_3_1833 := by
   rw [InitE.DeadStages692.Parallel.output2090_def]
   simp only [output2089_eq, output258_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2091_eq : InitE.DeadStages692.Parallel.input2091 =
     InitE.WordStages.Parallel692.word692_2_2601 := by
   rw [InitE.DeadStages692.Parallel.input2091_def]
   simp only [input2090_eq, input253_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2091_eq : InitE.DeadStages692.Parallel.output2091 =
     InitE.WordStages.Parallel692.word692_3_1834 := by
   rw [InitE.DeadStages692.Parallel.output2091_def]
   simp only [output2090_eq, output253_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2092_eq : InitE.DeadStages692.Parallel.input2092 =
     InitE.WordStages.Parallel692.word692_2_2603 := by
   rw [InitE.DeadStages692.Parallel.input2092_def]
   simp only [input2091_eq, input252_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2092_eq : InitE.DeadStages692.Parallel.output2092 =
     InitE.WordStages.Parallel692.word692_3_1836 := by
   rw [InitE.DeadStages692.Parallel.output2092_def]
   simp only [output2091_eq, output252_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2093_eq : InitE.DeadStages692.Parallel.input2093 =
     InitE.WordStages.Parallel692.word692_2_2630 := by
   rw [InitE.DeadStages692.Parallel.input2093_def]
   simp only [input2092_eq, input251_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2093_eq : InitE.DeadStages692.Parallel.output2093 =
     InitE.WordStages.Parallel692.word692_3_1854 := by
   rw [InitE.DeadStages692.Parallel.output2093_def]
   simp only [output2092_eq, output251_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2094_eq : InitE.DeadStages692.Parallel.input2094 =
     InitE.WordStages.Parallel692.word692_2_2631 := by
   rw [InitE.DeadStages692.Parallel.input2094_def]
   simp only [input2093_eq, input246_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2094_eq : InitE.DeadStages692.Parallel.output2094 =
     InitE.WordStages.Parallel692.word692_3_1855 := by
   rw [InitE.DeadStages692.Parallel.output2094_def]
   simp only [output2093_eq, output246_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2095_eq : InitE.DeadStages692.Parallel.input2095 =
     InitE.WordStages.Parallel692.word692_2_2633 := by
   rw [InitE.DeadStages692.Parallel.input2095_def]
   simp only [input2094_eq, input245_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2095_eq : InitE.DeadStages692.Parallel.output2095 =
     InitE.WordStages.Parallel692.word692_3_1857 := by
   rw [InitE.DeadStages692.Parallel.output2095_def]
   simp only [output2094_eq, output245_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2096_eq : InitE.DeadStages692.Parallel.input2096 =
     InitE.WordStages.Parallel692.word692_2_2660 := by
   rw [InitE.DeadStages692.Parallel.input2096_def]
   simp only [input2095_eq, input244_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2096_eq : InitE.DeadStages692.Parallel.output2096 =
     InitE.WordStages.Parallel692.word692_3_1875 := by
   rw [InitE.DeadStages692.Parallel.output2096_def]
   simp only [output2095_eq, output244_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2097_eq : InitE.DeadStages692.Parallel.input2097 =
     InitE.WordStages.Parallel692.word692_2_2661 := by
   rw [InitE.DeadStages692.Parallel.input2097_def]
   simp only [input2096_eq, input239_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2097_eq : InitE.DeadStages692.Parallel.output2097 =
     InitE.WordStages.Parallel692.word692_3_1876 := by
   rw [InitE.DeadStages692.Parallel.output2097_def]
   simp only [output2096_eq, output239_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2098_eq : InitE.DeadStages692.Parallel.input2098 =
     InitE.WordStages.Parallel692.word692_2_2663 := by
   rw [InitE.DeadStages692.Parallel.input2098_def]
   simp only [input2097_eq, input238_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2098_eq : InitE.DeadStages692.Parallel.output2098 =
     InitE.WordStages.Parallel692.word692_3_1878 := by
   rw [InitE.DeadStages692.Parallel.output2098_def]
   simp only [output2097_eq, output238_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2099_eq : InitE.DeadStages692.Parallel.input2099 =
     InitE.WordStages.Parallel692.word692_2_2690 := by
   rw [InitE.DeadStages692.Parallel.input2099_def]
   simp only [input2098_eq, input237_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2099_eq : InitE.DeadStages692.Parallel.output2099 =
     InitE.WordStages.Parallel692.word692_3_1896 := by
   rw [InitE.DeadStages692.Parallel.output2099_def]
   simp only [output2098_eq, output237_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2100_eq : InitE.DeadStages692.Parallel.input2100 =
     InitE.WordStages.Parallel692.word692_2_2691 := by
   rw [InitE.DeadStages692.Parallel.input2100_def]
   simp only [input2099_eq, input232_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2100_eq : InitE.DeadStages692.Parallel.output2100 =
     InitE.WordStages.Parallel692.word692_3_1897 := by
   rw [InitE.DeadStages692.Parallel.output2100_def]
   simp only [output2099_eq, output232_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2101_eq : InitE.DeadStages692.Parallel.input2101 =
     InitE.WordStages.Parallel692.word692_2_2693 := by
   rw [InitE.DeadStages692.Parallel.input2101_def]
   simp only [input2100_eq, input231_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2101_eq : InitE.DeadStages692.Parallel.output2101 =
     InitE.WordStages.Parallel692.word692_3_1899 := by
   rw [InitE.DeadStages692.Parallel.output2101_def]
   simp only [output2100_eq, output231_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2102_eq : InitE.DeadStages692.Parallel.input2102 =
     InitE.WordStages.Parallel692.word692_2_2720 := by
   rw [InitE.DeadStages692.Parallel.input2102_def]
   simp only [input2101_eq, input230_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2102_eq : InitE.DeadStages692.Parallel.output2102 =
     InitE.WordStages.Parallel692.word692_3_1917 := by
   rw [InitE.DeadStages692.Parallel.output2102_def]
   simp only [output2101_eq, output230_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2103_eq : InitE.DeadStages692.Parallel.input2103 =
     InitE.WordStages.Parallel692.word692_2_2721 := by
   rw [InitE.DeadStages692.Parallel.input2103_def]
   simp only [input2102_eq, input225_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2103_eq : InitE.DeadStages692.Parallel.output2103 =
     InitE.WordStages.Parallel692.word692_3_1918 := by
   rw [InitE.DeadStages692.Parallel.output2103_def]
   simp only [output2102_eq, output225_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2104_eq : InitE.DeadStages692.Parallel.input2104 =
     InitE.WordStages.Parallel692.word692_2_2723 := by
   rw [InitE.DeadStages692.Parallel.input2104_def]
   simp only [input2103_eq, input224_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2104_eq : InitE.DeadStages692.Parallel.output2104 =
     InitE.WordStages.Parallel692.word692_3_1920 := by
   rw [InitE.DeadStages692.Parallel.output2104_def]
   simp only [output2103_eq, output224_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2105_eq : InitE.DeadStages692.Parallel.input2105 =
     InitE.WordStages.Parallel692.word692_2_2750 := by
   rw [InitE.DeadStages692.Parallel.input2105_def]
   simp only [input2104_eq, input223_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2105_eq : InitE.DeadStages692.Parallel.output2105 =
     InitE.WordStages.Parallel692.word692_3_1938 := by
   rw [InitE.DeadStages692.Parallel.output2105_def]
   simp only [output2104_eq, output223_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2106_eq : InitE.DeadStages692.Parallel.input2106 =
     InitE.WordStages.Parallel692.word692_2_2751 := by
   rw [InitE.DeadStages692.Parallel.input2106_def]
   simp only [input2105_eq, input218_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2106_eq : InitE.DeadStages692.Parallel.output2106 =
     InitE.WordStages.Parallel692.word692_3_1939 := by
   rw [InitE.DeadStages692.Parallel.output2106_def]
   simp only [output2105_eq, output218_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2107_eq : InitE.DeadStages692.Parallel.input2107 =
     InitE.WordStages.Parallel692.word692_2_2753 := by
   rw [InitE.DeadStages692.Parallel.input2107_def]
   simp only [input2106_eq, input217_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2107_eq : InitE.DeadStages692.Parallel.output2107 =
     InitE.WordStages.Parallel692.word692_3_1941 := by
   rw [InitE.DeadStages692.Parallel.output2107_def]
   simp only [output2106_eq, output217_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2108_eq : InitE.DeadStages692.Parallel.input2108 =
     InitE.WordStages.Parallel692.word692_2_2755 := by
   rw [InitE.DeadStages692.Parallel.input2108_def]
   simp only [input2107_eq, input216_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2108_eq : InitE.DeadStages692.Parallel.output2108 =
     InitE.WordStages.Parallel692.word692_3_1943 := by
   rw [InitE.DeadStages692.Parallel.output2108_def]
   simp only [output2107_eq, output216_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2109_eq : InitE.DeadStages692.Parallel.input2109 =
     InitE.WordStages.Parallel692.word692_2_2757 := by
   rw [InitE.DeadStages692.Parallel.input2109_def]
   simp only [input2108_eq, input215_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2109_eq : InitE.DeadStages692.Parallel.output2109 =
     InitE.WordStages.Parallel692.word692_3_1945 := by
   rw [InitE.DeadStages692.Parallel.output2109_def]
   simp only [output2108_eq, output215_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2110_eq : InitE.DeadStages692.Parallel.input2110 =
     InitE.WordStages.Parallel692.word692_2_2759 := by
   rw [InitE.DeadStages692.Parallel.input2110_def]
   simp only [input2109_eq, input214_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2110_eq : InitE.DeadStages692.Parallel.output2110 =
     InitE.WordStages.Parallel692.word692_3_1947 := by
   rw [InitE.DeadStages692.Parallel.output2110_def]
   simp only [output2109_eq, output214_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2111_eq : InitE.DeadStages692.Parallel.input2111 =
     InitE.WordStages.Parallel692.word692_2_2786 := by
   rw [InitE.DeadStages692.Parallel.input2111_def]
   simp only [input2110_eq, input213_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2111_eq : InitE.DeadStages692.Parallel.output2111 =
     InitE.WordStages.Parallel692.word692_3_1959 := by
   rw [InitE.DeadStages692.Parallel.output2111_def]
   simp only [output2110_eq, output213_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2112_eq : InitE.DeadStages692.Parallel.input2112 =
     InitE.WordStages.Parallel692.word692_2_2787 := by
   rw [InitE.DeadStages692.Parallel.input2112_def]
   simp only [input2111_eq, input208_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2112_eq : InitE.DeadStages692.Parallel.output2112 =
     InitE.WordStages.Parallel692.word692_3_1960 := by
   rw [InitE.DeadStages692.Parallel.output2112_def]
   simp only [output2111_eq, output208_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2113_eq : InitE.DeadStages692.Parallel.input2113 =
     InitE.WordStages.Parallel692.word692_2_2789 := by
   rw [InitE.DeadStages692.Parallel.input2113_def]
   simp only [input2112_eq, input207_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2113_eq : InitE.DeadStages692.Parallel.output2113 =
     InitE.WordStages.Parallel692.word692_3_1962 := by
   rw [InitE.DeadStages692.Parallel.output2113_def]
   simp only [output2112_eq, output207_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2114_eq : InitE.DeadStages692.Parallel.input2114 =
     InitE.WordStages.Parallel692.word692_2_2791 := by
   rw [InitE.DeadStages692.Parallel.input2114_def]
   simp only [input2113_eq, input206_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2114_eq : InitE.DeadStages692.Parallel.output2114 =
     InitE.WordStages.Parallel692.word692_3_1964 := by
   rw [InitE.DeadStages692.Parallel.output2114_def]
   simp only [output2113_eq, output206_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2115_eq : InitE.DeadStages692.Parallel.input2115 =
     InitE.WordStages.Parallel692.word692_2_2793 := by
   rw [InitE.DeadStages692.Parallel.input2115_def]
   simp only [input2114_eq, input205_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2115_eq : InitE.DeadStages692.Parallel.output2115 =
     InitE.WordStages.Parallel692.word692_3_1966 := by
   rw [InitE.DeadStages692.Parallel.output2115_def]
   simp only [output2114_eq, output205_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2116_eq : InitE.DeadStages692.Parallel.input2116 =
     InitE.WordStages.Parallel692.word692_2_2795 := by
   rw [InitE.DeadStages692.Parallel.input2116_def]
   simp only [input2115_eq, input204_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2116_eq : InitE.DeadStages692.Parallel.output2116 =
     InitE.WordStages.Parallel692.word692_3_1968 := by
   rw [InitE.DeadStages692.Parallel.output2116_def]
   simp only [output2115_eq, output204_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2117_eq : InitE.DeadStages692.Parallel.input2117 =
     InitE.WordStages.Parallel692.word692_2_2822 := by
   rw [InitE.DeadStages692.Parallel.input2117_def]
   simp only [input2116_eq, input203_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2117_eq : InitE.DeadStages692.Parallel.output2117 =
     InitE.WordStages.Parallel692.word692_3_1980 := by
   rw [InitE.DeadStages692.Parallel.output2117_def]
   simp only [output2116_eq, output203_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2118_eq : InitE.DeadStages692.Parallel.input2118 =
     InitE.WordStages.Parallel692.word692_2_2823 := by
   rw [InitE.DeadStages692.Parallel.input2118_def]
   simp only [input2117_eq, input198_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2118_eq : InitE.DeadStages692.Parallel.output2118 =
     InitE.WordStages.Parallel692.word692_3_1981 := by
   rw [InitE.DeadStages692.Parallel.output2118_def]
   simp only [output2117_eq, output198_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2119_eq : InitE.DeadStages692.Parallel.input2119 =
     InitE.WordStages.Parallel692.word692_2_2825 := by
   rw [InitE.DeadStages692.Parallel.input2119_def]
   simp only [input2118_eq, input197_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2119_eq : InitE.DeadStages692.Parallel.output2119 =
     InitE.WordStages.Parallel692.word692_3_1983 := by
   rw [InitE.DeadStages692.Parallel.output2119_def]
   simp only [output2118_eq, output197_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2120_eq : InitE.DeadStages692.Parallel.input2120 =
     InitE.WordStages.Parallel692.word692_2_2827 := by
   rw [InitE.DeadStages692.Parallel.input2120_def]
   simp only [input2119_eq, input196_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2120_eq : InitE.DeadStages692.Parallel.output2120 =
     InitE.WordStages.Parallel692.word692_3_1985 := by
   rw [InitE.DeadStages692.Parallel.output2120_def]
   simp only [output2119_eq, output196_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2121_eq : InitE.DeadStages692.Parallel.input2121 =
     InitE.WordStages.Parallel692.word692_2_2829 := by
   rw [InitE.DeadStages692.Parallel.input2121_def]
   simp only [input2120_eq, input195_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2121_eq : InitE.DeadStages692.Parallel.output2121 =
     InitE.WordStages.Parallel692.word692_3_1987 := by
   rw [InitE.DeadStages692.Parallel.output2121_def]
   simp only [output2120_eq, output195_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2122_eq : InitE.DeadStages692.Parallel.input2122 =
     InitE.WordStages.Parallel692.word692_2_2856 := by
   rw [InitE.DeadStages692.Parallel.input2122_def]
   simp only [input2121_eq, input194_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2122_eq : InitE.DeadStages692.Parallel.output2122 =
     InitE.WordStages.Parallel692.word692_3_1999 := by
   rw [InitE.DeadStages692.Parallel.output2122_def]
   simp only [output2121_eq, output194_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2123_eq : InitE.DeadStages692.Parallel.input2123 =
     InitE.WordStages.Parallel692.word692_2_2857 := by
   rw [InitE.DeadStages692.Parallel.input2123_def]
   simp only [input2122_eq, input189_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2123_eq : InitE.DeadStages692.Parallel.output2123 =
     InitE.WordStages.Parallel692.word692_3_2000 := by
   rw [InitE.DeadStages692.Parallel.output2123_def]
   simp only [output2122_eq, output189_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2124_eq : InitE.DeadStages692.Parallel.input2124 =
     InitE.WordStages.Parallel692.word692_2_2859 := by
   rw [InitE.DeadStages692.Parallel.input2124_def]
   simp only [input2123_eq, input188_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2124_eq : InitE.DeadStages692.Parallel.output2124 =
     InitE.WordStages.Parallel692.word692_3_2002 := by
   rw [InitE.DeadStages692.Parallel.output2124_def]
   simp only [output2123_eq, output188_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2125_eq : InitE.DeadStages692.Parallel.input2125 =
     InitE.WordStages.Parallel692.word692_2_2861 := by
   rw [InitE.DeadStages692.Parallel.input2125_def]
   simp only [input2124_eq, input187_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2125_eq : InitE.DeadStages692.Parallel.output2125 =
     InitE.WordStages.Parallel692.word692_3_2004 := by
   rw [InitE.DeadStages692.Parallel.output2125_def]
   simp only [output2124_eq, output187_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2126_eq : InitE.DeadStages692.Parallel.input2126 =
     InitE.WordStages.Parallel692.word692_2_2863 := by
   rw [InitE.DeadStages692.Parallel.input2126_def]
   simp only [input2125_eq, input186_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2126_eq : InitE.DeadStages692.Parallel.output2126 =
     InitE.WordStages.Parallel692.word692_3_2006 := by
   rw [InitE.DeadStages692.Parallel.output2126_def]
   simp only [output2125_eq, output186_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2127_eq : InitE.DeadStages692.Parallel.input2127 =
     InitE.WordStages.Parallel692.word692_2_2865 := by
   rw [InitE.DeadStages692.Parallel.input2127_def]
   simp only [input2126_eq, input185_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2127_eq : InitE.DeadStages692.Parallel.output2127 =
     InitE.WordStages.Parallel692.word692_3_2008 := by
   rw [InitE.DeadStages692.Parallel.output2127_def]
   simp only [output2126_eq, output185_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2128_eq : InitE.DeadStages692.Parallel.input2128 =
     InitE.WordStages.Parallel692.word692_2_2892 := by
   rw [InitE.DeadStages692.Parallel.input2128_def]
   simp only [input2127_eq, input184_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2128_eq : InitE.DeadStages692.Parallel.output2128 =
     InitE.WordStages.Parallel692.word692_3_2020 := by
   rw [InitE.DeadStages692.Parallel.output2128_def]
   simp only [output2127_eq, output184_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2129_eq : InitE.DeadStages692.Parallel.input2129 =
     InitE.WordStages.Parallel692.word692_2_2893 := by
   rw [InitE.DeadStages692.Parallel.input2129_def]
   simp only [input2128_eq, input179_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2129_eq : InitE.DeadStages692.Parallel.output2129 =
     InitE.WordStages.Parallel692.word692_3_2021 := by
   rw [InitE.DeadStages692.Parallel.output2129_def]
   simp only [output2128_eq, output179_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2130_eq : InitE.DeadStages692.Parallel.input2130 =
     InitE.WordStages.Parallel692.word692_2_2895 := by
   rw [InitE.DeadStages692.Parallel.input2130_def]
   simp only [input2129_eq, input178_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2130_eq : InitE.DeadStages692.Parallel.output2130 =
     InitE.WordStages.Parallel692.word692_3_2023 := by
   rw [InitE.DeadStages692.Parallel.output2130_def]
   simp only [output2129_eq, output178_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2131_eq : InitE.DeadStages692.Parallel.input2131 =
     InitE.WordStages.Parallel692.word692_2_2897 := by
   rw [InitE.DeadStages692.Parallel.input2131_def]
   simp only [input2130_eq, input177_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2131_eq : InitE.DeadStages692.Parallel.output2131 =
     InitE.WordStages.Parallel692.word692_3_2025 := by
   rw [InitE.DeadStages692.Parallel.output2131_def]
   simp only [output2130_eq, output177_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2132_eq : InitE.DeadStages692.Parallel.input2132 =
     InitE.WordStages.Parallel692.word692_2_2899 := by
   rw [InitE.DeadStages692.Parallel.input2132_def]
   simp only [input2131_eq, input176_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2132_eq : InitE.DeadStages692.Parallel.output2132 =
     InitE.WordStages.Parallel692.word692_3_2027 := by
   rw [InitE.DeadStages692.Parallel.output2132_def]
   simp only [output2131_eq, output176_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2133_eq : InitE.DeadStages692.Parallel.input2133 =
     InitE.WordStages.Parallel692.word692_2_2901 := by
   rw [InitE.DeadStages692.Parallel.input2133_def]
   simp only [input2132_eq, input175_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2133_eq : InitE.DeadStages692.Parallel.output2133 =
     InitE.WordStages.Parallel692.word692_3_2029 := by
   rw [InitE.DeadStages692.Parallel.output2133_def]
   simp only [output2132_eq, output175_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2134_eq : InitE.DeadStages692.Parallel.input2134 =
     InitE.WordStages.Parallel692.word692_2_2928 := by
   rw [InitE.DeadStages692.Parallel.input2134_def]
   simp only [input2133_eq, input174_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2134_eq : InitE.DeadStages692.Parallel.output2134 =
     InitE.WordStages.Parallel692.word692_3_2041 := by
   rw [InitE.DeadStages692.Parallel.output2134_def]
   simp only [output2133_eq, output174_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2135_eq : InitE.DeadStages692.Parallel.input2135 =
     InitE.WordStages.Parallel692.word692_2_2929 := by
   rw [InitE.DeadStages692.Parallel.input2135_def]
   simp only [input2134_eq, input169_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2135_eq : InitE.DeadStages692.Parallel.output2135 =
     InitE.WordStages.Parallel692.word692_3_2042 := by
   rw [InitE.DeadStages692.Parallel.output2135_def]
   simp only [output2134_eq, output169_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2136_eq : InitE.DeadStages692.Parallel.input2136 =
     InitE.WordStages.Parallel692.word692_2_2931 := by
   rw [InitE.DeadStages692.Parallel.input2136_def]
   simp only [input2135_eq, input168_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2136_eq : InitE.DeadStages692.Parallel.output2136 =
     InitE.WordStages.Parallel692.word692_3_2044 := by
   rw [InitE.DeadStages692.Parallel.output2136_def]
   simp only [output2135_eq, output168_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2137_eq : InitE.DeadStages692.Parallel.input2137 =
     InitE.WordStages.Parallel692.word692_2_2933 := by
   rw [InitE.DeadStages692.Parallel.input2137_def]
   simp only [input2136_eq, input167_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2137_eq : InitE.DeadStages692.Parallel.output2137 =
     InitE.WordStages.Parallel692.word692_3_2046 := by
   rw [InitE.DeadStages692.Parallel.output2137_def]
   simp only [output2136_eq, output167_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2138_eq : InitE.DeadStages692.Parallel.input2138 =
     InitE.WordStages.Parallel692.word692_2_2935 := by
   rw [InitE.DeadStages692.Parallel.input2138_def]
   simp only [input2137_eq, input166_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2138_eq : InitE.DeadStages692.Parallel.output2138 =
     InitE.WordStages.Parallel692.word692_3_2048 := by
   rw [InitE.DeadStages692.Parallel.output2138_def]
   simp only [output2137_eq, output166_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2139_eq : InitE.DeadStages692.Parallel.input2139 =
     InitE.WordStages.Parallel692.word692_2_2937 := by
   rw [InitE.DeadStages692.Parallel.input2139_def]
   simp only [input2138_eq, input165_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2139_eq : InitE.DeadStages692.Parallel.output2139 =
     InitE.WordStages.Parallel692.word692_3_2050 := by
   rw [InitE.DeadStages692.Parallel.output2139_def]
   simp only [output2138_eq, output165_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2140_eq : InitE.DeadStages692.Parallel.input2140 =
     InitE.WordStages.Parallel692.word692_2_2964 := by
   rw [InitE.DeadStages692.Parallel.input2140_def]
   simp only [input2139_eq, input164_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2140_eq : InitE.DeadStages692.Parallel.output2140 =
     InitE.WordStages.Parallel692.word692_3_2062 := by
   rw [InitE.DeadStages692.Parallel.output2140_def]
   simp only [output2139_eq, output164_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2141_eq : InitE.DeadStages692.Parallel.input2141 =
     InitE.WordStages.Parallel692.word692_2_2965 := by
   rw [InitE.DeadStages692.Parallel.input2141_def]
   simp only [input2140_eq, input159_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2141_eq : InitE.DeadStages692.Parallel.output2141 =
     InitE.WordStages.Parallel692.word692_3_2063 := by
   rw [InitE.DeadStages692.Parallel.output2141_def]
   simp only [output2140_eq, output159_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2142_eq : InitE.DeadStages692.Parallel.input2142 =
     InitE.WordStages.Parallel692.word692_2_2967 := by
   rw [InitE.DeadStages692.Parallel.input2142_def]
   simp only [input2141_eq, input158_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2142_eq : InitE.DeadStages692.Parallel.output2142 =
     InitE.WordStages.Parallel692.word692_3_2065 := by
   rw [InitE.DeadStages692.Parallel.output2142_def]
   simp only [output2141_eq, output158_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2143_eq : InitE.DeadStages692.Parallel.input2143 =
     InitE.WordStages.Parallel692.word692_2_2969 := by
   rw [InitE.DeadStages692.Parallel.input2143_def]
   simp only [input2142_eq, input157_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2143_eq : InitE.DeadStages692.Parallel.output2143 =
     InitE.WordStages.Parallel692.word692_3_2067 := by
   rw [InitE.DeadStages692.Parallel.output2143_def]
   simp only [output2142_eq, output157_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2144_eq : InitE.DeadStages692.Parallel.input2144 =
     InitE.WordStages.Parallel692.word692_2_2971 := by
   rw [InitE.DeadStages692.Parallel.input2144_def]
   simp only [input2143_eq, input156_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2144_eq : InitE.DeadStages692.Parallel.output2144 =
     InitE.WordStages.Parallel692.word692_3_2069 := by
   rw [InitE.DeadStages692.Parallel.output2144_def]
   simp only [output2143_eq, output156_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2145_eq : InitE.DeadStages692.Parallel.input2145 =
     InitE.WordStages.Parallel692.word692_2_2998 := by
   rw [InitE.DeadStages692.Parallel.input2145_def]
   simp only [input2144_eq, input155_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2145_eq : InitE.DeadStages692.Parallel.output2145 =
     InitE.WordStages.Parallel692.word692_3_2081 := by
   rw [InitE.DeadStages692.Parallel.output2145_def]
   simp only [output2144_eq, output155_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2146_eq : InitE.DeadStages692.Parallel.input2146 =
     InitE.WordStages.Parallel692.word692_2_2999 := by
   rw [InitE.DeadStages692.Parallel.input2146_def]
   simp only [input2145_eq, input150_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2146_eq : InitE.DeadStages692.Parallel.output2146 =
     InitE.WordStages.Parallel692.word692_3_2082 := by
   rw [InitE.DeadStages692.Parallel.output2146_def]
   simp only [output2145_eq, output150_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2147_eq : InitE.DeadStages692.Parallel.input2147 =
     InitE.WordStages.Parallel692.word692_2_3001 := by
   rw [InitE.DeadStages692.Parallel.input2147_def]
   simp only [input2146_eq, input149_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2147_eq : InitE.DeadStages692.Parallel.output2147 =
     InitE.WordStages.Parallel692.word692_3_2084 := by
   rw [InitE.DeadStages692.Parallel.output2147_def]
   simp only [output2146_eq, output149_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2148_eq : InitE.DeadStages692.Parallel.input2148 =
     InitE.WordStages.Parallel692.word692_2_3003 := by
   rw [InitE.DeadStages692.Parallel.input2148_def]
   simp only [input2147_eq, input148_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2148_eq : InitE.DeadStages692.Parallel.output2148 =
     InitE.WordStages.Parallel692.word692_3_2086 := by
   rw [InitE.DeadStages692.Parallel.output2148_def]
   simp only [output2147_eq, output148_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2149_eq : InitE.DeadStages692.Parallel.input2149 =
     InitE.WordStages.Parallel692.word692_2_3005 := by
   rw [InitE.DeadStages692.Parallel.input2149_def]
   simp only [input2148_eq, input147_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2149_eq : InitE.DeadStages692.Parallel.output2149 =
     InitE.WordStages.Parallel692.word692_3_2088 := by
   rw [InitE.DeadStages692.Parallel.output2149_def]
   simp only [output2148_eq, output147_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2150_eq : InitE.DeadStages692.Parallel.input2150 =
     InitE.WordStages.Parallel692.word692_2_3007 := by
   rw [InitE.DeadStages692.Parallel.input2150_def]
   simp only [input2149_eq, input146_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2150_eq : InitE.DeadStages692.Parallel.output2150 =
     InitE.WordStages.Parallel692.word692_3_2090 := by
   rw [InitE.DeadStages692.Parallel.output2150_def]
   simp only [output2149_eq, output146_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2151_eq : InitE.DeadStages692.Parallel.input2151 =
     InitE.WordStages.Parallel692.word692_2_3034 := by
   rw [InitE.DeadStages692.Parallel.input2151_def]
   simp only [input2150_eq, input145_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2151_eq : InitE.DeadStages692.Parallel.output2151 =
     InitE.WordStages.Parallel692.word692_3_2102 := by
   rw [InitE.DeadStages692.Parallel.output2151_def]
   simp only [output2150_eq, output145_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2152_eq : InitE.DeadStages692.Parallel.input2152 =
     InitE.WordStages.Parallel692.word692_2_3035 := by
   rw [InitE.DeadStages692.Parallel.input2152_def]
   simp only [input2151_eq, input140_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2152_eq : InitE.DeadStages692.Parallel.output2152 =
     InitE.WordStages.Parallel692.word692_3_2103 := by
   rw [InitE.DeadStages692.Parallel.output2152_def]
   simp only [output2151_eq, output140_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2153_eq : InitE.DeadStages692.Parallel.input2153 =
     InitE.WordStages.Parallel692.word692_2_3037 := by
   rw [InitE.DeadStages692.Parallel.input2153_def]
   simp only [input2152_eq, input139_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2153_eq : InitE.DeadStages692.Parallel.output2153 =
     InitE.WordStages.Parallel692.word692_3_2105 := by
   rw [InitE.DeadStages692.Parallel.output2153_def]
   simp only [output2152_eq, output139_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2154_eq : InitE.DeadStages692.Parallel.input2154 =
     InitE.WordStages.Parallel692.word692_2_3039 := by
   rw [InitE.DeadStages692.Parallel.input2154_def]
   simp only [input2153_eq, input138_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2154_eq : InitE.DeadStages692.Parallel.output2154 =
     InitE.WordStages.Parallel692.word692_3_2107 := by
   rw [InitE.DeadStages692.Parallel.output2154_def]
   simp only [output2153_eq, output138_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2155_eq : InitE.DeadStages692.Parallel.input2155 =
     InitE.WordStages.Parallel692.word692_2_3041 := by
   rw [InitE.DeadStages692.Parallel.input2155_def]
   simp only [input2154_eq, input137_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2155_eq : InitE.DeadStages692.Parallel.output2155 =
     InitE.WordStages.Parallel692.word692_3_2109 := by
   rw [InitE.DeadStages692.Parallel.output2155_def]
   simp only [output2154_eq, output137_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2156_eq : InitE.DeadStages692.Parallel.input2156 =
     InitE.WordStages.Parallel692.word692_2_3043 := by
   rw [InitE.DeadStages692.Parallel.input2156_def]
   simp only [input2155_eq, input136_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2156_eq : InitE.DeadStages692.Parallel.output2156 =
     InitE.WordStages.Parallel692.word692_3_2111 := by
   rw [InitE.DeadStages692.Parallel.output2156_def]
   simp only [output2155_eq, output136_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2157_eq : InitE.DeadStages692.Parallel.input2157 =
     InitE.WordStages.Parallel692.word692_2_3070 := by
   rw [InitE.DeadStages692.Parallel.input2157_def]
   simp only [input2156_eq, input135_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2157_eq : InitE.DeadStages692.Parallel.output2157 =
     InitE.WordStages.Parallel692.word692_3_2123 := by
   rw [InitE.DeadStages692.Parallel.output2157_def]
   simp only [output2156_eq, output135_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2158_eq : InitE.DeadStages692.Parallel.input2158 =
     InitE.WordStages.Parallel692.word692_2_3071 := by
   rw [InitE.DeadStages692.Parallel.input2158_def]
   simp only [input2157_eq, input130_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2158_eq : InitE.DeadStages692.Parallel.output2158 =
     InitE.WordStages.Parallel692.word692_3_2124 := by
   rw [InitE.DeadStages692.Parallel.output2158_def]
   simp only [output2157_eq, output130_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2159_eq : InitE.DeadStages692.Parallel.input2159 =
     InitE.WordStages.Parallel692.word692_2_3073 := by
   rw [InitE.DeadStages692.Parallel.input2159_def]
   simp only [input2158_eq, input129_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2159_eq : InitE.DeadStages692.Parallel.output2159 =
     InitE.WordStages.Parallel692.word692_3_2126 := by
   rw [InitE.DeadStages692.Parallel.output2159_def]
   simp only [output2158_eq, output129_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2160_eq : InitE.DeadStages692.Parallel.input2160 =
     InitE.WordStages.Parallel692.word692_2_3075 := by
   rw [InitE.DeadStages692.Parallel.input2160_def]
   simp only [input2159_eq, input128_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2160_eq : InitE.DeadStages692.Parallel.output2160 =
     InitE.WordStages.Parallel692.word692_3_2128 := by
   rw [InitE.DeadStages692.Parallel.output2160_def]
   simp only [output2159_eq, output128_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2161_eq : InitE.DeadStages692.Parallel.input2161 =
     InitE.WordStages.Parallel692.word692_2_3077 := by
   rw [InitE.DeadStages692.Parallel.input2161_def]
   simp only [input2160_eq, input127_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2161_eq : InitE.DeadStages692.Parallel.output2161 =
     InitE.WordStages.Parallel692.word692_3_2130 := by
   rw [InitE.DeadStages692.Parallel.output2161_def]
   simp only [output2160_eq, output127_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2162_eq : InitE.DeadStages692.Parallel.input2162 =
     InitE.WordStages.Parallel692.word692_2_3079 := by
   rw [InitE.DeadStages692.Parallel.input2162_def]
   simp only [input2161_eq, input126_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2162_eq : InitE.DeadStages692.Parallel.output2162 =
     InitE.WordStages.Parallel692.word692_3_2130 := by
@@ -1392,791 +1393,791 @@ theorem input2163_eq : InitE.DeadStages692.Parallel.input2163 =
     InitE.WordStages.Parallel692.word692_2_3108 := by
   rw [InitE.DeadStages692.Parallel.input2163_def]
   simp only [input2162_eq, input125_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2163_eq : InitE.DeadStages692.Parallel.output2163 =
     InitE.WordStages.Parallel692.word692_3_2144 := by
   rw [InitE.DeadStages692.Parallel.output2163_def]
   simp only [output2162_eq, output125_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2164_eq : InitE.DeadStages692.Parallel.input2164 =
     InitE.WordStages.Parallel692.word692_2_3109 := by
   rw [InitE.DeadStages692.Parallel.input2164_def]
   simp only [input2163_eq, input118_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2164_eq : InitE.DeadStages692.Parallel.output2164 =
     InitE.WordStages.Parallel692.word692_3_2145 := by
   rw [InitE.DeadStages692.Parallel.output2164_def]
   simp only [output2163_eq, output118_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2165_eq : InitE.DeadStages692.Parallel.input2165 =
     InitE.WordStages.Parallel692.word692_2_3111 := by
   rw [InitE.DeadStages692.Parallel.input2165_def]
   simp only [input2164_eq, input117_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2165_eq : InitE.DeadStages692.Parallel.output2165 =
     InitE.WordStages.Parallel692.word692_3_2147 := by
   rw [InitE.DeadStages692.Parallel.output2165_def]
   simp only [output2164_eq, output117_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2166_eq : InitE.DeadStages692.Parallel.input2166 =
     InitE.WordStages.Parallel692.word692_2_3113 := by
   rw [InitE.DeadStages692.Parallel.input2166_def]
   simp only [input2165_eq, input116_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2166_eq : InitE.DeadStages692.Parallel.output2166 =
     InitE.WordStages.Parallel692.word692_3_2149 := by
   rw [InitE.DeadStages692.Parallel.output2166_def]
   simp only [output2165_eq, output116_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2167_eq : InitE.DeadStages692.Parallel.input2167 =
     InitE.WordStages.Parallel692.word692_2_3115 := by
   rw [InitE.DeadStages692.Parallel.input2167_def]
   simp only [input2166_eq, input115_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2167_eq : InitE.DeadStages692.Parallel.output2167 =
     InitE.WordStages.Parallel692.word692_3_2151 := by
   rw [InitE.DeadStages692.Parallel.output2167_def]
   simp only [output2166_eq, output115_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2168_eq : InitE.DeadStages692.Parallel.input2168 =
     InitE.WordStages.Parallel692.word692_2_3117 := by
   rw [InitE.DeadStages692.Parallel.input2168_def]
   simp only [input2167_eq, input114_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2168_eq : InitE.DeadStages692.Parallel.output2168 =
     InitE.WordStages.Parallel692.word692_3_2153 := by
   rw [InitE.DeadStages692.Parallel.output2168_def]
   simp only [output2167_eq, output114_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2169_eq : InitE.DeadStages692.Parallel.input2169 =
     InitE.WordStages.Parallel692.word692_2_3144 := by
   rw [InitE.DeadStages692.Parallel.input2169_def]
   simp only [input2168_eq, input113_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2169_eq : InitE.DeadStages692.Parallel.output2169 =
     InitE.WordStages.Parallel692.word692_3_2165 := by
   rw [InitE.DeadStages692.Parallel.output2169_def]
   simp only [output2168_eq, output113_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2170_eq : InitE.DeadStages692.Parallel.input2170 =
     InitE.WordStages.Parallel692.word692_2_3145 := by
   rw [InitE.DeadStages692.Parallel.input2170_def]
   simp only [input2169_eq, input108_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2170_eq : InitE.DeadStages692.Parallel.output2170 =
     InitE.WordStages.Parallel692.word692_3_2166 := by
   rw [InitE.DeadStages692.Parallel.output2170_def]
   simp only [output2169_eq, output108_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2171_eq : InitE.DeadStages692.Parallel.input2171 =
     InitE.WordStages.Parallel692.word692_2_3147 := by
   rw [InitE.DeadStages692.Parallel.input2171_def]
   simp only [input2170_eq, input107_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2171_eq : InitE.DeadStages692.Parallel.output2171 =
     InitE.WordStages.Parallel692.word692_3_2168 := by
   rw [InitE.DeadStages692.Parallel.output2171_def]
   simp only [output2170_eq, output107_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2172_eq : InitE.DeadStages692.Parallel.input2172 =
     InitE.WordStages.Parallel692.word692_2_3149 := by
   rw [InitE.DeadStages692.Parallel.input2172_def]
   simp only [input2171_eq, input106_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2172_eq : InitE.DeadStages692.Parallel.output2172 =
     InitE.WordStages.Parallel692.word692_3_2170 := by
   rw [InitE.DeadStages692.Parallel.output2172_def]
   simp only [output2171_eq, output106_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2173_eq : InitE.DeadStages692.Parallel.input2173 =
     InitE.WordStages.Parallel692.word692_2_3151 := by
   rw [InitE.DeadStages692.Parallel.input2173_def]
   simp only [input2172_eq, input105_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2173_eq : InitE.DeadStages692.Parallel.output2173 =
     InitE.WordStages.Parallel692.word692_3_2172 := by
   rw [InitE.DeadStages692.Parallel.output2173_def]
   simp only [output2172_eq, output105_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2174_eq : InitE.DeadStages692.Parallel.input2174 =
     InitE.WordStages.Parallel692.word692_2_3153 := by
   rw [InitE.DeadStages692.Parallel.input2174_def]
   simp only [input2173_eq, input104_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2174_eq : InitE.DeadStages692.Parallel.output2174 =
     InitE.WordStages.Parallel692.word692_3_2174 := by
   rw [InitE.DeadStages692.Parallel.output2174_def]
   simp only [output2173_eq, output104_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2175_eq : InitE.DeadStages692.Parallel.input2175 =
     InitE.WordStages.Parallel692.word692_2_3180 := by
   rw [InitE.DeadStages692.Parallel.input2175_def]
   simp only [input2174_eq, input103_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2175_eq : InitE.DeadStages692.Parallel.output2175 =
     InitE.WordStages.Parallel692.word692_3_2186 := by
   rw [InitE.DeadStages692.Parallel.output2175_def]
   simp only [output2174_eq, output103_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2176_eq : InitE.DeadStages692.Parallel.input2176 =
     InitE.WordStages.Parallel692.word692_2_3181 := by
   rw [InitE.DeadStages692.Parallel.input2176_def]
   simp only [input2175_eq, input98_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2176_eq : InitE.DeadStages692.Parallel.output2176 =
     InitE.WordStages.Parallel692.word692_3_2187 := by
   rw [InitE.DeadStages692.Parallel.output2176_def]
   simp only [output2175_eq, output98_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2177_eq : InitE.DeadStages692.Parallel.input2177 =
     InitE.WordStages.Parallel692.word692_2_3183 := by
   rw [InitE.DeadStages692.Parallel.input2177_def]
   simp only [input2176_eq, input97_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2177_eq : InitE.DeadStages692.Parallel.output2177 =
     InitE.WordStages.Parallel692.word692_3_2189 := by
   rw [InitE.DeadStages692.Parallel.output2177_def]
   simp only [output2176_eq, output97_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2178_eq : InitE.DeadStages692.Parallel.input2178 =
     InitE.WordStages.Parallel692.word692_2_3185 := by
   rw [InitE.DeadStages692.Parallel.input2178_def]
   simp only [input2177_eq, input96_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2178_eq : InitE.DeadStages692.Parallel.output2178 =
     InitE.WordStages.Parallel692.word692_3_2191 := by
   rw [InitE.DeadStages692.Parallel.output2178_def]
   simp only [output2177_eq, output96_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2179_eq : InitE.DeadStages692.Parallel.input2179 =
     InitE.WordStages.Parallel692.word692_2_3187 := by
   rw [InitE.DeadStages692.Parallel.input2179_def]
   simp only [input2178_eq, input95_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2179_eq : InitE.DeadStages692.Parallel.output2179 =
     InitE.WordStages.Parallel692.word692_3_2193 := by
   rw [InitE.DeadStages692.Parallel.output2179_def]
   simp only [output2178_eq, output95_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2180_eq : InitE.DeadStages692.Parallel.input2180 =
     InitE.WordStages.Parallel692.word692_2_3189 := by
   rw [InitE.DeadStages692.Parallel.input2180_def]
   simp only [input2179_eq, input94_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2180_eq : InitE.DeadStages692.Parallel.output2180 =
     InitE.WordStages.Parallel692.word692_3_2195 := by
   rw [InitE.DeadStages692.Parallel.output2180_def]
   simp only [output2179_eq, output94_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2181_eq : InitE.DeadStages692.Parallel.input2181 =
     InitE.WordStages.Parallel692.word692_2_3216 := by
   rw [InitE.DeadStages692.Parallel.input2181_def]
   simp only [input2180_eq, input93_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2181_eq : InitE.DeadStages692.Parallel.output2181 =
     InitE.WordStages.Parallel692.word692_3_2207 := by
   rw [InitE.DeadStages692.Parallel.output2181_def]
   simp only [output2180_eq, output93_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2182_eq : InitE.DeadStages692.Parallel.input2182 =
     InitE.WordStages.Parallel692.word692_2_3217 := by
   rw [InitE.DeadStages692.Parallel.input2182_def]
   simp only [input2181_eq, input88_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2182_eq : InitE.DeadStages692.Parallel.output2182 =
     InitE.WordStages.Parallel692.word692_3_2208 := by
   rw [InitE.DeadStages692.Parallel.output2182_def]
   simp only [output2181_eq, output88_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2183_eq : InitE.DeadStages692.Parallel.input2183 =
     InitE.WordStages.Parallel692.word692_2_3219 := by
   rw [InitE.DeadStages692.Parallel.input2183_def]
   simp only [input2182_eq, input87_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2183_eq : InitE.DeadStages692.Parallel.output2183 =
     InitE.WordStages.Parallel692.word692_3_2210 := by
   rw [InitE.DeadStages692.Parallel.output2183_def]
   simp only [output2182_eq, output87_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2184_eq : InitE.DeadStages692.Parallel.input2184 =
     InitE.WordStages.Parallel692.word692_2_3221 := by
   rw [InitE.DeadStages692.Parallel.input2184_def]
   simp only [input2183_eq, input86_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2184_eq : InitE.DeadStages692.Parallel.output2184 =
     InitE.WordStages.Parallel692.word692_3_2212 := by
   rw [InitE.DeadStages692.Parallel.output2184_def]
   simp only [output2183_eq, output86_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2185_eq : InitE.DeadStages692.Parallel.input2185 =
     InitE.WordStages.Parallel692.word692_2_3223 := by
   rw [InitE.DeadStages692.Parallel.input2185_def]
   simp only [input2184_eq, input85_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2185_eq : InitE.DeadStages692.Parallel.output2185 =
     InitE.WordStages.Parallel692.word692_3_2214 := by
   rw [InitE.DeadStages692.Parallel.output2185_def]
   simp only [output2184_eq, output85_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2186_eq : InitE.DeadStages692.Parallel.input2186 =
     InitE.WordStages.Parallel692.word692_2_3225 := by
   rw [InitE.DeadStages692.Parallel.input2186_def]
   simp only [input2185_eq, input84_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2186_eq : InitE.DeadStages692.Parallel.output2186 =
     InitE.WordStages.Parallel692.word692_3_2216 := by
   rw [InitE.DeadStages692.Parallel.output2186_def]
   simp only [output2185_eq, output84_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2187_eq : InitE.DeadStages692.Parallel.input2187 =
     InitE.WordStages.Parallel692.word692_2_3252 := by
   rw [InitE.DeadStages692.Parallel.input2187_def]
   simp only [input2186_eq, input83_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2187_eq : InitE.DeadStages692.Parallel.output2187 =
     InitE.WordStages.Parallel692.word692_3_2228 := by
   rw [InitE.DeadStages692.Parallel.output2187_def]
   simp only [output2186_eq, output83_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2188_eq : InitE.DeadStages692.Parallel.input2188 =
     InitE.WordStages.Parallel692.word692_2_3253 := by
   rw [InitE.DeadStages692.Parallel.input2188_def]
   simp only [input2187_eq, input78_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2188_eq : InitE.DeadStages692.Parallel.output2188 =
     InitE.WordStages.Parallel692.word692_3_2229 := by
   rw [InitE.DeadStages692.Parallel.output2188_def]
   simp only [output2187_eq, output78_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2189_eq : InitE.DeadStages692.Parallel.input2189 =
     InitE.WordStages.Parallel692.word692_2_3255 := by
   rw [InitE.DeadStages692.Parallel.input2189_def]
   simp only [input2188_eq, input77_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2189_eq : InitE.DeadStages692.Parallel.output2189 =
     InitE.WordStages.Parallel692.word692_3_2231 := by
   rw [InitE.DeadStages692.Parallel.output2189_def]
   simp only [output2188_eq, output77_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2190_eq : InitE.DeadStages692.Parallel.input2190 =
     InitE.WordStages.Parallel692.word692_2_3257 := by
   rw [InitE.DeadStages692.Parallel.input2190_def]
   simp only [input2189_eq, input76_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2190_eq : InitE.DeadStages692.Parallel.output2190 =
     InitE.WordStages.Parallel692.word692_3_2233 := by
   rw [InitE.DeadStages692.Parallel.output2190_def]
   simp only [output2189_eq, output76_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2191_eq : InitE.DeadStages692.Parallel.input2191 =
     InitE.WordStages.Parallel692.word692_2_3259 := by
   rw [InitE.DeadStages692.Parallel.input2191_def]
   simp only [input2190_eq, input75_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2191_eq : InitE.DeadStages692.Parallel.output2191 =
     InitE.WordStages.Parallel692.word692_3_2235 := by
   rw [InitE.DeadStages692.Parallel.output2191_def]
   simp only [output2190_eq, output75_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2192_eq : InitE.DeadStages692.Parallel.input2192 =
     InitE.WordStages.Parallel692.word692_2_3261 := by
   rw [InitE.DeadStages692.Parallel.input2192_def]
   simp only [input2191_eq, input74_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2192_eq : InitE.DeadStages692.Parallel.output2192 =
     InitE.WordStages.Parallel692.word692_3_2237 := by
   rw [InitE.DeadStages692.Parallel.output2192_def]
   simp only [output2191_eq, output74_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2193_eq : InitE.DeadStages692.Parallel.input2193 =
     InitE.WordStages.Parallel692.word692_2_3288 := by
   rw [InitE.DeadStages692.Parallel.input2193_def]
   simp only [input2192_eq, input73_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2193_eq : InitE.DeadStages692.Parallel.output2193 =
     InitE.WordStages.Parallel692.word692_3_2249 := by
   rw [InitE.DeadStages692.Parallel.output2193_def]
   simp only [output2192_eq, output73_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2194_eq : InitE.DeadStages692.Parallel.input2194 =
     InitE.WordStages.Parallel692.word692_2_3289 := by
   rw [InitE.DeadStages692.Parallel.input2194_def]
   simp only [input2193_eq, input68_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2194_eq : InitE.DeadStages692.Parallel.output2194 =
     InitE.WordStages.Parallel692.word692_3_2250 := by
   rw [InitE.DeadStages692.Parallel.output2194_def]
   simp only [output2193_eq, output68_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2195_eq : InitE.DeadStages692.Parallel.input2195 =
     InitE.WordStages.Parallel692.word692_2_3291 := by
   rw [InitE.DeadStages692.Parallel.input2195_def]
   simp only [input2194_eq, input67_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2195_eq : InitE.DeadStages692.Parallel.output2195 =
     InitE.WordStages.Parallel692.word692_3_2252 := by
   rw [InitE.DeadStages692.Parallel.output2195_def]
   simp only [output2194_eq, output67_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2196_eq : InitE.DeadStages692.Parallel.input2196 =
     InitE.WordStages.Parallel692.word692_2_3293 := by
   rw [InitE.DeadStages692.Parallel.input2196_def]
   simp only [input2195_eq, input66_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2196_eq : InitE.DeadStages692.Parallel.output2196 =
     InitE.WordStages.Parallel692.word692_3_2254 := by
   rw [InitE.DeadStages692.Parallel.output2196_def]
   simp only [output2195_eq, output66_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2197_eq : InitE.DeadStages692.Parallel.input2197 =
     InitE.WordStages.Parallel692.word692_2_3295 := by
   rw [InitE.DeadStages692.Parallel.input2197_def]
   simp only [input2196_eq, input65_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2197_eq : InitE.DeadStages692.Parallel.output2197 =
     InitE.WordStages.Parallel692.word692_3_2256 := by
   rw [InitE.DeadStages692.Parallel.output2197_def]
   simp only [output2196_eq, output65_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2198_eq : InitE.DeadStages692.Parallel.input2198 =
     InitE.WordStages.Parallel692.word692_2_3297 := by
   rw [InitE.DeadStages692.Parallel.input2198_def]
   simp only [input2197_eq, input64_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2198_eq : InitE.DeadStages692.Parallel.output2198 =
     InitE.WordStages.Parallel692.word692_3_2258 := by
   rw [InitE.DeadStages692.Parallel.output2198_def]
   simp only [output2197_eq, output64_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2199_eq : InitE.DeadStages692.Parallel.input2199 =
     InitE.WordStages.Parallel692.word692_2_3324 := by
   rw [InitE.DeadStages692.Parallel.input2199_def]
   simp only [input2198_eq, input63_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2199_eq : InitE.DeadStages692.Parallel.output2199 =
     InitE.WordStages.Parallel692.word692_3_2270 := by
   rw [InitE.DeadStages692.Parallel.output2199_def]
   simp only [output2198_eq, output63_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2200_eq : InitE.DeadStages692.Parallel.input2200 =
     InitE.WordStages.Parallel692.word692_2_3325 := by
   rw [InitE.DeadStages692.Parallel.input2200_def]
   simp only [input2199_eq, input58_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2200_eq : InitE.DeadStages692.Parallel.output2200 =
     InitE.WordStages.Parallel692.word692_3_2271 := by
   rw [InitE.DeadStages692.Parallel.output2200_def]
   simp only [output2199_eq, output58_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2201_eq : InitE.DeadStages692.Parallel.input2201 =
     InitE.WordStages.Parallel692.word692_2_3327 := by
   rw [InitE.DeadStages692.Parallel.input2201_def]
   simp only [input2200_eq, input57_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2201_eq : InitE.DeadStages692.Parallel.output2201 =
     InitE.WordStages.Parallel692.word692_3_2273 := by
   rw [InitE.DeadStages692.Parallel.output2201_def]
   simp only [output2200_eq, output57_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2202_eq : InitE.DeadStages692.Parallel.input2202 =
     InitE.WordStages.Parallel692.word692_2_3329 := by
   rw [InitE.DeadStages692.Parallel.input2202_def]
   simp only [input2201_eq, input56_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2202_eq : InitE.DeadStages692.Parallel.output2202 =
     InitE.WordStages.Parallel692.word692_3_2275 := by
   rw [InitE.DeadStages692.Parallel.output2202_def]
   simp only [output2201_eq, output56_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2203_eq : InitE.DeadStages692.Parallel.input2203 =
     InitE.WordStages.Parallel692.word692_2_3331 := by
   rw [InitE.DeadStages692.Parallel.input2203_def]
   simp only [input2202_eq, input55_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2203_eq : InitE.DeadStages692.Parallel.output2203 =
     InitE.WordStages.Parallel692.word692_3_2277 := by
   rw [InitE.DeadStages692.Parallel.output2203_def]
   simp only [output2202_eq, output55_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2204_eq : InitE.DeadStages692.Parallel.input2204 =
     InitE.WordStages.Parallel692.word692_2_3333 := by
   rw [InitE.DeadStages692.Parallel.input2204_def]
   simp only [input2203_eq, input54_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2204_eq : InitE.DeadStages692.Parallel.output2204 =
     InitE.WordStages.Parallel692.word692_3_2279 := by
   rw [InitE.DeadStages692.Parallel.output2204_def]
   simp only [output2203_eq, output54_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2205_eq : InitE.DeadStages692.Parallel.input2205 =
     InitE.WordStages.Parallel692.word692_2_3360 := by
   rw [InitE.DeadStages692.Parallel.input2205_def]
   simp only [input2204_eq, input53_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2205_eq : InitE.DeadStages692.Parallel.output2205 =
     InitE.WordStages.Parallel692.word692_3_2291 := by
   rw [InitE.DeadStages692.Parallel.output2205_def]
   simp only [output2204_eq, output53_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2206_eq : InitE.DeadStages692.Parallel.input2206 =
     InitE.WordStages.Parallel692.word692_2_3361 := by
   rw [InitE.DeadStages692.Parallel.input2206_def]
   simp only [input2205_eq, input48_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2206_eq : InitE.DeadStages692.Parallel.output2206 =
     InitE.WordStages.Parallel692.word692_3_2292 := by
   rw [InitE.DeadStages692.Parallel.output2206_def]
   simp only [output2205_eq, output48_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2207_eq : InitE.DeadStages692.Parallel.input2207 =
     InitE.WordStages.Parallel692.word692_2_3363 := by
   rw [InitE.DeadStages692.Parallel.input2207_def]
   simp only [input2206_eq, input47_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2207_eq : InitE.DeadStages692.Parallel.output2207 =
     InitE.WordStages.Parallel692.word692_3_2294 := by
   rw [InitE.DeadStages692.Parallel.output2207_def]
   simp only [output2206_eq, output47_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2208_eq : InitE.DeadStages692.Parallel.input2208 =
     InitE.WordStages.Parallel692.word692_2_3365 := by
   rw [InitE.DeadStages692.Parallel.input2208_def]
   simp only [input2207_eq, input46_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2208_eq : InitE.DeadStages692.Parallel.output2208 =
     InitE.WordStages.Parallel692.word692_3_2296 := by
   rw [InitE.DeadStages692.Parallel.output2208_def]
   simp only [output2207_eq, output46_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2209_eq : InitE.DeadStages692.Parallel.input2209 =
     InitE.WordStages.Parallel692.word692_2_3367 := by
   rw [InitE.DeadStages692.Parallel.input2209_def]
   simp only [input2208_eq, input45_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2209_eq : InitE.DeadStages692.Parallel.output2209 =
     InitE.WordStages.Parallel692.word692_3_2298 := by
   rw [InitE.DeadStages692.Parallel.output2209_def]
   simp only [output2208_eq, output45_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2210_eq : InitE.DeadStages692.Parallel.input2210 =
     InitE.WordStages.Parallel692.word692_2_3394 := by
   rw [InitE.DeadStages692.Parallel.input2210_def]
   simp only [input2209_eq, input44_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2210_eq : InitE.DeadStages692.Parallel.output2210 =
     InitE.WordStages.Parallel692.word692_3_2310 := by
   rw [InitE.DeadStages692.Parallel.output2210_def]
   simp only [output2209_eq, output44_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2211_eq : InitE.DeadStages692.Parallel.input2211 =
     InitE.WordStages.Parallel692.word692_2_3395 := by
   rw [InitE.DeadStages692.Parallel.input2211_def]
   simp only [input2210_eq, input39_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2211_eq : InitE.DeadStages692.Parallel.output2211 =
     InitE.WordStages.Parallel692.word692_3_2311 := by
   rw [InitE.DeadStages692.Parallel.output2211_def]
   simp only [output2210_eq, output39_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2212_eq : InitE.DeadStages692.Parallel.input2212 =
     InitE.WordStages.Parallel692.word692_2_3401 := by
   rw [InitE.DeadStages692.Parallel.input2212_def]
   simp only [input2211_eq, input38_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2212_eq : InitE.DeadStages692.Parallel.output2212 =
     InitE.WordStages.Parallel692.word692_3_2317 := by
   rw [InitE.DeadStages692.Parallel.output2212_def]
   simp only [output2211_eq, output38_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2213_eq : InitE.DeadStages692.Parallel.input2213 =
     InitE.WordStages.Parallel692.word692_2_3403 := by
   rw [InitE.DeadStages692.Parallel.input2213_def]
   simp only [input2212_eq, input33_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2213_eq : InitE.DeadStages692.Parallel.output2213 =
     InitE.WordStages.Parallel692.word692_3_2319 := by
   rw [InitE.DeadStages692.Parallel.output2213_def]
   simp only [output2212_eq, output33_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2214_eq : InitE.DeadStages692.Parallel.input2214 =
     InitE.WordStages.Parallel692.word692_2_3405 := by
   rw [InitE.DeadStages692.Parallel.input2214_def]
   simp only [input2213_eq, input32_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2214_eq : InitE.DeadStages692.Parallel.output2214 =
     InitE.WordStages.Parallel692.word692_3_2321 := by
   rw [InitE.DeadStages692.Parallel.output2214_def]
   simp only [output2213_eq, output32_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2215_eq : InitE.DeadStages692.Parallel.input2215 =
     InitE.WordStages.Parallel692.word692_2_3432 := by
   rw [InitE.DeadStages692.Parallel.input2215_def]
   simp only [input2214_eq, input31_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2215_eq : InitE.DeadStages692.Parallel.output2215 =
     InitE.WordStages.Parallel692.word692_3_2333 := by
   rw [InitE.DeadStages692.Parallel.output2215_def]
   simp only [output2214_eq, output31_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2216_eq : InitE.DeadStages692.Parallel.input2216 =
     InitE.WordStages.Parallel692.word692_2_3433 := by
   rw [InitE.DeadStages692.Parallel.input2216_def]
   simp only [input2215_eq, input26_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2216_eq : InitE.DeadStages692.Parallel.output2216 =
     InitE.WordStages.Parallel692.word692_3_2334 := by
   rw [InitE.DeadStages692.Parallel.output2216_def]
   simp only [output2215_eq, output26_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2217_eq : InitE.DeadStages692.Parallel.input2217 =
     InitE.WordStages.Parallel692.word692_2_3441 := by
   rw [InitE.DeadStages692.Parallel.input2217_def]
   simp only [input2216_eq, input25_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2217_eq : InitE.DeadStages692.Parallel.output2217 =
     InitE.WordStages.Parallel692.word692_3_2342 := by
   rw [InitE.DeadStages692.Parallel.output2217_def]
   simp only [output2216_eq, output25_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2218_eq : InitE.DeadStages692.Parallel.input2218 =
     InitE.WordStages.Parallel692.word692_2_3443 := by
   rw [InitE.DeadStages692.Parallel.input2218_def]
   simp only [input2217_eq, input18_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2218_eq : InitE.DeadStages692.Parallel.output2218 =
     InitE.WordStages.Parallel692.word692_3_2344 := by
   rw [InitE.DeadStages692.Parallel.output2218_def]
   simp only [output2217_eq, output18_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2219_eq : InitE.DeadStages692.Parallel.input2219 =
     InitE.WordStages.Parallel692.word692_2_3445 := by
   rw [InitE.DeadStages692.Parallel.input2219_def]
   simp only [input2218_eq, input17_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2219_eq : InitE.DeadStages692.Parallel.output2219 =
     InitE.WordStages.Parallel692.word692_3_2346 := by
   rw [InitE.DeadStages692.Parallel.output2219_def]
   simp only [output2218_eq, output17_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2220_eq : InitE.DeadStages692.Parallel.input2220 =
     InitE.WordStages.Parallel692.word692_2_3472 := by
   rw [InitE.DeadStages692.Parallel.input2220_def]
   simp only [input2219_eq, input16_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2220_eq : InitE.DeadStages692.Parallel.output2220 =
     InitE.WordStages.Parallel692.word692_3_2358 := by
   rw [InitE.DeadStages692.Parallel.output2220_def]
   simp only [output2219_eq, output16_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2221_eq : InitE.DeadStages692.Parallel.input2221 =
     InitE.WordStages.Parallel692.word692_2_3473 := by
   rw [InitE.DeadStages692.Parallel.input2221_def]
   simp only [input2220_eq, input11_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2221_eq : InitE.DeadStages692.Parallel.output2221 =
     InitE.WordStages.Parallel692.word692_3_2359 := by
   rw [InitE.DeadStages692.Parallel.output2221_def]
   simp only [output2220_eq, output11_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2222_eq : InitE.DeadStages692.Parallel.input2222 =
     InitE.WordStages.Parallel692.word692_2_3475 := by
   rw [InitE.DeadStages692.Parallel.input2222_def]
   simp only [input2221_eq, input10_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2222_eq : InitE.DeadStages692.Parallel.output2222 =
     InitE.WordStages.Parallel692.word692_3_2361 := by
   rw [InitE.DeadStages692.Parallel.output2222_def]
   simp only [output2221_eq, output10_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2223_eq : InitE.DeadStages692.Parallel.input2223 =
     InitE.WordStages.Parallel692.word692_2_3502 := by
   rw [InitE.DeadStages692.Parallel.input2223_def]
   simp only [input2222_eq, input9_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2223_eq : InitE.DeadStages692.Parallel.output2223 =
     InitE.WordStages.Parallel692.word692_3_2373 := by
   rw [InitE.DeadStages692.Parallel.output2223_def]
   simp only [output2222_eq, output9_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2224_eq : InitE.DeadStages692.Parallel.input2224 =
     InitE.WordStages.Parallel692.word692_2_3503 := by
   rw [InitE.DeadStages692.Parallel.input2224_def]
   simp only [input2223_eq, input4_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2224_eq : InitE.DeadStages692.Parallel.output2224 =
     InitE.WordStages.Parallel692.word692_3_2374 := by
   rw [InitE.DeadStages692.Parallel.output2224_def]
   simp only [output2223_eq, output4_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2225_eq : InitE.DeadStages692.Parallel.input2225 =
     InitE.WordStages.Parallel692.word692_2_3505 := by
   rw [InitE.DeadStages692.Parallel.input2225_def]
   simp only [input2224_eq, input3_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2225_eq : InitE.DeadStages692.Parallel.output2225 =
     InitE.WordStages.Parallel692.word692_3_2376 := by
   rw [InitE.DeadStages692.Parallel.output2225_def]
   simp only [output2224_eq, output3_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2226_eq : InitE.DeadStages692.Parallel.input2226 =
     InitE.WordStages.Parallel692.word692_2_3509 := by
   rw [InitE.DeadStages692.Parallel.input2226_def]
   simp only [input2225_eq, input2_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2226_eq : InitE.DeadStages692.Parallel.output2226 =
     InitE.WordStages.Parallel692.word692_3_2380 := by
   rw [InitE.DeadStages692.Parallel.output2226_def]
   simp only [output2225_eq, output2_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2227_eq : InitE.DeadStages692.Parallel.input2227 =
     InitE.WordStages.Parallel692.word692_2_0 := by
   rw [InitE.DeadStages692.Parallel.input2227_def]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2227_eq : InitE.DeadStages692.Parallel.output2227 =
     InitE.WordStages.Parallel692.word692_3_0 := by
   rw [InitE.DeadStages692.Parallel.output2227_def]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem input2228_eq : InitE.DeadStages692.Parallel.input2228 =
     InitE.WordStages.Parallel692.word692_2_3510 := by
   rw [InitE.DeadStages692.Parallel.input2228_def]
   simp only [input2227_eq, input2226_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output2228_eq : InitE.DeadStages692.Parallel.output2228 =
     InitE.WordStages.Parallel692.word692_3_2381 := by
   rw [InitE.DeadStages692.Parallel.output2228_def]
   simp only [output2227_eq, output2226_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 #print axioms output2228_eq
 end InitE.WordStages.Parallel692.AgreementsParallel

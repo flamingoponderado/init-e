@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Pass461_7
 import InitE.CompilerComputation
 set_option Elab.async false
@@ -15724,7 +15725,6 @@ def word461_8_1460 : WordLangProgHOL (BitVec 64) :=
 def pass461_8 : WordLangProgHOL (BitVec 64) :=
 word461_8_1460
 theorem pass461_8_eq : WordAlloc.removeDeadProg (pass461_7) = pass461_8 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass461_8_eq
 end InitE.WordStages

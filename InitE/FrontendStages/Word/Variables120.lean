@@ -1,11 +1,10 @@
+import InitE.CompactComputation
 import InitE.FrontendStages.Loop.Data120
 import InitE.WordFrontendComputation
 set_option autoImplicit false
 set_option Elab.async false
 set_option maxRecDepth 1000000
 set_option maxHeartbeats 0
-set_option cbv.maxSteps 1000000000
-set_option cbv.warning false
 open Flapjack
 namespace InitE.FrontendStages.Word
 def assigned120 : NumSet := Flapjack.Spt.bn
@@ -21,22 +20,16 @@ def context120 : Spt Nat := Flapjack.Spt.bs
   (Flapjack.Spt.bs (Flapjack.Spt.bs Flapjack.Spt.ln 14 (Flapjack.Spt.ls 12)) 4
     (Flapjack.Spt.bs (Flapjack.Spt.ls 10) 8 (Flapjack.Spt.ls 6)))
 theorem assigned120_eq : accVarsHOL Loop.output120.2.2 (.ln : Spt Unit) = assigned120 := by
-  conv => lhs; cbv
-  conv => rhs; cbv
-  try rfl
+  kernel_rfl
 theorem variables120_eq : Flapjack.LoopToWord.fromNumSetHOL (sptDifference (accVarsHOL Loop.output120.2.2 (.ln : Spt Unit))
     (Flapjack.LoopToWord.toNumSetHOL Loop.output120.2.1)) = variables120 := by
   rw [assigned120_eq]
-  conv => lhs; cbv
-  conv => rhs; cbv
-  try rfl
+  kernel_rfl
 theorem context120_eq : makeCtxtHOL 2 (Loop.output120.2.1 ++
     Flapjack.LoopToWord.fromNumSetHOL (sptDifference (accVarsHOL Loop.output120.2.2 (.ln : Spt Unit)) (Flapjack.LoopToWord.toNumSetHOL Loop.output120.2.1)))
     (.ln : Spt Nat) = context120 := by
   rw [variables120_eq]
-  conv => lhs; cbv
-  conv => rhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms assigned120_eq
 #print axioms variables120_eq
 #print axioms context120_eq

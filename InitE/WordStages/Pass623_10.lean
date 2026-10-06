@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Pass623_9
 import InitE.CompilerComputation
 set_option Elab.async false
@@ -2554,7 +2555,6 @@ def word623_10_535 : WordLangProgHOL (BitVec 64) :=
 def pass623_10 : WordLangProgHOL (BitVec 64) :=
 word623_10_535
 theorem pass623_10_eq : WordRemove.removeMustTerminate (pass623_9) = pass623_10 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass623_10_eq
 end InitE.WordStages

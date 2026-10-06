@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Source810
 import InitE.CompilerComputation
 set_option Elab.async false
@@ -2168,7 +2169,6 @@ def word810_0_542 : WordLangProgHOL (BitVec 64) :=
 def pass810_0 : WordLangProgHOL (BitVec 64) :=
 word810_0_542
 theorem pass810_0_eq : WordSimp.compileExp (source810.2.2) = pass810_0 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass810_0_eq
 end InitE.WordStages

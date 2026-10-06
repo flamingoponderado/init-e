@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Parallel184.Data0
 import InitE.WordStages.Source184
 set_option Elab.async false
@@ -9,7 +10,6 @@ open scoped InitE.CompilerComputation
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 namespace InitE.WordStages.Parallel184
 theorem pass184_0_eq : WordSimp.compileExp (source184.2.2) = pass184_0 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass184_0_eq
 end InitE.WordStages.Parallel184

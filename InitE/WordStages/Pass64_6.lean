@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Pass64_5
 import InitE.CompilerComputation
 set_option Elab.async false
@@ -3611,7 +3612,6 @@ Flapjack.WordLangProgHOL.seq (Flapjack.WordLangProgHOL.move 1 [(9, 0)])
     (Flapjack.WordLangProgHOL.seq (Flapjack.WordLangProgHOL.move 1 [(0, 9)])
       (Flapjack.WordLangProgHOL.call none (some 65) [0] none)))
 theorem pass64_6_eq : WordInst.threeToTwoRegProg riscvConfig.twoRegArith (pass64_5) = pass64_6 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass64_6_eq
 end InitE.WordStages

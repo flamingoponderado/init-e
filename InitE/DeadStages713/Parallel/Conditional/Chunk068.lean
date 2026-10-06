@@ -1,3 +1,5 @@
+import InitE.CompactComputation
+import InitE.DeadBranchComputation
 import InitE.DeadStages713.Parallel.Data.Chunk068
 set_option autoImplicit false
 set_option Elab.async false
@@ -17,8 +19,8 @@ theorem node17408_cond_eq
   try dsimp only
   rw [child17407]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output17406_skip, output17407_skip]
+  kernel_rfl
 
 #print axioms node17408_cond_eq
 end InitE.DeadStages713.Parallel

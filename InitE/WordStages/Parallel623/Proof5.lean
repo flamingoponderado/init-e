@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Parallel623.Data5
 import InitE.WordStages.Parallel623.Data4
 set_option Elab.async false
@@ -9,7 +10,6 @@ open scoped InitE.CompilerComputation
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 namespace InitE.WordStages.Parallel623
 theorem pass623_5_eq : WordCopy.copyProp (pass623_4) = pass623_5 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass623_5_eq
 end InitE.WordStages.Parallel623

@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Pass646_0
 import InitE.CompilerComputation
 set_option Elab.async false
@@ -3794,7 +3795,6 @@ def word646_1_1125 : WordLangProgHOL (BitVec 64) :=
 def pass646_1 : WordLangProgHOL (BitVec 64) :=
 word646_1_1125
 theorem pass646_1_eq : WordInst.instSelectExecutable riscvConfig (maxVarHOL (pass646_0) + 1) (pass646_0) = pass646_1 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass646_1_eq
 end InitE.WordStages

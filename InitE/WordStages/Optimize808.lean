@@ -1,3 +1,5 @@
+import InitE.CompactComputation
+import InitE.CompilerStages
 import InitE.WordStages.Source808
 import InitE.WordStages.Pass808_10
 import InitE.CompilerStages
@@ -4864,8 +4866,8 @@ theorem optimize808_eq : WordToWord.fullCompileSingleWith
   dsimp only
   have name_eq : source808.1 = 808 := by rfl
   have argc_eq : source808.2.1 = 8 := by rfl
-  have oracle_eq : oracle808 = proposed808 := by with_unfolding_all rfl
+  have oracle_eq : oracle808 = proposed808 := by kernel_rfl
   rw [name_eq, argc_eq, oracle_eq, pass808_0_eq, pass808_1_eq, pass808_2_eq, pass808_3_eq, pass808_4_eq, pass808_5_eq, pass808_6_eq, pass808_7_eq, pass808_8_eq, pass808_9_eq, pass808_10_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 #print axioms optimize808_eq
 end InitE.WordStages

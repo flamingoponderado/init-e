@@ -9,6 +9,26 @@ import argparse
 import re
 from pathlib import Path
 
+TAIL = r"  (?:try \(conv => lhs; cbv\)|conv => lhs; cbv|all_goals \(conv => lhs; cbv\))\n  (?:try rfl|all_goals rfl)"
+def compact_dead(s):
+ s=re.sub(TAIL,'  kernel_rfl',s)
+ defs={m[1]:m[2] for m in re.finditer(r'theorem output(\d+)_def : .*? = \((.*?)\) := by',s,re.S)}
+ def alias(m):
+  match=re.fullmatch(r'[\s()]*output(\d+)[\s()]*',defs.get(m[2],''))
+  if not match:return m[0]
+  return m[1]+m[3].replace('  kernel_rfl','  exact output'+match[1]+'_skip')
+ s=re.sub(r'(@\[cbv_eval\] theorem output(\d+)_skip[^\n]* := by\n)(.*?)(?=\n(?:theorem\b|@\[[^\n]*\]\s*theorem\b)|\n\n|$)',alias,s,flags=re.S)
+ # Remove only our generated hint to keep this conversion idempotent.
+ s=re.sub(r'^  (?:try )?simp only \[Flapjack.WordAlloc.join(?:Seq|Ite)[^\n]*\]\n','',s,flags=re.M)
+ parts=re.split(r'(?=^theorem )',s,flags=re.M)
+ for i,part in enumerate(parts):
+  if 'kernel_rfl' not in part:continue
+  children=list(dict.fromkeys(re.findall(r'rw \[(?:child|node)(\d+)(?:_eq)?\]',part)))
+  if children:
+   hints=', '.join('output'+x+'_skip' for x in children)
+   parts[i]=part.replace('  kernel_rfl','  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, '+hints+']\n  kernel_rfl')
+ return ''.join(parts)
+
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("label", type=int)
 args = parser.parse_args()
@@ -38,13 +58,13 @@ set_option cbv.warning false
 open scoped InitE.CompilerComputation
 """
 for index, chunk in enumerate(chunks):
-    original = chunk.read_text()
+    original = compact_dead(chunk.read_text())
     nodes = list(pattern.finditer(original))
     body = original.split(f"namespace InitE.DeadStages{label}\n", 1)[1]
     body = body.rsplit(f"end InitE.DeadStages{label}", 1)[0]
     body = pattern.sub("", body)
     body = re.sub(r"^#print axioms node\d+_eq.*$", "", body, flags=re.M)
-    imports = "import InitE.DeadBranchComputation\nimport InitE.ComputationCache\n"
+    imports = "import InitE.CompactComputation\nimport InitE.DeadBranchComputation\nimport InitE.ComputationCache\n"
     if index:
         imports += f"import {namespace}.Data.Chunk{index - 1:03}\n"
     (base / "Data" / f"Chunk{index:03}.lean").write_text(

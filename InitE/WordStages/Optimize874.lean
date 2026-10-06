@@ -1,3 +1,5 @@
+import InitE.CompactComputation
+import InitE.CompilerStages
 import InitE.WordStages.Source874
 import InitE.WordStages.Pass874_10
 import InitE.CompilerStages
@@ -3366,8 +3368,8 @@ theorem optimize874_eq : WordToWord.fullCompileSingleWith
   dsimp only
   have name_eq : source874.1 = 874 := by rfl
   have argc_eq : source874.2.1 = 3 := by rfl
-  have oracle_eq : oracle874 = proposed874 := by with_unfolding_all rfl
+  have oracle_eq : oracle874 = proposed874 := by kernel_rfl
   rw [name_eq, argc_eq, oracle_eq, pass874_0_eq, pass874_1_eq, pass874_2_eq, pass874_3_eq, pass874_4_eq, pass874_5_eq, pass874_6_eq, pass874_7_eq, pass874_8_eq, pass874_9_eq, pass874_10_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 #print axioms optimize874_eq
 end InitE.WordStages

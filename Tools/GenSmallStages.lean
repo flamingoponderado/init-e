@@ -136,9 +136,13 @@ def prepare (env : Environment) (label argc : Nat)
     s!"WordToWord.wordAllocWith RegAlloc.regAllocExecutable {label} riscvConfig 3 (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length)) pass8 oracle",
     s!"WordRemove.removeMustTerminate (WordToWord.wordAllocWith RegAlloc.regAllocExecutable {label} riscvConfig 3 (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length)) pass8 oracle)"]
   for index in [2,3,4,5,6,7,8,10] do
-    let proof := if index == 2 || index == 10 then "  conv => lhs; cbv\n  try rfl\n" else "  with_unfolding_all rfl\n"
+    let proof := if index == 2 then
+      "  dsimp only\n  rw [InitE.SmallSsaKernelComputation.fullSsaStructural_eq]\n  kernel_rfl\n"
+      else "  kernel_rfl\n"
     IO.FS.writeFile s!"{dir}/Pass{index}.lean"
-      (s!"import {ns}.Data\n" ++ header ++ s!"namespace {ns}\ntheorem pass{index}_eq : {exprs[index]!} = pass{index} := by\n" ++ proof ++ s!"#print axioms pass{index}_eq\nend {ns}\n")
+      ("import InitE.CompactComputation\n" ++
+       (if index == 2 then "import InitE.SmallSsaKernelComputation\n" else "") ++
+       s!"import {ns}.Data\n" ++ header ++ s!"namespace {ns}\ntheorem pass{index}_eq : {exprs[index]!} = pass{index} := by\n" ++ proof ++ s!"#print axioms pass{index}_eq\nend {ns}\n")
   IO.println s!"Prepared {label}: {data.utf8ByteSize} bytes, 8 independently checked pass proposals"
 
 end InitE.GenSmallStages

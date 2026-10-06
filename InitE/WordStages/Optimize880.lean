@@ -1,3 +1,5 @@
+import InitE.CompactComputation
+import InitE.CompilerStages
 import InitE.WordStages.Source880
 import InitE.WordStages.Pass880_10
 import InitE.CompilerStages
@@ -3455,8 +3457,8 @@ theorem optimize880_eq : WordToWord.fullCompileSingleWith
   dsimp only
   have name_eq : source880.1 = 880 := by rfl
   have argc_eq : source880.2.1 = 3 := by rfl
-  have oracle_eq : oracle880 = proposed880 := by with_unfolding_all rfl
+  have oracle_eq : oracle880 = proposed880 := by kernel_rfl
   rw [name_eq, argc_eq, oracle_eq, pass880_0_eq, pass880_1_eq, pass880_2_eq, pass880_3_eq, pass880_4_eq, pass880_5_eq, pass880_6_eq, pass880_7_eq, pass880_8_eq, pass880_9_eq, pass880_10_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 #print axioms optimize880_eq
 end InitE.WordStages

@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Parallel656.Data2
 import InitE.WordStages.Parallel656.Data1
 set_option Elab.async false
@@ -9,7 +10,6 @@ open scoped InitE.CompilerComputation
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 namespace InitE.WordStages.Parallel656
 theorem pass656_2_eq : WordAlloc.fullSsaCcTrans 18 (pass656_1) = pass656_2 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass656_2_eq
 end InitE.WordStages.Parallel656

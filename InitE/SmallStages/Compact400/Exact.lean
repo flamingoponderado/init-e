@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.SmallStages.Compact400.Complete
 import InitE.SmallStages.Oracles400
 set_option autoImplicit false
@@ -11,6 +12,6 @@ theorem optimize400_exact : WordToWord.fullCompileSingleWith
   (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
   RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
   riscvConfig (source400, oracle400) = optimized400 := by
-  exact optimize400_eq.trans (by with_unfolding_all rfl)
+  exact optimize400_eq.trans (by kernel_rfl)
 #print axioms optimize400_exact
 end InitE.SmallStages.Compact400

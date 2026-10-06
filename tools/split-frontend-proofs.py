@@ -38,14 +38,16 @@ source += "#print axioms sourceDeclarations_eq\n#print axioms panSimpSource_eq\n
 print(f"Generated {len(names)} AST agreements in sixteen dependency lanes")
 
 for i in range(len(names)):
-    imports = f"import InitE.FrontendStages.Declarations.Data{i}\nimport InitE.StructComputation\n"
+    imports = f"import InitE.FrontendCodecComputation\nimport InitE.StructKernelComputation\nimport InitE.FrontendStages.Declarations.Data{i}\nimport InitE.StructComputation\n"
     if i >= 16:
         imports += f"import InitE.FrontendStages.Declarations.Struct{i-16}\n"
     (base / f"Struct{i}.lean").write_text(imports +
-        "set_option cbv.maxSteps 1000000000\nset_option cbv.warning false\n" + header +
+        "" + header +
         f"theorem struct{i}_eq (context finalContext : Flapjack.Pancake.PanStructs.CompileShapeExact.ContextExact) :\n"
         f"    InitE.StructComputation.compileDeclaration context finalContext simplified{i} = some simplified{i} := by\n"
-        "  conv => lhs; cbv\n  conv => rhs; cbv\n  try rfl\n" +
+        "  apply InitE.StructKernelComputation.declaration_identity\n" +
+        f"  change InitE.StructKernelComputation.declarationFree (Flapjack.Pancake.PanLang.declToHOL simplifiedData{i}) = true\n" +
+        "  rw [InitE.FrontendCodecComputation.declToHOL_eq]\n  kernel_rfl\n" +
         f"#print axioms struct{i}_eq\nend InitE.FrontendStages.Declarations\n")
 imports = "import InitE.FrontendStages.SourceAgreement\n" + "".join(
     f"import InitE.FrontendStages.Declarations.Struct{i}\n"

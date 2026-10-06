@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.SmallStages.Compact255.Complete
 import InitE.SmallStages.Oracles255
 set_option autoImplicit false
@@ -11,6 +12,6 @@ theorem optimize255_exact : WordToWord.fullCompileSingleWith
   (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
   RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
   riscvConfig (source255, oracle255) = optimized255 := by
-  exact optimize255_eq.trans (by with_unfolding_all rfl)
+  exact optimize255_eq.trans (by kernel_rfl)
 #print axioms optimize255_exact
 end InitE.SmallStages.Compact255

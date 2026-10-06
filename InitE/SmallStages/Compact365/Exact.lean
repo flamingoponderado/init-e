@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.SmallStages.Compact365.Complete
 import InitE.SmallStages.Oracles365
 set_option autoImplicit false
@@ -11,6 +12,6 @@ theorem optimize365_exact : WordToWord.fullCompileSingleWith
   (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
   RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
   riscvConfig (source365, oracle365) = optimized365 := by
-  exact optimize365_eq.trans (by with_unfolding_all rfl)
+  exact optimize365_eq.trans (by kernel_rfl)
 #print axioms optimize365_exact
 end InitE.SmallStages.Compact365

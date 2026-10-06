@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.DeadBranchComputation
 import InitE.ComputationCache
 import InitE.DeadStages651.Parallel.Data.Chunk000
@@ -180,8 +181,7 @@ theorem output256_def : output256 = (Flapjack.WordLangProgHOL.move 0 [(3157, 314
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output256_skip : Flapjack.WordAlloc.isSkip output256 = false := by
   rw [output256_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value203 : Flapjack.NumSet :=
@@ -355,8 +355,7 @@ theorem output257_def : output257 = (Flapjack.WordLangProgHOL.move 0 [(3153, 314
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output257_skip : Flapjack.WordAlloc.isSkip output257 = false := by
   rw [output257_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value204 : Flapjack.NumSet :=
@@ -530,8 +529,7 @@ theorem output258_def : output258 = (Flapjack.WordLangProgHOL.move 0 [(3149, 313
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output258_skip : Flapjack.WordAlloc.isSkip output258 = false := by
   rw [output258_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input259 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -546,8 +544,7 @@ theorem output259_def : output259 = (Flapjack.WordLangProgHOL.tick) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output259_skip : Flapjack.WordAlloc.isSkip output259 = false := by
   rw [output259_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value205 : Flapjack.NumSet :=
@@ -1610,8 +1607,7 @@ theorem output260_def : output260 = (Flapjack.WordLangProgHOL.call
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output260_skip : Flapjack.WordAlloc.isSkip output260 = false := by
   rw [output260_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value206 : Flapjack.NumSet :=
@@ -1848,8 +1844,7 @@ theorem output261_def : output261 = (Flapjack.WordLangProgHOL.move 1
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output261_skip : Flapjack.WordAlloc.isSkip output261 = false := by
   rw [output261_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input262 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -1864,8 +1859,7 @@ theorem output262_def : output262 = (.seq output261 output260) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output262_skip : Flapjack.WordAlloc.isSkip output262 = false := by
   rw [output262_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value207 : Flapjack.NumSet :=
@@ -2052,8 +2046,7 @@ theorem output263_def : output263 = (Flapjack.WordLangProgHOL.move 0
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output263_skip : Flapjack.WordAlloc.isSkip output263 = false := by
   rw [output263_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input264 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -2068,8 +2061,7 @@ theorem output264_def : output264 = (.seq output263 output262) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output264_skip : Flapjack.WordAlloc.isSkip output264 = false := by
   rw [output264_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value208 : Flapjack.NumSet :=
@@ -2235,8 +2227,7 @@ theorem output265_def : output265 = (Flapjack.WordLangProgHOL.move 0 [(2893, 287
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output265_skip : Flapjack.WordAlloc.isSkip output265 = false := by
   rw [output265_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value209 : Flapjack.NumSet :=
@@ -2400,8 +2391,7 @@ theorem output266_def : output266 = (Flapjack.WordLangProgHOL.move 0 [(2889, 287
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output266_skip : Flapjack.WordAlloc.isSkip output266 = false := by
   rw [output266_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value210 : Flapjack.NumSet :=
@@ -2563,8 +2553,7 @@ theorem output267_def : output267 = (Flapjack.WordLangProgHOL.move 0 [(2885, 286
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output267_skip : Flapjack.WordAlloc.isSkip output267 = false := by
   rw [output267_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value211 : Flapjack.NumSet :=
@@ -2724,8 +2713,7 @@ theorem output268_def : output268 = (Flapjack.WordLangProgHOL.move 0 [(2881, 286
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output268_skip : Flapjack.WordAlloc.isSkip output268 = false := by
   rw [output268_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value212 : Flapjack.NumSet :=
@@ -2888,8 +2876,7 @@ theorem output269_def : output269 = (Flapjack.WordLangProgHOL.move 0 [(2877, 277
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output269_skip : Flapjack.WordAlloc.isSkip output269 = false := by
   rw [output269_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value213 : Flapjack.NumSet :=
@@ -3052,8 +3039,7 @@ theorem output270_def : output270 = (Flapjack.WordLangProgHOL.move 0 [(2873, 274
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output270_skip : Flapjack.WordAlloc.isSkip output270 = false := by
   rw [output270_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value214 : Flapjack.NumSet :=
@@ -3219,8 +3205,7 @@ theorem output271_def : output271 = (Flapjack.WordLangProgHOL.move 0 [(2869, 276
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output271_skip : Flapjack.WordAlloc.isSkip output271 = false := by
   rw [output271_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value215 : Flapjack.NumSet :=
@@ -3389,8 +3374,7 @@ theorem output272_def : output272 = (Flapjack.WordLangProgHOL.move 0 [(2865, 278
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output272_skip : Flapjack.WordAlloc.isSkip output272 = false := by
   rw [output272_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input273 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -3405,8 +3389,7 @@ theorem output273_def : output273 = (Flapjack.WordLangProgHOL.tick) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output273_skip : Flapjack.WordAlloc.isSkip output273 = false := by
   rw [output273_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value216 : Flapjack.NumSet :=
@@ -4328,8 +4311,7 @@ theorem output274_def : output274 = (Flapjack.WordLangProgHOL.call
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output274_skip : Flapjack.WordAlloc.isSkip output274 = false := by
   rw [output274_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value217 : Flapjack.NumSet :=
@@ -4503,8 +4485,7 @@ theorem output275_def : output275 = (Flapjack.WordLangProgHOL.move 1 [(2, 2597),
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output275_skip : Flapjack.WordAlloc.isSkip output275 = false := by
   rw [output275_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input276 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -4519,8 +4500,7 @@ theorem output276_def : output276 = (.seq output275 output274) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output276_skip : Flapjack.WordAlloc.isSkip output276 = false := by
   rw [output276_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value218 : Flapjack.NumSet :=
@@ -4710,8 +4690,7 @@ theorem output277_def : output277 = (Flapjack.WordLangProgHOL.move 0
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output277_skip : Flapjack.WordAlloc.isSkip output277 = false := by
   rw [output277_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input278 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -4726,8 +4705,7 @@ theorem output278_def : output278 = (.seq output277 output276) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output278_skip : Flapjack.WordAlloc.isSkip output278 = false := by
   rw [output278_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value219 : Flapjack.NumSet :=
@@ -4902,8 +4880,7 @@ theorem output279_def : output279 = (Flapjack.WordLangProgHOL.move 0 [(2609, 258
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output279_skip : Flapjack.WordAlloc.isSkip output279 = false := by
   rw [output279_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value220 : Flapjack.NumSet :=
@@ -5079,8 +5056,7 @@ theorem output280_def : output280 = (Flapjack.WordLangProgHOL.move 0 [(2605, 259
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output280_skip : Flapjack.WordAlloc.isSkip output280 = false := by
   rw [output280_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value221 : Flapjack.NumSet :=
@@ -5257,8 +5233,7 @@ theorem output281_def : output281 = (Flapjack.WordLangProgHOL.move 0 [(2601, 258
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output281_skip : Flapjack.WordAlloc.isSkip output281 = false := by
   rw [output281_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value222 : Flapjack.NumSet :=
@@ -5436,8 +5411,7 @@ theorem output282_def : output282 = (Flapjack.WordLangProgHOL.move 0 [(2597, 257
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output282_skip : Flapjack.WordAlloc.isSkip output282 = false := by
   rw [output282_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input283 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -5452,8 +5426,7 @@ theorem output283_def : output283 = (Flapjack.WordLangProgHOL.tick) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output283_skip : Flapjack.WordAlloc.isSkip output283 = false := by
   rw [output283_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value223 : Flapjack.NumSet :=
@@ -6420,8 +6393,7 @@ theorem output284_def : output284 = (Flapjack.WordLangProgHOL.call
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output284_skip : Flapjack.WordAlloc.isSkip output284 = false := by
   rw [output284_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value224 : Flapjack.NumSet :=
@@ -6642,8 +6614,7 @@ theorem output285_def : output285 = (Flapjack.WordLangProgHOL.move 1
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output285_skip : Flapjack.WordAlloc.isSkip output285 = false := by
   rw [output285_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input286 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -6658,8 +6629,7 @@ theorem output286_def : output286 = (.seq output285 output284) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output286_skip : Flapjack.WordAlloc.isSkip output286 = false := by
   rw [output286_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value225 : Flapjack.NumSet :=
@@ -6835,8 +6805,7 @@ theorem output287_def : output287 = (Flapjack.WordLangProgHOL.move 0
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output287_skip : Flapjack.WordAlloc.isSkip output287 = false := by
   rw [output287_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input288 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -6851,8 +6820,7 @@ theorem output288_def : output288 = (.seq output287 output286) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output288_skip : Flapjack.WordAlloc.isSkip output288 = false := by
   rw [output288_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value226 : Flapjack.NumSet :=
@@ -7018,8 +6986,7 @@ theorem output289_def : output289 = (Flapjack.WordLangProgHOL.move 0 [(2373, 227
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output289_skip : Flapjack.WordAlloc.isSkip output289 = false := by
   rw [output289_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value227 : Flapjack.NumSet :=
@@ -7186,8 +7153,7 @@ theorem output290_def : output290 = (Flapjack.WordLangProgHOL.move 0 [(2369, 220
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output290_skip : Flapjack.WordAlloc.isSkip output290 = false := by
   rw [output290_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value228 : Flapjack.NumSet :=
@@ -7354,8 +7320,7 @@ theorem output291_def : output291 = (Flapjack.WordLangProgHOL.move 0 [(2365, 222
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output291_skip : Flapjack.WordAlloc.isSkip output291 = false := by
   rw [output291_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value229 : Flapjack.NumSet :=
@@ -7524,8 +7489,7 @@ theorem output292_def : output292 = (Flapjack.WordLangProgHOL.move 0 [(2361, 228
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output292_skip : Flapjack.WordAlloc.isSkip output292 = false := by
   rw [output292_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value230 : Flapjack.NumSet :=
@@ -7694,8 +7658,7 @@ theorem output293_def : output293 = (Flapjack.WordLangProgHOL.move 0 [(2357, 234
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output293_skip : Flapjack.WordAlloc.isSkip output293 = false := by
   rw [output293_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value231 : Flapjack.NumSet :=
@@ -7865,8 +7828,7 @@ theorem output294_def : output294 = (Flapjack.WordLangProgHOL.move 0 [(2353, 232
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output294_skip : Flapjack.WordAlloc.isSkip output294 = false := by
   rw [output294_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value232 : Flapjack.NumSet :=
@@ -8036,8 +7998,7 @@ theorem output295_def : output295 = (Flapjack.WordLangProgHOL.move 0 [(2349, 232
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output295_skip : Flapjack.WordAlloc.isSkip output295 = false := by
   rw [output295_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value233 : Flapjack.NumSet :=
@@ -8207,8 +8168,7 @@ theorem output296_def : output296 = (Flapjack.WordLangProgHOL.move 0 [(2345, 233
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output296_skip : Flapjack.WordAlloc.isSkip output296 = false := by
   rw [output296_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input297 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -8223,8 +8183,7 @@ theorem output297_def : output297 = (Flapjack.WordLangProgHOL.tick) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output297_skip : Flapjack.WordAlloc.isSkip output297 = false := by
   rw [output297_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value234 : Flapjack.NumSet :=
@@ -9137,8 +9096,7 @@ theorem output298_def : output298 = (Flapjack.WordLangProgHOL.call
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output298_skip : Flapjack.WordAlloc.isSkip output298 = false := by
   rw [output298_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value235 : Flapjack.NumSet :=
@@ -9332,8 +9290,7 @@ theorem output299_def : output299 = (Flapjack.WordLangProgHOL.move 1
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output299_skip : Flapjack.WordAlloc.isSkip output299 = false := by
   rw [output299_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input300 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -9348,8 +9305,7 @@ theorem output300_def : output300 = (.seq output299 output298) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output300_skip : Flapjack.WordAlloc.isSkip output300 = false := by
   rw [output300_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value236 : Flapjack.NumSet :=
@@ -9493,8 +9449,7 @@ theorem output301_def : output301 = (Flapjack.WordLangProgHOL.move 0
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output301_skip : Flapjack.WordAlloc.isSkip output301 = false := by
   rw [output301_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input302 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -9509,8 +9464,7 @@ theorem output302_def : output302 = (.seq output301 output300) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output302_skip : Flapjack.WordAlloc.isSkip output302 = false := by
   rw [output302_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value237 : Flapjack.NumSet :=
@@ -9637,8 +9591,7 @@ theorem output303_def : output303 = (Flapjack.WordLangProgHOL.move 0 [(2089, 207
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output303_skip : Flapjack.WordAlloc.isSkip output303 = false := by
   rw [output303_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value238 : Flapjack.NumSet :=
@@ -9764,8 +9717,7 @@ theorem output304_def : output304 = (Flapjack.WordLangProgHOL.move 0 [(2085, 206
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output304_skip : Flapjack.WordAlloc.isSkip output304 = false := by
   rw [output304_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value239 : Flapjack.NumSet :=
@@ -9890,8 +9842,7 @@ theorem output305_def : output305 = (Flapjack.WordLangProgHOL.move 0 [(2081, 206
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output305_skip : Flapjack.WordAlloc.isSkip output305 = false := by
   rw [output305_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value240 : Flapjack.NumSet :=
@@ -10015,8 +9966,7 @@ theorem output306_def : output306 = (Flapjack.WordLangProgHOL.move 0 [(2077, 206
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output306_skip : Flapjack.WordAlloc.isSkip output306 = false := by
   rw [output306_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value241 : Flapjack.NumSet :=
@@ -10142,8 +10092,7 @@ theorem output307_def : output307 = (Flapjack.WordLangProgHOL.move 0 [(2073, 204
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output307_skip : Flapjack.WordAlloc.isSkip output307 = false := by
   rw [output307_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value242 : Flapjack.NumSet :=
@@ -10270,8 +10219,7 @@ theorem output308_def : output308 = (Flapjack.WordLangProgHOL.move 0 [(2069, 205
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output308_skip : Flapjack.WordAlloc.isSkip output308 = false := by
   rw [output308_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value243 : Flapjack.NumSet :=
@@ -10400,8 +10348,7 @@ theorem output309_def : output309 = (Flapjack.WordLangProgHOL.move 0 [(2065, 204
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output309_skip : Flapjack.WordAlloc.isSkip output309 = false := by
   rw [output309_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value244 : Flapjack.NumSet :=
@@ -10532,8 +10479,7 @@ theorem output310_def : output310 = (Flapjack.WordLangProgHOL.move 0 [(2061, 204
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output310_skip : Flapjack.WordAlloc.isSkip output310 = false := by
   rw [output310_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input311 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -10548,8 +10494,7 @@ theorem output311_def : output311 = (Flapjack.WordLangProgHOL.tick) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output311_skip : Flapjack.WordAlloc.isSkip output311 = false := by
   rw [output311_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value245 : Flapjack.NumSet :=
@@ -11269,8 +11214,7 @@ theorem output312_def : output312 = (Flapjack.WordLangProgHOL.call
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output312_skip : Flapjack.WordAlloc.isSkip output312 = false := by
   rw [output312_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value246 : Flapjack.NumSet :=
@@ -11424,8 +11368,7 @@ theorem output313_def : output313 = (Flapjack.WordLangProgHOL.move 1
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output313_skip : Flapjack.WordAlloc.isSkip output313 = false := by
   rw [output313_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input314 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -11440,8 +11383,7 @@ theorem output314_def : output314 = (.seq output313 output312) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output314_skip : Flapjack.WordAlloc.isSkip output314 = false := by
   rw [output314_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value247 : Flapjack.NumSet :=
@@ -11574,8 +11516,7 @@ theorem output315_def : output315 = (Flapjack.WordLangProgHOL.move 0
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output315_skip : Flapjack.WordAlloc.isSkip output315 = false := by
   rw [output315_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input316 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -11590,8 +11531,7 @@ theorem output316_def : output316 = (.seq output315 output314) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output316_skip : Flapjack.WordAlloc.isSkip output316 = false := by
   rw [output316_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value248 : Flapjack.NumSet :=
@@ -11715,8 +11655,7 @@ theorem output317_def : output317 = (Flapjack.WordLangProgHOL.move 0 [(1837, 178
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output317_skip : Flapjack.WordAlloc.isSkip output317 = false := by
   rw [output317_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value249 : Flapjack.NumSet :=
@@ -11840,8 +11779,7 @@ theorem output318_def : output318 = (Flapjack.WordLangProgHOL.move 0 [(1833, 180
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output318_skip : Flapjack.WordAlloc.isSkip output318 = false := by
   rw [output318_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value250 : Flapjack.NumSet :=
@@ -11965,8 +11903,7 @@ theorem output319_def : output319 = (Flapjack.WordLangProgHOL.move 0 [(1829, 180
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output319_skip : Flapjack.WordAlloc.isSkip output319 = false := by
   rw [output319_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value251 : Flapjack.NumSet :=
@@ -12090,8 +12027,7 @@ theorem output320_def : output320 = (Flapjack.WordLangProgHOL.move 0 [(1825, 179
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output320_skip : Flapjack.WordAlloc.isSkip output320 = false := by
   rw [output320_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value252 : Flapjack.NumSet :=
@@ -12216,8 +12152,7 @@ theorem output321_def : output321 = (Flapjack.WordLangProgHOL.move 0 [(1821, 169
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output321_skip : Flapjack.WordAlloc.isSkip output321 = false := by
   rw [output321_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value253 : Flapjack.NumSet :=
@@ -12344,8 +12279,7 @@ theorem output322_def : output322 = (Flapjack.WordLangProgHOL.move 0 [(1817, 174
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output322_skip : Flapjack.WordAlloc.isSkip output322 = false := by
   rw [output322_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value254 : Flapjack.NumSet :=
@@ -12475,8 +12409,7 @@ theorem output323_def : output323 = (Flapjack.WordLangProgHOL.move 0 [(1813, 176
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output323_skip : Flapjack.WordAlloc.isSkip output323 = false := by
   rw [output323_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value255 : Flapjack.NumSet :=
@@ -12608,8 +12541,7 @@ theorem output324_def : output324 = (Flapjack.WordLangProgHOL.move 0 [(1809, 168
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output324_skip : Flapjack.WordAlloc.isSkip output324 = false := by
   rw [output324_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input325 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -12624,8 +12556,7 @@ theorem output325_def : output325 = (Flapjack.WordLangProgHOL.tick) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output325_skip : Flapjack.WordAlloc.isSkip output325 = false := by
   rw [output325_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value256 : Flapjack.NumSet :=
@@ -13378,8 +13309,7 @@ theorem output326_def : output326 = (Flapjack.WordLangProgHOL.call
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output326_skip : Flapjack.WordAlloc.isSkip output326 = false := by
   rw [output326_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value257 : Flapjack.NumSet :=
@@ -13539,8 +13469,7 @@ theorem output327_def : output327 = (Flapjack.WordLangProgHOL.move 1
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output327_skip : Flapjack.WordAlloc.isSkip output327 = false := by
   rw [output327_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input328 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -13555,8 +13484,7 @@ theorem output328_def : output328 = (.seq output327 output326) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output328_skip : Flapjack.WordAlloc.isSkip output328 = false := by
   rw [output328_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value258 : Flapjack.NumSet :=
@@ -13693,8 +13621,7 @@ theorem output329_def : output329 = (Flapjack.WordLangProgHOL.move 0
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output329_skip : Flapjack.WordAlloc.isSkip output329 = false := by
   rw [output329_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input330 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -13709,8 +13636,7 @@ theorem output330_def : output330 = (.seq output329 output328) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output330_skip : Flapjack.WordAlloc.isSkip output330 = false := by
   rw [output330_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value259 : Flapjack.NumSet :=
@@ -13832,8 +13758,7 @@ theorem output331_def : output331 = (Flapjack.WordLangProgHOL.move 0 [(1553, 140
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output331_skip : Flapjack.WordAlloc.isSkip output331 = false := by
   rw [output331_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value260 : Flapjack.NumSet :=
@@ -13958,8 +13883,7 @@ theorem output332_def : output332 = (Flapjack.WordLangProgHOL.move 0 [(1549, 148
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output332_skip : Flapjack.WordAlloc.isSkip output332 = false := by
   rw [output332_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value261 : Flapjack.NumSet :=
@@ -14086,8 +14010,7 @@ theorem output333_def : output333 = (Flapjack.WordLangProgHOL.move 0 [(1545, 144
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output333_skip : Flapjack.WordAlloc.isSkip output333 = false := by
   rw [output333_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value262 : Flapjack.NumSet :=
@@ -14214,8 +14137,7 @@ theorem output334_def : output334 = (Flapjack.WordLangProgHOL.move 0 [(1541, 139
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output334_skip : Flapjack.WordAlloc.isSkip output334 = false := by
   rw [output334_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value263 : Flapjack.NumSet :=
@@ -14342,8 +14264,7 @@ theorem output335_def : output335 = (Flapjack.WordLangProgHOL.move 0 [(1537, 139
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output335_skip : Flapjack.WordAlloc.isSkip output335 = false := by
   rw [output335_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value264 : Flapjack.NumSet :=
@@ -14471,8 +14392,7 @@ theorem output336_def : output336 = (Flapjack.WordLangProgHOL.move 0 [(1533, 146
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output336_skip : Flapjack.WordAlloc.isSkip output336 = false := by
   rw [output336_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value265 : Flapjack.NumSet :=
@@ -14601,8 +14521,7 @@ theorem output337_def : output337 = (Flapjack.WordLangProgHOL.move 0 [(1529, 145
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output337_skip : Flapjack.WordAlloc.isSkip output337 = false := by
   rw [output337_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value266 : Flapjack.NumSet :=
@@ -14730,8 +14649,7 @@ theorem output338_def : output338 = (Flapjack.WordLangProgHOL.move 0 [(1525, 138
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output338_skip : Flapjack.WordAlloc.isSkip output338 = false := by
   rw [output338_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input339 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -14746,8 +14664,7 @@ theorem output339_def : output339 = (Flapjack.WordLangProgHOL.tick) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output339_skip : Flapjack.WordAlloc.isSkip output339 = false := by
   rw [output339_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value267 : Flapjack.NumSet :=
@@ -15471,8 +15388,7 @@ theorem output340_def : output340 = (Flapjack.WordLangProgHOL.call
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output340_skip : Flapjack.WordAlloc.isSkip output340 = false := by
   rw [output340_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value268 : Flapjack.NumSet :=
@@ -15640,8 +15556,7 @@ theorem output341_def : output341 = (Flapjack.WordLangProgHOL.move 1
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output341_skip : Flapjack.WordAlloc.isSkip output341 = false := by
   rw [output341_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input342 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -15656,8 +15571,7 @@ theorem output342_def : output342 = (.seq output341 output340) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output342_skip : Flapjack.WordAlloc.isSkip output342 = false := by
   rw [output342_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value269 : Flapjack.NumSet :=
@@ -15796,8 +15710,7 @@ theorem output343_def : output343 = (Flapjack.WordLangProgHOL.move 0
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output343_skip : Flapjack.WordAlloc.isSkip output343 = false := by
   rw [output343_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input344 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -15812,8 +15725,7 @@ theorem output344_def : output344 = (.seq output343 output342) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output344_skip : Flapjack.WordAlloc.isSkip output344 = false := by
   rw [output344_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value270 : Flapjack.NumSet :=
@@ -15935,8 +15847,7 @@ theorem output345_def : output345 = (Flapjack.WordLangProgHOL.move 0 [(1269, 113
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output345_skip : Flapjack.WordAlloc.isSkip output345 = false := by
   rw [output345_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value271 : Flapjack.NumSet :=
@@ -16059,8 +15970,7 @@ theorem output346_def : output346 = (Flapjack.WordLangProgHOL.move 0 [(1265, 119
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output346_skip : Flapjack.WordAlloc.isSkip output346 = false := by
   rw [output346_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value272 : Flapjack.NumSet :=
@@ -16184,8 +16094,7 @@ theorem output347_def : output347 = (Flapjack.WordLangProgHOL.move 0 [(1261, 116
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output347_skip : Flapjack.WordAlloc.isSkip output347 = false := by
   rw [output347_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value273 : Flapjack.NumSet :=
@@ -16308,8 +16217,7 @@ theorem output348_def : output348 = (Flapjack.WordLangProgHOL.move 0 [(1257, 112
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output348_skip : Flapjack.WordAlloc.isSkip output348 = false := by
   rw [output348_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value274 : Flapjack.NumSet :=
@@ -16431,8 +16339,7 @@ theorem output349_def : output349 = (Flapjack.WordLangProgHOL.move 0 [(1253, 112
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output349_skip : Flapjack.WordAlloc.isSkip output349 = false := by
   rw [output349_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value275 : Flapjack.NumSet :=
@@ -16555,8 +16462,7 @@ theorem output350_def : output350 = (Flapjack.WordLangProgHOL.move 0 [(1249, 118
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output350_skip : Flapjack.WordAlloc.isSkip output350 = false := by
   rw [output350_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value276 : Flapjack.NumSet :=
@@ -16678,8 +16584,7 @@ theorem output351_def : output351 = (Flapjack.WordLangProgHOL.move 0 [(1245, 117
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output351_skip : Flapjack.WordAlloc.isSkip output351 = false := by
   rw [output351_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value277 : Flapjack.NumSet :=
@@ -16802,8 +16707,7 @@ theorem output352_def : output352 = (Flapjack.WordLangProgHOL.move 0 [(1241, 111
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output352_skip : Flapjack.WordAlloc.isSkip output352 = false := by
   rw [output352_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input353 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -16818,8 +16722,7 @@ theorem output353_def : output353 = (Flapjack.WordLangProgHOL.tick) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output353_skip : Flapjack.WordAlloc.isSkip output353 = false := by
   rw [output353_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value278 : Flapjack.NumSet :=
@@ -17486,8 +17389,7 @@ theorem output354_def : output354 = (Flapjack.WordLangProgHOL.call
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output354_skip : Flapjack.WordAlloc.isSkip output354 = false := by
   rw [output354_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value279 : Flapjack.NumSet :=
@@ -17631,8 +17533,7 @@ theorem output355_def : output355 = (Flapjack.WordLangProgHOL.move 1
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output355_skip : Flapjack.WordAlloc.isSkip output355 = false := by
   rw [output355_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input356 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -17647,8 +17548,7 @@ theorem output356_def : output356 = (.seq output355 output354) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output356_skip : Flapjack.WordAlloc.isSkip output356 = false := by
   rw [output356_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value280 : Flapjack.NumSet :=
@@ -17738,8 +17638,7 @@ theorem output357_def : output357 = (Flapjack.WordLangProgHOL.move 0
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output357_skip : Flapjack.WordAlloc.isSkip output357 = false := by
   rw [output357_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input358 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -17754,8 +17653,7 @@ theorem output358_def : output358 = (.seq output357 output356) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output358_skip : Flapjack.WordAlloc.isSkip output358 = false := by
   rw [output358_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value281 : Flapjack.NumSet :=
@@ -17831,8 +17729,7 @@ theorem output359_def : output359 = (Flapjack.WordLangProgHOL.move 0 [(1017, 985
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output359_skip : Flapjack.WordAlloc.isSkip output359 = false := by
   rw [output359_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value282 : Flapjack.NumSet :=
@@ -17908,8 +17805,7 @@ theorem output360_def : output360 = (Flapjack.WordLangProgHOL.move 0 [(1013, 977
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output360_skip : Flapjack.WordAlloc.isSkip output360 = false := by
   rw [output360_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value283 : Flapjack.NumSet :=
@@ -17985,8 +17881,7 @@ theorem output361_def : output361 = (Flapjack.WordLangProgHOL.move 0 [(1009, 969
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output361_skip : Flapjack.WordAlloc.isSkip output361 = false := by
   rw [output361_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value284 : Flapjack.NumSet :=
@@ -18062,8 +17957,7 @@ theorem output362_def : output362 = (Flapjack.WordLangProgHOL.move 0 [(1005, 981
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output362_skip : Flapjack.WordAlloc.isSkip output362 = false := by
   rw [output362_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value285 : Flapjack.NumSet :=
@@ -18141,8 +18035,7 @@ theorem output363_def : output363 = (Flapjack.WordLangProgHOL.move 0 [(1001, 889
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output363_skip : Flapjack.WordAlloc.isSkip output363 = false := by
   rw [output363_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value286 : Flapjack.NumSet :=
@@ -18219,8 +18112,7 @@ theorem output364_def : output364 = (Flapjack.WordLangProgHOL.move 0 [(997, 933)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output364_skip : Flapjack.WordAlloc.isSkip output364 = false := by
   rw [output364_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value287 : Flapjack.NumSet :=
@@ -18296,8 +18188,7 @@ theorem output365_def : output365 = (Flapjack.WordLangProgHOL.move 0 [(993, 925)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output365_skip : Flapjack.WordAlloc.isSkip output365 = false := by
   rw [output365_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value288 : Flapjack.NumSet :=
@@ -18373,8 +18264,7 @@ theorem output366_def : output366 = (Flapjack.WordLangProgHOL.move 0 [(989, 881)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output366_skip : Flapjack.WordAlloc.isSkip output366 = false := by
   rw [output366_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input367 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -18389,8 +18279,7 @@ theorem output367_def : output367 = (Flapjack.WordLangProgHOL.tick) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output367_skip : Flapjack.WordAlloc.isSkip output367 = false := by
   rw [output367_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value289 : Flapjack.NumSet :=
@@ -18875,8 +18764,7 @@ theorem output368_def : output368 = (Flapjack.WordLangProgHOL.call
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output368_skip : Flapjack.WordAlloc.isSkip output368 = false := by
   rw [output368_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value290 : Flapjack.NumSet :=
@@ -18976,8 +18864,7 @@ theorem output369_def : output369 = (Flapjack.WordLangProgHOL.move 1 [(2, 785), 
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output369_skip : Flapjack.WordAlloc.isSkip output369 = false := by
   rw [output369_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input370 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -18992,8 +18879,7 @@ theorem output370_def : output370 = (.seq output369 output368) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output370_skip : Flapjack.WordAlloc.isSkip output370 = false := by
   rw [output370_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value291 : Flapjack.NumSet :=
@@ -19067,8 +18953,7 @@ theorem output371_def : output371 = (Flapjack.WordLangProgHOL.move 0
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output371_skip : Flapjack.WordAlloc.isSkip output371 = false := by
   rw [output371_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input372 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -19083,8 +18968,7 @@ theorem output372_def : output372 = (.seq output371 output370) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output372_skip : Flapjack.WordAlloc.isSkip output372 = false := by
   rw [output372_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value292 : Flapjack.NumSet :=
@@ -19151,8 +19035,7 @@ theorem output373_def : output373 = (Flapjack.WordLangProgHOL.move 0 [(797, 717)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output373_skip : Flapjack.WordAlloc.isSkip output373 = false := by
   rw [output373_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value293 : Flapjack.NumSet :=
@@ -19222,8 +19105,7 @@ theorem output374_def : output374 = (Flapjack.WordLangProgHOL.move 0 [(793, 741)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output374_skip : Flapjack.WordAlloc.isSkip output374 = false := by
   rw [output374_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value294 : Flapjack.NumSet :=
@@ -19295,8 +19177,7 @@ theorem output375_def : output375 = (Flapjack.WordLangProgHOL.move 0 [(789, 709)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output375_skip : Flapjack.WordAlloc.isSkip output375 = false := by
   rw [output375_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value295 : Flapjack.NumSet :=
@@ -19370,8 +19251,7 @@ theorem output376_def : output376 = (Flapjack.WordLangProgHOL.move 0 [(785, 729)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output376_skip : Flapjack.WordAlloc.isSkip output376 = false := by
   rw [output376_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input377 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -19386,8 +19266,7 @@ theorem output377_def : output377 = (Flapjack.WordLangProgHOL.tick) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output377_skip : Flapjack.WordAlloc.isSkip output377 = false := by
   rw [output377_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value296 : Flapjack.NumSet :=
@@ -19815,8 +19694,7 @@ theorem output378_def : output378 = (Flapjack.WordLangProgHOL.call
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output378_skip : Flapjack.WordAlloc.isSkip output378 = false := by
   rw [output378_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value297 : Flapjack.NumSet :=
@@ -19908,8 +19786,7 @@ theorem output379_def : output379 = (Flapjack.WordLangProgHOL.move 1 [(2, 613), 
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output379_skip : Flapjack.WordAlloc.isSkip output379 = false := by
   rw [output379_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input380 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -19924,8 +19801,7 @@ theorem output380_def : output380 = (.seq output379 output378) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output380_skip : Flapjack.WordAlloc.isSkip output380 = false := by
   rw [output380_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value298 : Flapjack.NumSet :=
@@ -19998,8 +19874,7 @@ theorem output381_def : output381 = (Flapjack.WordLangProgHOL.move 0
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output381_skip : Flapjack.WordAlloc.isSkip output381 = false := by
   rw [output381_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input382 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -20014,8 +19889,7 @@ theorem output382_def : output382 = (.seq output381 output380) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output382_skip : Flapjack.WordAlloc.isSkip output382 = false := by
   rw [output382_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value299 : Flapjack.NumSet :=
@@ -20081,8 +19955,7 @@ theorem output383_def : output383 = (Flapjack.WordLangProgHOL.move 0 [(625, 569)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output383_skip : Flapjack.WordAlloc.isSkip output383 = false := by
   rw [output383_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value300 : Flapjack.NumSet :=
@@ -20148,8 +20021,7 @@ theorem output384_def : output384 = (Flapjack.WordLangProgHOL.move 0 [(621, 533)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output384_skip : Flapjack.WordAlloc.isSkip output384 = false := by
   rw [output384_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value301 : Flapjack.NumSet :=
@@ -20212,8 +20084,7 @@ theorem output385_def : output385 = (Flapjack.WordLangProgHOL.move 0 [(617, 545)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output385_skip : Flapjack.WordAlloc.isSkip output385 = false := by
   rw [output385_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value302 : Flapjack.NumSet :=
@@ -20277,8 +20148,7 @@ theorem output386_def : output386 = (Flapjack.WordLangProgHOL.move 0 [(613, 565)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output386_skip : Flapjack.WordAlloc.isSkip output386 = false := by
   rw [output386_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value303 : Flapjack.NumSet :=
@@ -20345,8 +20215,7 @@ theorem output387_def : output387 = (Flapjack.WordLangProgHOL.inst
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output387_skip : Flapjack.WordAlloc.isSkip output387 = false := by
   rw [output387_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value304 : Flapjack.NumSet :=
@@ -20409,8 +20278,7 @@ theorem output388_def : output388 = (Flapjack.WordLangProgHOL.move 0 [(605, 597)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output388_skip : Flapjack.WordAlloc.isSkip output388 = false := by
   rw [output388_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input389 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -20425,8 +20293,7 @@ theorem output389_def : output389 = (.seq output388 output387) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output389_skip : Flapjack.WordAlloc.isSkip output389 = false := by
   rw [output389_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value305 : Flapjack.NumSet :=
@@ -20491,8 +20358,7 @@ theorem output390_def : output390 = (Flapjack.WordLangProgHOL.inst
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output390_skip : Flapjack.WordAlloc.isSkip output390 = false := by
   rw [output390_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value306 : Flapjack.NumSet :=
@@ -20553,8 +20419,7 @@ theorem output391_def : output391 = (Flapjack.WordLangProgHOL.move 0 [(597, 589)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output391_skip : Flapjack.WordAlloc.isSkip output391 = false := by
   rw [output391_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input392 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -20569,8 +20434,7 @@ theorem output392_def : output392 = (.seq output391 output390) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output392_skip : Flapjack.WordAlloc.isSkip output392 = false := by
   rw [output392_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value307 : Flapjack.NumSet :=
@@ -20634,8 +20498,7 @@ theorem output393_def : output393 = (Flapjack.WordLangProgHOL.inst
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output393_skip : Flapjack.WordAlloc.isSkip output393 = false := by
   rw [output393_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value308 : Flapjack.NumSet :=
@@ -20696,8 +20559,7 @@ theorem output394_def : output394 = (Flapjack.WordLangProgHOL.move 0 [(589, 581)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output394_skip : Flapjack.WordAlloc.isSkip output394 = false := by
   rw [output394_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input395 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -20712,8 +20574,7 @@ theorem output395_def : output395 = (.seq output394 output393) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output395_skip : Flapjack.WordAlloc.isSkip output395 = false := by
   rw [output395_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value309 : Flapjack.NumSet :=
@@ -20775,8 +20636,7 @@ theorem output396_def : output396 = (Flapjack.WordLangProgHOL.inst
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output396_skip : Flapjack.WordAlloc.isSkip output396 = false := by
   rw [output396_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value310 : Flapjack.NumSet :=
@@ -20835,8 +20695,7 @@ theorem output397_def : output397 = (Flapjack.WordLangProgHOL.move 0 [(581, 553)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output397_skip : Flapjack.WordAlloc.isSkip output397 = false := by
   rw [output397_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input398 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -20851,8 +20710,7 @@ theorem output398_def : output398 = (.seq output397 output396) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output398_skip : Flapjack.WordAlloc.isSkip output398 = false := by
   rw [output398_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input399 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -20867,8 +20725,7 @@ theorem output399_def : output399 = (Flapjack.WordLangProgHOL.tick) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output399_skip : Flapjack.WordAlloc.isSkip output399 = false := by
   rw [output399_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input400 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -20883,8 +20740,7 @@ theorem output400_def : output400 = (Flapjack.WordLangProgHOL.skip) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output400_skip : Flapjack.WordAlloc.isSkip output400 = true := by
   rw [output400_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input401 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -20899,8 +20755,7 @@ theorem output401_def : output401 = (Flapjack.WordLangProgHOL.tick) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output401_skip : Flapjack.WordAlloc.isSkip output401 = false := by
   rw [output401_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input402 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -20915,8 +20770,7 @@ theorem output402_def : output402 = (Flapjack.WordLangProgHOL.skip) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output402_skip : Flapjack.WordAlloc.isSkip output402 = true := by
   rw [output402_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input403 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -20931,8 +20785,7 @@ theorem output403_def : output403 = (output401) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output403_skip : Flapjack.WordAlloc.isSkip output403 = false := by
   rw [output403_def]
-  conv => lhs; cbv
-  try rfl
+  exact output401_skip
 
 
 @[irreducible, cbv_opaque] def input404 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -20947,8 +20800,7 @@ theorem output404_def : output404 = (output403) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output404_skip : Flapjack.WordAlloc.isSkip output404 = false := by
   rw [output404_def]
-  conv => lhs; cbv
-  try rfl
+  exact output403_skip
 
 
 def value311 : Flapjack.NumSet :=
@@ -21003,8 +20855,7 @@ theorem output405_def : output405 = (Flapjack.WordLangProgHOL.inst (Flapjack.Wor
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output405_skip : Flapjack.WordAlloc.isSkip output405 = false := by
   rw [output405_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value312 : Flapjack.NumSet :=
@@ -21057,8 +20908,7 @@ theorem output406_def : output406 = (Flapjack.WordLangProgHOL.inst (Flapjack.Wor
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output406_skip : Flapjack.WordAlloc.isSkip output406 = false := by
   rw [output406_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value313 : Flapjack.NumSet :=
@@ -21109,8 +20959,7 @@ theorem output407_def : output407 = (Flapjack.WordLangProgHOL.inst (Flapjack.Wor
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output407_skip : Flapjack.WordAlloc.isSkip output407 = false := by
   rw [output407_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input408 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -21125,8 +20974,7 @@ theorem output408_def : output408 = (Flapjack.WordLangProgHOL.skip) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output408_skip : Flapjack.WordAlloc.isSkip output408 = true := by
   rw [output408_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value314 : Flapjack.NumSet :=
@@ -21172,8 +21020,7 @@ theorem output409_def : output409 = (Flapjack.WordLangProgHOL.inst (Flapjack.Wor
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output409_skip : Flapjack.WordAlloc.isSkip output409 = false := by
   rw [output409_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value315 : Flapjack.NumSet :=
@@ -21216,8 +21063,7 @@ theorem output410_def : output410 = (Flapjack.WordLangProgHOL.inst (Flapjack.Wor
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output410_skip : Flapjack.WordAlloc.isSkip output410 = false := by
   rw [output410_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value316 : Flapjack.NumSet :=
@@ -21257,8 +21103,7 @@ theorem output411_def : output411 = (Flapjack.WordLangProgHOL.inst (Flapjack.Wor
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output411_skip : Flapjack.WordAlloc.isSkip output411 = false := by
   rw [output411_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value317 : Flapjack.NumSet :=
@@ -21295,8 +21140,7 @@ theorem output412_def : output412 = (Flapjack.WordLangProgHOL.inst (Flapjack.Wor
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output412_skip : Flapjack.WordAlloc.isSkip output412 = false := by
   rw [output412_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input413 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -21311,8 +21155,7 @@ theorem output413_def : output413 = (Flapjack.WordLangProgHOL.skip) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output413_skip : Flapjack.WordAlloc.isSkip output413 = true := by
   rw [output413_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value318 : Flapjack.NumSet :=
@@ -21345,8 +21188,7 @@ theorem output414_def : output414 = (Flapjack.WordLangProgHOL.inst (Flapjack.Wor
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output414_skip : Flapjack.WordAlloc.isSkip output414 = false := by
   rw [output414_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value319 : Flapjack.NumSet :=
@@ -21374,8 +21216,7 @@ theorem output415_def : output415 = (Flapjack.WordLangProgHOL.inst (Flapjack.Wor
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output415_skip : Flapjack.WordAlloc.isSkip output415 = false := by
   rw [output415_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input416 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -21390,8 +21231,7 @@ theorem output416_def : output416 = (Flapjack.WordLangProgHOL.skip) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output416_skip : Flapjack.WordAlloc.isSkip output416 = true := by
   rw [output416_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input417 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -21406,8 +21246,7 @@ theorem output417_def : output417 = (output415) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output417_skip : Flapjack.WordAlloc.isSkip output417 = false := by
   rw [output417_def]
-  conv => lhs; cbv
-  try rfl
+  exact output415_skip
 
 
 @[irreducible, cbv_opaque] def input418 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -21422,8 +21261,7 @@ theorem output418_def : output418 = (.seq output417 output414) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output418_skip : Flapjack.WordAlloc.isSkip output418 = false := by
   rw [output418_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input419 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -21438,8 +21276,7 @@ theorem output419_def : output419 = (output418) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output419_skip : Flapjack.WordAlloc.isSkip output419 = false := by
   rw [output419_def]
-  conv => lhs; cbv
-  try rfl
+  exact output418_skip
 
 
 @[irreducible, cbv_opaque] def input420 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -21454,8 +21291,7 @@ theorem output420_def : output420 = (.seq output419 output412) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output420_skip : Flapjack.WordAlloc.isSkip output420 = false := by
   rw [output420_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input421 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -21470,8 +21306,7 @@ theorem output421_def : output421 = (.seq output420 output411) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output421_skip : Flapjack.WordAlloc.isSkip output421 = false := by
   rw [output421_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input422 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -21486,8 +21321,7 @@ theorem output422_def : output422 = (.seq output421 output410) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output422_skip : Flapjack.WordAlloc.isSkip output422 = false := by
   rw [output422_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input423 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -21502,8 +21336,7 @@ theorem output423_def : output423 = (.seq output422 output409) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output423_skip : Flapjack.WordAlloc.isSkip output423 = false := by
   rw [output423_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input424 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -21518,8 +21351,7 @@ theorem output424_def : output424 = (output423) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output424_skip : Flapjack.WordAlloc.isSkip output424 = false := by
   rw [output424_def]
-  conv => lhs; cbv
-  try rfl
+  exact output423_skip
 
 
 @[irreducible, cbv_opaque] def input425 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -21534,8 +21366,7 @@ theorem output425_def : output425 = (.seq output424 output407) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output425_skip : Flapjack.WordAlloc.isSkip output425 = false := by
   rw [output425_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input426 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -21550,8 +21381,7 @@ theorem output426_def : output426 = (.seq output425 output406) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output426_skip : Flapjack.WordAlloc.isSkip output426 = false := by
   rw [output426_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input427 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -21566,8 +21396,7 @@ theorem output427_def : output427 = (.seq output426 output405) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output427_skip : Flapjack.WordAlloc.isSkip output427 = false := by
   rw [output427_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value320 : Flapjack.NumSet :=
@@ -21595,8 +21424,7 @@ theorem output428_def : output428 = (Flapjack.WordLangProgHOL.move 1 [(525, 493)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output428_skip : Flapjack.WordAlloc.isSkip output428 = false := by
   rw [output428_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input429 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -21611,8 +21439,7 @@ theorem output429_def : output429 = (.seq output428 output427) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output429_skip : Flapjack.WordAlloc.isSkip output429 = false := by
   rw [output429_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value321 : Flapjack.NumSet :=
@@ -21640,8 +21467,7 @@ theorem output430_def : output430 = (Flapjack.WordLangProgHOL.return 493 [2]) :=
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output430_skip : Flapjack.WordAlloc.isSkip output430 = false := by
   rw [output430_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value322 : Flapjack.NumSet :=
@@ -21673,8 +21499,7 @@ theorem output431_def : output431 = (Flapjack.WordLangProgHOL.move 0 [(2, 513)])
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output431_skip : Flapjack.WordAlloc.isSkip output431 = false := by
   rw [output431_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input432 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -21689,8 +21514,7 @@ theorem output432_def : output432 = (.seq output431 output430) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output432_skip : Flapjack.WordAlloc.isSkip output432 = false := by
   rw [output432_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input433 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -21705,8 +21529,7 @@ theorem output433_def : output433 = (Flapjack.WordLangProgHOL.inst (Flapjack.Wor
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output433_skip : Flapjack.WordAlloc.isSkip output433 = false := by
   rw [output433_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input434 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -21721,8 +21544,7 @@ theorem output434_def : output434 = (Flapjack.WordLangProgHOL.tick) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output434_skip : Flapjack.WordAlloc.isSkip output434 = false := by
   rw [output434_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value323 : Flapjack.NumSet :=
@@ -21858,8 +21680,7 @@ theorem output435_def : output435 = (Flapjack.WordLangProgHOL.call
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output435_skip : Flapjack.WordAlloc.isSkip output435 = false := by
   rw [output435_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value324 : Flapjack.NumSet :=
@@ -21891,8 +21712,7 @@ theorem output436_def : output436 = (Flapjack.WordLangProgHOL.move 1 [(2, 481)])
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output436_skip : Flapjack.WordAlloc.isSkip output436 = false := by
   rw [output436_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input437 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -21907,8 +21727,7 @@ theorem output437_def : output437 = (.seq output436 output435) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output437_skip : Flapjack.WordAlloc.isSkip output437 = false := by
   rw [output437_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value325 : Flapjack.NumSet :=
@@ -21938,8 +21757,7 @@ theorem output438_def : output438 = (Flapjack.WordLangProgHOL.move 0 [(487, 409)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output438_skip : Flapjack.WordAlloc.isSkip output438 = false := by
   rw [output438_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input439 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -21954,8 +21772,7 @@ theorem output439_def : output439 = (.seq output438 output437) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output439_skip : Flapjack.WordAlloc.isSkip output439 = false := by
   rw [output439_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value326 : Flapjack.NumSet :=
@@ -21984,8 +21801,7 @@ theorem output440_def : output440 = (Flapjack.WordLangProgHOL.move 0 [(481, 425)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output440_skip : Flapjack.WordAlloc.isSkip output440 = false := by
   rw [output440_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input441 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -22000,8 +21816,7 @@ theorem output441_def : output441 = (Flapjack.WordLangProgHOL.skip) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output441_skip : Flapjack.WordAlloc.isSkip output441 = true := by
   rw [output441_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input442 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -22016,8 +21831,7 @@ theorem output442_def : output442 = (Flapjack.WordLangProgHOL.tick) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output442_skip : Flapjack.WordAlloc.isSkip output442 = false := by
   rw [output442_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input443 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -22032,8 +21846,7 @@ theorem output443_def : output443 = (Flapjack.WordLangProgHOL.skip) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output443_skip : Flapjack.WordAlloc.isSkip output443 = true := by
   rw [output443_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input444 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -22048,8 +21861,7 @@ theorem output444_def : output444 = (output442) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output444_skip : Flapjack.WordAlloc.isSkip output444 = false := by
   rw [output444_def]
-  conv => lhs; cbv
-  try rfl
+  exact output442_skip
 
 
 @[irreducible, cbv_opaque] def input445 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -22064,8 +21876,7 @@ theorem output445_def : output445 = (output444) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output445_skip : Flapjack.WordAlloc.isSkip output445 = false := by
   rw [output445_def]
-  conv => lhs; cbv
-  try rfl
+  exact output444_skip
 
 
 @[irreducible, cbv_opaque] def input446 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -22080,8 +21891,7 @@ theorem output446_def : output446 = (.seq output445 output440) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output446_skip : Flapjack.WordAlloc.isSkip output446 = false := by
   rw [output446_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input447 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -22096,8 +21906,7 @@ theorem output447_def : output447 = (.seq output446 output439) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output447_skip : Flapjack.WordAlloc.isSkip output447 = false := by
   rw [output447_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input448 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -22112,8 +21921,7 @@ theorem output448_def : output448 = (.seq output447 output434) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output448_skip : Flapjack.WordAlloc.isSkip output448 = false := by
   rw [output448_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input449 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -22128,8 +21936,7 @@ theorem output449_def : output449 = (.seq output448 output433) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output449_skip : Flapjack.WordAlloc.isSkip output449 = false := by
   rw [output449_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input450 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -22144,8 +21951,7 @@ theorem output450_def : output450 = (.seq output449 output432) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output450_skip : Flapjack.WordAlloc.isSkip output450 = false := by
   rw [output450_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input451 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -22160,8 +21966,7 @@ theorem output451_def : output451 = (.seq output450 output429) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output451_skip : Flapjack.WordAlloc.isSkip output451 = false := by
   rw [output451_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value327 : Flapjack.NumSet :=
@@ -22217,8 +22022,7 @@ theorem output452_def : output452 = (Flapjack.WordLangProgHOL.move 2 [(569, 413)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output452_skip : Flapjack.WordAlloc.isSkip output452 = false := by
   rw [output452_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value328 : Flapjack.NumSet :=
@@ -22273,8 +22077,7 @@ theorem output453_def : output453 = (Flapjack.WordLangProgHOL.move 2 [(565, 417)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output453_skip : Flapjack.WordAlloc.isSkip output453 = false := by
   rw [output453_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value329 : Flapjack.NumSet :=
@@ -22328,8 +22131,7 @@ theorem output454_def : output454 = (Flapjack.WordLangProgHOL.move 2 [(561, 421)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output454_skip : Flapjack.WordAlloc.isSkip output454 = false := by
   rw [output454_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input455 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -22344,8 +22146,7 @@ theorem output455_def : output455 = (Flapjack.WordLangProgHOL.skip) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output455_skip : Flapjack.WordAlloc.isSkip output455 = true := by
   rw [output455_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value330 : Flapjack.NumSet :=
@@ -22398,8 +22199,7 @@ theorem output456_def : output456 = (Flapjack.WordLangProgHOL.move 2 [(553, 425)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output456_skip : Flapjack.WordAlloc.isSkip output456 = false := by
   rw [output456_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value331 : Flapjack.NumSet :=
@@ -22451,8 +22251,7 @@ theorem output457_def : output457 = (Flapjack.WordLangProgHOL.move 2 [(549, 429)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output457_skip : Flapjack.WordAlloc.isSkip output457 = false := by
   rw [output457_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value332 : Flapjack.NumSet :=
@@ -22503,8 +22302,7 @@ theorem output458_def : output458 = (Flapjack.WordLangProgHOL.move 2 [(545, 433)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output458_skip : Flapjack.WordAlloc.isSkip output458 = false := by
   rw [output458_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value333 : Flapjack.NumSet :=
@@ -22554,8 +22352,7 @@ theorem output459_def : output459 = (Flapjack.WordLangProgHOL.move 2 [(541, 437)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output459_skip : Flapjack.WordAlloc.isSkip output459 = false := by
   rw [output459_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input460 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -22570,8 +22367,7 @@ theorem output460_def : output460 = (Flapjack.WordLangProgHOL.skip) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output460_skip : Flapjack.WordAlloc.isSkip output460 = true := by
   rw [output460_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value334 : Flapjack.NumSet :=
@@ -22623,8 +22419,7 @@ theorem output461_def : output461 = (Flapjack.WordLangProgHOL.move 2 [(533, 441)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output461_skip : Flapjack.WordAlloc.isSkip output461 = false := by
   rw [output461_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value335 : Flapjack.NumSet :=
@@ -22676,8 +22471,7 @@ theorem output462_def : output462 = (Flapjack.WordLangProgHOL.move 2 [(529, 445)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output462_skip : Flapjack.WordAlloc.isSkip output462 = false := by
   rw [output462_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input463 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -22692,8 +22486,7 @@ theorem output463_def : output463 = (Flapjack.WordLangProgHOL.skip) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output463_skip : Flapjack.WordAlloc.isSkip output463 = true := by
   rw [output463_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input464 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -22708,8 +22501,7 @@ theorem output464_def : output464 = (output462) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output464_skip : Flapjack.WordAlloc.isSkip output464 = false := by
   rw [output464_def]
-  conv => lhs; cbv
-  try rfl
+  exact output462_skip
 
 
 @[irreducible, cbv_opaque] def input465 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -22724,8 +22516,7 @@ theorem output465_def : output465 = (.seq output464 output461) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output465_skip : Flapjack.WordAlloc.isSkip output465 = false := by
   rw [output465_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input466 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -22740,8 +22531,7 @@ theorem output466_def : output466 = (output465) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output466_skip : Flapjack.WordAlloc.isSkip output466 = false := by
   rw [output466_def]
-  conv => lhs; cbv
-  try rfl
+  exact output465_skip
 
 
 @[irreducible, cbv_opaque] def input467 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -22756,8 +22546,7 @@ theorem output467_def : output467 = (.seq output466 output459) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output467_skip : Flapjack.WordAlloc.isSkip output467 = false := by
   rw [output467_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input468 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -22772,8 +22561,7 @@ theorem output468_def : output468 = (.seq output467 output458) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output468_skip : Flapjack.WordAlloc.isSkip output468 = false := by
   rw [output468_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input469 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -22788,8 +22576,7 @@ theorem output469_def : output469 = (.seq output468 output457) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output469_skip : Flapjack.WordAlloc.isSkip output469 = false := by
   rw [output469_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input470 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -22804,8 +22591,7 @@ theorem output470_def : output470 = (.seq output469 output456) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output470_skip : Flapjack.WordAlloc.isSkip output470 = false := by
   rw [output470_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input471 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -22820,8 +22606,7 @@ theorem output471_def : output471 = (output470) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output471_skip : Flapjack.WordAlloc.isSkip output471 = false := by
   rw [output471_def]
-  conv => lhs; cbv
-  try rfl
+  exact output470_skip
 
 
 @[irreducible, cbv_opaque] def input472 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -22836,8 +22621,7 @@ theorem output472_def : output472 = (.seq output471 output454) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output472_skip : Flapjack.WordAlloc.isSkip output472 = false := by
   rw [output472_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input473 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -22852,8 +22636,7 @@ theorem output473_def : output473 = (.seq output472 output453) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output473_skip : Flapjack.WordAlloc.isSkip output473 = false := by
   rw [output473_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input474 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -22868,8 +22651,7 @@ theorem output474_def : output474 = (.seq output473 output452) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output474_skip : Flapjack.WordAlloc.isSkip output474 = false := by
   rw [output474_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value336 : Flapjack.NumSet :=
@@ -22920,8 +22702,7 @@ theorem output475_def : output475 = (Flapjack.WordLangProgHOL.move 2 [(525, 409)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output475_skip : Flapjack.WordAlloc.isSkip output475 = false := by
   rw [output475_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input476 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -22936,8 +22717,7 @@ theorem output476_def : output476 = (.seq output475 output474) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output476_skip : Flapjack.WordAlloc.isSkip output476 = false := by
   rw [output476_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input477 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -22952,8 +22732,7 @@ theorem output477_def : output477 = (Flapjack.WordLangProgHOL.skip) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output477_skip : Flapjack.WordAlloc.isSkip output477 = true := by
   rw [output477_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input478 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -22968,8 +22747,7 @@ theorem output478_def : output478 = (output476) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output478_skip : Flapjack.WordAlloc.isSkip output478 = false := by
   rw [output478_def]
-  conv => lhs; cbv
-  try rfl
+  exact output476_skip
 
 
 def value337 : Flapjack.Cmp :=
@@ -23026,8 +22804,7 @@ theorem output479_def : output479 = (.ite value337 465 value338 output451 output
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output479_skip : Flapjack.WordAlloc.isSkip output479 = false := by
   rw [output479_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input480 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -23042,8 +22819,7 @@ theorem output480_def : output480 = (.seq output479 output404) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output480_skip : Flapjack.WordAlloc.isSkip output480 = false := by
   rw [output480_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value340 : Flapjack.NumSet :=
@@ -23094,8 +22870,7 @@ theorem output481_def : output481 = (Flapjack.WordLangProgHOL.inst (Flapjack.Wor
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output481_skip : Flapjack.WordAlloc.isSkip output481 = false := by
   rw [output481_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value341 : Flapjack.NumSet :=
@@ -23146,8 +22921,7 @@ theorem output482_def : output482 = (Flapjack.WordLangProgHOL.move 0 [(465, 457)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output482_skip : Flapjack.WordAlloc.isSkip output482 = false := by
   rw [output482_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input483 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -23162,8 +22936,7 @@ theorem output483_def : output483 = (Flapjack.WordLangProgHOL.tick) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output483_skip : Flapjack.WordAlloc.isSkip output483 = false := by
   rw [output483_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value342 : Flapjack.NumSet :=
@@ -23441,8 +23214,7 @@ theorem output484_def : output484 = (Flapjack.WordLangProgHOL.call
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output484_skip : Flapjack.WordAlloc.isSkip output484 = false := by
   rw [output484_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value343 : Flapjack.NumSet :=
@@ -23507,8 +23279,7 @@ theorem output485_def : output485 = (Flapjack.WordLangProgHOL.move 1 [(2, 349), 
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output485_skip : Flapjack.WordAlloc.isSkip output485 = false := by
   rw [output485_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input486 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -23523,8 +23294,7 @@ theorem output486_def : output486 = (.seq output485 output484) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output486_skip : Flapjack.WordAlloc.isSkip output486 = false := by
   rw [output486_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value344 : Flapjack.NumSet :=
@@ -23574,8 +23344,7 @@ theorem output487_def : output487 = (Flapjack.WordLangProgHOL.move 0
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output487_skip : Flapjack.WordAlloc.isSkip output487 = false := by
   rw [output487_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input488 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -23590,8 +23359,7 @@ theorem output488_def : output488 = (.seq output487 output486) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output488_skip : Flapjack.WordAlloc.isSkip output488 = false := by
   rw [output488_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value345 : Flapjack.NumSet :=
@@ -23633,8 +23401,7 @@ theorem output489_def : output489 = (Flapjack.WordLangProgHOL.move 0 [(361, 345)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output489_skip : Flapjack.WordAlloc.isSkip output489 = false := by
   rw [output489_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value346 : Flapjack.NumSet :=
@@ -23675,8 +23442,7 @@ theorem output490_def : output490 = (Flapjack.WordLangProgHOL.move 0 [(357, 337)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output490_skip : Flapjack.WordAlloc.isSkip output490 = false := by
   rw [output490_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value347 : Flapjack.NumSet :=
@@ -23717,8 +23483,7 @@ theorem output491_def : output491 = (Flapjack.WordLangProgHOL.move 0 [(353, 329)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output491_skip : Flapjack.WordAlloc.isSkip output491 = false := by
   rw [output491_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value348 : Flapjack.NumSet :=
@@ -23759,8 +23524,7 @@ theorem output492_def : output492 = (Flapjack.WordLangProgHOL.move 0 [(349, 321)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output492_skip : Flapjack.WordAlloc.isSkip output492 = false := by
   rw [output492_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value349 : Flapjack.NumSet :=
@@ -23803,8 +23567,7 @@ theorem output493_def : output493 = (Flapjack.WordLangProgHOL.inst
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output493_skip : Flapjack.WordAlloc.isSkip output493 = false := by
   rw [output493_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value350 : Flapjack.NumSet :=
@@ -23843,8 +23606,7 @@ theorem output494_def : output494 = (Flapjack.WordLangProgHOL.move 0 [(341, 333)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output494_skip : Flapjack.WordAlloc.isSkip output494 = false := by
   rw [output494_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input495 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -23859,8 +23621,7 @@ theorem output495_def : output495 = (.seq output494 output493) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output495_skip : Flapjack.WordAlloc.isSkip output495 = false := by
   rw [output495_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value351 : Flapjack.NumSet :=
@@ -23902,8 +23663,7 @@ theorem output496_def : output496 = (Flapjack.WordLangProgHOL.inst
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output496_skip : Flapjack.WordAlloc.isSkip output496 = false := by
   rw [output496_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value352 : Flapjack.NumSet :=
@@ -23941,8 +23701,7 @@ theorem output497_def : output497 = (Flapjack.WordLangProgHOL.move 0 [(333, 325)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output497_skip : Flapjack.WordAlloc.isSkip output497 = false := by
   rw [output497_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input498 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -23957,8 +23716,7 @@ theorem output498_def : output498 = (.seq output497 output496) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output498_skip : Flapjack.WordAlloc.isSkip output498 = false := by
   rw [output498_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value353 : Flapjack.NumSet :=
@@ -23997,8 +23755,7 @@ theorem output499_def : output499 = (Flapjack.WordLangProgHOL.inst
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output499_skip : Flapjack.WordAlloc.isSkip output499 = false := by
   rw [output499_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value354 : Flapjack.NumSet :=
@@ -24035,8 +23792,7 @@ theorem output500_def : output500 = (Flapjack.WordLangProgHOL.move 0 [(325, 317)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output500_skip : Flapjack.WordAlloc.isSkip output500 = false := by
   rw [output500_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input501 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -24051,8 +23807,7 @@ theorem output501_def : output501 = (.seq output500 output499) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output501_skip : Flapjack.WordAlloc.isSkip output501 = false := by
   rw [output501_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value355 : Flapjack.NumSet :=
@@ -24092,8 +23847,7 @@ theorem output502_def : output502 = (Flapjack.WordLangProgHOL.inst
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output502_skip : Flapjack.WordAlloc.isSkip output502 = false := by
   rw [output502_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 def value356 : Flapjack.NumSet :=
@@ -24129,8 +23883,7 @@ theorem output503_def : output503 = (Flapjack.WordLangProgHOL.move 0 [(317, 249)
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output503_skip : Flapjack.WordAlloc.isSkip output503 = false := by
   rw [output503_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input504 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -24145,8 +23898,7 @@ theorem output504_def : output504 = (.seq output503 output502) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output504_skip : Flapjack.WordAlloc.isSkip output504 = false := by
   rw [output504_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input505 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -24161,8 +23913,7 @@ theorem output505_def : output505 = (Flapjack.WordLangProgHOL.tick) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output505_skip : Flapjack.WordAlloc.isSkip output505 = false := by
   rw [output505_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input506 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -24177,8 +23928,7 @@ theorem output506_def : output506 = (Flapjack.WordLangProgHOL.skip) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output506_skip : Flapjack.WordAlloc.isSkip output506 = true := by
   rw [output506_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input507 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -24193,8 +23943,7 @@ theorem output507_def : output507 = (Flapjack.WordLangProgHOL.tick) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output507_skip : Flapjack.WordAlloc.isSkip output507 = false := by
   rw [output507_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input508 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -24209,8 +23958,7 @@ theorem output508_def : output508 = (Flapjack.WordLangProgHOL.skip) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output508_skip : Flapjack.WordAlloc.isSkip output508 = true := by
   rw [output508_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 @[irreducible, cbv_opaque] def input509 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -24225,8 +23973,7 @@ theorem output509_def : output509 = (output507) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output509_skip : Flapjack.WordAlloc.isSkip output509 = false := by
   rw [output509_def]
-  conv => lhs; cbv
-  try rfl
+  exact output507_skip
 
 
 @[irreducible, cbv_opaque] def input510 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -24241,8 +23988,7 @@ theorem output510_def : output510 = (output509) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output510_skip : Flapjack.WordAlloc.isSkip output510 = false := by
   rw [output510_def]
-  conv => lhs; cbv
-  try rfl
+  exact output509_skip
 
 
 @[irreducible, cbv_opaque] def input511 : Flapjack.WordLangProgHOL (BitVec 64) :=
@@ -24257,8 +24003,7 @@ theorem output511_def : output511 = (Flapjack.WordLangProgHOL.skip) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output511_skip : Flapjack.WordAlloc.isSkip output511 = true := by
   rw [output511_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 

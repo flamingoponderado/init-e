@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.DeadBranchComputation
 import InitE.ComputationCache
 import InitE.DeadStages713.Parallel.Data.Chunk067
@@ -21,8 +22,7 @@ theorem output17408_def : output17408 = (.seq output17407 output17406) := by
   exact InitE.ComputationCache.boxedValue_eq _
 @[cbv_eval] theorem output17408_skip : Flapjack.WordAlloc.isSkip output17408 = false := by
   rw [output17408_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 
 

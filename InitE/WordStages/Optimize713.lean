@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.CompilerStages
 import InitE.WordStages.Sparse713.FromParallelCheckpoints3
 import InitE.WordStages.Sparse713.Proof4
@@ -29,7 +30,7 @@ theorem optimize713_eq : WordToWord.fullCompileSingleWith
   dsimp only
   have name_eq : source713.1 = 713 := by rfl
   have argc_eq : source713.2.1 = 1 := by rfl
-  have oracle_eq : oracle713 = Sparse713.proposed713 := by with_unfolding_all rfl
+  have oracle_eq : oracle713 = Sparse713.proposed713 := by kernel_rfl
   rw [name_eq, argc_eq, oracle_eq, pass713_0_eq, pass713_1_eq, pass713_2_eq,
     Sparse713.fromParallelCheckpoints3_eq,
     Sparse713.pass713_4_eq, Sparse713.pass713_5_eq, Sparse713.pass713_6_eq,

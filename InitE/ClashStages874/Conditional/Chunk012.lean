@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.ClashStages874.Data
 import InitE.ClashComputation
 set_option autoImplicit false
@@ -30,17 +31,15 @@ theorem node1152_eq_conditional
   try dsimp only [live1152, coloured1152]
   rw [child]
   dsimp only [result1151]
-  try dsimp only [colour, result1152]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree1153_agree_conditional : tree1153 = literal1153 := by
   rw [tree1153_def]
   rfl
 theorem node1153_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree1153 live1153 coloured1153 = result1153 := by
   rw [tree1153_def]
-  try dsimp only [colour, result1153]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree1154_agree_conditional
     (child0 : tree1152 = literal1152)
     (child1 : tree1153 = literal1153) : tree1154 = literal1154 := by
@@ -61,17 +60,15 @@ theorem node1154_eq_conditional
   try dsimp only [live1154, coloured1154]
   rw [child]
   dsimp only [result1153]
-  try dsimp only [colour, result1154]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree1155_agree_conditional : tree1155 = literal1155 := by
   rw [tree1155_def]
   rfl
 theorem node1155_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree1155 live1155 coloured1155 = result1155 := by
   rw [tree1155_def]
-  try dsimp only [colour, result1155]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree1156_agree_conditional
     (child0 : tree1154 = literal1154)
     (child1 : tree1155 = literal1155) : tree1156 = literal1156 := by
@@ -92,7 +89,6 @@ theorem node1156_eq_conditional
   try dsimp only [live1156, coloured1156]
   rw [child]
   dsimp only [result1155]
-  try dsimp only [colour, result1156]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 end InitE.ClashStages874

@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Pass623_2
 import InitE.WordStages.Parallel623.Data3
 import InitE.WordStages.Parallel623.AgreementsParallel.Chunk004
@@ -15,7 +16,7 @@ def pass623_3 : WordLangProgHOL (BitVec 64) := Parallel623.pass623_3
 /-- A closed composition of local kernel-checked checkpoint equations. -/
 theorem pass623_3_eq : WordAlloc.removeDeadProg pass623_2 = pass623_3 := by
   have input_eq : pass623_2 = InitE.DeadStages623.Parallel.input1204 :=
-    (show pass623_2 = Parallel623.word623_2_1944 by with_unfolding_all rfl).trans
+    (show pass623_2 = Parallel623.word623_2_1944 by kernel_rfl).trans
       Parallel623.AgreementsParallel.input1204_eq.symm
   unfold WordAlloc.removeDeadProg
   rw [WordAlloc.removeDeadStructural_eq, input_eq]

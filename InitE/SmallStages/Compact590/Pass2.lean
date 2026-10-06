@@ -1,3 +1,5 @@
+import InitE.CompactComputation
+import InitE.SmallSsaKernelComputation
 import InitE.SmallStages.Compact590.Data
 set_option autoImplicit false
 set_option Elab.async false
@@ -10,7 +12,8 @@ open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 open InitE.WordStages
 namespace InitE.SmallStages.Compact590
 theorem pass2_eq : (let p0 := WordSimp.compileExp source590.2.2; let p1 := WordInst.instSelectExecutable riscvConfig (maxVarHOL p0 + 1) p0; WordAlloc.fullSsaCcTrans 1 p1) = pass2 := by
-  conv => lhs; cbv
-  try rfl
+  dsimp only
+  rw [InitE.SmallSsaKernelComputation.fullSsaStructural_eq]
+  kernel_rfl
 #print axioms pass2_eq
 end InitE.SmallStages.Compact590

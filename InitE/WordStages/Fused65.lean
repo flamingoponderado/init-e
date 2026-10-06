@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Source65
 import InitE.CompilerComputation
 import InitE.CompilerStages
@@ -617,8 +618,7 @@ def pass65_0 : WordLangProgHOL (BitVec 64) := (InitE.ComputationCache.boxedValue
 theorem pass65_0_def : pass65_0 = (word65_0_182) := InitE.ComputationCache.boxedValue_eq _
 theorem pass65_0_eq : WordSimp.compileExp (source65.2.2) = pass65_0 := by
   rw [pass65_0_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass65_0_eq
 def word65_1_0 : WordLangProgHOL (BitVec 64) :=
 Flapjack.WordLangProgHOL.skip
@@ -1270,8 +1270,7 @@ theorem pass65_1_def : pass65_1 = (word65_1_199) := InitE.ComputationCache.boxed
 theorem pass65_1_eq : WordInst.instSelectExecutable riscvConfig (maxVarHOL (pass65_0) + 1) (pass65_0) = pass65_1 := by
   rw [pass65_1_def]
   rw [pass65_0_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass65_1_eq
 def word65_2_0 : WordLangProgHOL (BitVec 64) :=
 Flapjack.WordLangProgHOL.move 1 [(33, 0)]
@@ -4340,8 +4339,7 @@ theorem pass65_2_def : pass65_2 = (word65_2_891) := InitE.ComputationCache.boxed
 theorem pass65_2_eq : WordAlloc.fullSsaCcTrans 1 (pass65_1) = pass65_2 := by
   rw [pass65_2_def]
   rw [pass65_1_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass65_2_eq
 def word65_3_0 : WordLangProgHOL (BitVec 64) :=
 Flapjack.WordLangProgHOL.move 1 [(33, 0)]
@@ -6246,8 +6244,7 @@ theorem pass65_3_def : pass65_3 = (word65_3_503) := InitE.ComputationCache.boxed
 theorem pass65_3_eq : WordAlloc.removeDeadProg (pass65_2) = pass65_3 := by
   rw [pass65_3_def]
   rw [pass65_2_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass65_3_eq
 def word65_4_0 : WordLangProgHOL (BitVec 64) :=
 Flapjack.WordLangProgHOL.move 1 [(33, 0)]
@@ -8152,8 +8149,7 @@ theorem pass65_4_def : pass65_4 = (word65_4_503) := InitE.ComputationCache.boxed
 theorem pass65_4_eq : WordCse.wordCommonSubexpElim (pass65_3) = pass65_4 := by
   rw [pass65_4_def]
   rw [pass65_3_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass65_4_eq
 def word65_5_0 : WordLangProgHOL (BitVec 64) :=
 Flapjack.WordLangProgHOL.move 1 [(33, 0)]
@@ -10058,8 +10054,7 @@ theorem pass65_5_def : pass65_5 = (word65_5_503) := InitE.ComputationCache.boxed
 theorem pass65_5_eq : WordCopy.copyProp (pass65_4) = pass65_5 := by
   rw [pass65_5_def]
   rw [pass65_4_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass65_5_eq
 def word65_6_0 : WordLangProgHOL (BitVec 64) :=
 Flapjack.WordLangProgHOL.move 1 [(33, 0)]
@@ -11964,8 +11959,7 @@ theorem pass65_6_def : pass65_6 = (word65_6_503) := InitE.ComputationCache.boxed
 theorem pass65_6_eq : WordInst.threeToTwoRegProg riscvConfig.twoRegArith (pass65_5) = pass65_6 := by
   rw [pass65_6_def]
   rw [pass65_5_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass65_6_eq
 def word65_7_0 : WordLangProgHOL (BitVec 64) :=
 Flapjack.WordLangProgHOL.move 1 [(39, 0), (33, 0)]
@@ -13298,8 +13292,7 @@ theorem pass65_7_def : pass65_7 = (word65_7_312) := InitE.ComputationCache.boxed
 theorem pass65_7_eq : WordUnreach.removeUnreach (pass65_6) = pass65_7 := by
   rw [pass65_7_def]
   rw [pass65_6_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass65_7_eq
 def word65_8_0 : WordLangProgHOL (BitVec 64) :=
 Flapjack.WordLangProgHOL.move 1 [(39, 0)]
@@ -14631,8 +14624,7 @@ theorem pass65_8_def : pass65_8 = (word65_8_312) := InitE.ComputationCache.boxed
 theorem pass65_8_eq : WordAlloc.removeDeadProg (pass65_7) = pass65_8 := by
   rw [pass65_8_def]
   rw [pass65_7_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass65_8_eq
 def proposed65 : Option (Spt Nat) :=
 some
@@ -15685,8 +15677,7 @@ theorem pass65_9_def : pass65_9 = (word65_9_236) := InitE.ComputationCache.boxed
 theorem pass65_9_eq : WordToWord.wordAllocWith RegAlloc.regAllocExecutable 65 riscvConfig RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length)) (pass65_8) proposed65 = pass65_9 := by
   rw [pass65_9_def]
   rw [pass65_8_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass65_9_eq
 def word65_10_0 : WordLangProgHOL (BitVec 64) :=
 Flapjack.WordLangProgHOL.move 1 [(44, 0)]
@@ -16570,8 +16561,7 @@ theorem pass65_10_def : pass65_10 = (word65_10_236) := InitE.ComputationCache.bo
 theorem pass65_10_eq : WordRemove.removeMustTerminate (pass65_9) = pass65_10 := by
   rw [pass65_10_def]
   rw [pass65_9_def]
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass65_10_eq
 theorem compiled_eq : WordToWord.fullCompileSingleWith RegAlloc.regAllocExecutable riscvConfig.twoRegArith (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length)) RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg riscvConfig (source65, proposed65) = (65, 1, pass65_10) := by
   rw [InitE.CompilerStages.fullCompile_expanded]

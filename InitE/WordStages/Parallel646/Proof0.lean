@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Parallel646.Data0
 import InitE.WordStages.Source646
 set_option Elab.async false
@@ -9,7 +10,6 @@ open scoped InitE.CompilerComputation
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 namespace InitE.WordStages.Parallel646
 theorem pass646_0_eq : WordSimp.compileExp (source646.2.2) = pass646_0 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass646_0_eq
 end InitE.WordStages.Parallel646

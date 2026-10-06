@@ -1,3 +1,5 @@
+import InitE.CompactComputation
+import InitE.DeadBranchComputation
 import InitE.DeadStages875.Parallel.Data.Chunk002
 set_option autoImplicit false
 set_option Elab.async false
@@ -17,8 +19,8 @@ theorem node512_cond_eq
   try dsimp only
   rw [child511]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output500_skip, output511_skip]
+  kernel_rfl
 
 theorem node513_cond_eq
     (child499 : Flapjack.WordAlloc.removeDeadStructural input499 value24 value1 value2 = (output499, value24, value1))
@@ -29,8 +31,8 @@ theorem node513_cond_eq
   try dsimp only
   rw [child512]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output499_skip, output512_skip]
+  kernel_rfl
 
 theorem node514_cond_eq
     (child498 : Flapjack.WordAlloc.removeDeadStructural input498 value24 value1 value2 = (output498, value24, value1))
@@ -41,8 +43,8 @@ theorem node514_cond_eq
   try dsimp only
   rw [child513]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output498_skip, output513_skip]
+  kernel_rfl
 
 theorem node515_cond_eq
     (child497 : Flapjack.WordAlloc.removeDeadStructural input497 value24 value1 value2 = (output497, value24, value1))
@@ -53,8 +55,8 @@ theorem node515_cond_eq
   try dsimp only
   rw [child514]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output497_skip, output514_skip]
+  kernel_rfl
 
 theorem node516_cond_eq
     (child496 : Flapjack.WordAlloc.removeDeadStructural input496 value24 value1 value2 = (output496, value24, value1))
@@ -65,8 +67,8 @@ theorem node516_cond_eq
   try dsimp only
   rw [child515]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output496_skip, output515_skip]
+  kernel_rfl
 
 theorem node517_cond_eq
     (child495 : Flapjack.WordAlloc.removeDeadStructural input495 value24 value1 value2 = (output495, value24, value1))
@@ -77,8 +79,8 @@ theorem node517_cond_eq
   try dsimp only
   rw [child516]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output495_skip, output516_skip]
+  kernel_rfl
 
 theorem node518_cond_eq
     (child494 : Flapjack.WordAlloc.removeDeadStructural input494 value24 value1 value2 = (output494, value24, value1))
@@ -89,8 +91,8 @@ theorem node518_cond_eq
   try dsimp only
   rw [child517]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output494_skip, output517_skip]
+  kernel_rfl
 
 theorem node519_cond_eq
     (child493 : Flapjack.WordAlloc.removeDeadStructural input493 value24 value1 value2 = (output493, value24, value1))
@@ -101,8 +103,8 @@ theorem node519_cond_eq
   try dsimp only
   rw [child518]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output493_skip, output518_skip]
+  kernel_rfl
 
 theorem node520_cond_eq
     (child492 : Flapjack.WordAlloc.removeDeadStructural input492 value24 value1 value2 = (output492, value24, value1))
@@ -113,8 +115,8 @@ theorem node520_cond_eq
   try dsimp only
   rw [child519]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output492_skip, output519_skip]
+  kernel_rfl
 
 theorem node521_cond_eq
     (child491 : Flapjack.WordAlloc.removeDeadStructural input491 value24 value1 value2 = (output491, value24, value1))
@@ -125,8 +127,8 @@ theorem node521_cond_eq
   try dsimp only
   rw [child520]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output491_skip, output520_skip]
+  kernel_rfl
 
 theorem node522_cond_eq
     (child490 : Flapjack.WordAlloc.removeDeadStructural input490 value24 value1 value2 = (output490, value24, value1))
@@ -137,8 +139,8 @@ theorem node522_cond_eq
   try dsimp only
   rw [child521]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output490_skip, output521_skip]
+  kernel_rfl
 
 theorem node523_cond_eq
     (child489 : Flapjack.WordAlloc.removeDeadStructural input489 value24 value1 value2 = (output489, value24, value1))
@@ -149,8 +151,8 @@ theorem node523_cond_eq
   try dsimp only
   rw [child522]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output489_skip, output522_skip]
+  kernel_rfl
 
 theorem node524_cond_eq
     (child488 : Flapjack.WordAlloc.removeDeadStructural input488 value24 value1 value2 = (output488, value24, value1))
@@ -161,8 +163,8 @@ theorem node524_cond_eq
   try dsimp only
   rw [child523]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output488_skip, output523_skip]
+  kernel_rfl
 
 theorem node525_cond_eq
     (child487 : Flapjack.WordAlloc.removeDeadStructural input487 value24 value1 value2 = (output487, value24, value1))
@@ -173,8 +175,8 @@ theorem node525_cond_eq
   try dsimp only
   rw [child524]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output487_skip, output524_skip]
+  kernel_rfl
 
 theorem node526_cond_eq
     (child486 : Flapjack.WordAlloc.removeDeadStructural input486 value24 value1 value2 = (output486, value24, value1))
@@ -185,8 +187,8 @@ theorem node526_cond_eq
   try dsimp only
   rw [child525]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output486_skip, output525_skip]
+  kernel_rfl
 
 theorem node527_cond_eq
     (child485 : Flapjack.WordAlloc.removeDeadStructural input485 value24 value1 value2 = (output485, value24, value1))
@@ -197,8 +199,8 @@ theorem node527_cond_eq
   try dsimp only
   rw [child526]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output485_skip, output526_skip]
+  kernel_rfl
 
 theorem node528_cond_eq
     (child484 : Flapjack.WordAlloc.removeDeadStructural input484 value24 value1 value2 = (output484, value24, value1))
@@ -209,8 +211,8 @@ theorem node528_cond_eq
   try dsimp only
   rw [child527]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output484_skip, output527_skip]
+  kernel_rfl
 
 theorem node529_cond_eq
     (child483 : Flapjack.WordAlloc.removeDeadStructural input483 value24 value1 value2 = (output483, value24, value1))
@@ -221,8 +223,8 @@ theorem node529_cond_eq
   try dsimp only
   rw [child528]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output483_skip, output528_skip]
+  kernel_rfl
 
 theorem node530_cond_eq
     (child482 : Flapjack.WordAlloc.removeDeadStructural input482 value24 value1 value2 = (output482, value24, value1))
@@ -233,8 +235,8 @@ theorem node530_cond_eq
   try dsimp only
   rw [child529]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output482_skip, output529_skip]
+  kernel_rfl
 
 theorem node531_cond_eq
     (child481 : Flapjack.WordAlloc.removeDeadStructural input481 value24 value1 value2 = (output481, value24, value1))
@@ -245,8 +247,8 @@ theorem node531_cond_eq
   try dsimp only
   rw [child530]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output481_skip, output530_skip]
+  kernel_rfl
 
 theorem node532_cond_eq
     (child480 : Flapjack.WordAlloc.removeDeadStructural input480 value24 value1 value2 = (output480, value24, value1))
@@ -257,8 +259,8 @@ theorem node532_cond_eq
   try dsimp only
   rw [child531]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output480_skip, output531_skip]
+  kernel_rfl
 
 theorem node533_cond_eq
     (child479 : Flapjack.WordAlloc.removeDeadStructural input479 value24 value1 value2 = (output479, value24, value1))
@@ -269,8 +271,8 @@ theorem node533_cond_eq
   try dsimp only
   rw [child532]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output479_skip, output532_skip]
+  kernel_rfl
 
 theorem node534_cond_eq
     (child478 : Flapjack.WordAlloc.removeDeadStructural input478 value24 value1 value2 = (output478, value24, value1))
@@ -281,8 +283,8 @@ theorem node534_cond_eq
   try dsimp only
   rw [child533]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output478_skip, output533_skip]
+  kernel_rfl
 
 theorem node535_cond_eq
     (child477 : Flapjack.WordAlloc.removeDeadStructural input477 value24 value1 value2 = (output477, value24, value1))
@@ -293,8 +295,8 @@ theorem node535_cond_eq
   try dsimp only
   rw [child534]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output477_skip, output534_skip]
+  kernel_rfl
 
 theorem node536_cond_eq
     (child476 : Flapjack.WordAlloc.removeDeadStructural input476 value24 value1 value2 = (output476, value24, value1))
@@ -305,8 +307,8 @@ theorem node536_cond_eq
   try dsimp only
   rw [child535]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output476_skip, output535_skip]
+  kernel_rfl
 
 theorem node537_cond_eq
     (child475 : Flapjack.WordAlloc.removeDeadStructural input475 value24 value1 value2 = (output475, value24, value1))
@@ -317,8 +319,8 @@ theorem node537_cond_eq
   try dsimp only
   rw [child536]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output475_skip, output536_skip]
+  kernel_rfl
 
 theorem node538_cond_eq
     (child474 : Flapjack.WordAlloc.removeDeadStructural input474 value24 value1 value2 = (output474, value24, value1))
@@ -329,8 +331,8 @@ theorem node538_cond_eq
   try dsimp only
   rw [child537]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output474_skip, output537_skip]
+  kernel_rfl
 
 theorem node539_cond_eq
     (child473 : Flapjack.WordAlloc.removeDeadStructural input473 value24 value1 value2 = (output473, value24, value1))
@@ -341,8 +343,8 @@ theorem node539_cond_eq
   try dsimp only
   rw [child538]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output473_skip, output538_skip]
+  kernel_rfl
 
 theorem node540_cond_eq
     (child472 : Flapjack.WordAlloc.removeDeadStructural input472 value24 value1 value2 = (output472, value24, value1))
@@ -353,8 +355,8 @@ theorem node540_cond_eq
   try dsimp only
   rw [child539]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output472_skip, output539_skip]
+  kernel_rfl
 
 theorem node541_cond_eq
     (child471 : Flapjack.WordAlloc.removeDeadStructural input471 value24 value1 value2 = (output471, value24, value1))
@@ -365,8 +367,8 @@ theorem node541_cond_eq
   try dsimp only
   rw [child540]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output471_skip, output540_skip]
+  kernel_rfl
 
 theorem node542_cond_eq
     (child470 : Flapjack.WordAlloc.removeDeadStructural input470 value24 value1 value2 = (output470, value24, value1))
@@ -377,8 +379,8 @@ theorem node542_cond_eq
   try dsimp only
   rw [child541]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output470_skip, output541_skip]
+  kernel_rfl
 
 theorem node543_cond_eq
     (child469 : Flapjack.WordAlloc.removeDeadStructural input469 value24 value1 value2 = (output469, value24, value1))
@@ -389,8 +391,8 @@ theorem node543_cond_eq
   try dsimp only
   rw [child542]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output469_skip, output542_skip]
+  kernel_rfl
 
 theorem node544_cond_eq
     (child468 : Flapjack.WordAlloc.removeDeadStructural input468 value24 value1 value2 = (output468, value24, value1))
@@ -401,8 +403,8 @@ theorem node544_cond_eq
   try dsimp only
   rw [child543]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output468_skip, output543_skip]
+  kernel_rfl
 
 theorem node545_cond_eq
     (child467 : Flapjack.WordAlloc.removeDeadStructural input467 value24 value1 value2 = (output467, value24, value1))
@@ -413,8 +415,8 @@ theorem node545_cond_eq
   try dsimp only
   rw [child544]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output467_skip, output544_skip]
+  kernel_rfl
 
 theorem node546_cond_eq
     (child466 : Flapjack.WordAlloc.removeDeadStructural input466 value24 value1 value2 = (output466, value24, value1))
@@ -425,8 +427,8 @@ theorem node546_cond_eq
   try dsimp only
   rw [child545]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output466_skip, output545_skip]
+  kernel_rfl
 
 theorem node547_cond_eq
     (child465 : Flapjack.WordAlloc.removeDeadStructural input465 value24 value1 value2 = (output465, value24, value1))
@@ -437,8 +439,8 @@ theorem node547_cond_eq
   try dsimp only
   rw [child546]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output465_skip, output546_skip]
+  kernel_rfl
 
 theorem node548_cond_eq
     (child464 : Flapjack.WordAlloc.removeDeadStructural input464 value24 value1 value2 = (output464, value24, value1))
@@ -449,8 +451,8 @@ theorem node548_cond_eq
   try dsimp only
   rw [child547]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output464_skip, output547_skip]
+  kernel_rfl
 
 theorem node549_cond_eq
     (child463 : Flapjack.WordAlloc.removeDeadStructural input463 value24 value1 value2 = (output463, value24, value1))
@@ -461,8 +463,8 @@ theorem node549_cond_eq
   try dsimp only
   rw [child548]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output463_skip, output548_skip]
+  kernel_rfl
 
 theorem node550_cond_eq
     (child462 : Flapjack.WordAlloc.removeDeadStructural input462 value24 value1 value2 = (output462, value24, value1))
@@ -473,8 +475,8 @@ theorem node550_cond_eq
   try dsimp only
   rw [child549]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output462_skip, output549_skip]
+  kernel_rfl
 
 theorem node551_cond_eq
     (child461 : Flapjack.WordAlloc.removeDeadStructural input461 value24 value1 value2 = (output461, value24, value1))
@@ -485,8 +487,8 @@ theorem node551_cond_eq
   try dsimp only
   rw [child550]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output461_skip, output550_skip]
+  kernel_rfl
 
 theorem node552_cond_eq
     (child460 : Flapjack.WordAlloc.removeDeadStructural input460 value24 value1 value2 = (output460, value24, value1))
@@ -497,8 +499,8 @@ theorem node552_cond_eq
   try dsimp only
   rw [child551]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output460_skip, output551_skip]
+  kernel_rfl
 
 theorem node553_cond_eq
     (child459 : Flapjack.WordAlloc.removeDeadStructural input459 value24 value1 value2 = (output459, value24, value1))
@@ -509,8 +511,8 @@ theorem node553_cond_eq
   try dsimp only
   rw [child552]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output459_skip, output552_skip]
+  kernel_rfl
 
 theorem node554_cond_eq
     (child458 : Flapjack.WordAlloc.removeDeadStructural input458 value24 value1 value2 = (output458, value24, value1))
@@ -521,8 +523,8 @@ theorem node554_cond_eq
   try dsimp only
   rw [child553]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output458_skip, output553_skip]
+  kernel_rfl
 
 theorem node555_cond_eq
     (child457 : Flapjack.WordAlloc.removeDeadStructural input457 value24 value1 value2 = (output457, value24, value1))
@@ -533,8 +535,8 @@ theorem node555_cond_eq
   try dsimp only
   rw [child554]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output457_skip, output554_skip]
+  kernel_rfl
 
 theorem node556_cond_eq
     (child456 : Flapjack.WordAlloc.removeDeadStructural input456 value24 value1 value2 = (output456, value24, value1))
@@ -545,8 +547,8 @@ theorem node556_cond_eq
   try dsimp only
   rw [child555]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output456_skip, output555_skip]
+  kernel_rfl
 
 theorem node557_cond_eq
     (child455 : Flapjack.WordAlloc.removeDeadStructural input455 value24 value1 value2 = (output455, value24, value1))
@@ -557,8 +559,8 @@ theorem node557_cond_eq
   try dsimp only
   rw [child556]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output455_skip, output556_skip]
+  kernel_rfl
 
 theorem node558_cond_eq
     (child454 : Flapjack.WordAlloc.removeDeadStructural input454 value24 value1 value2 = (output454, value24, value1))
@@ -569,8 +571,8 @@ theorem node558_cond_eq
   try dsimp only
   rw [child557]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output454_skip, output557_skip]
+  kernel_rfl
 
 theorem node559_cond_eq
     (child453 : Flapjack.WordAlloc.removeDeadStructural input453 value24 value1 value2 = (output453, value24, value1))
@@ -581,8 +583,8 @@ theorem node559_cond_eq
   try dsimp only
   rw [child558]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output453_skip, output558_skip]
+  kernel_rfl
 
 theorem node560_cond_eq
     (child452 : Flapjack.WordAlloc.removeDeadStructural input452 value24 value1 value2 = (output452, value24, value1))
@@ -593,8 +595,8 @@ theorem node560_cond_eq
   try dsimp only
   rw [child559]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output452_skip, output559_skip]
+  kernel_rfl
 
 theorem node561_cond_eq
     (child451 : Flapjack.WordAlloc.removeDeadStructural input451 value24 value1 value2 = (output451, value24, value1))
@@ -605,8 +607,8 @@ theorem node561_cond_eq
   try dsimp only
   rw [child560]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output451_skip, output560_skip]
+  kernel_rfl
 
 theorem node562_cond_eq
     (child450 : Flapjack.WordAlloc.removeDeadStructural input450 value24 value1 value2 = (output450, value24, value1))
@@ -617,8 +619,8 @@ theorem node562_cond_eq
   try dsimp only
   rw [child561]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output450_skip, output561_skip]
+  kernel_rfl
 
 theorem node563_cond_eq
     (child449 : Flapjack.WordAlloc.removeDeadStructural input449 value24 value1 value2 = (output449, value24, value1))
@@ -629,8 +631,8 @@ theorem node563_cond_eq
   try dsimp only
   rw [child562]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output449_skip, output562_skip]
+  kernel_rfl
 
 theorem node564_cond_eq
     (child448 : Flapjack.WordAlloc.removeDeadStructural input448 value24 value1 value2 = (output448, value24, value1))
@@ -641,8 +643,8 @@ theorem node564_cond_eq
   try dsimp only
   rw [child563]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output448_skip, output563_skip]
+  kernel_rfl
 
 theorem node565_cond_eq
     (child447 : Flapjack.WordAlloc.removeDeadStructural input447 value24 value1 value2 = (output447, value24, value1))
@@ -653,8 +655,8 @@ theorem node565_cond_eq
   try dsimp only
   rw [child564]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output447_skip, output564_skip]
+  kernel_rfl
 
 theorem node566_cond_eq
     (child446 : Flapjack.WordAlloc.removeDeadStructural input446 value24 value1 value2 = (output446, value24, value1))
@@ -665,8 +667,8 @@ theorem node566_cond_eq
   try dsimp only
   rw [child565]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output446_skip, output565_skip]
+  kernel_rfl
 
 theorem node567_cond_eq
     (child445 : Flapjack.WordAlloc.removeDeadStructural input445 value24 value1 value2 = (output445, value24, value1))
@@ -677,8 +679,8 @@ theorem node567_cond_eq
   try dsimp only
   rw [child566]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output445_skip, output566_skip]
+  kernel_rfl
 
 theorem node568_cond_eq
     (child444 : Flapjack.WordAlloc.removeDeadStructural input444 value24 value1 value2 = (output444, value24, value1))
@@ -689,8 +691,8 @@ theorem node568_cond_eq
   try dsimp only
   rw [child567]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output444_skip, output567_skip]
+  kernel_rfl
 
 theorem node569_cond_eq
     (child443 : Flapjack.WordAlloc.removeDeadStructural input443 value24 value1 value2 = (output443, value24, value1))
@@ -701,8 +703,8 @@ theorem node569_cond_eq
   try dsimp only
   rw [child568]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output443_skip, output568_skip]
+  kernel_rfl
 
 theorem node570_cond_eq
     (child442 : Flapjack.WordAlloc.removeDeadStructural input442 value24 value1 value2 = (output442, value24, value1))
@@ -713,8 +715,8 @@ theorem node570_cond_eq
   try dsimp only
   rw [child569]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output442_skip, output569_skip]
+  kernel_rfl
 
 theorem node571_cond_eq
     (child441 : Flapjack.WordAlloc.removeDeadStructural input441 value24 value1 value2 = (output441, value24, value1))
@@ -725,8 +727,8 @@ theorem node571_cond_eq
   try dsimp only
   rw [child570]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output441_skip, output570_skip]
+  kernel_rfl
 
 theorem node572_cond_eq
     (child440 : Flapjack.WordAlloc.removeDeadStructural input440 value24 value1 value2 = (output440, value24, value1))
@@ -737,8 +739,8 @@ theorem node572_cond_eq
   try dsimp only
   rw [child571]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output440_skip, output571_skip]
+  kernel_rfl
 
 theorem node573_cond_eq
     (child439 : Flapjack.WordAlloc.removeDeadStructural input439 value24 value1 value2 = (output439, value24, value1))
@@ -749,8 +751,8 @@ theorem node573_cond_eq
   try dsimp only
   rw [child572]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output439_skip, output572_skip]
+  kernel_rfl
 
 theorem node574_cond_eq
     (child438 : Flapjack.WordAlloc.removeDeadStructural input438 value24 value1 value2 = (output438, value24, value1))
@@ -761,8 +763,8 @@ theorem node574_cond_eq
   try dsimp only
   rw [child573]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output438_skip, output573_skip]
+  kernel_rfl
 
 theorem node575_cond_eq
     (child437 : Flapjack.WordAlloc.removeDeadStructural input437 value24 value1 value2 = (output437, value24, value1))
@@ -773,8 +775,8 @@ theorem node575_cond_eq
   try dsimp only
   rw [child574]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output437_skip, output574_skip]
+  kernel_rfl
 
 theorem node576_cond_eq
     (child436 : Flapjack.WordAlloc.removeDeadStructural input436 value24 value1 value2 = (output436, value24, value1))
@@ -785,8 +787,8 @@ theorem node576_cond_eq
   try dsimp only
   rw [child575]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output436_skip, output575_skip]
+  kernel_rfl
 
 theorem node577_cond_eq
     (child435 : Flapjack.WordAlloc.removeDeadStructural input435 value24 value1 value2 = (output435, value24, value1))
@@ -797,8 +799,8 @@ theorem node577_cond_eq
   try dsimp only
   rw [child576]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output435_skip, output576_skip]
+  kernel_rfl
 
 theorem node578_cond_eq
     (child434 : Flapjack.WordAlloc.removeDeadStructural input434 value24 value1 value2 = (output434, value24, value1))
@@ -809,8 +811,8 @@ theorem node578_cond_eq
   try dsimp only
   rw [child577]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output434_skip, output577_skip]
+  kernel_rfl
 
 theorem node579_cond_eq
     (child433 : Flapjack.WordAlloc.removeDeadStructural input433 value24 value1 value2 = (output433, value24, value1))
@@ -821,8 +823,8 @@ theorem node579_cond_eq
   try dsimp only
   rw [child578]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output433_skip, output578_skip]
+  kernel_rfl
 
 theorem node580_cond_eq
     (child432 : Flapjack.WordAlloc.removeDeadStructural input432 value24 value1 value2 = (output432, value24, value1))
@@ -833,8 +835,8 @@ theorem node580_cond_eq
   try dsimp only
   rw [child579]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output432_skip, output579_skip]
+  kernel_rfl
 
 theorem node581_cond_eq
     (child431 : Flapjack.WordAlloc.removeDeadStructural input431 value24 value1 value2 = (output431, value24, value1))
@@ -845,8 +847,8 @@ theorem node581_cond_eq
   try dsimp only
   rw [child580]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output431_skip, output580_skip]
+  kernel_rfl
 
 theorem node582_cond_eq
     (child430 : Flapjack.WordAlloc.removeDeadStructural input430 value24 value1 value2 = (output430, value24, value1))
@@ -857,8 +859,8 @@ theorem node582_cond_eq
   try dsimp only
   rw [child581]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output430_skip, output581_skip]
+  kernel_rfl
 
 theorem node583_cond_eq
     (child429 : Flapjack.WordAlloc.removeDeadStructural input429 value24 value1 value2 = (output429, value24, value1))
@@ -869,8 +871,8 @@ theorem node583_cond_eq
   try dsimp only
   rw [child582]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output429_skip, output582_skip]
+  kernel_rfl
 
 theorem node584_cond_eq
     (child428 : Flapjack.WordAlloc.removeDeadStructural input428 value24 value1 value2 = (output428, value24, value1))
@@ -881,8 +883,8 @@ theorem node584_cond_eq
   try dsimp only
   rw [child583]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output428_skip, output583_skip]
+  kernel_rfl
 
 theorem node585_cond_eq
     (child427 : Flapjack.WordAlloc.removeDeadStructural input427 value24 value1 value2 = (output427, value24, value1))
@@ -893,8 +895,8 @@ theorem node585_cond_eq
   try dsimp only
   rw [child584]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output427_skip, output584_skip]
+  kernel_rfl
 
 theorem node586_cond_eq
     (child426 : Flapjack.WordAlloc.removeDeadStructural input426 value24 value1 value2 = (output426, value24, value1))
@@ -905,8 +907,8 @@ theorem node586_cond_eq
   try dsimp only
   rw [child585]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output426_skip, output585_skip]
+  kernel_rfl
 
 theorem node587_cond_eq
     (child425 : Flapjack.WordAlloc.removeDeadStructural input425 value24 value1 value2 = (output425, value24, value1))
@@ -917,8 +919,8 @@ theorem node587_cond_eq
   try dsimp only
   rw [child586]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output425_skip, output586_skip]
+  kernel_rfl
 
 theorem node588_cond_eq
     (child424 : Flapjack.WordAlloc.removeDeadStructural input424 value24 value1 value2 = (output424, value24, value1))
@@ -929,8 +931,8 @@ theorem node588_cond_eq
   try dsimp only
   rw [child587]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output424_skip, output587_skip]
+  kernel_rfl
 
 theorem node589_cond_eq
     (child423 : Flapjack.WordAlloc.removeDeadStructural input423 value24 value1 value2 = (output423, value24, value1))
@@ -941,8 +943,8 @@ theorem node589_cond_eq
   try dsimp only
   rw [child588]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output423_skip, output588_skip]
+  kernel_rfl
 
 theorem node590_cond_eq
     (child422 : Flapjack.WordAlloc.removeDeadStructural input422 value24 value1 value2 = (output422, value24, value1))
@@ -953,8 +955,8 @@ theorem node590_cond_eq
   try dsimp only
   rw [child589]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output422_skip, output589_skip]
+  kernel_rfl
 
 theorem node591_cond_eq
     (child421 : Flapjack.WordAlloc.removeDeadStructural input421 value24 value1 value2 = (output421, value24, value1))
@@ -965,8 +967,8 @@ theorem node591_cond_eq
   try dsimp only
   rw [child590]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output421_skip, output590_skip]
+  kernel_rfl
 
 theorem node592_cond_eq
     (child420 : Flapjack.WordAlloc.removeDeadStructural input420 value24 value1 value2 = (output420, value24, value1))
@@ -977,8 +979,8 @@ theorem node592_cond_eq
   try dsimp only
   rw [child591]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output420_skip, output591_skip]
+  kernel_rfl
 
 theorem node593_cond_eq
     (child419 : Flapjack.WordAlloc.removeDeadStructural input419 value24 value1 value2 = (output419, value24, value1))
@@ -989,8 +991,8 @@ theorem node593_cond_eq
   try dsimp only
   rw [child592]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output419_skip, output592_skip]
+  kernel_rfl
 
 theorem node594_cond_eq
     (child418 : Flapjack.WordAlloc.removeDeadStructural input418 value24 value1 value2 = (output418, value24, value1))
@@ -1001,8 +1003,8 @@ theorem node594_cond_eq
   try dsimp only
   rw [child593]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output418_skip, output593_skip]
+  kernel_rfl
 
 theorem node595_cond_eq
     (child417 : Flapjack.WordAlloc.removeDeadStructural input417 value24 value1 value2 = (output417, value24, value1))
@@ -1013,8 +1015,8 @@ theorem node595_cond_eq
   try dsimp only
   rw [child594]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output417_skip, output594_skip]
+  kernel_rfl
 
 theorem node596_cond_eq
     (child416 : Flapjack.WordAlloc.removeDeadStructural input416 value24 value1 value2 = (output416, value24, value1))
@@ -1025,8 +1027,8 @@ theorem node596_cond_eq
   try dsimp only
   rw [child595]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output416_skip, output595_skip]
+  kernel_rfl
 
 theorem node597_cond_eq
     (child415 : Flapjack.WordAlloc.removeDeadStructural input415 value24 value1 value2 = (output415, value24, value1))
@@ -1037,8 +1039,8 @@ theorem node597_cond_eq
   try dsimp only
   rw [child596]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output415_skip, output596_skip]
+  kernel_rfl
 
 theorem node598_cond_eq
     (child414 : Flapjack.WordAlloc.removeDeadStructural input414 value24 value1 value2 = (output414, value24, value1))
@@ -1049,13 +1051,12 @@ theorem node598_cond_eq
   try dsimp only
   rw [child597]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output414_skip, output597_skip]
+  kernel_rfl
 
 theorem node599_cond_eq : Flapjack.WordAlloc.removeDeadStructural input599 value24 value1 value2 = (output599, value55, value1) := by
   rw [input599_def, output599_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node600_cond_eq
     (child598 : Flapjack.WordAlloc.removeDeadStructural input598 value24 value1 value2 = (output598, value24, value1))
@@ -1066,23 +1067,20 @@ theorem node600_cond_eq
   try dsimp only
   rw [child599]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output598_skip, output599_skip]
+  kernel_rfl
 
 theorem node601_cond_eq : Flapjack.WordAlloc.removeDeadStructural input601 value55 value1 value2 = (output601, value55, value1) := by
   rw [input601_def, output601_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node602_cond_eq : Flapjack.WordAlloc.removeDeadStructural input602 value55 value1 value2 = (output602, value55, value1) := by
   rw [input602_def, output602_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node603_cond_eq : Flapjack.WordAlloc.removeDeadStructural input603 value55 value1 value2 = (output603, value55, value1) := by
   rw [input603_def, output603_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node604_cond_eq
     (child602 : Flapjack.WordAlloc.removeDeadStructural input602 value55 value1 value2 = (output602, value55, value1))
@@ -1093,8 +1091,8 @@ theorem node604_cond_eq
   try dsimp only
   rw [child603]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output602_skip, output603_skip]
+  kernel_rfl
 
 theorem node605_cond_eq
     (child601 : Flapjack.WordAlloc.removeDeadStructural input601 value55 value1 value2 = (output601, value55, value1))
@@ -1105,8 +1103,8 @@ theorem node605_cond_eq
   try dsimp only
   rw [child604]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output601_skip, output604_skip]
+  kernel_rfl
 
 theorem node606_cond_eq
     (child600 : Flapjack.WordAlloc.removeDeadStructural input600 value24 value1 value2 = (output600, value55, value1))
@@ -1117,8 +1115,8 @@ theorem node606_cond_eq
   try dsimp only
   rw [child605]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output600_skip, output605_skip]
+  kernel_rfl
 
 theorem node607_cond_eq
     (child413 : Flapjack.WordAlloc.removeDeadStructural input413 value24 value1 value2 = (output413, value54, value1))
@@ -1130,28 +1128,24 @@ theorem node607_cond_eq
   rw [child606]
   try dsimp only
   unfold Flapjack.WordAlloc.joinDeadIteResult
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output413_skip, output606_skip]
+  kernel_rfl
 
 theorem node608_cond_eq : Flapjack.WordAlloc.removeDeadStructural input608 value57 value1 value2 = (output608, value54, value1) := by
   rw [input608_def, output608_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node609_cond_eq : Flapjack.WordAlloc.removeDeadStructural input609 value54 value1 value2 = (output609, value58, value1) := by
   rw [input609_def, output609_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node610_cond_eq : Flapjack.WordAlloc.removeDeadStructural input610 value58 value1 value2 = (output610, value59, value1) := by
   rw [input610_def, output610_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node611_cond_eq : Flapjack.WordAlloc.removeDeadStructural input611 value59 value1 value2 = (output611, value60, value1) := by
   rw [input611_def, output611_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node612_cond_eq
     (child610 : Flapjack.WordAlloc.removeDeadStructural input610 value58 value1 value2 = (output610, value59, value1))
@@ -1162,18 +1156,16 @@ theorem node612_cond_eq
   try dsimp only
   rw [child611]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output610_skip, output611_skip]
+  kernel_rfl
 
 theorem node613_cond_eq : Flapjack.WordAlloc.removeDeadStructural input613 value60 value1 value2 = (output613, value61, value1) := by
   rw [input613_def, output613_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node614_cond_eq : Flapjack.WordAlloc.removeDeadStructural input614 value61 value1 value2 = (output614, value62, value1) := by
   rw [input614_def, output614_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node615_cond_eq
     (child613 : Flapjack.WordAlloc.removeDeadStructural input613 value60 value1 value2 = (output613, value61, value1))
@@ -1184,38 +1176,32 @@ theorem node615_cond_eq
   try dsimp only
   rw [child614]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output613_skip, output614_skip]
+  kernel_rfl
 
 theorem node616_cond_eq : Flapjack.WordAlloc.removeDeadStructural input616 value62 value1 value2 = (output616, value60, value1) := by
   rw [input616_def, output616_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node617_cond_eq : Flapjack.WordAlloc.removeDeadStructural input617 value60 value1 value2 = (output617, value63, value1) := by
   rw [input617_def, output617_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node618_cond_eq : Flapjack.WordAlloc.removeDeadStructural input618 value63 value1 value2 = (output618, value64, value1) := by
   rw [input618_def, output618_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node619_cond_eq : Flapjack.WordAlloc.removeDeadStructural input619 value64 value1 value2 = (output619, value64, value1) := by
   rw [input619_def, output619_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node620_cond_eq : Flapjack.WordAlloc.removeDeadStructural input620 value64 value1 value2 = (output620, value65, value1) := by
   rw [input620_def, output620_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node621_cond_eq : Flapjack.WordAlloc.removeDeadStructural input621 value65 value1 value2 = (output621, value66, value1) := by
   rw [input621_def, output621_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node622_cond_eq
     (child620 : Flapjack.WordAlloc.removeDeadStructural input620 value64 value1 value2 = (output620, value65, value1))
@@ -1226,13 +1212,12 @@ theorem node622_cond_eq
   try dsimp only
   rw [child621]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output620_skip, output621_skip]
+  kernel_rfl
 
 theorem node623_cond_eq : Flapjack.WordAlloc.removeDeadStructural input623 value66 value1 value2 = (output623, value67, value1) := by
   rw [input623_def, output623_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node624_cond_eq
     (child622 : Flapjack.WordAlloc.removeDeadStructural input622 value64 value1 value2 = (output622, value66, value1))
@@ -1243,43 +1228,36 @@ theorem node624_cond_eq
   try dsimp only
   rw [child623]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output622_skip, output623_skip]
+  kernel_rfl
 
 theorem node625_cond_eq : Flapjack.WordAlloc.removeDeadStructural input625 value67 value1 value2 = (output625, value68, value1) := by
   rw [input625_def, output625_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node626_cond_eq : Flapjack.WordAlloc.removeDeadStructural input626 value68 value1 value2 = (output626, value68, value1) := by
   rw [input626_def, output626_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node627_cond_eq : Flapjack.WordAlloc.removeDeadStructural input627 value68 value1 value2 = (output627, value69, value1) := by
   rw [input627_def, output627_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node628_cond_eq : Flapjack.WordAlloc.removeDeadStructural input628 value69 value1 value2 = (output628, value70, value1) := by
   rw [input628_def, output628_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node629_cond_eq : Flapjack.WordAlloc.removeDeadStructural input629 value70 value1 value2 = (output629, value71, value1) := by
   rw [input629_def, output629_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node630_cond_eq : Flapjack.WordAlloc.removeDeadStructural input630 value71 value1 value2 = (output630, value72, value1) := by
   rw [input630_def, output630_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node631_cond_eq : Flapjack.WordAlloc.removeDeadStructural input631 value72 value1 value2 = (output631, value73, value1) := by
   rw [input631_def, output631_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node632_cond_eq
     (child630 : Flapjack.WordAlloc.removeDeadStructural input630 value71 value1 value2 = (output630, value72, value1))
@@ -1290,8 +1268,8 @@ theorem node632_cond_eq
   try dsimp only
   rw [child631]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output630_skip, output631_skip]
+  kernel_rfl
 
 theorem node633_cond_eq
     (child629 : Flapjack.WordAlloc.removeDeadStructural input629 value70 value1 value2 = (output629, value71, value1))
@@ -1302,8 +1280,8 @@ theorem node633_cond_eq
   try dsimp only
   rw [child632]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output629_skip, output632_skip]
+  kernel_rfl
 
 theorem node634_cond_eq
     (child628 : Flapjack.WordAlloc.removeDeadStructural input628 value69 value1 value2 = (output628, value70, value1))
@@ -1314,8 +1292,8 @@ theorem node634_cond_eq
   try dsimp only
   rw [child633]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output628_skip, output633_skip]
+  kernel_rfl
 
 theorem node635_cond_eq
     (child627 : Flapjack.WordAlloc.removeDeadStructural input627 value68 value1 value2 = (output627, value69, value1))
@@ -1326,43 +1304,36 @@ theorem node635_cond_eq
   try dsimp only
   rw [child634]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output627_skip, output634_skip]
+  kernel_rfl
 
 theorem node636_cond_eq : Flapjack.WordAlloc.removeDeadStructural input636 value73 value1 value2 = (output636, value73, value1) := by
   rw [input636_def, output636_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node637_cond_eq : Flapjack.WordAlloc.removeDeadStructural input637 value74 value1 value75 = (output637, value76, value1) := by
   rw [input637_def, output637_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node638_cond_eq : Flapjack.WordAlloc.removeDeadStructural input638 value76 value1 value75 = (output638, value76, value1) := by
   rw [input638_def, output638_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node639_cond_eq : Flapjack.WordAlloc.removeDeadStructural input639 value76 value1 value75 = (output639, value76, value1) := by
   rw [input639_def, output639_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node640_cond_eq : Flapjack.WordAlloc.removeDeadStructural input640 value76 value1 value75 = (output640, value76, value1) := by
   rw [input640_def, output640_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node641_cond_eq : Flapjack.WordAlloc.removeDeadStructural input641 value76 value1 value75 = (output641, value76, value1) := by
   rw [input641_def, output641_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node642_cond_eq : Flapjack.WordAlloc.removeDeadStructural input642 value76 value1 value75 = (output642, value76, value1) := by
   rw [input642_def, output642_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node643_cond_eq
     (child641 : Flapjack.WordAlloc.removeDeadStructural input641 value76 value1 value75 = (output641, value76, value1))
@@ -1373,8 +1344,8 @@ theorem node643_cond_eq
   try dsimp only
   rw [child642]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output641_skip, output642_skip]
+  kernel_rfl
 
 theorem node644_cond_eq
     (child640 : Flapjack.WordAlloc.removeDeadStructural input640 value76 value1 value75 = (output640, value76, value1))
@@ -1385,8 +1356,8 @@ theorem node644_cond_eq
   try dsimp only
   rw [child643]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output640_skip, output643_skip]
+  kernel_rfl
 
 theorem node645_cond_eq
     (child639 : Flapjack.WordAlloc.removeDeadStructural input639 value76 value1 value75 = (output639, value76, value1))
@@ -1397,13 +1368,12 @@ theorem node645_cond_eq
   try dsimp only
   rw [child644]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output639_skip, output644_skip]
+  kernel_rfl
 
 theorem node646_cond_eq : Flapjack.WordAlloc.removeDeadStructural input646 value76 value1 value75 = (output646, value77, value1) := by
   rw [input646_def, output646_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node647_cond_eq
     (child645 : Flapjack.WordAlloc.removeDeadStructural input645 value76 value1 value75 = (output645, value76, value1))
@@ -1414,18 +1384,16 @@ theorem node647_cond_eq
   try dsimp only
   rw [child646]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output645_skip, output646_skip]
+  kernel_rfl
 
 theorem node648_cond_eq : Flapjack.WordAlloc.removeDeadStructural input648 value77 value1 value75 = (output648, value74, value1) := by
   rw [input648_def, output648_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node649_cond_eq : Flapjack.WordAlloc.removeDeadStructural input649 value74 value1 value75 = (output649, value77, value1) := by
   rw [input649_def, output649_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node650_cond_eq
     (child648 : Flapjack.WordAlloc.removeDeadStructural input648 value77 value1 value75 = (output648, value74, value1))
@@ -1436,23 +1404,20 @@ theorem node650_cond_eq
   try dsimp only
   rw [child649]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output648_skip, output649_skip]
+  kernel_rfl
 
 theorem node651_cond_eq : Flapjack.WordAlloc.removeDeadStructural input651 value77 value1 value75 = (output651, value78, value1) := by
   rw [input651_def, output651_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node652_cond_eq : Flapjack.WordAlloc.removeDeadStructural input652 value78 value1 value75 = (output652, value79, value1) := by
   rw [input652_def, output652_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node653_cond_eq : Flapjack.WordAlloc.removeDeadStructural input653 value79 value1 value75 = (output653, value80, value1) := by
   rw [input653_def, output653_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node654_cond_eq
     (child652 : Flapjack.WordAlloc.removeDeadStructural input652 value78 value1 value75 = (output652, value79, value1))
@@ -1463,18 +1428,16 @@ theorem node654_cond_eq
   try dsimp only
   rw [child653]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output652_skip, output653_skip]
+  kernel_rfl
 
 theorem node655_cond_eq : Flapjack.WordAlloc.removeDeadStructural input655 value80 value1 value75 = (output655, value81, value1) := by
   rw [input655_def, output655_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node656_cond_eq : Flapjack.WordAlloc.removeDeadStructural input656 value81 value1 value75 = (output656, value82, value1) := by
   rw [input656_def, output656_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node657_cond_eq
     (child655 : Flapjack.WordAlloc.removeDeadStructural input655 value80 value1 value75 = (output655, value81, value1))
@@ -1485,28 +1448,24 @@ theorem node657_cond_eq
   try dsimp only
   rw [child656]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output655_skip, output656_skip]
+  kernel_rfl
 
 theorem node658_cond_eq : Flapjack.WordAlloc.removeDeadStructural input658 value82 value1 value75 = (output658, value83, value1) := by
   rw [input658_def, output658_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node659_cond_eq : Flapjack.WordAlloc.removeDeadStructural input659 value83 value1 value75 = (output659, value84, value1) := by
   rw [input659_def, output659_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node660_cond_eq : Flapjack.WordAlloc.removeDeadStructural input660 value84 value1 value75 = (output660, value85, value1) := by
   rw [input660_def, output660_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node661_cond_eq : Flapjack.WordAlloc.removeDeadStructural input661 value85 value1 value75 = (output661, value86, value1) := by
   rw [input661_def, output661_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node662_cond_eq
     (child660 : Flapjack.WordAlloc.removeDeadStructural input660 value84 value1 value75 = (output660, value85, value1))
@@ -1517,18 +1476,16 @@ theorem node662_cond_eq
   try dsimp only
   rw [child661]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output660_skip, output661_skip]
+  kernel_rfl
 
 theorem node663_cond_eq : Flapjack.WordAlloc.removeDeadStructural input663 value86 value1 value75 = (output663, value87, value1) := by
   rw [input663_def, output663_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node664_cond_eq : Flapjack.WordAlloc.removeDeadStructural input664 value87 value1 value75 = (output664, value88, value1) := by
   rw [input664_def, output664_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node665_cond_eq
     (child663 : Flapjack.WordAlloc.removeDeadStructural input663 value86 value1 value75 = (output663, value87, value1))
@@ -1539,8 +1496,8 @@ theorem node665_cond_eq
   try dsimp only
   rw [child664]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output663_skip, output664_skip]
+  kernel_rfl
 
 theorem node666_cond_eq
     (child662 : Flapjack.WordAlloc.removeDeadStructural input662 value84 value1 value75 = (output662, value86, value1))
@@ -1551,8 +1508,8 @@ theorem node666_cond_eq
   try dsimp only
   rw [child665]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output662_skip, output665_skip]
+  kernel_rfl
 
 theorem node667_cond_eq
     (child659 : Flapjack.WordAlloc.removeDeadStructural input659 value83 value1 value75 = (output659, value84, value1))
@@ -1563,18 +1520,16 @@ theorem node667_cond_eq
   try dsimp only
   rw [child666]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output659_skip, output666_skip]
+  kernel_rfl
 
 theorem node668_cond_eq : Flapjack.WordAlloc.removeDeadStructural input668 value88 value1 value75 = (output668, value89, value1) := by
   rw [input668_def, output668_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node669_cond_eq : Flapjack.WordAlloc.removeDeadStructural input669 value89 value1 value75 = (output669, value90, value1) := by
   rw [input669_def, output669_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node670_cond_eq
     (child668 : Flapjack.WordAlloc.removeDeadStructural input668 value88 value1 value75 = (output668, value89, value1))
@@ -1585,18 +1540,16 @@ theorem node670_cond_eq
   try dsimp only
   rw [child669]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output668_skip, output669_skip]
+  kernel_rfl
 
 theorem node671_cond_eq : Flapjack.WordAlloc.removeDeadStructural input671 value90 value1 value75 = (output671, value91, value1) := by
   rw [input671_def, output671_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node672_cond_eq : Flapjack.WordAlloc.removeDeadStructural input672 value91 value1 value75 = (output672, value92, value1) := by
   rw [input672_def, output672_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node673_cond_eq
     (child671 : Flapjack.WordAlloc.removeDeadStructural input671 value90 value1 value75 = (output671, value91, value1))
@@ -1607,8 +1560,8 @@ theorem node673_cond_eq
   try dsimp only
   rw [child672]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output671_skip, output672_skip]
+  kernel_rfl
 
 theorem node674_cond_eq
     (child670 : Flapjack.WordAlloc.removeDeadStructural input670 value88 value1 value75 = (output670, value90, value1))
@@ -1619,23 +1572,20 @@ theorem node674_cond_eq
   try dsimp only
   rw [child673]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output670_skip, output673_skip]
+  kernel_rfl
 
 theorem node675_cond_eq : Flapjack.WordAlloc.removeDeadStructural input675 value92 value1 value75 = (output675, value92, value1) := by
   rw [input675_def, output675_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node676_cond_eq : Flapjack.WordAlloc.removeDeadStructural input676 value92 value1 value75 = (output676, value92, value1) := by
   rw [input676_def, output676_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node677_cond_eq : Flapjack.WordAlloc.removeDeadStructural input677 value92 value1 value75 = (output677, value92, value1) := by
   rw [input677_def, output677_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node678_cond_eq
     (child676 : Flapjack.WordAlloc.removeDeadStructural input676 value92 value1 value75 = (output676, value92, value1))
@@ -1646,8 +1596,8 @@ theorem node678_cond_eq
   try dsimp only
   rw [child677]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output676_skip, output677_skip]
+  kernel_rfl
 
 theorem node679_cond_eq
     (child675 : Flapjack.WordAlloc.removeDeadStructural input675 value92 value1 value75 = (output675, value92, value1))
@@ -1658,8 +1608,8 @@ theorem node679_cond_eq
   try dsimp only
   rw [child678]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output675_skip, output678_skip]
+  kernel_rfl
 
 theorem node680_cond_eq
     (child674 : Flapjack.WordAlloc.removeDeadStructural input674 value88 value1 value75 = (output674, value92, value1))
@@ -1670,8 +1620,8 @@ theorem node680_cond_eq
   try dsimp only
   rw [child679]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output674_skip, output679_skip]
+  kernel_rfl
 
 theorem node681_cond_eq
     (child667 : Flapjack.WordAlloc.removeDeadStructural input667 value83 value1 value75 = (output667, value88, value1))
@@ -1682,8 +1632,8 @@ theorem node681_cond_eq
   try dsimp only
   rw [child680]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output667_skip, output680_skip]
+  kernel_rfl
 
 theorem node682_cond_eq
     (child658 : Flapjack.WordAlloc.removeDeadStructural input658 value82 value1 value75 = (output658, value83, value1))
@@ -1694,8 +1644,8 @@ theorem node682_cond_eq
   try dsimp only
   rw [child681]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output658_skip, output681_skip]
+  kernel_rfl
 
 theorem node683_cond_eq
     (child657 : Flapjack.WordAlloc.removeDeadStructural input657 value80 value1 value75 = (output657, value82, value1))
@@ -1706,8 +1656,8 @@ theorem node683_cond_eq
   try dsimp only
   rw [child682]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output657_skip, output682_skip]
+  kernel_rfl
 
 theorem node684_cond_eq
     (child654 : Flapjack.WordAlloc.removeDeadStructural input654 value78 value1 value75 = (output654, value80, value1))
@@ -1718,8 +1668,8 @@ theorem node684_cond_eq
   try dsimp only
   rw [child683]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output654_skip, output683_skip]
+  kernel_rfl
 
 theorem node685_cond_eq
     (child651 : Flapjack.WordAlloc.removeDeadStructural input651 value77 value1 value75 = (output651, value78, value1))
@@ -1730,8 +1680,8 @@ theorem node685_cond_eq
   try dsimp only
   rw [child684]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output651_skip, output684_skip]
+  kernel_rfl
 
 theorem node686_cond_eq
     (child650 : Flapjack.WordAlloc.removeDeadStructural input650 value77 value1 value75 = (output650, value77, value1))
@@ -1742,8 +1692,8 @@ theorem node686_cond_eq
   try dsimp only
   rw [child685]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output650_skip, output685_skip]
+  kernel_rfl
 
 theorem node687_cond_eq
     (child647 : Flapjack.WordAlloc.removeDeadStructural input647 value76 value1 value75 = (output647, value77, value1))
@@ -1754,28 +1704,24 @@ theorem node687_cond_eq
   try dsimp only
   rw [child686]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output647_skip, output686_skip]
+  kernel_rfl
 
 theorem node688_cond_eq : Flapjack.WordAlloc.removeDeadStructural input688 value76 value1 value75 = (output688, value76, value1) := by
   rw [input688_def, output688_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node689_cond_eq : Flapjack.WordAlloc.removeDeadStructural input689 value76 value1 value75 = (output689, value76, value1) := by
   rw [input689_def, output689_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node690_cond_eq : Flapjack.WordAlloc.removeDeadStructural input690 value76 value1 value75 = (output690, value76, value1) := by
   rw [input690_def, output690_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node691_cond_eq : Flapjack.WordAlloc.removeDeadStructural input691 value76 value1 value75 = (output691, value76, value1) := by
   rw [input691_def, output691_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node692_cond_eq
     (child690 : Flapjack.WordAlloc.removeDeadStructural input690 value76 value1 value75 = (output690, value76, value1))
@@ -1786,8 +1732,8 @@ theorem node692_cond_eq
   try dsimp only
   rw [child691]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output690_skip, output691_skip]
+  kernel_rfl
 
 theorem node693_cond_eq
     (child689 : Flapjack.WordAlloc.removeDeadStructural input689 value76 value1 value75 = (output689, value76, value1))
@@ -1798,8 +1744,8 @@ theorem node693_cond_eq
   try dsimp only
   rw [child692]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output689_skip, output692_skip]
+  kernel_rfl
 
 theorem node694_cond_eq
     (child688 : Flapjack.WordAlloc.removeDeadStructural input688 value76 value1 value75 = (output688, value76, value1))
@@ -1810,13 +1756,12 @@ theorem node694_cond_eq
   try dsimp only
   rw [child693]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output688_skip, output693_skip]
+  kernel_rfl
 
 theorem node695_cond_eq : Flapjack.WordAlloc.removeDeadStructural input695 value76 value1 value75 = (output695, value92, value1) := by
   rw [input695_def, output695_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node696_cond_eq
     (child694 : Flapjack.WordAlloc.removeDeadStructural input694 value76 value1 value75 = (output694, value76, value1))
@@ -1827,18 +1772,16 @@ theorem node696_cond_eq
   try dsimp only
   rw [child695]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output694_skip, output695_skip]
+  kernel_rfl
 
 theorem node697_cond_eq : Flapjack.WordAlloc.removeDeadStructural input697 value92 value1 value75 = (output697, value73, value1) := by
   rw [input697_def, output697_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node698_cond_eq : Flapjack.WordAlloc.removeDeadStructural input698 value73 value1 value75 = (output698, value93, value1) := by
   rw [input698_def, output698_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node699_cond_eq
     (child697 : Flapjack.WordAlloc.removeDeadStructural input697 value92 value1 value75 = (output697, value73, value1))
@@ -1849,23 +1792,20 @@ theorem node699_cond_eq
   try dsimp only
   rw [child698]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output697_skip, output698_skip]
+  kernel_rfl
 
 theorem node700_cond_eq : Flapjack.WordAlloc.removeDeadStructural input700 value93 value1 value75 = (output700, value93, value1) := by
   rw [input700_def, output700_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node701_cond_eq : Flapjack.WordAlloc.removeDeadStructural input701 value93 value1 value75 = (output701, value93, value1) := by
   rw [input701_def, output701_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node702_cond_eq : Flapjack.WordAlloc.removeDeadStructural input702 value93 value1 value75 = (output702, value93, value1) := by
   rw [input702_def, output702_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node703_cond_eq
     (child701 : Flapjack.WordAlloc.removeDeadStructural input701 value93 value1 value75 = (output701, value93, value1))
@@ -1876,8 +1816,8 @@ theorem node703_cond_eq
   try dsimp only
   rw [child702]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output701_skip, output702_skip]
+  kernel_rfl
 
 theorem node704_cond_eq
     (child700 : Flapjack.WordAlloc.removeDeadStructural input700 value93 value1 value75 = (output700, value93, value1))
@@ -1888,8 +1828,8 @@ theorem node704_cond_eq
   try dsimp only
   rw [child703]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output700_skip, output703_skip]
+  kernel_rfl
 
 theorem node705_cond_eq
     (child699 : Flapjack.WordAlloc.removeDeadStructural input699 value92 value1 value75 = (output699, value93, value1))
@@ -1900,8 +1840,8 @@ theorem node705_cond_eq
   try dsimp only
   rw [child704]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output699_skip, output704_skip]
+  kernel_rfl
 
 theorem node706_cond_eq
     (child696 : Flapjack.WordAlloc.removeDeadStructural input696 value76 value1 value75 = (output696, value92, value1))
@@ -1912,8 +1852,8 @@ theorem node706_cond_eq
   try dsimp only
   rw [child705]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output696_skip, output705_skip]
+  kernel_rfl
 
 theorem node707_cond_eq
     (child687 : Flapjack.WordAlloc.removeDeadStructural input687 value76 value1 value75 = (output687, value92, value1))
@@ -1925,18 +1865,16 @@ theorem node707_cond_eq
   rw [child706]
   try dsimp only
   unfold Flapjack.WordAlloc.joinDeadIteResult
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output687_skip, output706_skip]
+  kernel_rfl
 
 theorem node708_cond_eq : Flapjack.WordAlloc.removeDeadStructural input708 value92 value1 value75 = (output708, value95, value1) := by
   rw [input708_def, output708_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node709_cond_eq : Flapjack.WordAlloc.removeDeadStructural input709 value95 value1 value75 = (output709, value74, value1) := by
   rw [input709_def, output709_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node710_cond_eq
     (child708 : Flapjack.WordAlloc.removeDeadStructural input708 value92 value1 value75 = (output708, value95, value1))
@@ -1947,8 +1885,8 @@ theorem node710_cond_eq
   try dsimp only
   rw [child709]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output708_skip, output709_skip]
+  kernel_rfl
 
 theorem node711_cond_eq
     (child707 : Flapjack.WordAlloc.removeDeadStructural input707 value76 value1 value75 = (output707, value92, value1))
@@ -1959,8 +1897,8 @@ theorem node711_cond_eq
   try dsimp only
   rw [child710]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output707_skip, output710_skip]
+  kernel_rfl
 
 theorem node712_cond_eq
     (child638 : Flapjack.WordAlloc.removeDeadStructural input638 value76 value1 value75 = (output638, value76, value1))
@@ -1971,8 +1909,8 @@ theorem node712_cond_eq
   try dsimp only
   rw [child711]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output638_skip, output711_skip]
+  kernel_rfl
 
 theorem node713_cond_eq
     (child637 : Flapjack.WordAlloc.removeDeadStructural input637 value74 value1 value75 = (output637, value76, value1))
@@ -1983,8 +1921,8 @@ theorem node713_cond_eq
   try dsimp only
   rw [child712]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output637_skip, output712_skip]
+  kernel_rfl
 
 theorem node714_cond_eq
     (child713 : Flapjack.WordAlloc.removeDeadStructural input713 value74 value1 value75 = (output713, value74, value1)) : Flapjack.WordAlloc.removeDeadStructural input714 value73 value1 value2 = (output714, value74, value1) := by
@@ -1996,18 +1934,15 @@ theorem node714_cond_eq
   rw [loop_context_eq, loop_stores_eq] at loop_child
   rw [loop_child]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node715_cond_eq : Flapjack.WordAlloc.removeDeadStructural input715 value74 value1 value2 = (output715, value96, value1) := by
   rw [input715_def, output715_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node716_cond_eq : Flapjack.WordAlloc.removeDeadStructural input716 value96 value1 value2 = (output716, value96, value1) := by
   rw [input716_def, output716_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node717_cond_eq
     (child715 : Flapjack.WordAlloc.removeDeadStructural input715 value74 value1 value2 = (output715, value96, value1))
@@ -2018,8 +1953,8 @@ theorem node717_cond_eq
   try dsimp only
   rw [child716]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output715_skip, output716_skip]
+  kernel_rfl
 
 theorem node718_cond_eq
     (child714 : Flapjack.WordAlloc.removeDeadStructural input714 value73 value1 value2 = (output714, value74, value1))
@@ -2030,28 +1965,24 @@ theorem node718_cond_eq
   try dsimp only
   rw [child717]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output714_skip, output717_skip]
+  kernel_rfl
 
 theorem node719_cond_eq : Flapjack.WordAlloc.removeDeadStructural input719 value96 value1 value2 = (output719, value96, value1) := by
   rw [input719_def, output719_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node720_cond_eq : Flapjack.WordAlloc.removeDeadStructural input720 value96 value1 value2 = (output720, value97, value1) := by
   rw [input720_def, output720_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node721_cond_eq : Flapjack.WordAlloc.removeDeadStructural input721 value97 value1 value2 = (output721, value98, value1) := by
   rw [input721_def, output721_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node722_cond_eq : Flapjack.WordAlloc.removeDeadStructural input722 value98 value1 value2 = (output722, value99, value1) := by
   rw [input722_def, output722_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node723_cond_eq
     (child721 : Flapjack.WordAlloc.removeDeadStructural input721 value97 value1 value2 = (output721, value98, value1))
@@ -2062,18 +1993,16 @@ theorem node723_cond_eq
   try dsimp only
   rw [child722]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output721_skip, output722_skip]
+  kernel_rfl
 
 theorem node724_cond_eq : Flapjack.WordAlloc.removeDeadStructural input724 value99 value1 value2 = (output724, value100, value1) := by
   rw [input724_def, output724_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node725_cond_eq : Flapjack.WordAlloc.removeDeadStructural input725 value100 value1 value2 = (output725, value101, value1) := by
   rw [input725_def, output725_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node726_cond_eq
     (child724 : Flapjack.WordAlloc.removeDeadStructural input724 value99 value1 value2 = (output724, value100, value1))
@@ -2084,28 +2013,24 @@ theorem node726_cond_eq
   try dsimp only
   rw [child725]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output724_skip, output725_skip]
+  kernel_rfl
 
 theorem node727_cond_eq : Flapjack.WordAlloc.removeDeadStructural input727 value101 value1 value2 = (output727, value102, value1) := by
   rw [input727_def, output727_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node728_cond_eq : Flapjack.WordAlloc.removeDeadStructural input728 value102 value1 value2 = (output728, value103, value1) := by
   rw [input728_def, output728_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node729_cond_eq : Flapjack.WordAlloc.removeDeadStructural input729 value103 value1 value2 = (output729, value104, value1) := by
   rw [input729_def, output729_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node730_cond_eq : Flapjack.WordAlloc.removeDeadStructural input730 value104 value1 value2 = (output730, value105, value1) := by
   rw [input730_def, output730_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node731_cond_eq
     (child729 : Flapjack.WordAlloc.removeDeadStructural input729 value103 value1 value2 = (output729, value104, value1))
@@ -2116,23 +2041,20 @@ theorem node731_cond_eq
   try dsimp only
   rw [child730]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output729_skip, output730_skip]
+  kernel_rfl
 
 theorem node732_cond_eq : Flapjack.WordAlloc.removeDeadStructural input732 value105 value1 value2 = (output732, value105, value1) := by
   rw [input732_def, output732_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node733_cond_eq : Flapjack.WordAlloc.removeDeadStructural input733 value105 value1 value2 = (output733, value106, value1) := by
   rw [input733_def, output733_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node734_cond_eq : Flapjack.WordAlloc.removeDeadStructural input734 value106 value1 value2 = (output734, value107, value1) := by
   rw [input734_def, output734_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node735_cond_eq
     (child733 : Flapjack.WordAlloc.removeDeadStructural input733 value105 value1 value2 = (output733, value106, value1))
@@ -2143,13 +2065,12 @@ theorem node735_cond_eq
   try dsimp only
   rw [child734]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output733_skip, output734_skip]
+  kernel_rfl
 
 theorem node736_cond_eq : Flapjack.WordAlloc.removeDeadStructural input736 value107 value1 value2 = (output736, value108, value1) := by
   rw [input736_def, output736_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node737_cond_eq
     (child735 : Flapjack.WordAlloc.removeDeadStructural input735 value105 value1 value2 = (output735, value107, value1))
@@ -2160,38 +2081,32 @@ theorem node737_cond_eq
   try dsimp only
   rw [child736]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output735_skip, output736_skip]
+  kernel_rfl
 
 theorem node738_cond_eq : Flapjack.WordAlloc.removeDeadStructural input738 value108 value1 value2 = (output738, value109, value1) := by
   rw [input738_def, output738_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node739_cond_eq : Flapjack.WordAlloc.removeDeadStructural input739 value109 value1 value2 = (output739, value110, value1) := by
   rw [input739_def, output739_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node740_cond_eq : Flapjack.WordAlloc.removeDeadStructural input740 value110 value1 value2 = (output740, value110, value1) := by
   rw [input740_def, output740_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node741_cond_eq : Flapjack.WordAlloc.removeDeadStructural input741 value110 value1 value2 = (output741, value110, value1) := by
   rw [input741_def, output741_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node742_cond_eq : Flapjack.WordAlloc.removeDeadStructural input742 value110 value1 value2 = (output742, value110, value1) := by
   rw [input742_def, output742_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node743_cond_eq : Flapjack.WordAlloc.removeDeadStructural input743 value110 value1 value2 = (output743, value111, value1) := by
   rw [input743_def, output743_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node744_cond_eq
     (child742 : Flapjack.WordAlloc.removeDeadStructural input742 value110 value1 value2 = (output742, value110, value1))
@@ -2202,28 +2117,24 @@ theorem node744_cond_eq
   try dsimp only
   rw [child743]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output742_skip, output743_skip]
+  kernel_rfl
 
 theorem node745_cond_eq : Flapjack.WordAlloc.removeDeadStructural input745 value111 value1 value2 = (output745, value112, value1) := by
   rw [input745_def, output745_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node746_cond_eq : Flapjack.WordAlloc.removeDeadStructural input746 value112 value1 value2 = (output746, value112, value1) := by
   rw [input746_def, output746_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node747_cond_eq : Flapjack.WordAlloc.removeDeadStructural input747 value112 value1 value2 = (output747, value112, value1) := by
   rw [input747_def, output747_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node748_cond_eq : Flapjack.WordAlloc.removeDeadStructural input748 value112 value1 value2 = (output748, value112, value1) := by
   rw [input748_def, output748_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node749_cond_eq
     (child747 : Flapjack.WordAlloc.removeDeadStructural input747 value112 value1 value2 = (output747, value112, value1))
@@ -2234,8 +2145,8 @@ theorem node749_cond_eq
   try dsimp only
   rw [child748]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output747_skip, output748_skip]
+  kernel_rfl
 
 theorem node750_cond_eq
     (child746 : Flapjack.WordAlloc.removeDeadStructural input746 value112 value1 value2 = (output746, value112, value1))
@@ -2246,8 +2157,8 @@ theorem node750_cond_eq
   try dsimp only
   rw [child749]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output746_skip, output749_skip]
+  kernel_rfl
 
 theorem node751_cond_eq
     (child745 : Flapjack.WordAlloc.removeDeadStructural input745 value111 value1 value2 = (output745, value112, value1))
@@ -2258,8 +2169,8 @@ theorem node751_cond_eq
   try dsimp only
   rw [child750]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output745_skip, output750_skip]
+  kernel_rfl
 
 theorem node752_cond_eq
     (child744 : Flapjack.WordAlloc.removeDeadStructural input744 value110 value1 value2 = (output744, value111, value1))
@@ -2270,18 +2181,16 @@ theorem node752_cond_eq
   try dsimp only
   rw [child751]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output744_skip, output751_skip]
+  kernel_rfl
 
 theorem node753_cond_eq : Flapjack.WordAlloc.removeDeadStructural input753 value110 value1 value2 = (output753, value110, value1) := by
   rw [input753_def, output753_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node754_cond_eq : Flapjack.WordAlloc.removeDeadStructural input754 value110 value1 value2 = (output754, value113, value1) := by
   rw [input754_def, output754_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node755_cond_eq
     (child753 : Flapjack.WordAlloc.removeDeadStructural input753 value110 value1 value2 = (output753, value110, value1))
@@ -2292,23 +2201,20 @@ theorem node755_cond_eq
   try dsimp only
   rw [child754]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output753_skip, output754_skip]
+  kernel_rfl
 
 theorem node756_cond_eq : Flapjack.WordAlloc.removeDeadStructural input756 value113 value1 value2 = (output756, value113, value1) := by
   rw [input756_def, output756_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node757_cond_eq : Flapjack.WordAlloc.removeDeadStructural input757 value113 value1 value2 = (output757, value113, value1) := by
   rw [input757_def, output757_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node758_cond_eq : Flapjack.WordAlloc.removeDeadStructural input758 value113 value1 value2 = (output758, value113, value1) := by
   rw [input758_def, output758_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node759_cond_eq
     (child757 : Flapjack.WordAlloc.removeDeadStructural input757 value113 value1 value2 = (output757, value113, value1))
@@ -2319,8 +2225,8 @@ theorem node759_cond_eq
   try dsimp only
   rw [child758]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output757_skip, output758_skip]
+  kernel_rfl
 
 theorem node760_cond_eq
     (child756 : Flapjack.WordAlloc.removeDeadStructural input756 value113 value1 value2 = (output756, value113, value1))
@@ -2331,8 +2237,8 @@ theorem node760_cond_eq
   try dsimp only
   rw [child759]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output756_skip, output759_skip]
+  kernel_rfl
 
 theorem node761_cond_eq
     (child755 : Flapjack.WordAlloc.removeDeadStructural input755 value110 value1 value2 = (output755, value113, value1))
@@ -2343,8 +2249,8 @@ theorem node761_cond_eq
   try dsimp only
   rw [child760]
   try dsimp only
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output755_skip, output760_skip]
+  kernel_rfl
 
 theorem node762_cond_eq
     (child752 : Flapjack.WordAlloc.removeDeadStructural input752 value110 value1 value2 = (output752, value112, value1))
@@ -2356,33 +2262,28 @@ theorem node762_cond_eq
   rw [child761]
   try dsimp only
   unfold Flapjack.WordAlloc.joinDeadIteResult
-  try (conv => lhs; cbv)
-  try rfl
+  try simp only [Flapjack.WordAlloc.joinSeq, Flapjack.WordAlloc.joinIte, output752_skip, output761_skip]
+  kernel_rfl
 
 theorem node763_cond_eq : Flapjack.WordAlloc.removeDeadStructural input763 value116 value1 value2 = (output763, value113, value1) := by
   rw [input763_def, output763_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node764_cond_eq : Flapjack.WordAlloc.removeDeadStructural input764 value113 value1 value2 = (output764, value112, value1) := by
   rw [input764_def, output764_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node765_cond_eq : Flapjack.WordAlloc.removeDeadStructural input765 value112 value1 value2 = (output765, value117, value1) := by
   rw [input765_def, output765_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node766_cond_eq : Flapjack.WordAlloc.removeDeadStructural input766 value117 value1 value2 = (output766, value117, value1) := by
   rw [input766_def, output766_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node767_cond_eq : Flapjack.WordAlloc.removeDeadStructural input767 value118 value1 value119 = (output767, value120, value1) := by
   rw [input767_def, output767_def]
-  try (conv => lhs; cbv)
-  try rfl
+  kernel_rfl
 
 #print axioms node767_cond_eq
 end InitE.DeadStages875.Parallel

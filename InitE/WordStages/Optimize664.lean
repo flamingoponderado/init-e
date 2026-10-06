@@ -1,3 +1,5 @@
+import InitE.CompactComputation
+import InitE.CompilerStages
 import InitE.WordStages.Source664
 import InitE.WordStages.Pass664_10
 import InitE.CompilerStages
@@ -2840,8 +2842,8 @@ theorem optimize664_eq : WordToWord.fullCompileSingleWith
   dsimp only
   have name_eq : source664.1 = 664 := by rfl
   have argc_eq : source664.2.1 = 1 := by rfl
-  have oracle_eq : oracle664 = proposed664 := by with_unfolding_all rfl
+  have oracle_eq : oracle664 = proposed664 := by kernel_rfl
   rw [name_eq, argc_eq, oracle_eq, pass664_0_eq, pass664_1_eq, pass664_2_eq, pass664_3_eq, pass664_4_eq, pass664_5_eq, pass664_6_eq, pass664_7_eq, pass664_8_eq, pass664_9_eq, pass664_10_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 #print axioms optimize664_eq
 end InitE.WordStages

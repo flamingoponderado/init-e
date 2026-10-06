@@ -1,3 +1,5 @@
+import InitE.CompactComputation
+import InitE.CompilerStages
 import InitE.WordStages.Source862
 import InitE.WordStages.Pass862_10
 import InitE.CompilerStages
@@ -4351,8 +4353,8 @@ theorem optimize862_eq : WordToWord.fullCompileSingleWith
   dsimp only
   have name_eq : source862.1 = 862 := by rfl
   have argc_eq : source862.2.1 = 2 := by rfl
-  have oracle_eq : oracle862 = proposed862 := by with_unfolding_all rfl
+  have oracle_eq : oracle862 = proposed862 := by kernel_rfl
   rw [name_eq, argc_eq, oracle_eq, pass862_0_eq, pass862_1_eq, pass862_2_eq, pass862_3_eq, pass862_4_eq, pass862_5_eq, pass862_6_eq, pass862_7_eq, pass862_8_eq, pass862_9_eq, pass862_10_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 #print axioms optimize862_eq
 end InitE.WordStages

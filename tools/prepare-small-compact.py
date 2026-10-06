@@ -83,14 +83,15 @@ def process(label):
     complete = complete.replace(f"source{label}.2.1 = 3", f"source{label}.2.1 = {argc[1]}")
     (directory / "Complete.lean").write_text(complete)
     original_goal = original.split(marker)[1].split(" := by")[0]
-    exact = (f"import InitE.SmallStages.Compact{label}.Complete\n"
+    exact = ("import InitE.CompactComputation\n"
+        f"import InitE.SmallStages.Compact{label}.Complete\n"
         f"import InitE.SmallStages.Oracles{label}\n"
         "set_option autoImplicit false\nset_option maxRecDepth 1000000\nset_option maxHeartbeats 0\n"
         "open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target\n"
         f"open InitE.WordStages InitE.SmallStages.Oracles{label}\n"
         f"namespace InitE.SmallStages.Compact{label}\n"
         f"theorem optimize{label}_exact :{original_goal} := by\n"
-        "  exact optimize" + str(label) + "_eq.trans (by with_unfolding_all rfl)\n"
+        "  exact optimize" + str(label) + "_eq.trans (by kernel_rfl)\n"
         f"#print axioms optimize{label}_exact\nend InitE.SmallStages.Compact{label}\n")
     (directory / "Exact.lean").write_text(exact)
     if args.prepare_only:

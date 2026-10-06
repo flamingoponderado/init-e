@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Shared713.Data8
 set_option Elab.async false
 set_option maxRecDepth 1000000
@@ -8,7 +9,6 @@ open scoped InitE.CompilerComputation
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 namespace InitE.WordStages.Shared713
 theorem pass713_8_eq : WordAlloc.removeDeadProg (pass713_7) = pass713_8 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass713_8_eq
 end InitE.WordStages.Shared713

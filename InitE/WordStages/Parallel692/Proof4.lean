@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Parallel692.Data4
 import InitE.WordStages.Parallel692.Data3
 set_option Elab.async false
@@ -9,7 +10,6 @@ open scoped InitE.CompilerComputation
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 namespace InitE.WordStages.Parallel692
 theorem pass692_4_eq : WordCse.wordCommonSubexpElim (pass692_3) = pass692_4 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass692_4_eq
 end InitE.WordStages.Parallel692

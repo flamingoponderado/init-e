@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Parallel880.Data0
 import InitE.WordStages.Source880
 set_option Elab.async false
@@ -9,7 +10,6 @@ open scoped InitE.CompilerComputation
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 namespace InitE.WordStages.Parallel880
 theorem pass880_0_eq : WordSimp.compileExp (source880.2.2) = pass880_0 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass880_0_eq
 end InitE.WordStages.Parallel880

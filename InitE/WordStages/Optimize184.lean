@@ -1,3 +1,5 @@
+import InitE.CompactComputation
+import InitE.CompilerStages
 import InitE.WordStages.Source184
 import InitE.WordStages.Pass184_10
 import InitE.CompilerStages
@@ -4293,8 +4295,8 @@ theorem optimize184_eq : WordToWord.fullCompileSingleWith
   dsimp only
   have name_eq : source184.1 = 184 := by rfl
   have argc_eq : source184.2.1 = 3 := by rfl
-  have oracle_eq : oracle184 = proposed184 := by with_unfolding_all rfl
+  have oracle_eq : oracle184 = proposed184 := by kernel_rfl
   rw [name_eq, argc_eq, oracle_eq, pass184_0_eq, pass184_1_eq, pass184_2_eq, pass184_3_eq, pass184_4_eq, pass184_5_eq, pass184_6_eq, pass184_7_eq, pass184_8_eq, pass184_9_eq, pass184_10_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 #print axioms optimize184_eq
 end InitE.WordStages

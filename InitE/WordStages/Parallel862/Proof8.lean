@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Parallel862.Data8
 import InitE.WordStages.Parallel862.Data7
 set_option Elab.async false
@@ -9,7 +10,6 @@ open scoped InitE.CompilerComputation
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 namespace InitE.WordStages.Parallel862
 theorem pass862_8_eq : WordAlloc.removeDeadProg (pass862_7) = pass862_8 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass862_8_eq
 end InitE.WordStages.Parallel862

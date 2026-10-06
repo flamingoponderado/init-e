@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Source700
 import InitE.CompilerComputation
 set_option Elab.async false
@@ -2370,7 +2371,6 @@ def word700_0_564 : WordLangProgHOL (BitVec 64) :=
 def pass700_0 : WordLangProgHOL (BitVec 64) :=
 word700_0_564
 theorem pass700_0_eq : WordSimp.compileExp (source700.2.2) = pass700_0 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass700_0_eq
 end InitE.WordStages

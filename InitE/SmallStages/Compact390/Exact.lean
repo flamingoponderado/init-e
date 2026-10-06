@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.SmallStages.Compact390.Complete
 import InitE.SmallStages.Oracles390
 set_option autoImplicit false
@@ -11,6 +12,6 @@ theorem optimize390_exact : WordToWord.fullCompileSingleWith
   (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
   RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
   riscvConfig (source390, oracle390) = optimized390 := by
-  exact optimize390_eq.trans (by with_unfolding_all rfl)
+  exact optimize390_eq.trans (by kernel_rfl)
 #print axioms optimize390_exact
 end InitE.SmallStages.Compact390

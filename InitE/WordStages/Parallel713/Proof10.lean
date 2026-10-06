@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Parallel713.Data10
 import InitE.WordStages.Parallel713.Data9
 set_option Elab.async false
@@ -9,7 +10,6 @@ open scoped InitE.CompilerComputation
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 namespace InitE.WordStages.Parallel713
 theorem pass713_10_eq : WordRemove.removeMustTerminate (pass713_9) = pass713_10 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass713_10_eq
 end InitE.WordStages.Parallel713

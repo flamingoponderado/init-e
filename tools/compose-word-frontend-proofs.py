@@ -8,8 +8,6 @@ header = """set_option autoImplicit false
 set_option Elab.async false
 set_option maxRecDepth 1000000
 set_option maxHeartbeats 0
-set_option cbv.maxSteps 1000000000
-set_option cbv.warning false
 namespace InitE.FrontendStages.Word
 """
 for i in range(826):
@@ -21,7 +19,7 @@ for i in range(826):
         lane = f"import InitE.WordStages.Source{label-16}\n"
         if lane not in text:
             source.write_text(lane+text)
-    imports = f"import InitE.FrontendStages.Loop.Data{i}\nimport InitE.WordStages.Source{label}\nimport InitE.WordFrontendComputation\n"
+    imports = f"import InitE.CompactComputation\nimport InitE.FrontendStages.Loop.Data{i}\nimport InitE.WordStages.Source{label}\nimport InitE.WordFrontendComputation\n"
     if i >= 16:
         imports += f"import InitE.FrontendStages.Word.Translate{i-16}\n"
     special = base / f"Translate{i}.lean"
@@ -35,7 +33,7 @@ for i in range(826):
     (base / f"Translate{i}.lean").write_text(imports + header +
         f"theorem translate{i}_eq : InitE.WordFrontendComputation.compileEntry Loop.output{i} =\n" +
         f"    InitE.WordStages.source{label} := by\n" +
-        "  conv => lhs; cbv\n  try (conv => rhs; cbv)\n  try rfl\n" +
+        "  kernel_rfl\n" +
         f"#print axioms translate{i}_eq\nend InitE.FrontendStages.Word\n")
 imports = "import InitE.WordFrontendComputation\n" + "".join(
     f"import InitE.FrontendStages.Word.Translate{i}\n" for i in range(810,826))

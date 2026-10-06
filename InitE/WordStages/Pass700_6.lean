@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Pass700_5
 import InitE.CompilerComputation
 set_option Elab.async false
@@ -7261,7 +7262,6 @@ def word700_6_1296 : WordLangProgHOL (BitVec 64) :=
 def pass700_6 : WordLangProgHOL (BitVec 64) :=
 word700_6_1296
 theorem pass700_6_eq : WordInst.threeToTwoRegProg riscvConfig.twoRegArith (pass700_5) = pass700_6 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass700_6_eq
 end InitE.WordStages

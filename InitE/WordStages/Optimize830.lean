@@ -1,3 +1,5 @@
+import InitE.CompactComputation
+import InitE.CompilerStages
 import InitE.WordStages.Source830
 import InitE.WordStages.Pass830_10
 import InitE.CompilerStages
@@ -7017,8 +7019,8 @@ theorem optimize830_eq : WordToWord.fullCompileSingleWith
   dsimp only
   have name_eq : source830.1 = 830 := by rfl
   have argc_eq : source830.2.1 = 1 := by rfl
-  have oracle_eq : oracle830 = proposed830 := by with_unfolding_all rfl
+  have oracle_eq : oracle830 = proposed830 := by kernel_rfl
   rw [name_eq, argc_eq, oracle_eq, pass830_0_eq, pass830_1_eq, pass830_2_eq, pass830_3_eq, pass830_4_eq, pass830_5_eq, pass830_6_eq, pass830_7_eq, pass830_8_eq, pass830_9_eq, pass830_10_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 #print axioms optimize830_eq
 end InitE.WordStages

@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Pass713_2
 import InitE.WordStages.Sparse713.Data3
 import InitE.WordStages.Parallel713.Agreements.Chunk068
@@ -16,7 +17,7 @@ theorem fromCheckpoints3_eq :
     WordAlloc.removeDeadProg InitE.WordStages.pass713_2 = pass713_3 := by
   have input_eq : InitE.WordStages.pass713_2 = InitE.DeadStages713.input17408 :=
     (show InitE.WordStages.pass713_2 =
-      InitE.WordStages.Parallel713.word713_2_17426 by with_unfolding_all rfl).trans
+      InitE.WordStages.Parallel713.word713_2_17426 by kernel_rfl).trans
         InitE.WordStages.Parallel713.Agreements.input17408_eq.symm
   unfold WordAlloc.removeDeadProg
   rw [WordAlloc.removeDeadStructural_eq, input_eq]
@@ -25,7 +26,7 @@ theorem fromCheckpoints3_eq :
     InitE.DeadStages713.value2] at checked
   rw [checked]
   exact InitE.WordStages.Parallel713.Agreements.output17408_eq.trans
-    (by with_unfolding_all rfl)
+    (by kernel_rfl)
 
 #print axioms fromCheckpoints3_eq
 end InitE.WordStages.Sparse713

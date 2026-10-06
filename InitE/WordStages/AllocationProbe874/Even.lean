@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Parallel874.Data8
 import InitE.WordStages.Parallel874.Data9
 set_option Elab.async false
@@ -12,7 +13,6 @@ namespace InitE.WordStages.AllocationProbe874
 @[irreducible] def colour : Spt Nat := proposed874.getD .ln
 theorem checked : WordAlloc.everyEvenColour colour = true := by
   unfold colour
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms checked
 end InitE.WordStages.AllocationProbe874

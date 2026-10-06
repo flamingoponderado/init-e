@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Parallel231.Data2
 import InitE.WordStages.Parallel231.Data1
 set_option Elab.async false
@@ -9,7 +10,6 @@ open scoped InitE.CompilerComputation
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 namespace InitE.WordStages.Parallel231
 theorem pass231_2_eq : WordAlloc.fullSsaCcTrans 3 (pass231_1) = pass231_2 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass231_2_eq
 end InitE.WordStages.Parallel231

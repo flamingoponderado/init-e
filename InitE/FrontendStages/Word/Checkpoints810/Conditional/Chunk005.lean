@@ -1,18 +1,15 @@
+import InitE.CompactComputation
 import InitE.FrontendStages.Word.Checkpoints810.Data.Chunk005
 set_option autoImplicit false
 set_option Elab.async false
 set_option maxRecDepth 1000000
 set_option maxHeartbeats 0
-set_option cbv.maxSteps 1000000000
-set_option cbv.warning false
 open Flapjack
 namespace InitE.FrontendStages.Word.Checkpoints810
 theorem node1920_conditional : Flapjack.LoopToWord.compHOL Word.context810
     Loop.loopBody810_1764 (874, 42) = (output1920, (874, 42)) := by
   rw [output1920_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1921_conditional
     (child1920 : Flapjack.LoopToWord.compHOL Word.context810

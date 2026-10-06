@@ -1,3 +1,5 @@
+import InitE.CompactComputation
+import InitE.CompilerStages
 import InitE.WordStages.Source783
 import InitE.WordStages.Pass783_10
 import InitE.CompilerStages
@@ -6105,8 +6107,8 @@ theorem optimize783_eq : WordToWord.fullCompileSingleWith
   dsimp only
   have name_eq : source783.1 = 783 := by rfl
   have argc_eq : source783.2.1 = 4 := by rfl
-  have oracle_eq : oracle783 = proposed783 := by with_unfolding_all rfl
+  have oracle_eq : oracle783 = proposed783 := by kernel_rfl
   rw [name_eq, argc_eq, oracle_eq, pass783_0_eq, pass783_1_eq, pass783_2_eq, pass783_3_eq, pass783_4_eq, pass783_5_eq, pass783_6_eq, pass783_7_eq, pass783_8_eq, pass783_9_eq, pass783_10_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 #print axioms optimize783_eq
 end InitE.WordStages

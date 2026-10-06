@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Pass651_4
 import InitE.CompilerComputation
 set_option Elab.async false
@@ -7312,7 +7313,6 @@ def word651_5_1387 : WordLangProgHOL (BitVec 64) :=
 def pass651_5 : WordLangProgHOL (BitVec 64) :=
 word651_5_1387
 theorem pass651_5_eq : WordCopy.copyProp (pass651_4) = pass651_5 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass651_5_eq
 end InitE.WordStages

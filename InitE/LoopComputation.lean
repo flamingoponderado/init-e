@@ -1,3 +1,4 @@
+import InitE.LoopKernelComputation
 import InitE.CrepComposition
 import Flapjack.Pancake.CrepToLoop.ContextExact
 

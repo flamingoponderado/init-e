@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.FrontendStages.Crep.FunctionsFacts
 import InitE.FrontendStages.Crep.ContextFacts
 import InitE.CrepInlineComputation
@@ -6,8 +7,6 @@ set_option autoImplicit false
 set_option Elab.async false
 set_option maxRecDepth 1000000
 set_option maxHeartbeats 0
-set_option cbv.maxSteps 1000000000
-set_option cbv.warning false
 namespace InitE.FrontendStages
 open Flapjack Flapjack.Pancake.PanLang
 open Declarations Crep
@@ -19,8 +18,7 @@ private theorem inputFunctions_eq : inputFunctions = generatedMain :: translated
 
 private theorem exceptions_compile_eq : exceptionDeclarations.filterMap
     (InitE.CrepComputation.compileDeclaration functionMap exceptionMap) = [] := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 
 theorem toCrep_eq : compileToCrepExactHOLW pass2 = pass3 := by
   rw [InitE.CrepComputation.compileToCrep_eq_filterMap,
