@@ -5,39 +5,109 @@ fixed Pancake guest on the cases specified in [docs/CHALLENGE.md](docs/CHALLENGE
 The score is a certified execution step bound, either a natural number or infinity.
 Code must fit in the 128 MiB program window.
 
-The assignment includes `guest/src/`, the authoritative literal AST in `Guest/Ast.lean`, and
-its initial memory and accelerator FFI semantics. The authoritative source
-evaluator is the compiler theorem’s `PanSemStateFiniteExact.semanticsDecls`,
-fixed by `InitE/SourceSemantics.lean`. Flapjack is a pinned Lake
-dependency from the `riscv-im` branch. The baseline includes a proved bootstrap
-and uses compiler correctness to
-certify the complete submitted image with score infinity. The verifier script
-and submission format are described in [docs/SUBMISSIONS.md](docs/SUBMISSIONS.md);
-the standard-axiom baseline has passed the full outside build and proof audit.
-The previous pin's cold isolated trusted audit also passed with exactly the three
-standard axioms. The compact computation certificates have passed the complete outside build
-and standard-axiom audit. Fresh isolated comparator acceptance is pending.
-The earlier isolated acceptance used native-computation axioms and is recorded
-separately.
+## How to participate
+
+1. Read [the challenge](docs/CHALLENGE.md) for the fixed source program,
+   execution environment, covered outcomes, and scoring rules.
+2. Create a submission directory containing `Solution.lean`, `claim.json`, and
+   optional helper modules under `InitECandidate/`. Supply the complete ROM,
+   including any bootstrap, data, and padding, as `List (BitVec 8)` literals;
+   large images may concatenate literal chunks.
+3. Define `InitE.Challenge.submission` and a literal `claimedScore`, then prove
+   `InitE.Challenge.certificate` with the statement below. Set `claim.json` to
+   `{"K":12345}` for a finite score, or `{"K":"infinity"}` for infinity,
+   matching the Lean score.
+4. Run the submission checks and isolated verifier. Follow
+   [docs/SUBMISSIONS.md](docs/SUBMISSIONS.md) for the complete format, permitted
+   imports, tool installation, and isolation requirements. The initial solution
+   in [submission/Solution.lean](submission/Solution.lean) is a worked example.
+
+The required declarations in `Solution.lean` have this form:
+
+```lean
+import InitE
+
+namespace InitE.Challenge
+
+noncomputable def submission : InitE.Submission := ...
+def claimedScore : InitE.NatE := .finite 12345  -- or .infinity
+
+theorem certificate : InitE.Certificate submission claimedScore := by
+  ...
+
+end InitE.Challenge
+```
+
+The fixed proposition is [InitE.Certificate](InitE/Challenge.lean). It requires
+admission conditions, including the code-size and FFI-layout checks, and a proof
+that each covered source termination on an input with declared gas limit at most
+200,000,000 has a matching target execution and observable result. A finite score
+bounds the target's steps; infinity still requires a finite terminating execution
+for each such input. Only `propext`, `Classical.choice`, and `Quot.sound` are
+permitted axioms. Passing execution tests does not replace this proof.
+
+From the repository root, check your candidate directory with:
+
+```sh
+python3 verifier/check_submission.py path/to/candidate
+python3 verifier/verify.py --local path/to/candidate --work verifier/runs/my-candidate
+```
+
+Install the pinned verifier tools as documented in
+[docs/SUBMISSIONS.md](docs/SUBMISSIONS.md) before the second command, and choose a
+work directory that does not already exist. File/import checks and Lean builds
+are preliminary checks; isolated verification succeeds only with a `verified`
+result after comparator kernel replay.
+
+## Source program and initial submission
+
+The assignment includes `guest/src/`, the authoritative literal AST in
+[Guest/Ast.lean](Guest/Ast.lean), and its initial memory and accelerator FFI
+semantics. The authoritative source evaluator is the compiler theorem's
+`PanSemStateFiniteExact.semanticsDecls`, fixed by
+[InitE/SourceSemantics.lean](InitE/SourceSemantics.lean). Flapjack is a pinned Lake
+dependency from the `riscv-im` branch. The initial submission includes a proved
+bootstrap and uses compiler correctness to certify the complete submitted image
+with score infinity.
+
+The challenge takes `Guest.guestAst` directly. The Pancake text remains readable
+provenance; parser agreement is not required.
+
+## Building and testing
 
 Build the challenge and initial submission with `tools/build-lean.sh`; run the
 proof audit with `tools/build-lean.sh InitE.Audit`. Build the optional testing
 model with `tools/build-lean.sh Guest`. These commands stop after eight hours;
 use `tools/build-lean.sh --quick MODULE` for a 10-minute exploratory check.
-A timeout means the check is unfinished, not that the proof passed. Candidate testing, toolchain setup,
-Docker instructions, and historical results are in [docs/TESTING.md](docs/TESTING.md).
-The full EEST procedure is in [docs/EEST-SPIKE.md](docs/EEST-SPIKE.md).
-Tests help develop candidates; submitting a solution requires proofs.
+A timeout means the check is unfinished, not that the proof passed.
+
+Candidate testing, toolchain setup, Docker instructions, and historical results
+are in [docs/TESTING.md](docs/TESTING.md). The full EEST procedure is in
+[docs/EEST-SPIKE.md](docs/EEST-SPIKE.md). Tests help develop candidates; submitting
+a solution requires proofs.
+
+## Verification status
+
+The standard-axiom baseline and compact computation certificates have passed
+the full outside build and proof audit. The previous pin's cold isolated trusted
+audit also passed with exactly the three standard axioms. Fresh isolated
+comparator acceptance is pending. The earlier isolated acceptance used
+native-computation axioms and is recorded separately.
+
+## Soundness and execution platform
 
 This is experimental research code. Equivalence with this guest is not a proof
-that the guest implements Ethereum correctly. Evaluate [docs/SOUNDNESS.md](docs/SOUNDNESS.md)
-and the [riscv-im-compare README](https://github.com/flamingoponderado/riscv-im-compare#readme)
+that the guest implements Ethereum correctly. Evaluate
+[docs/SOUNDNESS.md](docs/SOUNDNESS.md) and the
+[riscv-im-compare README](https://github.com/flamingoponderado/riscv-im-compare#readme)
 as well: its comparison of Flapjack's RISC-V model with riscv-zkvm documents
-explicit assumptions and remaining gaps that matter for the intended execution platform.
+explicit assumptions and remaining gaps that matter for the intended execution
+platform.
 
-The challenge takes `Guest.guestAst` directly. The Pancake text remains readable
-provenance; parser agreement is not required. See
-[proof-performance notes](docs/PROOF-PERFORMANCE.md) for scaled measurements and
-the remaining standard-axiom verification work.
+## Proof performance
+
+See [proof-performance notes](docs/PROOF-PERFORMANCE.md) for scaled measurements
+and the remaining standard-axiom verification work.
 [Proof reuse measurements](docs/PROOF-REUSE-EXPERIMENT.md) describe the shared
-backend label and duplicate-function certificates, including complete export replay timings.
+backend label and duplicate-function certificates, including complete export
+replay timings.
