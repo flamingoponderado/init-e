@@ -39,3 +39,5 @@ The challenge takes `Guest.guestAst` directly. The Pancake text remains readable
 provenance; parser agreement is not required. See
 [proof-performance notes](docs/PROOF-PERFORMANCE.md) for scaled measurements and
 the remaining standard-axiom verification work.
+[Proof reuse measurements](docs/PROOF-REUSE-EXPERIMENT.md) describe the shared
+backend label and duplicate-function certificates, including complete export replay timings.

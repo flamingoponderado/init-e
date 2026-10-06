@@ -27,6 +27,7 @@ if a.generate or a.generate_only:
  output=root/".lake/build/lib/lean/Tools/GenBackendTargetStages.olean";output.parent.mkdir(parents=True,exist_ok=True)
  command("generator-correct-build",["lake","env","lean","-o",str(output),"Tools/GenBackendTargetStages.lean"],a.seconds)
  command("generate-correct",["lake","env","lean","InitE/BackendStages/TargetChecks/GenerateCorrect.lean"],a.generation_seconds)
+ command("reuse-correct-labels",["python3","tools/reuse_backend_labels.py"],a.seconds)
  if a.generate_only:raise SystemExit(0)
 def check(label):
  started=time.monotonic();base=root/"InitE/BackendStages/TargetChecks"

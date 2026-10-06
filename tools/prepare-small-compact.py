@@ -113,3 +113,8 @@ if args.prepare_only:
 else:
     for label in labels:
         process(label)
+
+# Regeneration must preserve the checked common-pipeline certificates.
+if set(labels) & {225, 226, 649, 650}:
+    subprocess.run(["python3", str(root / "tools/reuse-word-functions.py"), "225", "226"],
+                   cwd=root, check=True)

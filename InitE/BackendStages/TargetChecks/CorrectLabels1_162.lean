@@ -1,3 +1,7 @@
+import InitE.BackendStages.TargetChecks.CorrectLabels0_162
+import InitE.BackendStages.TargetChecks.CorrectEncode0_162
+import InitE.BackendStages.TargetChecks.LabelReuse
+import InitE.CompactComputation
 import InitE.BackendStages.TargetChecks.CorrectData1_162
 set_option autoImplicit false
 set_option Elab.async false
@@ -7,6 +11,9 @@ open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 open InitE.BackendStages
 namespace InitE.BackendStages.TargetChecks.Correct
 theorem localLabels1_162_eq : LabToTarget.sectionLabels 46556 Reencode0_162.lines [] = (46928, localLabels1_162) := by
-  with_unfolding_all rfl
+  exact (InitE.BackendStages.TargetChecks.sectionLabels_of_encLinesAgain
+    Target.labels0 Target.ffis 46556 46928 riscvConfig.encode
+    Initial162.lines Reencode0_162.lines [] Reencode0_162_eq).trans
+    (localLabels0_162_eq.trans (by kernel_rfl))
 #print axioms localLabels1_162_eq
 end InitE.BackendStages.TargetChecks.Correct
