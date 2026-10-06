@@ -2,7 +2,8 @@
 """Check a frozen init-e submission against the independently frozen challenge contract.
 
 Untrusted Lean is compiled only within the mandatory Linux systemd/Landlock sandbox.
-Structural checks alone never produce the status "verified".
+The comparator is temporarily commented out; normal runs stop after the trusted
+audit with status "comparator_disabled". No submission acceptance is reported.
 """
 from __future__ import annotations
 
@@ -447,18 +448,24 @@ def verify(args: argparse.Namespace) -> dict:
         config_path = work / "comparator.json"
         config_path.write_text(json.dumps(config, indent=2) + "\n")
         result["permitted_axioms"] = permitted
-        comparator_command = limited_lake_command(
-            project, ["lake", "env", env["COMPARATOR_BIN"], str(config_path)])
-        with comparator_spool_directory(work, project) as spool_dir:
-            command, clean = linux_command(comparator_command, project, env,
-                                           [source, *args.hide], spool_dir=spool_dir)
-            code, timeout = run_checked(command, project, clean, log)
-            output = log.read_text(errors="replace")
-            if timeout:
-                return dict(result, status="timeout")
-            if code == 0 and "Your solution is okay!" in output:
-                return dict(result, status="verified", score=policy["score"])
-            return dict(result, status="rejected", reason=output[-1200:])
+        # Temporarily disabled at the maintainer's request. See docs/SOUNDNESS.md.
+        # comparator_command = limited_lake_command(
+        #     project, ["lake", "env", env["COMPARATOR_BIN"], str(config_path)])
+        # with comparator_spool_directory(work, project) as spool_dir:
+        #     command, clean = linux_command(comparator_command, project, env,
+        #                                    [source, *args.hide], spool_dir=spool_dir)
+        #     code, timeout = run_checked(command, project, clean, log)
+        #     output = log.read_text(errors="replace")
+        #     if timeout:
+        #         return dict(result, status="timeout")
+        #     if code == 0 and "Your solution is okay!" in output:
+        #         return dict(result, status="verified", score=policy["score"])
+        #     return dict(result, status="rejected", reason=output[-1200:])
+        reason = ("Comparator disabled; candidate build, export, comparison and "
+                  "kernel replay were not performed.")
+        log.write_text(reason + "\n")
+        return dict(result, status="comparator_disabled", audit_log=str(audit_log), reason=reason)
+
     except (VerifyError, OSError, subprocess.SubprocessError, ValueError) as exc:
         log.write_text(str(exc) + "\n")
         return dict(result, status="failed", reason=str(exc)[:1200])

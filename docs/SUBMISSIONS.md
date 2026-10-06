@@ -64,6 +64,12 @@ may be imported.
 
 ## Isolated proof verification
 
+**The comparator stage is temporarily commented out.** The normal command
+below performs policy, isolation and trusted-audit checks, then reports
+`comparator_disabled` with exit status 1. It does not build or accept the
+candidate. See [SOUNDNESS.md](SOUNDNESS.md#comparator-temporarily-disabled).
+The comparator procedure described below applies when that stage is restored.
+
 Install the pinned tools, then run the isolated checker:
 
 ```sh

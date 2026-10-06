@@ -1,3 +1,5 @@
+import argparse
+import io
 import json
 import os
 import sys
@@ -11,7 +13,7 @@ from check_submission import check, claim, score_literal
 from verify import (BUILD_SECONDS, WALL_SECONDS, VerifyError, freeze_submission,
                     limited_lake_command, linux_command, prepare_project, trusted_axioms,
                     clone_project_cache, REBUILT_NAMESPACES, comparator_spool_directory,
-                    validate_spool_directory, linux_filesystem_type)
+                    validate_spool_directory, linux_filesystem_type, verify, main)
 
 
 class PolicyTests(unittest.TestCase):
@@ -58,6 +60,54 @@ class PolicyTests(unittest.TestCase):
         (self.root / "notes.zip").unlink()
         (self.root / "Solution.lean").write_text("prelude\n")
         self.assertFalse(check(self.root)["ok"])
+
+
+class DisabledComparatorTests(unittest.TestCase):
+    def test_trusted_audit_pass_does_not_run_or_accept_candidate(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            source = root / "candidate"
+            (source / "InitECandidate").mkdir(parents=True)
+            (source / "Solution.lean").write_text("import InitECandidate.Program\n")
+            (source / "InitECandidate" / "Program.lean").write_text("import InitE.Challenge\n")
+            (source / "claim.json").write_text('{"K":"infinity"}')
+            trusted = Path(__file__).resolve().parents[2]
+            permitted = json.loads((trusted / "verifier" / "trusted-axioms.json").read_text())
+            args = argparse.Namespace(local=source, trusted=trusted, work=root / "run",
+                                      hide=[], structural_only=False)
+
+            def stage(_trusted, _source, project, _claim):
+                (project / "verifier").mkdir(parents=True)
+                (project / "verifier" / "trusted-axioms.json").write_text(json.dumps(permitted))
+                (project / "verifier" / "comparator.json").write_text("{}")
+                return "challenge-fingerprint"
+
+            def audit(_command, _project, _env, log, **_kwargs):
+                log.write_text("INIT_E_TRUSTED_AXIOMS " + json.dumps(permitted) + "\n")
+                return 0, False
+
+            with patch("verify.platform.system", return_value="Linux"), \
+                 patch("verify.tools_env", return_value={}), \
+                 patch("verify.linux_preflight"), patch("verify.sandbox_probe"), \
+                 patch("verify.prepare_project", side_effect=stage), \
+                 patch("verify.linux_command", side_effect=lambda command, *a, **k: (command, {})), \
+                 patch("verify.run_checked", side_effect=audit) as run, \
+                 patch("verify.comparator_spool_directory") as spool:
+                result = verify(args)
+            self.assertEqual(result["status"], "comparator_disabled")
+            self.assertEqual(result["permitted_axioms"], sorted(permitted))
+            self.assertNotIn("score", result)
+            self.assertIn("were not performed", Path(result["log"]).read_text())
+            run.assert_called_once()
+            self.assertEqual(run.call_args.args[0][-3:], ["lake", "build", "TrustedAxioms"])
+            spool.assert_not_called()
+
+    def test_disabled_comparator_cli_is_not_success(self):
+        with patch("verify.verify", return_value={"status": "comparator_disabled"}), \
+             patch.object(sys, "argv", ["verify.py", "--local", "candidate", "--work", "unused"]), \
+             patch("sys.stdout", new_callable=io.StringIO) as output:
+            self.assertEqual(main(), 1)
+            self.assertEqual(json.loads(output.getvalue())["status"], "comparator_disabled")
 
 
 class FreezeTests(unittest.TestCase):

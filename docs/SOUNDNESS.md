@@ -1,9 +1,24 @@
 # Soundness notes
 
+## Comparator temporarily disabled
+
+The comparator invocation in `verifier/verify.py` is commented out. A normal
+run still freezes the submission, checks its file/import/claim policy, probes
+Linux isolation, and builds and validates the trusted challenge's axiom audit.
+It then reports **`comparator_disabled`** and exits with status **1**.
+
+The run does not build the candidate, export its proof, compare its declarations
+or axioms with the trusted challenge, or replay its proof in the comparator's
+kernel. Passing the trusted audit therefore establishes no acceptance of the
+submission. The checker cannot report `verified` while this stage is disabled.
+Outside Lean builds and axiom audits remain useful preliminary checks, but do
+not replace comparator acceptance. The commented invocation and its pinned
+configuration are retained for restoration.
+
 ## The memory is intentionally big
 
 The challenge (`docs/CHALLENGE.md`) states functional equivalence against the
-Pancake source on a machine with 29 GB of RAM from `0xa000_0000`. That size is
+Pancake source on a machine with 29 GiB of RAM from `0xa000_0000`. That size is
 chosen for technical reasons in how the challenge is stated, not because any
 particular zkVM provides it:
 
@@ -54,7 +69,8 @@ as `docs/CHALLENGE.md` states. The following can still go wrong.
   the Pancake source runs out of memory or diverges on it (the free case, so the
   submission may reject or trap), or the Pancake source itself rejects the valid
   block (a bug of the source, which a submission must reproduce). The same
-  freedom applies when the declared block gas limit parses and exceeds 200M.
+  freedom applies when the total declared block gas reader returns more than
+  200M.
 * **The fixed Pancake program and the semantic models might contain bugs.**
   The program is the reference, so submissions reproduce its behavior in the
   covered cases. Compiler-based submissions must prove the compiler theorem's
