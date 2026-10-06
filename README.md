@@ -78,6 +78,19 @@ verified as submission proofs. See [the proof boundary](docs/CHALLENGE.md#challe
 The challenge takes `Guest.guestAst` directly. The Pancake text remains readable
 provenance; parser agreement is not required.
 
+## Hints for a finite score
+
+One possible strategy is to define a step-count cost model for the fixed Pancake
+source evaluator, then prove a step-count preservation or upper-bound theorem
+for the Flapjack compiler that relates source execution cost to RISC-V steps.
+Bound the source cost for inputs satisfying the declared gas limit, including
+input decoding and other work outside gas-charged EVM execution. Combine these
+results with bounds for the bootstrap and accelerator/foreign-call execution to
+obtain a literal finite `K` in the challenge's target evaluator.
+
+This is an optional proof strategy. Submissions may use any approach that proves
+the required certificate.
+
 ## Building and testing
 
 Build the challenge and initial submission with `tools/build-lean.sh`; run the
