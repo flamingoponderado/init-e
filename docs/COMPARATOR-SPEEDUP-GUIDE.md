@@ -220,6 +220,47 @@ Therefore, neither fewer declarations, more caching, nor shorter proof text is
 an acceptance criterion. The measured comparator cost must improve without an
 unacceptable build or memory regression. Include helper setup costs explicitly.
 
+### Compiler intermediates: share a checked computation
+
+Most generated compiler stages already use compact proofs. A remaining
+opportunity is to reuse a checked equation when multiple functions have the
+same optimizer input. Functions 373, 375, 376, 377, and 378 have the same body
+and argument count. Their names differ, so directly aliasing the full theorem
+is insufficient. The checked allocator oracle permits a theorem generalized
+over the function name; the optimizer prefix and oracle result can then be
+checked once and reused by all five public certificates.
+
+The five-function comparison improved median replay from 6.184 s to 5.371 s
+and comparator wall time from 20.623 s to 19.628 s in three alternating trials.
+Parsing still takes about 13 seconds. This is a modest improvement on an actual
+compiler fragment, with no estimate for whole-submission speedup.
+
+The alternative that reuses every existing per-pass equation took 5.424 s
+median replay over two trials, versus 5.371 s for the shared computed prefix.
+That small difference does not establish a checkpoint-layout advantage; both
+benefit from avoiding repeated optimizer work across functions. Warm sequential
+compilation of the eight selected modules plus the group fixture increased
+slightly, from 10.72 s to 11.47 s. Common dependencies were prebuilt, and all
+used helper proofs were included in the exported replay. Existing data and
+public theorem statements remain unchanged; every comparison passed the
+permitted-axiom and declaration checks.
+
+Reproduce against the frozen original proofs:
+
+```sh
+rtk proxy python3 tools/certificate-bench/stage-reuse.py \
+  --base-revision c2f6c8f5f --work work/lean-perf/stage-group-confirmation --trials 3
+```
+
+The harness compiles isolated before/after copies, compares their common
+five-theorem statement with the real comparator, and includes the complete
+used dependency closures. `--checkpoint-prefix` tests reusing existing
+per-pass equations instead of computing the shared prefix in one step.
+The checked results and setup costs are recorded in
+[stage-reuse-results.json](../tools/certificate-bench/stage-reuse-results.json).
+`tools/reuse-word-functions.py` preserves the change after regeneration and
+checks that the source bodies and argument counts still match.
+
 ## 6. Retain only validated changes
 
 Before committing:
