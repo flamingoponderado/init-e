@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.SmallStages.Compact345.Complete
 import InitE.SmallStages.Oracles345
 set_option autoImplicit false
@@ -11,6 +12,6 @@ theorem optimize345_exact : WordToWord.fullCompileSingleWith
   (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
   RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
   riscvConfig (source345, oracle345) = optimized345 := by
-  exact optimize345_eq.trans (by with_unfolding_all rfl)
+  exact optimize345_eq.trans (by kernel_rfl)
 #print axioms optimize345_exact
 end InitE.SmallStages.Compact345

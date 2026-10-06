@@ -1,3 +1,5 @@
+import InitE.CompactComputation
+import InitE.CompilerStages
 import InitE.WordStages.Source347
 import InitE.WordStages.Pass347_10
 import InitE.CompilerStages
@@ -2866,8 +2868,8 @@ theorem optimize347_eq : WordToWord.fullCompileSingleWith
   dsimp only
   have name_eq : source347.1 = 347 := by rfl
   have argc_eq : source347.2.1 = 3 := by rfl
-  have oracle_eq : oracle347 = proposed347 := by with_unfolding_all rfl
+  have oracle_eq : oracle347 = proposed347 := by kernel_rfl
   rw [name_eq, argc_eq, oracle_eq, pass347_0_eq, pass347_1_eq, pass347_2_eq, pass347_3_eq, pass347_4_eq, pass347_5_eq, pass347_6_eq, pass347_7_eq, pass347_8_eq, pass347_9_eq, pass347_10_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 #print axioms optimize347_eq
 end InitE.WordStages

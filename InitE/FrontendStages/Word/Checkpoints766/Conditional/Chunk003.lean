@@ -1,10 +1,9 @@
+import InitE.CompactComputation
 import InitE.FrontendStages.Word.Checkpoints766.Data.Chunk003
 set_option autoImplicit false
 set_option Elab.async false
 set_option maxRecDepth 1000000
 set_option maxHeartbeats 0
-set_option cbv.maxSteps 1000000000
-set_option cbv.warning false
 open Flapjack
 namespace InitE.FrontendStages.Word.Checkpoints766
 theorem node1152_conditional
@@ -74,9 +73,7 @@ theorem node1159_conditional
 theorem node1160_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1158 (830, 6) = (output1160, (830, 6)) := by
   rw [output1160_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1161_conditional
     (child1160 : Flapjack.LoopToWord.compHOL Word.context766
@@ -88,9 +85,7 @@ theorem node1161_conditional
 theorem node1162_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1160 (830, 6) = (output1162, (830, 6)) := by
   rw [output1162_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1163_conditional
     (child1162 : Flapjack.LoopToWord.compHOL Word.context766
@@ -182,9 +177,7 @@ theorem node1173_conditional
 theorem node1174_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1172 (830, 6) = (output1174, (830, 6)) := by
   rw [output1174_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1175_conditional
     (child1174 : Flapjack.LoopToWord.compHOL Word.context766
@@ -196,9 +189,7 @@ theorem node1175_conditional
 theorem node1176_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1174 (830, 6) = (output1176, (830, 6)) := by
   rw [output1176_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1177_conditional
     (child1176 : Flapjack.LoopToWord.compHOL Word.context766
@@ -290,9 +281,7 @@ theorem node1187_conditional
 theorem node1188_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1186 (830, 6) = (output1188, (830, 6)) := by
   rw [output1188_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1189_conditional
     (child1188 : Flapjack.LoopToWord.compHOL Word.context766
@@ -304,9 +293,7 @@ theorem node1189_conditional
 theorem node1190_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1188 (830, 6) = (output1190, (830, 6)) := by
   rw [output1190_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1191_conditional
     (child1190 : Flapjack.LoopToWord.compHOL Word.context766
@@ -398,9 +385,7 @@ theorem node1201_conditional
 theorem node1202_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1200 (830, 6) = (output1202, (830, 6)) := by
   rw [output1202_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1203_conditional
     (child1202 : Flapjack.LoopToWord.compHOL Word.context766
@@ -412,9 +397,7 @@ theorem node1203_conditional
 theorem node1204_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1202 (830, 6) = (output1204, (830, 6)) := by
   rw [output1204_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1205_conditional
     (child1204 : Flapjack.LoopToWord.compHOL Word.context766
@@ -506,9 +489,7 @@ theorem node1215_conditional
 theorem node1216_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1214 (830, 6) = (output1216, (830, 6)) := by
   rw [output1216_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1217_conditional
     (child1216 : Flapjack.LoopToWord.compHOL Word.context766
@@ -520,9 +501,7 @@ theorem node1217_conditional
 theorem node1218_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1216 (830, 6) = (output1218, (830, 6)) := by
   rw [output1218_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1219_conditional
     (child1218 : Flapjack.LoopToWord.compHOL Word.context766
@@ -614,9 +593,7 @@ theorem node1229_conditional
 theorem node1230_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1228 (830, 6) = (output1230, (830, 6)) := by
   rw [output1230_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1231_conditional
     (child1230 : Flapjack.LoopToWord.compHOL Word.context766
@@ -628,9 +605,7 @@ theorem node1231_conditional
 theorem node1232_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1230 (830, 6) = (output1232, (830, 6)) := by
   rw [output1232_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1233_conditional
     (child1232 : Flapjack.LoopToWord.compHOL Word.context766
@@ -722,9 +697,7 @@ theorem node1243_conditional
 theorem node1244_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1242 (830, 6) = (output1244, (830, 6)) := by
   rw [output1244_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1245_conditional
     (child1244 : Flapjack.LoopToWord.compHOL Word.context766
@@ -736,9 +709,7 @@ theorem node1245_conditional
 theorem node1246_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1244 (830, 6) = (output1246, (830, 6)) := by
   rw [output1246_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1247_conditional
     (child1246 : Flapjack.LoopToWord.compHOL Word.context766
@@ -830,9 +801,7 @@ theorem node1257_conditional
 theorem node1258_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1256 (830, 6) = (output1258, (830, 6)) := by
   rw [output1258_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1259_conditional
     (child1258 : Flapjack.LoopToWord.compHOL Word.context766
@@ -844,9 +813,7 @@ theorem node1259_conditional
 theorem node1260_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1258 (830, 6) = (output1260, (830, 6)) := by
   rw [output1260_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1261_conditional
     (child1260 : Flapjack.LoopToWord.compHOL Word.context766
@@ -938,9 +905,7 @@ theorem node1271_conditional
 theorem node1272_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1270 (830, 6) = (output1272, (830, 6)) := by
   rw [output1272_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1273_conditional
     (child1272 : Flapjack.LoopToWord.compHOL Word.context766
@@ -952,9 +917,7 @@ theorem node1273_conditional
 theorem node1274_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1272 (830, 6) = (output1274, (830, 6)) := by
   rw [output1274_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1275_conditional
     (child1274 : Flapjack.LoopToWord.compHOL Word.context766
@@ -1046,9 +1009,7 @@ theorem node1285_conditional
 theorem node1286_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1284 (830, 6) = (output1286, (830, 6)) := by
   rw [output1286_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1287_conditional
     (child1286 : Flapjack.LoopToWord.compHOL Word.context766
@@ -1060,9 +1021,7 @@ theorem node1287_conditional
 theorem node1288_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1286 (830, 6) = (output1288, (830, 6)) := by
   rw [output1288_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1289_conditional
     (child1288 : Flapjack.LoopToWord.compHOL Word.context766
@@ -1154,9 +1113,7 @@ theorem node1299_conditional
 theorem node1300_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1298 (830, 6) = (output1300, (830, 6)) := by
   rw [output1300_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1301_conditional
     (child1300 : Flapjack.LoopToWord.compHOL Word.context766
@@ -1168,9 +1125,7 @@ theorem node1301_conditional
 theorem node1302_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1300 (830, 6) = (output1302, (830, 6)) := by
   rw [output1302_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1303_conditional
     (child1302 : Flapjack.LoopToWord.compHOL Word.context766
@@ -1262,9 +1217,7 @@ theorem node1313_conditional
 theorem node1314_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1312 (830, 6) = (output1314, (830, 6)) := by
   rw [output1314_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1315_conditional
     (child1314 : Flapjack.LoopToWord.compHOL Word.context766
@@ -1276,9 +1229,7 @@ theorem node1315_conditional
 theorem node1316_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1314 (830, 6) = (output1316, (830, 6)) := by
   rw [output1316_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1317_conditional
     (child1316 : Flapjack.LoopToWord.compHOL Word.context766
@@ -1370,9 +1321,7 @@ theorem node1327_conditional
 theorem node1328_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1326 (830, 6) = (output1328, (830, 6)) := by
   rw [output1328_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1329_conditional
     (child1328 : Flapjack.LoopToWord.compHOL Word.context766
@@ -1384,9 +1333,7 @@ theorem node1329_conditional
 theorem node1330_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1328 (830, 6) = (output1330, (830, 6)) := by
   rw [output1330_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1331_conditional
     (child1330 : Flapjack.LoopToWord.compHOL Word.context766
@@ -1478,9 +1425,7 @@ theorem node1341_conditional
 theorem node1342_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1340 (830, 6) = (output1342, (830, 6)) := by
   rw [output1342_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1343_conditional
     (child1342 : Flapjack.LoopToWord.compHOL Word.context766
@@ -1492,9 +1437,7 @@ theorem node1343_conditional
 theorem node1344_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1342 (830, 6) = (output1344, (830, 6)) := by
   rw [output1344_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1345_conditional
     (child1344 : Flapjack.LoopToWord.compHOL Word.context766
@@ -1586,9 +1529,7 @@ theorem node1355_conditional
 theorem node1356_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1354 (830, 6) = (output1356, (830, 6)) := by
   rw [output1356_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1357_conditional
     (child1356 : Flapjack.LoopToWord.compHOL Word.context766
@@ -1600,9 +1541,7 @@ theorem node1357_conditional
 theorem node1358_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1356 (830, 6) = (output1358, (830, 6)) := by
   rw [output1358_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1359_conditional
     (child1358 : Flapjack.LoopToWord.compHOL Word.context766
@@ -1694,9 +1633,7 @@ theorem node1369_conditional
 theorem node1370_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1368 (830, 6) = (output1370, (830, 6)) := by
   rw [output1370_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1371_conditional
     (child1370 : Flapjack.LoopToWord.compHOL Word.context766
@@ -1708,9 +1645,7 @@ theorem node1371_conditional
 theorem node1372_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1370 (830, 6) = (output1372, (830, 6)) := by
   rw [output1372_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1373_conditional
     (child1372 : Flapjack.LoopToWord.compHOL Word.context766
@@ -1802,9 +1737,7 @@ theorem node1383_conditional
 theorem node1384_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1382 (830, 6) = (output1384, (830, 6)) := by
   rw [output1384_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1385_conditional
     (child1384 : Flapjack.LoopToWord.compHOL Word.context766
@@ -1864,9 +1797,7 @@ theorem node1391_conditional
 theorem node1392_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1390 (830, 6) = (output1392, (830, 6)) := by
   rw [output1392_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1393_conditional
     (child1392 : Flapjack.LoopToWord.compHOL Word.context766
@@ -1878,9 +1809,7 @@ theorem node1393_conditional
 theorem node1394_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1392 (830, 6) = (output1394, (830, 6)) := by
   rw [output1394_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1395_conditional
     (child1394 : Flapjack.LoopToWord.compHOL Word.context766
@@ -1972,9 +1901,7 @@ theorem node1405_conditional
 theorem node1406_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1404 (830, 6) = (output1406, (830, 6)) := by
   rw [output1406_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1407_conditional
     (child1406 : Flapjack.LoopToWord.compHOL Word.context766
@@ -1986,9 +1913,7 @@ theorem node1407_conditional
 theorem node1408_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1406 (830, 6) = (output1408, (830, 6)) := by
   rw [output1408_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1409_conditional
     (child1408 : Flapjack.LoopToWord.compHOL Word.context766
@@ -2080,9 +2005,7 @@ theorem node1419_conditional
 theorem node1420_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1418 (830, 6) = (output1420, (830, 6)) := by
   rw [output1420_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1421_conditional
     (child1420 : Flapjack.LoopToWord.compHOL Word.context766
@@ -2094,9 +2017,7 @@ theorem node1421_conditional
 theorem node1422_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1420 (830, 6) = (output1422, (830, 6)) := by
   rw [output1422_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1423_conditional
     (child1422 : Flapjack.LoopToWord.compHOL Word.context766
@@ -2188,9 +2109,7 @@ theorem node1433_conditional
 theorem node1434_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1432 (830, 6) = (output1434, (830, 6)) := by
   rw [output1434_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1435_conditional
     (child1434 : Flapjack.LoopToWord.compHOL Word.context766
@@ -2202,9 +2121,7 @@ theorem node1435_conditional
 theorem node1436_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1434 (830, 6) = (output1436, (830, 6)) := by
   rw [output1436_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1437_conditional
     (child1436 : Flapjack.LoopToWord.compHOL Word.context766
@@ -2296,9 +2213,7 @@ theorem node1447_conditional
 theorem node1448_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1446 (830, 6) = (output1448, (830, 6)) := by
   rw [output1448_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1449_conditional
     (child1448 : Flapjack.LoopToWord.compHOL Word.context766
@@ -2310,9 +2225,7 @@ theorem node1449_conditional
 theorem node1450_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1448 (830, 6) = (output1450, (830, 6)) := by
   rw [output1450_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1451_conditional
     (child1450 : Flapjack.LoopToWord.compHOL Word.context766
@@ -2404,9 +2317,7 @@ theorem node1461_conditional
 theorem node1462_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1460 (830, 6) = (output1462, (830, 6)) := by
   rw [output1462_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1463_conditional
     (child1462 : Flapjack.LoopToWord.compHOL Word.context766
@@ -2418,9 +2329,7 @@ theorem node1463_conditional
 theorem node1464_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1462 (830, 6) = (output1464, (830, 6)) := by
   rw [output1464_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1465_conditional
     (child1464 : Flapjack.LoopToWord.compHOL Word.context766
@@ -2512,9 +2421,7 @@ theorem node1475_conditional
 theorem node1476_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1474 (830, 6) = (output1476, (830, 6)) := by
   rw [output1476_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1477_conditional
     (child1476 : Flapjack.LoopToWord.compHOL Word.context766
@@ -2526,9 +2433,7 @@ theorem node1477_conditional
 theorem node1478_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1476 (830, 6) = (output1478, (830, 6)) := by
   rw [output1478_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1479_conditional
     (child1478 : Flapjack.LoopToWord.compHOL Word.context766
@@ -2620,9 +2525,7 @@ theorem node1489_conditional
 theorem node1490_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1488 (830, 6) = (output1490, (830, 6)) := by
   rw [output1490_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1491_conditional
     (child1490 : Flapjack.LoopToWord.compHOL Word.context766
@@ -2682,9 +2585,7 @@ theorem node1497_conditional
 theorem node1498_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1496 (830, 6) = (output1498, (830, 6)) := by
   rw [output1498_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1499_conditional
     (child1498 : Flapjack.LoopToWord.compHOL Word.context766
@@ -2696,9 +2597,7 @@ theorem node1499_conditional
 theorem node1500_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1498 (830, 6) = (output1500, (830, 6)) := by
   rw [output1500_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1501_conditional
     (child1500 : Flapjack.LoopToWord.compHOL Word.context766
@@ -2790,9 +2689,7 @@ theorem node1511_conditional
 theorem node1512_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1510 (830, 6) = (output1512, (830, 6)) := by
   rw [output1512_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1513_conditional
     (child1512 : Flapjack.LoopToWord.compHOL Word.context766
@@ -2804,9 +2701,7 @@ theorem node1513_conditional
 theorem node1514_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1512 (830, 6) = (output1514, (830, 6)) := by
   rw [output1514_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1515_conditional
     (child1514 : Flapjack.LoopToWord.compHOL Word.context766
@@ -2898,9 +2793,7 @@ theorem node1525_conditional
 theorem node1526_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1524 (830, 6) = (output1526, (830, 6)) := by
   rw [output1526_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1527_conditional
     (child1526 : Flapjack.LoopToWord.compHOL Word.context766
@@ -2912,9 +2805,7 @@ theorem node1527_conditional
 theorem node1528_conditional : Flapjack.LoopToWord.compHOL Word.context766
     Loop.loopBody766_1526 (830, 6) = (output1528, (830, 6)) := by
   rw [output1528_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node1529_conditional
     (child1528 : Flapjack.LoopToWord.compHOL Word.context766

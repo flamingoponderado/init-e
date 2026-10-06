@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.BackendStages.Allocation66
 import InitE.CompilerComputation
 import Flapjack.Compiler.Backend.Backend
@@ -110,7 +111,6 @@ def Remove66 : Nat × StackLang.HolProg 64 :=
                                                 (Flapjack.Compiler.Backend.StackLang.Prog.call none (Sum.inl 5)
                                                   none))))))))))))))))))))))))
 theorem Remove66_eq : StackRemove.progComp false riscvConfig.addrOffset (riscvConfig.regCount - (riscvConfig.avoidRegs.length + 3)) Allocation66 = Remove66 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms Remove66_eq
 end InitE.BackendStages

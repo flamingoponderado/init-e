@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.ClashStages783.Data
 import InitE.WordStages.Parallel783.Data8
 import InitE.WordStages.Parallel783.Data9
@@ -10,7 +11,6 @@ open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 open InitE.WordStages.Parallel783
 namespace InitE.ClashStages783
 theorem stack_eq : everyStackVarHOL (fun x => decide (2 * (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length)) ≤ x)) pass783_9 = true := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms stack_eq
 end InitE.ClashStages783

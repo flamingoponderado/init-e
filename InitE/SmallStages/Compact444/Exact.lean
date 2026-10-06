@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.SmallStages.Compact444.Complete
 import InitE.SmallStages.Oracles444
 set_option autoImplicit false
@@ -11,6 +12,6 @@ theorem optimize444_exact : WordToWord.fullCompileSingleWith
   (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
   RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
   riscvConfig (source444, oracle444) = optimized444 := by
-  exact optimize444_eq.trans (by with_unfolding_all rfl)
+  exact optimize444_eq.trans (by kernel_rfl)
 #print axioms optimize444_exact
 end InitE.SmallStages.Compact444

@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Source64
 import InitE.WordStages.Source65
 import InitE.WordStages.Source66
@@ -16,7 +17,6 @@ namespace InitE.WordStages
 theorem lowering_sample_eq :
     (panToWordCompileProgHOL riscvConfig.isa sourceDeclarations).take 8 =
       [source64, source65, source66, source67, source68, source69, source70, source71] := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms lowering_sample_eq
 end InitE.WordStages

@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.SmallStages.Compact887.Complete
 import InitE.SmallStages.Oracles887
 set_option autoImplicit false
@@ -11,6 +12,6 @@ theorem optimize887_exact : WordToWord.fullCompileSingleWith
   (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
   RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
   riscvConfig (source887, oracle887) = optimized887 := by
-  exact optimize887_eq.trans (by with_unfolding_all rfl)
+  exact optimize887_eq.trans (by kernel_rfl)
 #print axioms optimize887_exact
 end InitE.SmallStages.Compact887

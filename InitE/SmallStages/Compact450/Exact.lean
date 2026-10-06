@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.SmallStages.Compact450.Complete
 import InitE.SmallStages.Oracles450
 set_option autoImplicit false
@@ -11,6 +12,6 @@ theorem optimize450_exact : WordToWord.fullCompileSingleWith
   (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
   RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
   riscvConfig (source450, oracle450) = optimized450 := by
-  exact optimize450_eq.trans (by with_unfolding_all rfl)
+  exact optimize450_eq.trans (by kernel_rfl)
 #print axioms optimize450_exact
 end InitE.SmallStages.Compact450

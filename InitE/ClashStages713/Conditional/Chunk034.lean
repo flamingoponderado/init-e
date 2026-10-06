@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.ClashStages713.Data
 import InitE.ClashComputation
 import Flapjack.Compiler.Backend.WordAlloc.TotalColour
@@ -29,17 +30,15 @@ theorem node3264_eq_conditional
   try dsimp only [live3264, coloured3264]
   rw [child]
   dsimp only [result3263]
-  try dsimp only [colour, result3264]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3265_agree_conditional : tree3265 = literal3265 := by
   rw [tree3265_def]
   rfl
 theorem node3265_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3265 live3265 coloured3265 = result3265 := by
   rw [tree3265_def]
-  try dsimp only [colour, result3265]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3266_agree_conditional
     (child0 : tree3264 = literal3264)
     (child1 : tree3265 = literal3265) : tree3266 = literal3266 := by
@@ -60,17 +59,15 @@ theorem node3266_eq_conditional
   try dsimp only [live3266, coloured3266]
   rw [child]
   dsimp only [result3265]
-  try dsimp only [colour, result3266]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3267_agree_conditional : tree3267 = literal3267 := by
   rw [tree3267_def]
   rfl
 theorem node3267_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3267 live3267 coloured3267 = result3267 := by
   rw [tree3267_def]
-  try dsimp only [colour, result3267]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3268_agree_conditional
     (child0 : tree3266 = literal3266)
     (child1 : tree3267 = literal3267) : tree3268 = literal3268 := by
@@ -91,17 +88,15 @@ theorem node3268_eq_conditional
   try dsimp only [live3268, coloured3268]
   rw [child]
   dsimp only [result3267]
-  try dsimp only [colour, result3268]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3269_agree_conditional : tree3269 = literal3269 := by
   rw [tree3269_def]
   rfl
 theorem node3269_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3269 live3269 coloured3269 = result3269 := by
   rw [tree3269_def]
-  try dsimp only [colour, result3269]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3270_agree_conditional
     (child0 : tree3268 = literal3268)
     (child1 : tree3269 = literal3269) : tree3270 = literal3270 := by
@@ -122,17 +117,15 @@ theorem node3270_eq_conditional
   try dsimp only [live3270, coloured3270]
   rw [child]
   dsimp only [result3269]
-  try dsimp only [colour, result3270]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3271_agree_conditional : tree3271 = literal3271 := by
   rw [tree3271_def]
   rfl
 theorem node3271_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3271 live3271 coloured3271 = result3271 := by
   rw [tree3271_def]
-  try dsimp only [colour, result3271]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3272_agree_conditional
     (child0 : tree3270 = literal3270)
     (child1 : tree3271 = literal3271) : tree3272 = literal3272 := by
@@ -153,17 +146,15 @@ theorem node3272_eq_conditional
   try dsimp only [live3272, coloured3272]
   rw [child]
   dsimp only [result3271]
-  try dsimp only [colour, result3272]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3273_agree_conditional : tree3273 = literal3273 := by
   rw [tree3273_def]
   rfl
 theorem node3273_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3273 live3273 coloured3273 = result3273 := by
   rw [tree3273_def]
-  try dsimp only [colour, result3273]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3274_agree_conditional
     (child0 : tree3272 = literal3272)
     (child1 : tree3273 = literal3273) : tree3274 = literal3274 := by
@@ -184,17 +175,15 @@ theorem node3274_eq_conditional
   try dsimp only [live3274, coloured3274]
   rw [child]
   dsimp only [result3273]
-  try dsimp only [colour, result3274]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3275_agree_conditional : tree3275 = literal3275 := by
   rw [tree3275_def]
   rfl
 theorem node3275_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3275 live3275 coloured3275 = result3275 := by
   rw [tree3275_def]
-  try dsimp only [colour, result3275]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3276_agree_conditional
     (child0 : tree3274 = literal3274)
     (child1 : tree3275 = literal3275) : tree3276 = literal3276 := by
@@ -215,17 +204,15 @@ theorem node3276_eq_conditional
   try dsimp only [live3276, coloured3276]
   rw [child]
   dsimp only [result3275]
-  try dsimp only [colour, result3276]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3277_agree_conditional : tree3277 = literal3277 := by
   rw [tree3277_def]
   rfl
 theorem node3277_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3277 live3277 coloured3277 = result3277 := by
   rw [tree3277_def]
-  try dsimp only [colour, result3277]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3278_agree_conditional
     (child0 : tree3276 = literal3276)
     (child1 : tree3277 = literal3277) : tree3278 = literal3278 := by
@@ -246,17 +233,15 @@ theorem node3278_eq_conditional
   try dsimp only [live3278, coloured3278]
   rw [child]
   dsimp only [result3277]
-  try dsimp only [colour, result3278]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3279_agree_conditional : tree3279 = literal3279 := by
   rw [tree3279_def]
   rfl
 theorem node3279_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3279 live3279 coloured3279 = result3279 := by
   rw [tree3279_def]
-  try dsimp only [colour, result3279]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3280_agree_conditional
     (child0 : tree3278 = literal3278)
     (child1 : tree3279 = literal3279) : tree3280 = literal3280 := by
@@ -277,17 +262,15 @@ theorem node3280_eq_conditional
   try dsimp only [live3280, coloured3280]
   rw [child]
   dsimp only [result3279]
-  try dsimp only [colour, result3280]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3281_agree_conditional : tree3281 = literal3281 := by
   rw [tree3281_def]
   rfl
 theorem node3281_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3281 live3281 coloured3281 = result3281 := by
   rw [tree3281_def]
-  try dsimp only [colour, result3281]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3282_agree_conditional
     (child0 : tree3280 = literal3280)
     (child1 : tree3281 = literal3281) : tree3282 = literal3282 := by
@@ -308,17 +291,15 @@ theorem node3282_eq_conditional
   try dsimp only [live3282, coloured3282]
   rw [child]
   dsimp only [result3281]
-  try dsimp only [colour, result3282]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3283_agree_conditional : tree3283 = literal3283 := by
   rw [tree3283_def]
   rfl
 theorem node3283_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3283 live3283 coloured3283 = result3283 := by
   rw [tree3283_def]
-  try dsimp only [colour, result3283]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3284_agree_conditional
     (child0 : tree3282 = literal3282)
     (child1 : tree3283 = literal3283) : tree3284 = literal3284 := by
@@ -339,17 +320,15 @@ theorem node3284_eq_conditional
   try dsimp only [live3284, coloured3284]
   rw [child]
   dsimp only [result3283]
-  try dsimp only [colour, result3284]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3285_agree_conditional : tree3285 = literal3285 := by
   rw [tree3285_def]
   rfl
 theorem node3285_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3285 live3285 coloured3285 = result3285 := by
   rw [tree3285_def]
-  try dsimp only [colour, result3285]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3286_agree_conditional
     (child0 : tree3284 = literal3284)
     (child1 : tree3285 = literal3285) : tree3286 = literal3286 := by
@@ -370,17 +349,15 @@ theorem node3286_eq_conditional
   try dsimp only [live3286, coloured3286]
   rw [child]
   dsimp only [result3285]
-  try dsimp only [colour, result3286]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3287_agree_conditional : tree3287 = literal3287 := by
   rw [tree3287_def]
   rfl
 theorem node3287_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3287 live3287 coloured3287 = result3287 := by
   rw [tree3287_def]
-  try dsimp only [colour, result3287]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3288_agree_conditional
     (child0 : tree3286 = literal3286)
     (child1 : tree3287 = literal3287) : tree3288 = literal3288 := by
@@ -401,17 +378,15 @@ theorem node3288_eq_conditional
   try dsimp only [live3288, coloured3288]
   rw [child]
   dsimp only [result3287]
-  try dsimp only [colour, result3288]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3289_agree_conditional : tree3289 = literal3289 := by
   rw [tree3289_def]
   rfl
 theorem node3289_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3289 live3289 coloured3289 = result3289 := by
   rw [tree3289_def]
-  try dsimp only [colour, result3289]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3290_agree_conditional
     (child0 : tree3288 = literal3288)
     (child1 : tree3289 = literal3289) : tree3290 = literal3290 := by
@@ -432,17 +407,15 @@ theorem node3290_eq_conditional
   try dsimp only [live3290, coloured3290]
   rw [child]
   dsimp only [result3289]
-  try dsimp only [colour, result3290]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3291_agree_conditional : tree3291 = literal3291 := by
   rw [tree3291_def]
   rfl
 theorem node3291_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3291 live3291 coloured3291 = result3291 := by
   rw [tree3291_def]
-  try dsimp only [colour, result3291]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3292_agree_conditional
     (child0 : tree3290 = literal3290)
     (child1 : tree3291 = literal3291) : tree3292 = literal3292 := by
@@ -463,17 +436,15 @@ theorem node3292_eq_conditional
   try dsimp only [live3292, coloured3292]
   rw [child]
   dsimp only [result3291]
-  try dsimp only [colour, result3292]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3293_agree_conditional : tree3293 = literal3293 := by
   rw [tree3293_def]
   rfl
 theorem node3293_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3293 live3293 coloured3293 = result3293 := by
   rw [tree3293_def]
-  try dsimp only [colour, result3293]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3294_agree_conditional
     (child0 : tree3292 = literal3292)
     (child1 : tree3293 = literal3293) : tree3294 = literal3294 := by
@@ -494,17 +465,15 @@ theorem node3294_eq_conditional
   try dsimp only [live3294, coloured3294]
   rw [child]
   dsimp only [result3293]
-  try dsimp only [colour, result3294]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3295_agree_conditional : tree3295 = literal3295 := by
   rw [tree3295_def]
   rfl
 theorem node3295_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3295 live3295 coloured3295 = result3295 := by
   rw [tree3295_def]
-  try dsimp only [colour, result3295]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3296_agree_conditional
     (child0 : tree3294 = literal3294)
     (child1 : tree3295 = literal3295) : tree3296 = literal3296 := by
@@ -525,17 +494,15 @@ theorem node3296_eq_conditional
   try dsimp only [live3296, coloured3296]
   rw [child]
   dsimp only [result3295]
-  try dsimp only [colour, result3296]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3297_agree_conditional : tree3297 = literal3297 := by
   rw [tree3297_def]
   rfl
 theorem node3297_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3297 live3297 coloured3297 = result3297 := by
   rw [tree3297_def]
-  try dsimp only [colour, result3297]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3298_agree_conditional
     (child0 : tree3296 = literal3296)
     (child1 : tree3297 = literal3297) : tree3298 = literal3298 := by
@@ -556,17 +523,15 @@ theorem node3298_eq_conditional
   try dsimp only [live3298, coloured3298]
   rw [child]
   dsimp only [result3297]
-  try dsimp only [colour, result3298]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3299_agree_conditional : tree3299 = literal3299 := by
   rw [tree3299_def]
   rfl
 theorem node3299_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3299 live3299 coloured3299 = result3299 := by
   rw [tree3299_def]
-  try dsimp only [colour, result3299]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3300_agree_conditional
     (child0 : tree3298 = literal3298)
     (child1 : tree3299 = literal3299) : tree3300 = literal3300 := by
@@ -587,17 +552,15 @@ theorem node3300_eq_conditional
   try dsimp only [live3300, coloured3300]
   rw [child]
   dsimp only [result3299]
-  try dsimp only [colour, result3300]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3301_agree_conditional : tree3301 = literal3301 := by
   rw [tree3301_def]
   rfl
 theorem node3301_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3301 live3301 coloured3301 = result3301 := by
   rw [tree3301_def]
-  try dsimp only [colour, result3301]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3302_agree_conditional
     (child0 : tree3300 = literal3300)
     (child1 : tree3301 = literal3301) : tree3302 = literal3302 := by
@@ -618,17 +581,15 @@ theorem node3302_eq_conditional
   try dsimp only [live3302, coloured3302]
   rw [child]
   dsimp only [result3301]
-  try dsimp only [colour, result3302]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3303_agree_conditional : tree3303 = literal3303 := by
   rw [tree3303_def]
   rfl
 theorem node3303_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3303 live3303 coloured3303 = result3303 := by
   rw [tree3303_def]
-  try dsimp only [colour, result3303]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3304_agree_conditional
     (child0 : tree3302 = literal3302)
     (child1 : tree3303 = literal3303) : tree3304 = literal3304 := by
@@ -649,17 +610,15 @@ theorem node3304_eq_conditional
   try dsimp only [live3304, coloured3304]
   rw [child]
   dsimp only [result3303]
-  try dsimp only [colour, result3304]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3305_agree_conditional : tree3305 = literal3305 := by
   rw [tree3305_def]
   rfl
 theorem node3305_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3305 live3305 coloured3305 = result3305 := by
   rw [tree3305_def]
-  try dsimp only [colour, result3305]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3306_agree_conditional
     (child0 : tree3304 = literal3304)
     (child1 : tree3305 = literal3305) : tree3306 = literal3306 := by
@@ -680,17 +639,15 @@ theorem node3306_eq_conditional
   try dsimp only [live3306, coloured3306]
   rw [child]
   dsimp only [result3305]
-  try dsimp only [colour, result3306]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3307_agree_conditional : tree3307 = literal3307 := by
   rw [tree3307_def]
   rfl
 theorem node3307_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3307 live3307 coloured3307 = result3307 := by
   rw [tree3307_def]
-  try dsimp only [colour, result3307]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3308_agree_conditional
     (child0 : tree3306 = literal3306)
     (child1 : tree3307 = literal3307) : tree3308 = literal3308 := by
@@ -711,17 +668,15 @@ theorem node3308_eq_conditional
   try dsimp only [live3308, coloured3308]
   rw [child]
   dsimp only [result3307]
-  try dsimp only [colour, result3308]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3309_agree_conditional : tree3309 = literal3309 := by
   rw [tree3309_def]
   rfl
 theorem node3309_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3309 live3309 coloured3309 = result3309 := by
   rw [tree3309_def]
-  try dsimp only [colour, result3309]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3310_agree_conditional
     (child0 : tree3308 = literal3308)
     (child1 : tree3309 = literal3309) : tree3310 = literal3310 := by
@@ -742,17 +697,15 @@ theorem node3310_eq_conditional
   try dsimp only [live3310, coloured3310]
   rw [child]
   dsimp only [result3309]
-  try dsimp only [colour, result3310]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3311_agree_conditional : tree3311 = literal3311 := by
   rw [tree3311_def]
   rfl
 theorem node3311_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3311 live3311 coloured3311 = result3311 := by
   rw [tree3311_def]
-  try dsimp only [colour, result3311]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3312_agree_conditional
     (child0 : tree3310 = literal3310)
     (child1 : tree3311 = literal3311) : tree3312 = literal3312 := by
@@ -773,17 +726,15 @@ theorem node3312_eq_conditional
   try dsimp only [live3312, coloured3312]
   rw [child]
   dsimp only [result3311]
-  try dsimp only [colour, result3312]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3313_agree_conditional : tree3313 = literal3313 := by
   rw [tree3313_def]
   rfl
 theorem node3313_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3313 live3313 coloured3313 = result3313 := by
   rw [tree3313_def]
-  try dsimp only [colour, result3313]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3314_agree_conditional
     (child0 : tree3312 = literal3312)
     (child1 : tree3313 = literal3313) : tree3314 = literal3314 := by
@@ -804,17 +755,15 @@ theorem node3314_eq_conditional
   try dsimp only [live3314, coloured3314]
   rw [child]
   dsimp only [result3313]
-  try dsimp only [colour, result3314]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3315_agree_conditional : tree3315 = literal3315 := by
   rw [tree3315_def]
   rfl
 theorem node3315_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3315 live3315 coloured3315 = result3315 := by
   rw [tree3315_def]
-  try dsimp only [colour, result3315]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3316_agree_conditional
     (child0 : tree3314 = literal3314)
     (child1 : tree3315 = literal3315) : tree3316 = literal3316 := by
@@ -835,17 +784,15 @@ theorem node3316_eq_conditional
   try dsimp only [live3316, coloured3316]
   rw [child]
   dsimp only [result3315]
-  try dsimp only [colour, result3316]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3317_agree_conditional : tree3317 = literal3317 := by
   rw [tree3317_def]
   rfl
 theorem node3317_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3317 live3317 coloured3317 = result3317 := by
   rw [tree3317_def]
-  try dsimp only [colour, result3317]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3318_agree_conditional
     (child0 : tree3316 = literal3316)
     (child1 : tree3317 = literal3317) : tree3318 = literal3318 := by
@@ -866,17 +813,15 @@ theorem node3318_eq_conditional
   try dsimp only [live3318, coloured3318]
   rw [child]
   dsimp only [result3317]
-  try dsimp only [colour, result3318]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3319_agree_conditional : tree3319 = literal3319 := by
   rw [tree3319_def]
   rfl
 theorem node3319_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3319 live3319 coloured3319 = result3319 := by
   rw [tree3319_def]
-  try dsimp only [colour, result3319]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3320_agree_conditional
     (child0 : tree3318 = literal3318)
     (child1 : tree3319 = literal3319) : tree3320 = literal3320 := by
@@ -897,17 +842,15 @@ theorem node3320_eq_conditional
   try dsimp only [live3320, coloured3320]
   rw [child]
   dsimp only [result3319]
-  try dsimp only [colour, result3320]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3321_agree_conditional : tree3321 = literal3321 := by
   rw [tree3321_def]
   rfl
 theorem node3321_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3321 live3321 coloured3321 = result3321 := by
   rw [tree3321_def]
-  try dsimp only [colour, result3321]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3322_agree_conditional
     (child0 : tree3320 = literal3320)
     (child1 : tree3321 = literal3321) : tree3322 = literal3322 := by
@@ -928,17 +871,15 @@ theorem node3322_eq_conditional
   try dsimp only [live3322, coloured3322]
   rw [child]
   dsimp only [result3321]
-  try dsimp only [colour, result3322]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3323_agree_conditional : tree3323 = literal3323 := by
   rw [tree3323_def]
   rfl
 theorem node3323_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3323 live3323 coloured3323 = result3323 := by
   rw [tree3323_def]
-  try dsimp only [colour, result3323]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3324_agree_conditional
     (child0 : tree3322 = literal3322)
     (child1 : tree3323 = literal3323) : tree3324 = literal3324 := by
@@ -959,17 +900,15 @@ theorem node3324_eq_conditional
   try dsimp only [live3324, coloured3324]
   rw [child]
   dsimp only [result3323]
-  try dsimp only [colour, result3324]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3325_agree_conditional : tree3325 = literal3325 := by
   rw [tree3325_def]
   rfl
 theorem node3325_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3325 live3325 coloured3325 = result3325 := by
   rw [tree3325_def]
-  try dsimp only [colour, result3325]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3326_agree_conditional
     (child0 : tree3324 = literal3324)
     (child1 : tree3325 = literal3325) : tree3326 = literal3326 := by
@@ -990,17 +929,15 @@ theorem node3326_eq_conditional
   try dsimp only [live3326, coloured3326]
   rw [child]
   dsimp only [result3325]
-  try dsimp only [colour, result3326]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3327_agree_conditional : tree3327 = literal3327 := by
   rw [tree3327_def]
   rfl
 theorem node3327_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3327 live3327 coloured3327 = result3327 := by
   rw [tree3327_def]
-  try dsimp only [colour, result3327]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3328_agree_conditional
     (child0 : tree3326 = literal3326)
     (child1 : tree3327 = literal3327) : tree3328 = literal3328 := by
@@ -1021,17 +958,15 @@ theorem node3328_eq_conditional
   try dsimp only [live3328, coloured3328]
   rw [child]
   dsimp only [result3327]
-  try dsimp only [colour, result3328]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3329_agree_conditional : tree3329 = literal3329 := by
   rw [tree3329_def]
   rfl
 theorem node3329_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3329 live3329 coloured3329 = result3329 := by
   rw [tree3329_def]
-  try dsimp only [colour, result3329]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3330_agree_conditional
     (child0 : tree3328 = literal3328)
     (child1 : tree3329 = literal3329) : tree3330 = literal3330 := by
@@ -1052,17 +987,15 @@ theorem node3330_eq_conditional
   try dsimp only [live3330, coloured3330]
   rw [child]
   dsimp only [result3329]
-  try dsimp only [colour, result3330]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3331_agree_conditional : tree3331 = literal3331 := by
   rw [tree3331_def]
   rfl
 theorem node3331_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3331 live3331 coloured3331 = result3331 := by
   rw [tree3331_def]
-  try dsimp only [colour, result3331]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3332_agree_conditional
     (child0 : tree3330 = literal3330)
     (child1 : tree3331 = literal3331) : tree3332 = literal3332 := by
@@ -1083,17 +1016,15 @@ theorem node3332_eq_conditional
   try dsimp only [live3332, coloured3332]
   rw [child]
   dsimp only [result3331]
-  try dsimp only [colour, result3332]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3333_agree_conditional : tree3333 = literal3333 := by
   rw [tree3333_def]
   rfl
 theorem node3333_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3333 live3333 coloured3333 = result3333 := by
   rw [tree3333_def]
-  try dsimp only [colour, result3333]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3334_agree_conditional
     (child0 : tree3332 = literal3332)
     (child1 : tree3333 = literal3333) : tree3334 = literal3334 := by
@@ -1114,17 +1045,15 @@ theorem node3334_eq_conditional
   try dsimp only [live3334, coloured3334]
   rw [child]
   dsimp only [result3333]
-  try dsimp only [colour, result3334]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3335_agree_conditional : tree3335 = literal3335 := by
   rw [tree3335_def]
   rfl
 theorem node3335_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3335 live3335 coloured3335 = result3335 := by
   rw [tree3335_def]
-  try dsimp only [colour, result3335]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3336_agree_conditional
     (child0 : tree3334 = literal3334)
     (child1 : tree3335 = literal3335) : tree3336 = literal3336 := by
@@ -1145,17 +1074,15 @@ theorem node3336_eq_conditional
   try dsimp only [live3336, coloured3336]
   rw [child]
   dsimp only [result3335]
-  try dsimp only [colour, result3336]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3337_agree_conditional : tree3337 = literal3337 := by
   rw [tree3337_def]
   rfl
 theorem node3337_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3337 live3337 coloured3337 = result3337 := by
   rw [tree3337_def]
-  try dsimp only [colour, result3337]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3338_agree_conditional
     (child0 : tree3336 = literal3336)
     (child1 : tree3337 = literal3337) : tree3338 = literal3338 := by
@@ -1176,17 +1103,15 @@ theorem node3338_eq_conditional
   try dsimp only [live3338, coloured3338]
   rw [child]
   dsimp only [result3337]
-  try dsimp only [colour, result3338]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3339_agree_conditional : tree3339 = literal3339 := by
   rw [tree3339_def]
   rfl
 theorem node3339_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3339 live3339 coloured3339 = result3339 := by
   rw [tree3339_def]
-  try dsimp only [colour, result3339]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3340_agree_conditional
     (child0 : tree3338 = literal3338)
     (child1 : tree3339 = literal3339) : tree3340 = literal3340 := by
@@ -1207,17 +1132,15 @@ theorem node3340_eq_conditional
   try dsimp only [live3340, coloured3340]
   rw [child]
   dsimp only [result3339]
-  try dsimp only [colour, result3340]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3341_agree_conditional : tree3341 = literal3341 := by
   rw [tree3341_def]
   rfl
 theorem node3341_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3341 live3341 coloured3341 = result3341 := by
   rw [tree3341_def]
-  try dsimp only [colour, result3341]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3342_agree_conditional
     (child0 : tree3340 = literal3340)
     (child1 : tree3341 = literal3341) : tree3342 = literal3342 := by
@@ -1238,17 +1161,15 @@ theorem node3342_eq_conditional
   try dsimp only [live3342, coloured3342]
   rw [child]
   dsimp only [result3341]
-  try dsimp only [colour, result3342]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3343_agree_conditional : tree3343 = literal3343 := by
   rw [tree3343_def]
   rfl
 theorem node3343_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3343 live3343 coloured3343 = result3343 := by
   rw [tree3343_def]
-  try dsimp only [colour, result3343]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3344_agree_conditional
     (child0 : tree3342 = literal3342)
     (child1 : tree3343 = literal3343) : tree3344 = literal3344 := by
@@ -1269,17 +1190,15 @@ theorem node3344_eq_conditional
   try dsimp only [live3344, coloured3344]
   rw [child]
   dsimp only [result3343]
-  try dsimp only [colour, result3344]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3345_agree_conditional : tree3345 = literal3345 := by
   rw [tree3345_def]
   rfl
 theorem node3345_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3345 live3345 coloured3345 = result3345 := by
   rw [tree3345_def]
-  try dsimp only [colour, result3345]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3346_agree_conditional
     (child0 : tree3344 = literal3344)
     (child1 : tree3345 = literal3345) : tree3346 = literal3346 := by
@@ -1300,17 +1219,15 @@ theorem node3346_eq_conditional
   try dsimp only [live3346, coloured3346]
   rw [child]
   dsimp only [result3345]
-  try dsimp only [colour, result3346]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3347_agree_conditional : tree3347 = literal3347 := by
   rw [tree3347_def]
   rfl
 theorem node3347_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3347 live3347 coloured3347 = result3347 := by
   rw [tree3347_def]
-  try dsimp only [colour, result3347]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3348_agree_conditional
     (child0 : tree3346 = literal3346)
     (child1 : tree3347 = literal3347) : tree3348 = literal3348 := by
@@ -1331,17 +1248,15 @@ theorem node3348_eq_conditional
   try dsimp only [live3348, coloured3348]
   rw [child]
   dsimp only [result3347]
-  try dsimp only [colour, result3348]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3349_agree_conditional : tree3349 = literal3349 := by
   rw [tree3349_def]
   rfl
 theorem node3349_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3349 live3349 coloured3349 = result3349 := by
   rw [tree3349_def]
-  try dsimp only [colour, result3349]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3350_agree_conditional
     (child0 : tree3348 = literal3348)
     (child1 : tree3349 = literal3349) : tree3350 = literal3350 := by
@@ -1362,17 +1277,15 @@ theorem node3350_eq_conditional
   try dsimp only [live3350, coloured3350]
   rw [child]
   dsimp only [result3349]
-  try dsimp only [colour, result3350]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3351_agree_conditional : tree3351 = literal3351 := by
   rw [tree3351_def]
   rfl
 theorem node3351_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3351 live3351 coloured3351 = result3351 := by
   rw [tree3351_def]
-  try dsimp only [colour, result3351]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3352_agree_conditional
     (child0 : tree3350 = literal3350)
     (child1 : tree3351 = literal3351) : tree3352 = literal3352 := by
@@ -1393,17 +1306,15 @@ theorem node3352_eq_conditional
   try dsimp only [live3352, coloured3352]
   rw [child]
   dsimp only [result3351]
-  try dsimp only [colour, result3352]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3353_agree_conditional : tree3353 = literal3353 := by
   rw [tree3353_def]
   rfl
 theorem node3353_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3353 live3353 coloured3353 = result3353 := by
   rw [tree3353_def]
-  try dsimp only [colour, result3353]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3354_agree_conditional
     (child0 : tree3352 = literal3352)
     (child1 : tree3353 = literal3353) : tree3354 = literal3354 := by
@@ -1424,17 +1335,15 @@ theorem node3354_eq_conditional
   try dsimp only [live3354, coloured3354]
   rw [child]
   dsimp only [result3353]
-  try dsimp only [colour, result3354]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3355_agree_conditional : tree3355 = literal3355 := by
   rw [tree3355_def]
   rfl
 theorem node3355_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3355 live3355 coloured3355 = result3355 := by
   rw [tree3355_def]
-  try dsimp only [colour, result3355]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3356_agree_conditional
     (child0 : tree3354 = literal3354)
     (child1 : tree3355 = literal3355) : tree3356 = literal3356 := by
@@ -1455,17 +1364,15 @@ theorem node3356_eq_conditional
   try dsimp only [live3356, coloured3356]
   rw [child]
   dsimp only [result3355]
-  try dsimp only [colour, result3356]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3357_agree_conditional : tree3357 = literal3357 := by
   rw [tree3357_def]
   rfl
 theorem node3357_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3357 live3357 coloured3357 = result3357 := by
   rw [tree3357_def]
-  try dsimp only [colour, result3357]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3358_agree_conditional
     (child0 : tree3356 = literal3356)
     (child1 : tree3357 = literal3357) : tree3358 = literal3358 := by
@@ -1486,15 +1393,13 @@ theorem node3358_eq_conditional
   try dsimp only [live3358, coloured3358]
   rw [child]
   dsimp only [result3357]
-  try dsimp only [colour, result3358]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 theorem tree3359_agree_conditional : tree3359 = literal3359 := by
   rw [tree3359_def]
   rfl
 theorem node3359_eq_conditional : Flapjack.RegAlloc.checkClashTree (Flapjack.WordAlloc.totalColour colour) tree3359 live3359 coloured3359 = result3359 := by
   rw [tree3359_def]
-  try dsimp only [colour, result3359]
-  all_goals (conv => lhs; cbv)
-  all_goals rfl
+  try simp only [Flapjack.RegAlloc.checkClashTree]
+  all_goals kernel_rfl
 end InitE.ClashStages713

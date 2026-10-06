@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.SmallStages.Compact787.Complete
 import InitE.SmallStages.Oracles787
 set_option autoImplicit false
@@ -11,6 +12,6 @@ theorem optimize787_exact : WordToWord.fullCompileSingleWith
   (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
   RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
   riscvConfig (source787, oracle787) = optimized787 := by
-  exact optimize787_eq.trans (by with_unfolding_all rfl)
+  exact optimize787_eq.trans (by kernel_rfl)
 #print axioms optimize787_exact
 end InitE.SmallStages.Compact787

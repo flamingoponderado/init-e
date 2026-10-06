@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.SmallStages.Compact855.Complete
 import InitE.SmallStages.Oracles855
 set_option autoImplicit false
@@ -11,6 +12,6 @@ theorem optimize855_exact : WordToWord.fullCompileSingleWith
   (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
   RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
   riscvConfig (source855, oracle855) = optimized855 := by
-  exact optimize855_eq.trans (by with_unfolding_all rfl)
+  exact optimize855_eq.trans (by kernel_rfl)
 #print axioms optimize855_exact
 end InitE.SmallStages.Compact855

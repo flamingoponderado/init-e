@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Parallel713.Data2
 import InitE.WordStages.Parallel713.Data3
 import InitE.DeadStages713.Chunk068
@@ -13,13 +14,13 @@ theorem input17408_eq : InitE.DeadStages713.input17408 =
     InitE.WordStages.Parallel713.word713_2_17426 := by
   rw [InitE.DeadStages713.input17408_def]
   simp only [input17407_eq, input17406_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 theorem output17408_eq : InitE.DeadStages713.output17408 =
     InitE.WordStages.Parallel713.word713_3_15608 := by
   rw [InitE.DeadStages713.output17408_def]
   simp only [output17407_eq, output17406_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 
 #print axioms output17408_eq
 end InitE.WordStages.Parallel713.Agreements

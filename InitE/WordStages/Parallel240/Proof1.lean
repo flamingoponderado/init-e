@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Parallel240.Data1
 import InitE.WordStages.Parallel240.Data0
 set_option Elab.async false
@@ -9,7 +10,6 @@ open scoped InitE.CompilerComputation
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 namespace InitE.WordStages.Parallel240
 theorem pass240_1_eq : WordInst.instSelectExecutable riscvConfig (maxVarHOL (pass240_0) + 1) (pass240_0) = pass240_1 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass240_1_eq
 end InitE.WordStages.Parallel240

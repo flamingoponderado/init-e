@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Source64
 import InitE.CompilerComputation
 set_option Elab.async false
@@ -2846,7 +2847,6 @@ Flapjack.WordLangProgHOL.seq
     (Flapjack.WordLangProgHOL.store (Flapjack.WordLangExpHOL.var 4) 2))
   (Flapjack.WordLangProgHOL.call none (some 65) [0] none)
 theorem pass64_0_eq : WordSimp.compileExp (source64.2.2) = pass64_0 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass64_0_eq
 end InitE.WordStages

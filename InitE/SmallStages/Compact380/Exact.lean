@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.SmallStages.Compact380.Complete
 import InitE.SmallStages.Oracles380
 set_option autoImplicit false
@@ -11,6 +12,6 @@ theorem optimize380_exact : WordToWord.fullCompileSingleWith
   (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
   RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
   riscvConfig (source380, oracle380) = optimized380 := by
-  exact optimize380_eq.trans (by with_unfolding_all rfl)
+  exact optimize380_eq.trans (by kernel_rfl)
 #print axioms optimize380_exact
 end InitE.SmallStages.Compact380

@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Parallel651.Data9
 import InitE.WordStages.Parallel651.Data8
 set_option Elab.async false
@@ -9,7 +10,6 @@ open scoped InitE.CompilerComputation
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 namespace InitE.WordStages.Parallel651
 theorem pass651_9_eq : WordToWord.wordAllocWith RegAlloc.regAllocExecutable 651 riscvConfig RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length)) (pass651_8) proposed651 = pass651_9 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass651_9_eq
 end InitE.WordStages.Parallel651

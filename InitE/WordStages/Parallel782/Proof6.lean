@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Parallel782.Data6
 import InitE.WordStages.Parallel782.Data5
 set_option Elab.async false
@@ -9,7 +10,6 @@ open scoped InitE.CompilerComputation
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 namespace InitE.WordStages.Parallel782
 theorem pass782_6_eq : WordInst.threeToTwoRegProg riscvConfig.twoRegArith (pass782_5) = pass782_6 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass782_6_eq
 end InitE.WordStages.Parallel782

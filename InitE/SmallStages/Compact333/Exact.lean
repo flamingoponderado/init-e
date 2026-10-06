@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.SmallStages.Compact333.Complete
 import InitE.SmallStages.Oracles333
 set_option autoImplicit false
@@ -11,6 +12,6 @@ theorem optimize333_exact : WordToWord.fullCompileSingleWith
   (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
   RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
   riscvConfig (source333, oracle333) = optimized333 := by
-  exact optimize333_eq.trans (by with_unfolding_all rfl)
+  exact optimize333_eq.trans (by kernel_rfl)
 #print axioms optimize333_exact
 end InitE.SmallStages.Compact333

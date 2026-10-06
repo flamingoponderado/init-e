@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Pass810_2
 import InitE.WordStages.Parallel810.Data3
 import InitE.WordStages.Parallel810.AgreementsParallel.Chunk003
@@ -15,7 +16,7 @@ def pass810_3 : WordLangProgHOL (BitVec 64) := Parallel810.pass810_3
 /-- A closed composition of local kernel-checked checkpoint equations. -/
 theorem pass810_3_eq : WordAlloc.removeDeadProg pass810_2 = pass810_3 := by
   have input_eq : pass810_2 = InitE.DeadStages810.Parallel.input853 :=
-    (show pass810_2 = Parallel810.word810_2_1348 by with_unfolding_all rfl).trans
+    (show pass810_2 = Parallel810.word810_2_1348 by kernel_rfl).trans
       Parallel810.AgreementsParallel.input853_eq.symm
   unfold WordAlloc.removeDeadProg
   rw [WordAlloc.removeDeadStructural_eq, input_eq]

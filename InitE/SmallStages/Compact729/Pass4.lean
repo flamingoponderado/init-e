@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.SmallStages.Compact729.Data
 set_option autoImplicit false
 set_option Elab.async false
@@ -10,6 +11,6 @@ open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 open InitE.WordStages
 namespace InitE.SmallStages.Compact729
 theorem pass4_eq : WordCse.wordCommonSubexpElim pass3 = pass4 := by
-  with_unfolding_all rfl
+  kernel_rfl
 #print axioms pass4_eq
 end InitE.SmallStages.Compact729

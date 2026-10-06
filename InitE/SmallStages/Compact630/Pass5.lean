@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.SmallStages.Compact630.Data
 set_option autoImplicit false
 set_option Elab.async false
@@ -10,6 +11,6 @@ open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 open InitE.WordStages
 namespace InitE.SmallStages.Compact630
 theorem pass5_eq : WordCopy.copyProp pass4 = pass5 := by
-  with_unfolding_all rfl
+  kernel_rfl
 #print axioms pass5_eq
 end InitE.SmallStages.Compact630

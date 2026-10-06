@@ -1,3 +1,5 @@
+import InitE.CompactComputation
+import InitE.SmallSsaKernelComputation
 import InitE.WordStages.Pass713_1
 import InitE.CompilerComputation
 set_option Elab.async false
@@ -57624,7 +57626,7 @@ def word713_2_17426 : WordLangProgHOL (BitVec 64) :=
 def pass713_2 : WordLangProgHOL (BitVec 64) :=
 word713_2_17426
 theorem pass713_2_eq : WordAlloc.fullSsaCcTrans 1 (pass713_1) = pass713_2 := by
-  conv => lhs; cbv
-  try rfl
+  rw [InitE.SmallSsaKernelComputation.fullSsaStructural_eq]
+  kernel_rfl
 #print axioms pass713_2_eq
 end InitE.WordStages

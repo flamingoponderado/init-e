@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.SmallStages.Compact606.Complete
 import InitE.SmallStages.Oracles606
 set_option autoImplicit false
@@ -11,6 +12,6 @@ theorem optimize606_exact : WordToWord.fullCompileSingleWith
   (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
   RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
   riscvConfig (source606, oracle606) = optimized606 := by
-  exact optimize606_eq.trans (by with_unfolding_all rfl)
+  exact optimize606_eq.trans (by kernel_rfl)
 #print axioms optimize606_exact
 end InitE.SmallStages.Compact606

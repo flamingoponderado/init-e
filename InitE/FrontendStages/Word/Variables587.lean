@@ -1,11 +1,10 @@
+import InitE.CompactComputation
 import InitE.FrontendStages.Loop.Data587
 import InitE.WordFrontendComputation
 set_option autoImplicit false
 set_option Elab.async false
 set_option maxRecDepth 1000000
 set_option maxHeartbeats 0
-set_option cbv.maxSteps 1000000000
-set_option cbv.warning false
 open Flapjack
 namespace InitE.FrontendStages.Word
 def assigned587 : NumSet := Flapjack.Spt.bn
@@ -95,22 +94,16 @@ def context587 : Spt Nat := Flapjack.Spt.bs
         (Flapjack.Spt.bs (Flapjack.Spt.ls 20) 18 (Flapjack.Spt.bs Flapjack.Spt.ln 16 (Flapjack.Spt.ls 14))) 12
         (Flapjack.Spt.bs (Flapjack.Spt.ls 10) 8 (Flapjack.Spt.bs Flapjack.Spt.ln 6 (Flapjack.Spt.ls 4))))))
 theorem assigned587_eq : accVarsHOL Loop.output587.2.2 (.ln : Spt Unit) = assigned587 := by
-  conv => lhs; cbv
-  conv => rhs; cbv
-  try rfl
+  kernel_rfl
 theorem variables587_eq : Flapjack.LoopToWord.fromNumSetHOL (sptDifference (accVarsHOL Loop.output587.2.2 (.ln : Spt Unit))
     (Flapjack.LoopToWord.toNumSetHOL Loop.output587.2.1)) = variables587 := by
   rw [assigned587_eq]
-  conv => lhs; cbv
-  conv => rhs; cbv
-  try rfl
+  kernel_rfl
 theorem context587_eq : makeCtxtHOL 2 (Loop.output587.2.1 ++
     Flapjack.LoopToWord.fromNumSetHOL (sptDifference (accVarsHOL Loop.output587.2.2 (.ln : Spt Unit)) (Flapjack.LoopToWord.toNumSetHOL Loop.output587.2.1)))
     (.ln : Spt Nat) = context587 := by
   rw [variables587_eq]
-  conv => lhs; cbv
-  conv => rhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms assigned587_eq
 #print axioms variables587_eq
 #print axioms context587_eq

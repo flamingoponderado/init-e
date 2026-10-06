@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.SmallStages.Compact456.Complete
 import InitE.SmallStages.Oracles456
 set_option autoImplicit false
@@ -11,6 +12,6 @@ theorem optimize456_exact : WordToWord.fullCompileSingleWith
   (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
   RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
   riscvConfig (source456, oracle456) = optimized456 := by
-  exact optimize456_eq.trans (by with_unfolding_all rfl)
+  exact optimize456_eq.trans (by kernel_rfl)
 #print axioms optimize456_exact
 end InitE.SmallStages.Compact456

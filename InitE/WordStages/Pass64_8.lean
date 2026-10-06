@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Pass64_7
 import InitE.CompilerComputation
 set_option Elab.async false
@@ -2858,7 +2859,6 @@ Flapjack.WordLangProgHOL.seq (Flapjack.WordLangProgHOL.move 1 [(9, 0)])
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             [0]
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             none)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
 theorem pass64_8_eq : WordAlloc.removeDeadProg (pass64_7) = pass64_8 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass64_8_eq
 end InitE.WordStages

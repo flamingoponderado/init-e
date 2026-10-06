@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.BackendStages.Function66
 import InitE.CompilerComputation
 import Flapjack.Compiler.Backend.Backend
@@ -84,7 +85,6 @@ def Allocation66 : Nat × StackLang.HolProg 64 :=
                                                 (Flapjack.Compiler.Backend.StackLang.Prog.call none (Sum.inl 5)
                                                   none))))))))))))))))))))))))
 theorem Allocation66_eq : StackAlloc.progComp (66, (function66 (.list [])).1) = Allocation66 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms Allocation66_eq
 end InitE.BackendStages

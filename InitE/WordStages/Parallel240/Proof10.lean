@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Parallel240.Data10
 import InitE.WordStages.Parallel240.Data9
 set_option Elab.async false
@@ -9,7 +10,6 @@ open scoped InitE.CompilerComputation
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 namespace InitE.WordStages.Parallel240
 theorem pass240_10_eq : WordRemove.removeMustTerminate (pass240_9) = pass240_10 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass240_10_eq
 end InitE.WordStages.Parallel240

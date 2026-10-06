@@ -1,3 +1,5 @@
+import InitE.CompactComputation
+import InitE.CompilerStages
 import InitE.WordStages.Source231
 import InitE.WordStages.Pass231_10
 import InitE.CompilerStages
@@ -3803,8 +3805,8 @@ theorem optimize231_eq : WordToWord.fullCompileSingleWith
   dsimp only
   have name_eq : source231.1 = 231 := by rfl
   have argc_eq : source231.2.1 = 3 := by rfl
-  have oracle_eq : oracle231 = proposed231 := by with_unfolding_all rfl
+  have oracle_eq : oracle231 = proposed231 := by kernel_rfl
   rw [name_eq, argc_eq, oracle_eq, pass231_0_eq, pass231_1_eq, pass231_2_eq, pass231_3_eq, pass231_4_eq, pass231_5_eq, pass231_6_eq, pass231_7_eq, pass231_8_eq, pass231_9_eq, pass231_10_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 #print axioms optimize231_eq
 end InitE.WordStages

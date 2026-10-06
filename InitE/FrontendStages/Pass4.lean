@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.FrontendStages.Loop.FunctionsFacts
 import InitE.FrontendStages.Loop.ContextFacts
 
@@ -5,8 +6,6 @@ set_option autoImplicit false
 set_option Elab.async false
 set_option maxRecDepth 1000000
 set_option maxHeartbeats 0
-set_option cbv.maxSteps 1000000000
-set_option cbv.warning false
 namespace InitE.FrontendStages
 open Flapjack
 
@@ -16,8 +15,7 @@ private def functionLabels : List Nat := [64, 65, 66, 67, 68, 69, 70, 71, 72, 73
 
 private theorem functionLabels_eq : (List.range 826).map (fun n => n + firstLoopName) =
     functionLabels := by
-  conv => lhs; cbv
-  rfl
+  kernel_rfl
 
 private theorem functionCount_eq : pass3.length = 826 := by rfl
 

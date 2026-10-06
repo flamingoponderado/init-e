@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Pass808_0
 import InitE.CompilerComputation
 set_option Elab.async false
@@ -3907,7 +3908,6 @@ def word808_1_881 : WordLangProgHOL (BitVec 64) :=
 def pass808_1 : WordLangProgHOL (BitVec 64) :=
 word808_1_881
 theorem pass808_1_eq : WordInst.instSelectExecutable riscvConfig (maxVarHOL (pass808_0) + 1) (pass808_0) = pass808_1 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass808_1_eq
 end InitE.WordStages

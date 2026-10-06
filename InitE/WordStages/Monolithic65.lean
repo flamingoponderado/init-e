@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.ClashComputation
 import InitE.WordStages.Source65
 import InitE.CompilerComputation
@@ -1063,7 +1064,6 @@ theorem optimize65_eq : WordToWord.fullCompileSingleWith
   (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
   RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
   riscvConfig (source65, oracle65) = optimized65 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms optimize65_eq
 end InitE.WordStages.Monolithic65

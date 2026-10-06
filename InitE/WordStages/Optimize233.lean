@@ -1,3 +1,5 @@
+import InitE.CompactComputation
+import InitE.CompilerStages
 import InitE.WordStages.Source233
 import InitE.WordStages.Pass233_10
 import InitE.CompilerStages
@@ -6493,8 +6495,8 @@ theorem optimize233_eq : WordToWord.fullCompileSingleWith
   dsimp only
   have name_eq : source233.1 = 233 := by rfl
   have argc_eq : source233.2.1 = 26 := by rfl
-  have oracle_eq : oracle233 = proposed233 := by with_unfolding_all rfl
+  have oracle_eq : oracle233 = proposed233 := by kernel_rfl
   rw [name_eq, argc_eq, oracle_eq, pass233_0_eq, pass233_1_eq, pass233_2_eq, pass233_3_eq, pass233_4_eq, pass233_5_eq, pass233_6_eq, pass233_7_eq, pass233_8_eq, pass233_9_eq, pass233_10_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 #print axioms optimize233_eq
 end InitE.WordStages

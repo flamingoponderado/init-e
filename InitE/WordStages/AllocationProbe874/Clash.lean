@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.ClashComputation
 import InitE.WordStages.Parallel874.Data8
 import InitE.WordStages.Parallel874.Data9
@@ -13,7 +14,6 @@ namespace InitE.WordStages.AllocationProbe874
 @[irreducible] def colour : Spt Nat := proposed874.getD .ln
 theorem checked : (RegAlloc.checkClashTree (WordAlloc.totalColour colour) (WordAlloc.getClashTree pass874_8 []) .ln .ln).isSome = true := by
   unfold colour
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms checked
 end InitE.WordStages.AllocationProbe874

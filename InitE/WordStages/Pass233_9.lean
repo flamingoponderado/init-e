@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Pass233_8
 import InitE.ClashStages233.Allocation
 set_option Elab.async false
@@ -11,7 +12,7 @@ def proposed233 : Option (Spt Nat) := Parallel233.proposed233
 def pass233_9 : WordLangProgHOL (BitVec 64) := Parallel233.pass233_9
 theorem pass233_9_eq : WordToWord.wordAllocWith RegAlloc.regAllocExecutable 233 riscvConfig RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length)) pass233_8 proposed233 = pass233_9 := by
   have input_eq : pass233_8 = Parallel233.pass233_8 := by
-    with_unfolding_all rfl
+    kernel_rfl
   rw [input_eq]
   exact InitE.ClashStages233.allocation_eq
 #print axioms pass233_9_eq

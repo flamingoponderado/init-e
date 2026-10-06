@@ -1,3 +1,5 @@
+import InitE.CompactComputation
+import InitE.CompilerStages
 import InitE.WordStages.Source461
 import InitE.WordStages.Pass461_10
 import InitE.CompilerStages
@@ -8292,8 +8294,8 @@ theorem optimize461_eq : WordToWord.fullCompileSingleWith
   dsimp only
   have name_eq : source461.1 = 461 := by rfl
   have argc_eq : source461.2.1 = 5 := by rfl
-  have oracle_eq : oracle461 = proposed461 := by with_unfolding_all rfl
+  have oracle_eq : oracle461 = proposed461 := by kernel_rfl
   rw [name_eq, argc_eq, oracle_eq, pass461_0_eq, pass461_1_eq, pass461_2_eq, pass461_3_eq, pass461_4_eq, pass461_5_eq, pass461_6_eq, pass461_7_eq, pass461_8_eq, pass461_9_eq, pass461_10_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 #print axioms optimize461_eq
 end InitE.WordStages

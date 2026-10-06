@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Sparse713.Data7
 import InitE.WordStages.Sparse713.Data6
 set_option Elab.async false
@@ -9,7 +10,6 @@ open scoped InitE.CompilerComputation
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 namespace InitE.WordStages.Sparse713
 theorem pass713_7_eq : WordUnreach.removeUnreach (pass713_6) = pass713_7 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass713_7_eq
 end InitE.WordStages.Sparse713

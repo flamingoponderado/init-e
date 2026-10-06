@@ -1,3 +1,5 @@
+import InitE.CompactComputation
+import InitE.CompilerStages
 import InitE.WordStages.Source646
 import InitE.WordStages.Pass646_10
 import InitE.CompilerStages
@@ -6408,8 +6410,8 @@ theorem optimize646_eq : WordToWord.fullCompileSingleWith
   dsimp only
   have name_eq : source646.1 = 646 := by rfl
   have argc_eq : source646.2.1 = 9 := by rfl
-  have oracle_eq : oracle646 = proposed646 := by with_unfolding_all rfl
+  have oracle_eq : oracle646 = proposed646 := by kernel_rfl
   rw [name_eq, argc_eq, oracle_eq, pass646_0_eq, pass646_1_eq, pass646_2_eq, pass646_3_eq, pass646_4_eq, pass646_5_eq, pass646_6_eq, pass646_7_eq, pass646_8_eq, pass646_9_eq, pass646_10_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 #print axioms optimize646_eq
 end InitE.WordStages

@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Parallel461.Data5
 import InitE.WordStages.Parallel461.Data4
 set_option Elab.async false
@@ -9,7 +10,6 @@ open scoped InitE.CompilerComputation
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 namespace InitE.WordStages.Parallel461
 theorem pass461_5_eq : WordCopy.copyProp (pass461_4) = pass461_5 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass461_5_eq
 end InitE.WordStages.Parallel461

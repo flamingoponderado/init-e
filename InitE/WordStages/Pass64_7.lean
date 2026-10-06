@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Pass64_6
 import InitE.CompilerComputation
 set_option Elab.async false
@@ -3197,7 +3198,6 @@ Flapjack.WordLangProgHOL.seq (Flapjack.WordLangProgHOL.move 1 [(9, 0)])
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             [0]
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             none)))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
 theorem pass64_7_eq : WordUnreach.removeUnreach (pass64_6) = pass64_7 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass64_7_eq
 end InitE.WordStages

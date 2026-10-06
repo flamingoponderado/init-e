@@ -1,10 +1,9 @@
+import InitE.CompactComputation
 import InitE.FrontendStages.Word.Checkpoints649.Data.Chunk028
 set_option autoImplicit false
 set_option Elab.async false
 set_option maxRecDepth 1000000
 set_option maxHeartbeats 0
-set_option cbv.maxSteps 1000000000
-set_option cbv.warning false
 open Flapjack
 namespace InitE.FrontendStages.Word.Checkpoints649
 theorem node10752_conditional
@@ -26,9 +25,7 @@ theorem node10753_conditional
 theorem node10754_conditional : Flapjack.LoopToWord.compHOL Word.context649
     Loop.loopBody649_12 (713, 4) = (output10754, (713, 4)) := by
   rw [output10754_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node10755_conditional
     (child10754 : Flapjack.LoopToWord.compHOL Word.context649
@@ -40,9 +37,7 @@ theorem node10755_conditional
 theorem node10756_conditional : Flapjack.LoopToWord.compHOL Word.context649
     Loop.loopBody649_14 (713, 4) = (output10756, (713, 4)) := by
   rw [output10756_def]
-  conv => lhs; cbv
-  try (conv => rhs; cbv)
-  try rfl
+  kernel_rfl
 
 theorem node10757_conditional
     (child10756 : Flapjack.LoopToWord.compHOL Word.context649

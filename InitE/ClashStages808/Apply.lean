@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.ClashStages808.Data
 import InitE.WordStages.Parallel808.Data8
 import InitE.WordStages.Parallel808.Data9
@@ -10,7 +11,6 @@ open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 open InitE.WordStages.Parallel808
 namespace InitE.ClashStages808
 theorem apply_eq : WordAlloc.applyColour (WordAlloc.totalColour colour) pass808_8 = pass808_9 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms apply_eq
 end InitE.ClashStages808

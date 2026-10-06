@@ -314,9 +314,10 @@ and events for every terminating source execution. `InitE/TargetBudget.lean`
 proves the infinity equivalence using the actual evaluator's Halt witness.
 
 The current verifier allowlist contains only the three standard Lean axioms.
-Finite proof conversion and performance fixes now pass the full outside Lake
-build and axiom audit. The isolated verifier is rebuilding the workspace proof
-artifacts independently before auditing and comparing the submission.
+The previous standard-axiom proof version passed the full outside Lake build
+and axiom audit. Compact computation certificates are now being installed;
+the latest isolated run was stopped at the user’s request, and fresh full
+integration and acceptance remain pending.
 Metaprogrammed tactics and simplification procedures may construct proofs,
 but Lean's kernel must check them without additional axioms.
 
@@ -330,9 +331,9 @@ The complete sandbox checks and comparator kernel recheck passed. The trusted
 build used a 24 GiB cap; the comparator cap was raised to 64 GiB during the run,
 and the script now uses 112 GiB throughout. This acceptance includes the exact
 49-name native-computation axiom manifest. Those native checks have since been
-replaced with proofs using only standard axioms. The revised outside build
-passes, and its isolated verification is running. The guest, challenge semantics and Spike results are
-unchanged.
+replaced with proofs using only standard axioms. That revised outside build
+passed; its isolated verification has been superseded by compact-certificate
+work. The guest, challenge semantics and Spike results are unchanged.
 
 ## Standard-axiom certification
 
@@ -348,8 +349,9 @@ maps also pass with standard axioms.
 The concrete stack linkage, compiler-correctness specialization, all backend
 aggregates, literal-byte agreement, metadata and source-to-artifact composition
 now pass direct kernel checks with only `propext`, `Classical.choice`, and
-`Quot.sound`. The actual combined Lake build, submission and axiom audit now
-pass under the final resource caps. Admission metadata uses small checked
+`Quot.sound`. The previous combined Lake build, submission and axiom audit
+passed under the final resource caps. The compact-certificate replacement
+requires a fresh complete build. Admission metadata uses small checked
 literal tables and ordinary kernel computation. Full isolated verification
 remains pending: the original buffered comparator export failed with OOM.
 The disk-spooling retry passed its cold trusted audit in 2h 38m 23s with a
@@ -357,8 +359,18 @@ The disk-spooling retry passed its cold trusted audit in 2h 38m 23s with a
 user's request for the new pin. Fresh isolated acceptance remains pending. The measured
 outside continuation reused earlier stages and is not a cold build.
 
-Large computations use separately checked intermediate definitions, explicit
-equations and proof-producing simplification procedures. Native generation
+Large computations use separately checked intermediate definitions and explicit
+equations. Closed compiler-pass computations now submit compact reflexivity
+terms through `InitE.CompactComputation.kernel_rfl`; the kernel computes the
+conversion and rejects an incorrect proposed result. Symbolic frontend steps
+and cached checkpoint outputs use shared proved evaluator or equation bridges
+before reflexivity. The Loop shrink/fixed-point evaluator has a structurally
+bounded equivalent implementation, with a generic equality proof to the
+compiler’s original evaluator. The production-to-HOL codecs, Globals compiler
+and SSA traversal likewise have universally proved structural equivalents.
+These change proof computation only: existing source data, stage conclusions,
+bytecode, score and memory layout remain unchanged. No additional axioms or
+skipped kernel checks are introduced. Native generation
 only proposes values; kernel proofs establish every equation used by the
 certificate. These changes preserve the AST, evaluator, memory layout,
 submitted byte literals and infinity score. Benchmark fixtures, exact timings,

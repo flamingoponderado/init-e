@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.SmallStages.Compact301.Complete
 import InitE.SmallStages.Oracles301
 set_option autoImplicit false
@@ -11,6 +12,6 @@ theorem optimize301_exact : WordToWord.fullCompileSingleWith
   (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
   RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
   riscvConfig (source301, oracle301) = optimized301 := by
-  exact optimize301_eq.trans (by with_unfolding_all rfl)
+  exact optimize301_eq.trans (by kernel_rfl)
 #print axioms optimize301_exact
 end InitE.SmallStages.Compact301

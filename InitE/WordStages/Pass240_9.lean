@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.ClashComputation
 import InitE.WordStages.Pass240_8
 import InitE.CompilerComputation
@@ -7358,7 +7359,6 @@ def word240_9_2127 : WordLangProgHOL (BitVec 64) :=
 def pass240_9 : WordLangProgHOL (BitVec 64) :=
 word240_9_2127
 theorem pass240_9_eq : WordToWord.wordAllocWith RegAlloc.regAllocExecutable 240 riscvConfig RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length)) (pass240_8) proposed240 = pass240_9 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass240_9_eq
 end InitE.WordStages

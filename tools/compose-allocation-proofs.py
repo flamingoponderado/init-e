@@ -21,10 +21,10 @@ claims = {
     "Forced": f"(WordAlloc.getForced riscvConfig pass{label}_8 []).all (fun (x, y) => WordAlloc.totalColour colour x != WordAlloc.totalColour colour y) = true",
 }
 for name, claim in claims.items():
-    text = f"import InitE.ClashStages{label}.Data\nimport {input_namespace}.Data8\nimport {input_namespace}.Data9\n" + header
-    text += f"theorem {name.lower()}_eq : {claim} := by\n  conv => lhs; cbv\n  try rfl\n#print axioms {name.lower()}_eq\nend InitE.ClashStages{label}\n"
+    text = f"import InitE.CompactComputation\nimport InitE.ClashStages{label}.Data\nimport {input_namespace}.Data8\nimport {input_namespace}.Data9\n" + header
+    text += f"theorem {name.lower()}_eq : {claim} := by\n  kernel_rfl\n#print axioms {name.lower()}_eq\nend InitE.ClashStages{label}\n"
     (root / (name + ".lean")).write_text(text)
-imports = ["InitE.AllocationComputation", f"InitE.ClashStages{label}.Closed"] + [f"InitE.ClashStages{label}.{name}" for name in claims]
+imports = ["InitE.KernelComputation", "InitE.AllocationComputation", f"InitE.ClashStages{label}.Closed"] + [f"InitE.ClashStages{label}.{name}" for name in claims]
 text = "".join(f"import {module}\n" for module in imports) + header
 text += f"""theorem allocation_eq : WordToWord.wordAllocWith RegAlloc.regAllocExecutable {label} riscvConfig RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg {k} pass{label}_8 proposed{label} = pass{label}_9 := by
   exact InitE.AllocationComputation.wordAllocWith_eq_of_checks _ _ _ _ _ _ _ _ _
@@ -50,7 +50,7 @@ if "--install" in sys.argv and "--sparse-input" not in sys.argv:
     text += f"namespace InitE.WordStages\ndef proposed{label} : Option (Spt Nat) := Parallel{label}.proposed{label}\ndef pass{label}_9 : WordLangProgHOL (BitVec 64) := Parallel{label}.pass{label}_9\n"
     text += f"""theorem pass{label}_9_eq : WordToWord.wordAllocWith RegAlloc.regAllocExecutable {label} riscvConfig RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg {k} pass{label}_8 proposed{label} = pass{label}_9 := by
   have input_eq : pass{label}_8 = Parallel{label}.pass{label}_8 := by
-    with_unfolding_all rfl
+    kernel_rfl
   rw [input_eq]
   exact InitE.ClashStages{label}.allocation_eq
 #print axioms pass{label}_9_eq

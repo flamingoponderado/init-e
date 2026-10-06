@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.ClashComputation
 import InitE.WordStages.Pass880_8
 import InitE.CompilerComputation
@@ -3446,7 +3447,6 @@ def word880_9_670 : WordLangProgHOL (BitVec 64) :=
 def pass880_9 : WordLangProgHOL (BitVec 64) :=
 word880_9_670
 theorem pass880_9_eq : WordToWord.wordAllocWith RegAlloc.regAllocExecutable 880 riscvConfig RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length)) (pass880_8) proposed880 = pass880_9 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass880_9_eq
 end InitE.WordStages

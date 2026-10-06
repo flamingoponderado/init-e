@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.SmallStages.Compact840.Complete
 import InitE.SmallStages.Oracles840
 set_option autoImplicit false
@@ -11,6 +12,6 @@ theorem optimize840_exact : WordToWord.fullCompileSingleWith
   (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
   RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
   riscvConfig (source840, oracle840) = optimized840 := by
-  exact optimize840_eq.trans (by with_unfolding_all rfl)
+  exact optimize840_eq.trans (by kernel_rfl)
 #print axioms optimize840_exact
 end InitE.SmallStages.Compact840

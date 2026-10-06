@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.SmallStages.Compact546.Data
 set_option autoImplicit false
 set_option Elab.async false
@@ -10,6 +11,6 @@ open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 open InitE.WordStages
 namespace InitE.SmallStages.Compact546
 theorem pass3_eq : WordAlloc.removeDeadProg pass2 = pass3 := by
-  with_unfolding_all rfl
+  kernel_rfl
 #print axioms pass3_eq
 end InitE.SmallStages.Compact546

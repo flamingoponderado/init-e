@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.SmallStages.Compact397.Complete
 import InitE.SmallStages.Oracles397
 set_option autoImplicit false
@@ -11,6 +12,6 @@ theorem optimize397_exact : WordToWord.fullCompileSingleWith
   (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
   RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
   riscvConfig (source397, oracle397) = optimized397 := by
-  exact optimize397_eq.trans (by with_unfolding_all rfl)
+  exact optimize397_eq.trans (by kernel_rfl)
 #print axioms optimize397_exact
 end InitE.SmallStages.Compact397

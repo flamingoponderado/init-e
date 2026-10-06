@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.SmallStages.Compact644.Complete
 import InitE.SmallStages.Oracles644
 set_option autoImplicit false
@@ -11,6 +12,6 @@ theorem optimize644_exact : WordToWord.fullCompileSingleWith
   (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
   RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
   riscvConfig (source644, oracle644) = optimized644 := by
-  exact optimize644_eq.trans (by with_unfolding_all rfl)
+  exact optimize644_eq.trans (by kernel_rfl)
 #print axioms optimize644_exact
 end InitE.SmallStages.Compact644

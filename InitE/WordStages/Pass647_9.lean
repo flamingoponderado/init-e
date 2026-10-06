@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.ClashComputation
 import InitE.WordStages.Pass647_8
 import InitE.CompilerComputation
@@ -5154,7 +5155,6 @@ def word647_9_1132 : WordLangProgHOL (BitVec 64) :=
 def pass647_9 : WordLangProgHOL (BitVec 64) :=
 word647_9_1132
 theorem pass647_9_eq : WordToWord.wordAllocWith RegAlloc.regAllocExecutable 647 riscvConfig RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length)) (pass647_8) proposed647 = pass647_9 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass647_9_eq
 end InitE.WordStages

@@ -1,3 +1,4 @@
+import Tools.CompactCertificates
 import Tools.GenWordStages
 import Flapjack.Compiler.Backend.Backend
 import Flapjack.Compiler.Backend.RiscVConfig.Executable
@@ -109,12 +110,12 @@ def generate (env : Environment) (identifier : Nat)
     if e == sentinel then some (mkConst `bitmapPrefix) else none
   let text ← renderWordStage env proposal
   IO.FS.createDirAll "InitE/BackendStages"
-  IO.FS.writeFile s!"InitE/BackendStages/Function{identifier}.lean"
+  writeCompactCertificate s!"InitE/BackendStages/Function{identifier}.lean"
     (s!"import InitE.StackAnalysis.Data{identifier}\nimport InitE.CompilerComputation\nimport Flapjack.Compiler.Backend.WordToStack.NativeTopCompile\n" ++
      "set_option maxRecDepth 1000000\nset_option maxHeartbeats 0\nset_option cbv.maxSteps 1000000000\nset_option cbv.warning false\n" ++
      "open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target\n" ++
      s!"namespace InitE.BackendStages\n{dataDefs}\ndef function{identifier} (bitmapPrefix : AppList (BitVec 64)) : StackLang.HolProg 64 × Nat × (AppList (BitVec 64) × Nat) :=\n{text}\n" ++
-     s!"theorem function{identifier}_eq (bitmapPrefix : AppList (BitVec 64)) : WordToStack.Native.compileProgNative riscvConfig false {dataNamespace}.optimized{identifier}.2.2 {dataNamespace}.optimized{identifier}.2.1 (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length)) (bitmapPrefix, {offset}) = function{identifier} bitmapPrefix := by\n  with_unfolding_all rfl\n#print axioms function{identifier}_eq\nend InitE.BackendStages\n")
+     s!"theorem function{identifier}_eq (bitmapPrefix : AppList (BitVec 64)) : WordToStack.Native.compileProgNative riscvConfig false {dataNamespace}.optimized{identifier}.2.2 {dataNamespace}.optimized{identifier}.2.1 (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length)) (bitmapPrefix, {offset}) = function{identifier} bitmapPrefix := by\n  kernel_rfl\n#print axioms function{identifier}_eq\nend InitE.BackendStages\n")
   IO.println s!"Function {identifier}: {text.utf8ByteSize + dataDefs.utf8ByteSize} bytes; next offset {result.2.2.2}"
   pure result.2.2.2
 
@@ -122,26 +123,26 @@ def generate (env : Environment) (identifier : Nat)
 def generateStackResult (env : Environment) (name imports expression : String)
     (result : Nat × StackLang.HolProg 64) : IO Unit := do
   let text ← renderWordStage env (toExpr result)
-  IO.FS.writeFile s!"InitE/BackendStages/{name}.lean"
+  writeCompactCertificate s!"InitE/BackendStages/{name}.lean"
     (imports ++ "\nimport InitE.CompilerComputation\nimport Flapjack.Compiler.Backend.Backend\n" ++
      "set_option maxRecDepth 1000000\nset_option maxHeartbeats 0\nset_option cbv.maxSteps 1000000000\nset_option cbv.warning false\n" ++
      "open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target\n" ++
      s!"namespace InitE.BackendStages\ndef {name} : Nat × StackLang.HolProg 64 :=\n{text}\n" ++
-     s!"theorem {name}_eq : {expression} = {name} := by\n  conv => lhs; cbv\n  try rfl\n#print axioms {name}_eq\nend InitE.BackendStages\n")
+     s!"theorem {name}_eq : {expression} = {name} := by\n  kernel_rfl\n#print axioms {name}_eq\nend InitE.BackendStages\n")
   IO.println s!"{name}: {text.utf8ByteSize} bytes"
 
 
 def generateRawInfo (env : Environment) (stack : List (Nat × StackLang.HolProg 64)) : IO Unit := do
   let info := StackRawCall.collectInfo stack .ln
   let text ← renderWordStage env (toExpr info)
-  IO.FS.writeFile "InitE/BackendStages/RawInfoData.lean"
+  writeCompactCertificate "InitE/BackendStages/RawInfoData.lean"
     ("import Flapjack.Misc.Sptree\nopen Flapjack\nnamespace InitE.BackendStages.RawInfo\n" ++
      s!"def rawInfo : Spt Nat :=\n{text}\nend InitE.BackendStages.RawInfo\n")
-  IO.FS.writeFile "InitE/BackendStages/RawInfoFacts.lean"
+  writeCompactCertificate "InitE/BackendStages/RawInfoFacts.lean"
     ("import InitE.BackendStages.Native\nimport InitE.BackendStages.RawInfoData\n" ++
      "set_option maxRecDepth 1000000\nset_option maxHeartbeats 0\n" ++
      "open Flapjack Flapjack.Compiler.Backend\nnamespace InitE.BackendStages.RawInfo\n" ++
-     "theorem info_eq : StackRawCall.collectInfo Native.stack .ln = rawInfo := by\n  with_unfolding_all rfl\n" ++
+     "theorem info_eq : StackRawCall.collectInfo Native.stack .ln = rawInfo := by\n  kernel_rfl\n" ++
      "theorem compile_eq : StackRawCall.compile Native.stack = Native.stack.map (fun (identifier, body) => (identifier, StackRawCall.compTop rawInfo body)) := by\n  unfold StackRawCall.compile\n  rw [info_eq]\n" ++
      "#print axioms info_eq\n#print axioms compile_eq\nend InitE.BackendStages.RawInfo\n")
   IO.println s!"Raw info: {text.utf8ByteSize} bytes"
@@ -153,12 +154,12 @@ def generateRawFunction (env : Environment) (identifier : Nat)
   let state ← IO.mkRef ({tag := s!"rawBody{identifier}_"} : PancakeDataState)
   let name ← stackProgData env state result
   let dataDefs := String.intercalate "\n" (← state.get).lines.toList
-  IO.FS.writeFile s!"InitE/BackendStages/Raw{identifier}.lean"
+  writeCompactCertificate s!"InitE/BackendStages/Raw{identifier}.lean"
     (s!"import InitE.BackendStages.Function{identifier}\nimport InitE.BackendStages.RawInfoData\n" ++
      "import Flapjack.Compiler.Backend.StackRawCall\nset_option maxRecDepth 1000000\nset_option maxHeartbeats 0\n" ++
      "open Flapjack Flapjack.Compiler.Backend\nnamespace InitE.BackendStages\n" ++
      dataDefs ++ s!"\ndef raw{identifier} : StackLang.HolProg 64 := {name}\n" ++
-     s!"theorem raw{identifier}_eq : StackRawCall.compTop RawInfo.rawInfo (function{identifier} (.list [])).1 = raw{identifier} := by\n  with_unfolding_all rfl\n#print axioms raw{identifier}_eq\nend InitE.BackendStages\n")
+     s!"theorem raw{identifier}_eq : StackRawCall.compTop RawInfo.rawInfo (function{identifier} (.list [])).1 = raw{identifier} := by\n  kernel_rfl\n#print axioms raw{identifier}_eq\nend InitE.BackendStages\n")
   IO.println s!"Raw {identifier}: {dataDefs.utf8ByteSize} bytes"
 
 /-- Emit linear-size data and an independently checked equation for one lower pass. -/
@@ -168,25 +169,25 @@ def generateLowerFunction (env : Environment) (identifier : Nat)
   let body ← stackProgData env state result.2
   let dataDefs := String.intercalate "\n" (← state.get).lines.toList
   let name := s!"{stage}{identifier}"
-  IO.FS.writeFile s!"InitE/BackendStages/{name}.lean"
+  writeCompactCertificate s!"InitE/BackendStages/{name}.lean"
     (imports ++ "\nimport Flapjack.Compiler.Backend.Backend\n" ++
      "set_option maxRecDepth 1000000\nset_option maxHeartbeats 0\n" ++
      "open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target\nnamespace InitE.BackendStages\n" ++
      dataDefs ++ s!"\ndef {name} : Nat × StackLang.HolProg 64 := ({result.1}, {body})\n" ++
-     s!"theorem {name}_eq : {expression} = {name} := by\n  with_unfolding_all rfl\n#print axioms {name}_eq\nend InitE.BackendStages\n")
+     s!"theorem {name}_eq : {expression} = {name} := by\n  kernel_rfl\n#print axioms {name}_eq\nend InitE.BackendStages\n")
   IO.println s!"{name}: {dataDefs.utf8ByteSize} bytes"
 
 def generateSection (env : Environment) (identifier : Nat)
     (program : Nat × StackLang.HolProg 64) : IO Unit := do
   let result := StackToLab.progToSectionHOL program
   let text ← renderWordStage env (toExpr result)
-  IO.FS.writeFile s!"InitE/BackendStages/Section{identifier}.lean"
+  writeCompactCertificate s!"InitE/BackendStages/Section{identifier}.lean"
     (s!"import InitE.BackendStages.Named{identifier}\n" ++
      "import Flapjack.Compiler.Backend.StackToLab.Native\n" ++
      "set_option maxRecDepth 1000000\nset_option maxHeartbeats 0\n" ++
      "open Flapjack Flapjack.Compiler.Backend\nnamespace InitE.BackendStages\n" ++
      s!"def section{identifier} : LabSem.LabSectionHOL 64 :=\n{text}\n" ++
-     s!"theorem section{identifier}_eq : StackToLab.progToSectionHOL Named{identifier} = section{identifier} := by\n  with_unfolding_all rfl\n#print axioms section{identifier}_eq\nend InitE.BackendStages\n")
+     s!"theorem section{identifier}_eq : StackToLab.progToSectionHOL Named{identifier} = section{identifier} := by\n  kernel_rfl\n#print axioms section{identifier}_eq\nend InitE.BackendStages\n")
   IO.println s!"Section{identifier}: {text.utf8ByteSize} bytes"
 
 def generateStubStage (env : Environment) (stage imports expression : String)
@@ -196,34 +197,34 @@ def generateStubStage (env : Environment) (stage imports expression : String)
     let body ← stackProgData env state program
     pure s!"({identifier}, {body})"
   let dataDefs := String.intercalate "\n" (← state.get).lines.toList
-  IO.FS.writeFile s!"InitE/BackendStages/{stage}.lean"
+  writeCompactCertificate s!"InitE/BackendStages/{stage}.lean"
     (imports ++ "\nimport InitE.CompilerComputation\nimport Flapjack.Compiler.Backend.Backend\nimport Flapjack.Compiler.Backend.RiscVConfig.Executable\n" ++
      "set_option maxRecDepth 1000000\nset_option maxHeartbeats 0\n" ++
      "open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target\nnamespace InitE.BackendStages\n" ++
      dataDefs ++ s!"\ndef {stage} : List (Nat × StackLang.HolProg 64) := [{String.intercalate ", " entries}]\n" ++
-     s!"theorem {stage}_eq : {expression} = {stage} := by\n  with_unfolding_all rfl\n#print axioms {stage}_eq\nend InitE.BackendStages\n")
+     s!"theorem {stage}_eq : {expression} = {stage} := by\n  kernel_rfl\n#print axioms {stage}_eq\nend InitE.BackendStages\n")
   IO.println s!"{stage}: {dataDefs.utf8ByteSize} bytes"
 
 def generateSectionStubs (env : Environment) (programs : List (Nat × StackLang.HolProg 64)) : IO Unit := do
   let text ← renderWordStage env (toExpr (programs.map StackToLab.progToSectionHOL))
-  IO.FS.writeFile "InitE/BackendStages/SectionStubs.lean"
+  writeCompactCertificate "InitE/BackendStages/SectionStubs.lean"
     ("import InitE.BackendStages.NamedStubs\nimport Flapjack.Compiler.Backend.StackToLab.Native\n" ++
      "set_option maxRecDepth 1000000\nset_option maxHeartbeats 0\n" ++
      "open Flapjack Flapjack.Compiler.Backend\nnamespace InitE.BackendStages\n" ++
      s!"def SectionStubs : LabSem.LabProgHOL 64 :=\n{text}\n" ++
-     "theorem SectionStubs_eq : NamedStubs.map StackToLab.progToSectionHOL = SectionStubs := by\n  with_unfolding_all rfl\n#print axioms SectionStubs_eq\nend InitE.BackendStages\n")
+     "theorem SectionStubs_eq : NamedStubs.map StackToLab.progToSectionHOL = SectionStubs := by\n  kernel_rfl\n#print axioms SectionStubs_eq\nend InitE.BackendStages\n")
   IO.println s!"SectionStubs: {text.utf8ByteSize} bytes"
 
 def generateLabStage (env : Environment) (identifier : Nat)
     (stage imports expression : String) (labSection : LabSem.LabSectionHOL 64) : IO Unit := do
   let text ← renderWordStage env (toExpr labSection)
   let name := s!"{stage}{identifier}"
-  IO.FS.writeFile s!"InitE/BackendStages/{name}.lean"
+  writeCompactCertificate s!"InitE/BackendStages/{name}.lean"
     (imports ++ "\nimport InitE.CompilerComputation\nimport Flapjack.Compiler.Backend.LabToTarget.Compile\n" ++
      "set_option maxRecDepth 1000000\nset_option maxHeartbeats 0\n" ++
      "open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target\nnamespace InitE.BackendStages\n" ++
      s!"def {name} : LabSem.LabSectionHOL 64 :=\n{text}\n" ++
-     s!"theorem {name}_eq : {expression} = {name} := by\n  with_unfolding_all rfl\n#print axioms {name}_eq\nend InitE.BackendStages\n")
+     s!"theorem {name}_eq : {expression} = {name} := by\n  kernel_rfl\n#print axioms {name}_eq\nend InitE.BackendStages\n")
   IO.println s!"{name}: {text.utf8ByteSize} bytes"
 
 def generateTargetSection (env : Environment) (phase position : Nat)
@@ -237,14 +238,14 @@ def generateTargetSection (env : Environment) (phase position : Nat)
   let bodyText ← renderWordStage env (toExpr rewritten)
   let previous := if phase == 0 then s!"Encoded{n}" else s!"Reencode{phase - 1}_{n}"
   let name := s!"Reencode{phase}_{n}"
-  IO.FS.writeFile s!"InitE/BackendStages/{name}.lean"
+  writeCompactCertificate s!"InitE/BackendStages/{name}.lean"
     (s!"import InitE.BackendStages.{previous}\nimport InitE.BackendStages.TargetLabels{phase}\nimport InitE.BackendStages.TargetFfis\n" ++
      "set_option maxRecDepth 1000000\nset_option maxHeartbeats 0\n" ++
      "open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target\nnamespace InitE.BackendStages\n" ++
      s!"def localLabels{phase}_{n} : List (Nat × Nat) :=\n{localText}\n" ++
      s!"def {name} : LabSem.LabSectionHOL 64 :=\n{bodyText}\n" ++
-     s!"theorem localLabels{phase}_{n}_eq : LabToTarget.sectionLabels {position} {previous}.lines [] = ({nextPosition}, localLabels{phase}_{n}) := by\n  with_unfolding_all rfl\n" ++
-     s!"theorem {name}_eq : LabToTarget.encLinesAgain Target.labels{phase} Target.ffis {position} riscvConfig.encode {previous}.lines [] true = ({name}.lines, {next}, {ok}) := by\n  with_unfolding_all rfl\n#print axioms localLabels{phase}_{n}_eq\n#print axioms {name}_eq\nend InitE.BackendStages\n")
+     s!"theorem localLabels{phase}_{n}_eq : LabToTarget.sectionLabels {position} {previous}.lines [] = ({nextPosition}, localLabels{phase}_{n}) := by\n  kernel_rfl\n" ++
+     s!"theorem {name}_eq : LabToTarget.encLinesAgain Target.labels{phase} Target.ffis {position} riscvConfig.encode {previous}.lines [] true = ({name}.lines, {next}, {ok}) := by\n  kernel_rfl\n#print axioms localLabels{phase}_{n}_eq\n#print axioms {name}_eq\nend InitE.BackendStages\n")
   IO.println s!"Target {name}: {bodyText.utf8ByteSize} bytes; {position} → {next}; stable {ok}"
 
 def generateAlignmentSection (env : Environment) (position : Nat)
@@ -253,12 +254,12 @@ def generateAlignmentSection (env : Environment) (position : Nat)
   let (lines, next) := LabToTarget.linesUpdLabLen position sec.lines []
   let output : LabSem.LabSectionHOL 64 := {sec with lines := lines}
   let text ← renderWordStage env (toExpr output)
-  IO.FS.writeFile s!"InitE/BackendStages/Alignment{n}.lean"
+  writeCompactCertificate s!"InitE/BackendStages/Alignment{n}.lean"
     (s!"import InitE.BackendStages.TargetChecks.Data1_{n}\nimport InitE.CompilerComputation\nimport Flapjack.Compiler.Backend.LabToTarget.Compile\n" ++
      "set_option maxRecDepth 1000000\nset_option maxHeartbeats 0\n" ++
      "open Flapjack Flapjack.Compiler.Backend\nnamespace InitE.BackendStages\n" ++
      s!"def Alignment{n} : LabSem.LabSectionHOL 64 :=\n{text}\n" ++
-     s!"theorem Alignment{n}_eq : LabToTarget.linesUpdLabLen {position} TargetChecks.Reencode1_{n}.lines [] = (Alignment{n}.lines, {next}) := by\n  with_unfolding_all rfl\n#print axioms Alignment{n}_eq\nend InitE.BackendStages\n")
+     s!"theorem Alignment{n}_eq : LabToTarget.linesUpdLabLen {position} TargetChecks.Reencode1_{n}.lines [] = (Alignment{n}.lines, {next}) := by\n  kernel_rfl\n#print axioms Alignment{n}_eq\nend InitE.BackendStages\n")
   IO.println s!"Alignment{n}: {text.utf8ByteSize} bytes; {position} → {next}"
 
 def generateFinalSection (env : Environment) (position : Nat)
@@ -268,22 +269,22 @@ def generateFinalSection (env : Environment) (position : Nat)
   let (lines, next, ok) := LabToTarget.encLinesAgain labels ffis position riscvConfig.encode sec.lines [] true
   let output : LabSem.LabSectionHOL 64 := {sec with lines := lines}
   let text ← renderWordStage env (toExpr output)
-  IO.FS.writeFile s!"InitE/BackendStages/FinalReencode{n}.lean"
+  writeCompactCertificate s!"InitE/BackendStages/FinalReencode{n}.lean"
     (s!"import InitE.BackendStages.Alignment{n}\nimport InitE.BackendStages.TargetLabelsFinal\nimport InitE.BackendStages.TargetFfis\n" ++
      "set_option maxRecDepth 1000000\nset_option maxHeartbeats 0\n" ++
      "open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target\nnamespace InitE.BackendStages\n" ++
      s!"def FinalReencode{n} : LabSem.LabSectionHOL 64 :=\n{text}\n" ++
-     s!"theorem FinalReencode{n}_eq : LabToTarget.encLinesAgain Target.labelsFinal Target.ffis {position} riscvConfig.encode Alignment{n}.lines [] true = (FinalReencode{n}.lines, {next}, {ok}) := by\n  with_unfolding_all rfl\n#print axioms FinalReencode{n}_eq\nend InitE.BackendStages\n")
+     s!"theorem FinalReencode{n}_eq : LabToTarget.encLinesAgain Target.labelsFinal Target.ffis {position} riscvConfig.encode Alignment{n}.lines [] true = (FinalReencode{n}.lines, {next}, {ok}) := by\n  kernel_rfl\n#print axioms FinalReencode{n}_eq\nend InitE.BackendStages\n")
   let padded := LabToTarget.padSection (riscvConfig.encode (.inst .skip)) lines []
   let paddedOutput : LabSem.LabSectionHOL 64 := {sec with lines := padded}
   let text ← renderWordStage env (toExpr paddedOutput)
-  IO.FS.writeFile s!"InitE/BackendStages/Padded{n}.lean"
+  writeCompactCertificate s!"InitE/BackendStages/Padded{n}.lean"
     (s!"import InitE.BackendStages.FinalReencode{n}\n" ++
      "set_option maxRecDepth 1000000\nset_option maxHeartbeats 0\n" ++
      "open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target\nnamespace InitE.BackendStages\n" ++
      s!"def Padded{n} : LabSem.LabSectionHOL 64 :=\n{text}\n" ++
-     s!"theorem Padded{n}_eq : LabToTarget.padSection (riscvConfig.encode (.inst .skip)) FinalReencode{n}.lines [] = Padded{n}.lines := by\n  with_unfolding_all rfl\n" ++
-     s!"theorem Padded{n}_valid : LabToTarget.secOkLight riscvConfig Padded{n} = true := by\n  with_unfolding_all rfl\n#print axioms Padded{n}_eq\n#print axioms Padded{n}_valid\nend InitE.BackendStages\n")
+     s!"theorem Padded{n}_eq : LabToTarget.padSection (riscvConfig.encode (.inst .skip)) FinalReencode{n}.lines [] = Padded{n}.lines := by\n  kernel_rfl\n" ++
+     s!"theorem Padded{n}_valid : LabToTarget.secOkLight riscvConfig Padded{n} = true := by\n  kernel_rfl\n#print axioms Padded{n}_eq\n#print axioms Padded{n}_valid\nend InitE.BackendStages\n")
   IO.println s!"FinalReencode/Padded{n}: {position} → {next}; stable {ok}"
 
 /-- Untrusted target pass proposals; each label map needs a separate later certificate. -/
@@ -291,7 +292,7 @@ partial def targetPlanLoop (env : Environment) (phase clock : Nat)
     (program : LabSem.LabProgHOL 64) (ffis : List HolFfiName) : IO (List (BitVec 8)) := do
   let labels := LabToTarget.computeLabelsAlt 0 program .ln
   let text ← renderWordStage env (toExpr labels)
-  IO.FS.writeFile s!"InitE/BackendStages/TargetLabels{phase}.lean"
+  writeCompactCertificate s!"InitE/BackendStages/TargetLabels{phase}.lean"
     ("import Flapjack.Misc.Sptree\nset_option maxRecDepth 1000000\nset_option maxHeartbeats 0\nset_option autoImplicit false\nopen Flapjack\nnamespace InitE.BackendStages.Target\n" ++
      s!"def labels{phase} : Spt (Spt Nat) :=\n{text}\nend InitE.BackendStages.Target\n")
   let mut pos := 0
@@ -302,7 +303,7 @@ partial def targetPlanLoop (env : Environment) (phase clock : Nat)
     let (next, _) := LabToTarget.sectionLabels pos sec.lines []
     lines := lines.push s!"{sec.sectionId},{pos},{next}"
     pos := next
-  IO.FS.writeFile s!"work/lean-perf/backend-stages/TargetPositions{phase}.csv" (String.intercalate "\n" lines.toList)
+  writeCompactCertificate s!"work/lean-perf/backend-stages/TargetPositions{phase}.csv" (String.intercalate "\n" lines.toList)
   let (rewritten, done) := LabToTarget.encSecsAgain 0 labels ffis riscvConfig.encode program
   IO.println s!"TARGET phase {phase}: {program.length} sections; initial bytes {pos}; stable {done}; labels {text.utf8ByteSize} bytes"
   if done then
@@ -315,7 +316,7 @@ partial def targetPlanLoop (env : Environment) (phase clock : Nat)
     let aligned := LabToTarget.updLabLen 0 rewritten
     let labels := LabToTarget.computeLabelsAlt 0 aligned .ln
     let text ← renderWordStage env (toExpr labels)
-    IO.FS.writeFile "InitE/BackendStages/TargetLabelsFinal.lean"
+    writeCompactCertificate "InitE/BackendStages/TargetLabelsFinal.lean"
       ("import Flapjack.Misc.Sptree\nset_option maxRecDepth 1000000\nset_option maxHeartbeats 0\nset_option autoImplicit false\nopen Flapjack\nnamespace InitE.BackendStages.Target\n" ++
        s!"def labelsFinal : Spt (Spt Nat) :=\n{text}\nend InitE.BackendStages.Target\n")
     let mut finalPos := 0
@@ -343,7 +344,7 @@ def generateTargetPlan (env : Environment) (stack : List (Nat × StackLang.HolPr
   let filtered := LabFilter.filterSkip sections
   let ffis := LabToTarget.findFfiNames filtered
   let ffiText ← renderWordStage env (toExpr ffis)
-  IO.FS.writeFile "InitE/BackendStages/TargetFfis.lean" ("import Flapjack.FfiHOL\nset_option maxRecDepth 1000000\nset_option maxHeartbeats 0\nset_option autoImplicit false\nopen Flapjack\nnamespace InitE.BackendStages.Target\n" ++ s!"def ffis : List HolFfiName :=\n{ffiText}\nend InitE.BackendStages.Target\n")
+  writeCompactCertificate "InitE/BackendStages/TargetFfis.lean" ("import Flapjack.FfiHOL\nset_option maxRecDepth 1000000\nset_option maxHeartbeats 0\nset_option autoImplicit false\nopen Flapjack\nnamespace InitE.BackendStages.Target\n" ++ s!"def ffis : List HolFfiName :=\n{ffiText}\nend InitE.BackendStages.Target\n")
   IO.println s!"TARGET input: {sections.length} sections; {ffis.length} FFI names"
   let initial := LabToTarget.encSecList riscvConfig.encode filtered
   targetPlanLoop env 0 cfg.labConf.initClock initial ffis

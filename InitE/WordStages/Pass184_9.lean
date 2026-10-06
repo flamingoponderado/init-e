@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.ClashComputation
 import InitE.WordStages.Pass184_8
 import InitE.CompilerComputation
@@ -4284,7 +4285,6 @@ def word184_9_1172 : WordLangProgHOL (BitVec 64) :=
 def pass184_9 : WordLangProgHOL (BitVec 64) :=
 word184_9_1172
 theorem pass184_9_eq : WordToWord.wordAllocWith RegAlloc.regAllocExecutable 184 riscvConfig RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length)) (pass184_8) proposed184 = pass184_9 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass184_9_eq
 end InitE.WordStages

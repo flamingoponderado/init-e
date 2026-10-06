@@ -1454,12 +1454,93 @@ The bounded compatibility build also passed all 3,616 jobs, including
 `work/lean-perf/flapjack-repin-034bb5a1-smoke.log`; it is not a full
 initial-submission or isolated comparator check.
 
-The fresh full verifier is running in
+The fresh full verifier was started in
 `init-e-full-verifier-riscv-im-034bb5a1.service`, invocation
 `92688cf3b01a454d82aadb8e857bdeb4`, with source snapshot
 `be28eb472322c3e0af7c420e6ffc4d5abb505293`. Its work directory is
 `verifier/runs/full-riscv-im-034bb5a1-20261006`, with outer log/time files
 `work/lean-perf/full-verifier-riscv-im-034bb5a1.{log,time}`. The same
 112-GiB, zero-swap, 16-CPU/16-compiler-slot and eight-hour inner limits apply;
-the outer allowance is eighteen hours. The session-specific herdr completion
-waker is armed for this exact invocation. Full acceptance remains pending.
+the outer allowance was eighteen hours. The session-specific herdr completion
+waker was armed for this exact invocation. This run was subsequently stopped
+at the user’s request, as recorded below; it did not establish full acceptance.
+
+
+### Compact computation certificates (2026-10-06)
+
+After PR #15 was merged, work moved to `perf/compact-computation-proofs`.
+At the user's request, the current repin verifier and its exact completion
+watcher were stopped before replacing the computation certificates. The stopped
+run is not an acceptance result. Sources, journals and its pre-stop resource
+snapshot are retained under `work/lean-perf/full-verifier-riscv-im-034bb5a1-*`.
+
+`InitE.CompactComputation.kernel_rfl` submits an `Eq.refl` term without first
+repeating the conversion check in the elaborator. Lean's kernel still checks
+that the proposed result is definitionally equal to the computation. This
+changes the certificate representation, not the trust level. The regression
+module `Tools/KernelComputationCheck.lean` checks a real copy propagation and
+requires the kernel to reject the false proposed equality `1 = 2`.
+
+A 256-group changing-program copy-propagation fixture produced 892,468 distinct
+proof-expression nodes with `cbv`, versus 16 using full-transparency reflexivity.
+The complete dependency exports were 47,736,547 and 6,000,582 bytes respectively;
+fresh kernel replay took 38.542 and 2.728 seconds. This fixture includes moves
+between distinct allocator variables and returns rewritten to their copy
+representatives. The short term alone does not remove the definitions and
+input/output literals from the export. Exploratory wall measurements also
+include shared compiler-slot waits and concurrent work.
+
+Full guest-stage checks use the same 16-slot compiler admission and a 112-GiB,
+zero-swap memory cap. Reference sizes below are cached old artifacts, not fresh
+reruns of the old proof scripts. Each listed compact artifact passed a direct
+Lean kernel check; this is not full isolated comparator acceptance.
+
+| Full guest certificate | CPU seconds | Old `.olean` bytes | Compact `.olean` bytes |
+| --- | ---: | ---: | ---: |
+| Copy propagation `Pass875_5` | 67.31 | 810,526,280 | 28,441,056 |
+| Common subexpression elimination `Pass875_4` | 35.25 | 702,656,080 | 29,044,720 |
+| Complete optimizer `Optimize694` | 49.46 | 324,016,720 | 3,885,216 |
+| Dead-code removal `Pass875_8` | 49.65 | 321,780,152 | 25,028,168 |
+| SSA conversion `Pass713_2` | 113.58 | 197,057,048 | 49,146,064 |
+
+All listed equations retain only a subset of `propext`, `Classical.choice` and
+`Quot.sound`. The exact logs and resource measurements are recorded in
+`work/lean-perf/compact-guest/root-full-stage-results.json`.
+
+Closed definitional computations use compact reflexivity. For symbolic contexts
+and computations that need equation lemmas, the proof first applies a shared
+checked bridge. The Loop shrink pass now has a structurally recursive evaluator
+and a live-set-size-bounded fixed-point evaluator, proved equal to the original
+mutually well-founded definitions. Dead-code checkpoints retain cached child
+and skip equations; clash checkpoints retain the original structural validator
+and named child equations. A sorted-validator rewrite was tested but dropped:
+its well-founded merge sort did not reduce definitionally in larger cases.
+These shared equations keep each local computation small. The largest checked
+Loop translation, `Translate649`, took 17.53 wall seconds and reduced its artifact
+from 66,931,720 to 12,576 bytes; its shared evaluator helper is about 1.99 MB.
+The largest frontend conditional checkpoint,
+`Checkpoints811/Conditional/Chunk008`, also passed, reducing its artifact from
+3,379,712 to 988,776 bytes.
+
+The shared production-to-HOL codecs now have universally quantified equality
+proofs for shapes, expressions, programs and declarations. These permit compact
+frontend checks without reducing the original size-based recursion over string
+payloads. The codec module itself checked in 4.13 CPU seconds with only the three
+standard axioms. Full frontend leaf and aggregate checks remain separate work.
+
+The broad build exposed SSA-stage reflexivity failures that were absent from
+initial representative checks. Its expression traversal was inferred as
+well-founded recursion and could remain stuck even on a variable expression.
+`SmallSsaKernelComputation` proves the structural expression and program
+traversals equal to the original SSA compiler, without additional premises.
+The repaired `Pass875_2` checked in 65.80 wall seconds; the tiny failing
+`Compact885/Pass2` artifact shrank from 11,155,720 to 12,576 bytes. Fused
+optimizer proofs expose the pipeline before applying this bridge; proofs that
+already compose checked stages only need the final tuple conversion.
+
+The original bulk Word/Small build and frontend discovery build found these
+cases and exited with errors; they are not acceptance results. Their corrected
+proofs passed focused checks, and an actual full
+`lake build InitE Submission InitE.Audit` is now in progress. A few staged
+optimizer tails were corrected during that pass and require a final retry.
+The full integration result and fresh isolated comparison remain pending.

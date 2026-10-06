@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.SmallStages.Compact163.Complete
 import InitE.SmallStages.Thin163
 set_option autoImplicit false
@@ -12,6 +13,6 @@ theorem optimize163_exact : WordToWord.fullCompileSingleWith
     RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
     riscvConfig (source163, InitE.SmallStages.Thin163.oracle163) =
     InitE.SmallStages.Thin163.optimized163 := by
-  exact optimize163_eq.trans (by with_unfolding_all rfl)
+  exact optimize163_eq.trans (by kernel_rfl)
 #print axioms optimize163_exact
 end InitE.SmallStages.Compact163

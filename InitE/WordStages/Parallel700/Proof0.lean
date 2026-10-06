@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Parallel700.Data0
 import InitE.WordStages.Source700
 set_option Elab.async false
@@ -9,7 +10,6 @@ open scoped InitE.CompilerComputation
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 namespace InitE.WordStages.Parallel700
 theorem pass700_0_eq : WordSimp.compileExp (source700.2.2) = pass700_0 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass700_0_eq
 end InitE.WordStages.Parallel700

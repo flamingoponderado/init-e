@@ -1,3 +1,5 @@
+import InitE.CompactComputation
+import InitE.CompilerStages
 import InitE.WordStages.Source276
 import InitE.WordStages.Pass276_10
 import InitE.CompilerStages
@@ -2216,8 +2218,8 @@ theorem optimize276_eq : WordToWord.fullCompileSingleWith
   dsimp only
   have name_eq : source276.1 = 276 := by rfl
   have argc_eq : source276.2.1 = 3 := by rfl
-  have oracle_eq : oracle276 = proposed276 := by with_unfolding_all rfl
+  have oracle_eq : oracle276 = proposed276 := by kernel_rfl
   rw [name_eq, argc_eq, oracle_eq, pass276_0_eq, pass276_1_eq, pass276_2_eq, pass276_3_eq, pass276_4_eq, pass276_5_eq, pass276_6_eq, pass276_7_eq, pass276_8_eq, pass276_9_eq, pass276_10_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 #print axioms optimize276_eq
 end InitE.WordStages

@@ -15,7 +15,8 @@ certify the complete submitted image with score infinity. The verifier script
 and submission format are described in [docs/SUBMISSIONS.md](docs/SUBMISSIONS.md);
 the standard-axiom baseline has passed the full outside build and proof audit.
 The previous pin's cold isolated trusted audit also passed with exactly the three
-standard axioms. Fresh isolated verification of the latest Flapjack pin is running; acceptance is pending.
+standard axioms. The latest-pin verifier was stopped at the user’s request while compact computation
+certificates are installed; fresh full acceptance is pending.
 The earlier isolated acceptance used native-computation axioms and is recorded
 separately.
 

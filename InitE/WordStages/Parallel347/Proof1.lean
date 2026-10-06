@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Parallel347.Data1
 import InitE.WordStages.Parallel347.Data0
 set_option Elab.async false
@@ -9,7 +10,6 @@ open scoped InitE.CompilerComputation
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 namespace InitE.WordStages.Parallel347
 theorem pass347_1_eq : WordInst.instSelectExecutable riscvConfig (maxVarHOL (pass347_0) + 1) (pass347_0) = pass347_1 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass347_1_eq
 end InitE.WordStages.Parallel347

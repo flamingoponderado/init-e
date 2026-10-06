@@ -44,8 +44,8 @@
   "source_evaluator": "Flapjack.PanSemStateFiniteExact.semanticsDecls",
   "source_model": "InitE.sourceBehaviour",
   "pending": [
-    "complete the current isolated verification with only the three standard axioms",
-    "record full isolated acceptance and measured results on PR14"
+    "complete fresh isolated verification of the compact certificates with only the three standard axioms",
+    "record full isolated acceptance and measured results in the new compact-certificate PR"
   ],
   "submitted_image_bytes": 950336,
   "bootstrap_bytes": 208,
@@ -380,27 +380,17 @@
     }
   ],
   "current_standard_axiom_verification": {
-    "status": "running",
-    "unit": "init-e-full-verifier-riscv-im-034bb5a1.service",
-    "invocation_id": "92688cf3b01a454d82aadb8e857bdeb4",
-    "work": "verifier/runs/full-riscv-im-034bb5a1-20261006",
-    "log": "work/lean-perf/full-verifier-riscv-im-034bb5a1.log",
-    "time_log": "work/lean-perf/full-verifier-riscv-im-034bb5a1.time",
-    "source_commit": "be28eb472322c3e0af7c420e6ffc4d5abb505293",
+    "status": "pending_compact_certificate_integration",
     "flapjack_revision": "034bb5a1ed0b757082768d5406206bd2f8e31b7c",
-    "stage": "Fresh isolation preflight and cold workspace staging at the new pin",
+    "branch": "perf/compact-computation-proofs",
     "axiom_count": 3,
     "memory_limit_gib": 112,
     "logical_cpus": 16,
     "active_lean_compilers": 16,
     "inner_runtime_limit_seconds": 28800,
-    "outer_runtime_limit_seconds": 64800,
-    "completion_waker": {
-      "unit": "init-e-full-verifier-riscv-im-034bb5a1-waker.service",
-      "invocation_id": "24cc72b1ea2a43369bfc7fc70972b8e4",
-      "target_thread": "01a107bb-47af-7960-b576-efd9678059da"
-    },
-    "scope": "Fresh new-pin isolated build and full comparison; old-pin evidence does not establish acceptance."
+    "stage": "Full outside Lake build of InitE, Submission and InitE.Audit is running; representative frontend and SSA bridge checks passed; repaired staged optimizer tails require a final retry",
+    "scope": "No current full isolated acceptance. The previous verifier was stopped by explicit user request.",
+    "outside_build_unit": "init-e-compact-full-outside-20261006.service"
   },
   "published_standard_axiom_snapshot": {
     "commit": "1eecd1778a5646c9613097220e21e25a4bb67103",
@@ -545,6 +535,31 @@
           }
         ]
       }
+    },
+    {
+      "status": "superseded_by_user",
+      "unit": "init-e-full-verifier-riscv-im-034bb5a1.service",
+      "invocation_id": "92688cf3b01a454d82aadb8e857bdeb4",
+      "work": "verifier/runs/full-riscv-im-034bb5a1-20261006",
+      "log": "work/lean-perf/full-verifier-riscv-im-034bb5a1.log",
+      "time_log": "work/lean-perf/full-verifier-riscv-im-034bb5a1.time",
+      "source_commit": "be28eb472322c3e0af7c420e6ffc4d5abb505293",
+      "flapjack_revision": "034bb5a1ed0b757082768d5406206bd2f8e31b7c",
+      "stage": "Stopped at user request before compact computation certificate propagation; no acceptance result",
+      "axiom_count": 3,
+      "memory_limit_gib": 112,
+      "logical_cpus": 16,
+      "active_lean_compilers": 16,
+      "inner_runtime_limit_seconds": 28800,
+      "outer_runtime_limit_seconds": 64800,
+      "completion_waker": {
+        "unit": "init-e-full-verifier-riscv-im-034bb5a1-waker.service",
+        "invocation_id": "24cc72b1ea2a43369bfc7fc70972b8e4",
+        "target_thread": "01a107bb-47af-7960-b576-efd9678059da",
+        "status": "stopped_before_verifier"
+      },
+      "scope": "Fresh new-pin isolated build and full comparison; old-pin evidence does not establish acceptance.",
+      "stop_evidence": "work/lean-perf/full-verifier-riscv-im-034bb5a1-stop-request.json"
     }
   ],
   "flapjack_repin": {
@@ -570,6 +585,16 @@
       "count": 21,
       "elapsed_seconds": 8.463
     },
-    "full_verifier_status": "running"
+    "full_verifier_status": "pending_compact_certificate_integration"
+  },
+  "compact_computation_certificates": {
+    "status": "full_stage_checks_passed_integration_pending",
+    "tactic": "InitE.CompactComputation.kernel_rfl",
+    "kernel_regression": "Tools/KernelComputationCheck.lean",
+    "evidence": "work/lean-perf/compact-guest/root-full-stage-results.json",
+    "scope": "Submitted Eq.refl terms are fully checked by the kernel. Shared bridge lemmas preserve original evaluators where direct conversion is unsuitable.",
+    "frontend_evidence": "work/lean-perf/compact-frontend/structural-bridge-results.json",
+    "ssa_evidence": "work/lean-perf/compact-small-ssa/word-results.json",
+    "contract_audit": "work/lean-perf/compact-frontend/PROPAGATION-AUDIT.md"
   }
 }

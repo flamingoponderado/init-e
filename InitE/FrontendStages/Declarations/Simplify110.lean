@@ -1,15 +1,15 @@
+import InitE.FrontendCodecComputation
+import InitE.CompactComputation
 import InitE.FrontendStages.Declarations.Data110
 set_option Elab.async false
 set_option maxRecDepth 1000000
 set_option maxHeartbeats 0
-set_option cbv.maxSteps 1000000000
-set_option cbv.warning false
 open scoped InitE.FrontendComputation
 open Flapjack
 namespace InitE.FrontendStages.Declarations
 theorem simplify110_eq : InitE.FrontendComputation.simplifyDeclaration original110 = simplified110 := by
-  conv => lhs; cbv
-  conv => rhs; cbv
-  try rfl
+  change InitE.FrontendComputation.simplifyDeclaration (Flapjack.Pancake.PanLang.declToHOL originalData110) = Flapjack.Pancake.PanLang.declToHOL simplifiedData110
+  simp only [InitE.FrontendCodecComputation.declToHOL_eq]
+  kernel_rfl
 #print axioms simplify110_eq
 end InitE.FrontendStages.Declarations

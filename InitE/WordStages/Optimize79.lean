@@ -1,3 +1,5 @@
+import InitE.CompactComputation
+import InitE.CompilerStages
 import InitE.WordStages.Source79
 import InitE.WordStages.Pass79_10
 import InitE.CompilerStages
@@ -1860,8 +1862,8 @@ theorem optimize79_eq : WordToWord.fullCompileSingleWith
   dsimp only
   have name_eq : source79.1 = 79 := by rfl
   have argc_eq : source79.2.1 = 4 := by rfl
-  have oracle_eq : oracle79 = proposed79 := by with_unfolding_all rfl
+  have oracle_eq : oracle79 = proposed79 := by kernel_rfl
   rw [name_eq, argc_eq, oracle_eq, pass79_0_eq, pass79_1_eq, pass79_2_eq, pass79_3_eq, pass79_4_eq, pass79_5_eq, pass79_6_eq, pass79_7_eq, pass79_8_eq, pass79_9_eq, pass79_10_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 #print axioms optimize79_eq
 end InitE.WordStages

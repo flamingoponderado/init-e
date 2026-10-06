@@ -1,3 +1,5 @@
+import InitE.CompactComputation
+import InitE.CompilerStages
 import InitE.WordStages.Source240
 import InitE.WordStages.Pass240_10
 import InitE.CompilerStages
@@ -7367,8 +7369,8 @@ theorem optimize240_eq : WordToWord.fullCompileSingleWith
   dsimp only
   have name_eq : source240.1 = 240 := by rfl
   have argc_eq : source240.2.1 = 1 := by rfl
-  have oracle_eq : oracle240 = proposed240 := by with_unfolding_all rfl
+  have oracle_eq : oracle240 = proposed240 := by kernel_rfl
   rw [name_eq, argc_eq, oracle_eq, pass240_0_eq, pass240_1_eq, pass240_2_eq, pass240_3_eq, pass240_4_eq, pass240_5_eq, pass240_6_eq, pass240_7_eq, pass240_8_eq, pass240_9_eq, pass240_10_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 #print axioms optimize240_eq
 end InitE.WordStages

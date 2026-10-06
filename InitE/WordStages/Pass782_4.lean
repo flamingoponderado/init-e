@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Pass782_3
 import InitE.CompilerComputation
 set_option Elab.async false
@@ -12179,7 +12180,6 @@ def word782_4_2462 : WordLangProgHOL (BitVec 64) :=
 def pass782_4 : WordLangProgHOL (BitVec 64) :=
 word782_4_2462
 theorem pass782_4_eq : WordCse.wordCommonSubexpElim (pass782_3) = pass782_4 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass782_4_eq
 end InitE.WordStages

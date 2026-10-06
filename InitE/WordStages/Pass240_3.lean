@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Pass240_2
 import InitE.WordStages.Parallel240.Data3
 import InitE.WordStages.Parallel240.AgreementsParallel.Chunk018
@@ -17,7 +18,7 @@ def pass240_3 : WordLangProgHOL (BitVec 64) := Parallel240.pass240_3
 its checked equation. The final certificate has no child premises. -/
 theorem pass240_3_eq : WordAlloc.removeDeadProg pass240_2 = pass240_3 := by
   have input_eq : pass240_2 = InitE.DeadStages240.Parallel.input4744 :=
-    (show pass240_2 = Parallel240.word240_2_4802 by with_unfolding_all rfl).trans
+    (show pass240_2 = Parallel240.word240_2_4802 by kernel_rfl).trans
       Parallel240.AgreementsParallel.input4744_eq.symm
   unfold WordAlloc.removeDeadProg
   rw [WordAlloc.removeDeadStructural_eq, input_eq]

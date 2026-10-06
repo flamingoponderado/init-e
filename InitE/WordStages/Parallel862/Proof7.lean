@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.WordStages.Parallel862.Data7
 import InitE.WordStages.Parallel862.Data6
 set_option Elab.async false
@@ -9,7 +10,6 @@ open scoped InitE.CompilerComputation
 open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 namespace InitE.WordStages.Parallel862
 theorem pass862_7_eq : WordUnreach.removeUnreach (pass862_6) = pass862_7 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass862_7_eq
 end InitE.WordStages.Parallel862

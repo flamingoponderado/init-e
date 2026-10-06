@@ -1,3 +1,5 @@
+import InitE.CompactComputation
+import InitE.CompilerStages
 import InitE.WordStages.Source866
 import InitE.WordStages.Pass866_10
 import InitE.CompilerStages
@@ -3541,8 +3543,8 @@ theorem optimize866_eq : WordToWord.fullCompileSingleWith
   dsimp only
   have name_eq : source866.1 = 866 := by rfl
   have argc_eq : source866.2.1 = 2 := by rfl
-  have oracle_eq : oracle866 = proposed866 := by with_unfolding_all rfl
+  have oracle_eq : oracle866 = proposed866 := by kernel_rfl
   rw [name_eq, argc_eq, oracle_eq, pass866_0_eq, pass866_1_eq, pass866_2_eq, pass866_3_eq, pass866_4_eq, pass866_5_eq, pass866_6_eq, pass866_7_eq, pass866_8_eq, pass866_9_eq, pass866_10_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 #print axioms optimize866_eq
 end InitE.WordStages

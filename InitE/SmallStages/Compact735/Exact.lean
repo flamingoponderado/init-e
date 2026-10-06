@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.SmallStages.Compact735.Complete
 import InitE.SmallStages.Oracles735
 set_option autoImplicit false
@@ -11,6 +12,6 @@ theorem optimize735_exact : WordToWord.fullCompileSingleWith
   (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
   RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
   riscvConfig (source735, oracle735) = optimized735 := by
-  exact optimize735_eq.trans (by with_unfolding_all rfl)
+  exact optimize735_eq.trans (by kernel_rfl)
 #print axioms optimize735_exact
 end InitE.SmallStages.Compact735

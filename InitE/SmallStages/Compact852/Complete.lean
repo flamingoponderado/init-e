@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.SmallStages.Compact852.Pass2
 import InitE.SmallStages.Compact852.Pass3
 import InitE.SmallStages.Compact852.Pass4
@@ -30,7 +31,7 @@ theorem fullCompile_expanded (ra : WordToWord.RegAllocFn)
        let p9 := WordToWord.wordAllocWith ra entry.1 c alg regs p8 oracle
        WordRemove.removeMustTerminate p9) := by
   rcases entry with ⟨name, argc, p⟩
-  with_unfolding_all rfl
+  kernel_rfl
 
 #print axioms fullCompile_expanded
 theorem optimize852_eq : WordToWord.fullCompileSingleWith

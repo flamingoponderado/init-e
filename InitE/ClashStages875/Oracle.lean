@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.ClashStages875.Data
 import InitE.WordStages.Parallel875.Data8
 import InitE.WordStages.Parallel875.Data9
@@ -10,7 +11,6 @@ open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 open InitE.WordStages.Parallel875
 namespace InitE.ClashStages875
 theorem oracle_eq : proposed875 = some colour := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms oracle_eq
 end InitE.ClashStages875

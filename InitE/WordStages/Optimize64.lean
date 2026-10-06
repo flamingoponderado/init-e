@@ -1,3 +1,5 @@
+import InitE.CompactComputation
+import InitE.CompilerStages
 import InitE.WordStages.Source64
 import InitE.WordStages.Pass64_10
 import InitE.CompilerStages
@@ -3139,10 +3141,10 @@ theorem optimize64_eq : WordToWord.fullCompileSingleWith
   dsimp only
   have name_eq : source64.1 = 64 := by rfl
   have argc_eq : source64.2.1 = 1 := by rfl
-  have oracle_eq : oracle64 = proposed64 := by with_unfolding_all rfl
+  have oracle_eq : oracle64 = proposed64 := by kernel_rfl
   rw [name_eq, argc_eq, oracle_eq, pass64_0_eq, pass64_1_eq, pass64_2_eq,
     pass64_3_eq, pass64_4_eq, pass64_5_eq, pass64_6_eq, pass64_7_eq,
     pass64_8_eq, pass64_9_eq, pass64_10_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 #print axioms optimize64_eq
 end InitE.WordStages

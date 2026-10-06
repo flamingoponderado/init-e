@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.SmallStages.Compact511.Complete
 import InitE.SmallStages.Oracles511
 set_option autoImplicit false
@@ -11,6 +12,6 @@ theorem optimize511_exact : WordToWord.fullCompileSingleWith
   (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length))
   RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg
   riscvConfig (source511, oracle511) = optimized511 := by
-  exact optimize511_eq.trans (by with_unfolding_all rfl)
+  exact optimize511_eq.trans (by kernel_rfl)
 #print axioms optimize511_exact
 end InitE.SmallStages.Compact511

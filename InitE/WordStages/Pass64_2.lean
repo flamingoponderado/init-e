@@ -1,3 +1,5 @@
+import InitE.CompactComputation
+import InitE.SmallSsaKernelComputation
 import InitE.WordStages.Pass64_1
 import InitE.CompilerComputation
 set_option Elab.async false
@@ -4417,7 +4419,7 @@ Flapjack.WordLangProgHOL.seq (Flapjack.WordLangProgHOL.move 1 [(9, 0)])
     (Flapjack.WordLangProgHOL.seq (Flapjack.WordLangProgHOL.move 1 [(0, 9)])
       (Flapjack.WordLangProgHOL.call none (some 65) [0] none)))
 theorem pass64_2_eq : WordAlloc.fullSsaCcTrans 1 (pass64_1) = pass64_2 := by
-  conv => lhs; cbv
-  try rfl
+  rw [InitE.SmallSsaKernelComputation.fullSsaStructural_eq]
+  kernel_rfl
 #print axioms pass64_2_eq
 end InitE.WordStages

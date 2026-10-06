@@ -1,3 +1,5 @@
+import InitE.CompactComputation
+import InitE.CompilerStages
 import InitE.WordStages.Source700
 import InitE.WordStages.Pass700_10
 import InitE.CompilerStages
@@ -3748,8 +3750,8 @@ theorem optimize700_eq : WordToWord.fullCompileSingleWith
   dsimp only
   have name_eq : source700.1 = 700 := by rfl
   have argc_eq : source700.2.1 = 3 := by rfl
-  have oracle_eq : oracle700 = proposed700 := by with_unfolding_all rfl
+  have oracle_eq : oracle700 = proposed700 := by kernel_rfl
   rw [name_eq, argc_eq, oracle_eq, pass700_0_eq, pass700_1_eq, pass700_2_eq, pass700_3_eq, pass700_4_eq, pass700_5_eq, pass700_6_eq, pass700_7_eq, pass700_8_eq, pass700_9_eq, pass700_10_eq]
-  with_unfolding_all rfl
+  kernel_rfl
 #print axioms optimize700_eq
 end InitE.WordStages

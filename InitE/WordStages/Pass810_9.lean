@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.ClashComputation
 import InitE.WordStages.Pass810_8
 import InitE.CompilerComputation
@@ -2382,7 +2383,6 @@ def word810_9_391 : WordLangProgHOL (BitVec 64) :=
 def pass810_9 : WordLangProgHOL (BitVec 64) :=
 word810_9_391
 theorem pass810_9_eq : WordToWord.wordAllocWith RegAlloc.regAllocExecutable 810 riscvConfig RiscVConfig.pancakeRiscVBackendConfig.wordToWordConf.regAlg (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length)) (pass810_8) proposed810 = pass810_9 := by
-  conv => lhs; cbv
-  try rfl
+  kernel_rfl
 #print axioms pass810_9_eq
 end InitE.WordStages

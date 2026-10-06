@@ -1,3 +1,4 @@
+import InitE.CompactComputation
 import InitE.SmallStages.Compact826.Data
 set_option autoImplicit false
 set_option Elab.async false
@@ -10,6 +11,6 @@ open Flapjack Flapjack.Compiler.Backend Flapjack.Compiler.Encoders.RiscV.Target
 open InitE.WordStages
 namespace InitE.SmallStages.Compact826
 theorem pass7_eq : WordUnreach.removeUnreach pass6 = pass7 := by
-  with_unfolding_all rfl
+  kernel_rfl
 #print axioms pass7_eq
 end InitE.SmallStages.Compact826
