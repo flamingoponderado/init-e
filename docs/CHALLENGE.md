@@ -324,7 +324,8 @@ now pass direct kernel checks with only `propext`, `Classical.choice`, and
 `Quot.sound`. The actual combined Lake build, submission and axiom audit now
 pass under the final resource caps. Admission metadata uses small checked
 literal tables and ordinary kernel computation. Full isolated verification
-is running with a cold workspace rebuild; it remains pending. The measured
+remains pending after a successful cold workspace build and an OOM failure
+in the comparator’s buffered proof export. A file-spooling retry follows. The measured
 outside continuation reused earlier stages and is not a cold build.
 
 Large computations use separately checked intermediate definitions, explicit
@@ -342,6 +343,11 @@ runtime limit. A trusted project-local launcher admits compilers before their
 proof environments load, preserving the original compiler, githash and Lake
 cache traces. Both launcher sources are staged and hashed with the trusted
 contract. Bounded logs retain their final output, including the axiom manifest.
+The pinned comparator has a hash-checked transport patch that streams exports
+into private disk files before parsing. The spool directory is outside the
+candidate’s writable Lake cache; tmpfs and ramfs are rejected. Declaration
+comparison, both axiom closures, primitive checks and full kernel replay are
+retained. Only their successful completion establishes acceptance.
 
 The standalone challenge and compiler-correctness modules pass outside
 `PrivatePIDs` under these caps; the complete challenge/submission build and

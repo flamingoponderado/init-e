@@ -380,13 +380,13 @@
     }
   ],
   "current_standard_axiom_verification": {
-    "status": "running",
+    "status": "rejected",
     "unit": "init-e-full-verifier-standard3.service",
     "invocation_id": "e971a80e80ed4dd68dee057b90644b50",
     "work": "verifier/runs/full-standard3-20261006",
     "log": "work/lean-perf/full-verifier-standard3.log",
     "time_log": "work/lean-perf/full-verifier-standard3.time",
-    "stage": "Trusted audit passed; final isolated comparator running",
+    "stage": "Trusted audit and solution build passed; buffered comparator export OOM-killed",
     "axiom_count": 3,
     "memory_limit_gib": 112,
     "logical_cpus": 16,
@@ -411,7 +411,20 @@
       "elapsed_seconds": 9802.874174,
       "accounting_message": "init-e-verify-1bb782b22538.service: Consumed 1d 16h 50min 50.743s CPU time over 2h 43min 22.873s wall clock time, 109G memory peak.",
       "scope": "Cold rebuild of workspace proof namespaces; upstream dependencies and trusted tool caches reused. Comparator acceptance remains pending."
-    }
+    },
+    "comparator": {
+      "status": "oom-kill",
+      "unit": "init-e-verify-d934e6dd4875.service",
+      "invocation_id": "b349fc705f0b48a2bbaffac39bb99251",
+      "cpu_seconds": 7252.766618,
+      "memory_peak_bytes": 120259084288,
+      "memory_swap_peak_bytes": 0,
+      "elapsed_seconds": 9594.84435,
+      "accounting_message": "init-e-verify-d934e6dd4875.service: Consumed 2h 52.766s CPU time over 2h 39min 54.844s wall clock time, 112G memory peak.",
+      "scope": "Solution built successfully (53268 jobs), but buffered proof export failed at112GiB; no comparator acceptance."
+    },
+    "outer_elapsed_seconds": 19453,
+    "retry_status": "Transport-only file-spool patch installed; fresh isolated verification pending"
   },
   "published_standard_axiom_snapshot": {
     "commit": "1eecd1778a5646c9613097220e21e25a4bb67103",

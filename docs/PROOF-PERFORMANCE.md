@@ -1340,19 +1340,23 @@ is running separately inside PrivatePIDs with the same limits; trusted audit
 success alone is not submission acceptance. Exact service accounting is retained
 in `work/lean-perf/full-verifier-standard3-trusted-audit-result.json`.
 
-### Comparator text-buffer experiment (not adopted)
+### Comparator text-buffer experiment and transport adoption
 
 The live full comparator reached its 112-GiB cap while exporting Solution.
 The pinned comparator captures all stdout with `IO.Process.output`; Lean
 reads it into one byte array before UTF-8 conversion and export parsing.
-A separate prototype copies stdout to private disk-backed temporary handles
-in 64-KiB chunks and parses those handles after both exporters finish.
-The installed comparator and running verification were not changed.
+A separate prototype copies stdout to private temporary handles in 64-KiB
+chunks and parses those handles after both exporters finish. The original run
+was left unchanged until its actual OOM failure. The measured prototype used
+`/tmp`, now confirmed to be tmpfs; the installed verifier instead requires a
+private disk-backed directory outside the candidate’s writable Lake cache.
 
 Synthetic ASCII producers were measured sequentially with one CPU, 2 GiB,
 zero swap and a 600-second limit. Sampled anonymous memory includes the Lean
-harness; file cache is separately charged and reclaimable. RSS also includes
-shared tool mappings, so it is not the anonymous-memory measurement below.
+harness. Sampled file memory includes tmpfs/shmem and shared tool mappings;
+the tmpfs portion is not reclaimable disk cache with zero swap. These tests
+measure buffer elimination, not disk-spool I/O performance. RSS is not the
+anonymous-memory measurement below.
 
 | Output | Buffered wall / sampled anon | Spool wall / sampled anon |
 | --- | --- | --- |
@@ -1374,3 +1378,20 @@ in `work/lean-perf/comparator-spool/experiment-results.json`; the proposed
 patch is `spool.patch` in that directory (SHA256
 `de157a76ea8749d19456b32b48fab4ba60cf2ac1615d907a0e395b75ac7d2d4a`). These are exploratory checks,
 not the initial submission verification result.
+
+The uninterrupted original comparator failed with an OOM kill after
+9,594.844 seconds (2h 39m 55s), with 7,252.767 CPU seconds,
+120,259,084,288 bytes peak (112 GiB), and zero swap. Its solution build passed
+all 53,268 jobs before the buffered exporter failed; this is not acceptance.
+The full outer attempt took 5h 24m 13s including the successful cold trusted
+audit. Exact comparator accounting and journal are retained in
+`work/lean-perf/full-verifier-standard3-comparator-result.{json,journal.json}`.
+
+After that terminal failure, the reviewed transport patch was installed at
+`verifier/patches/comparator-file-spool.patch`, hash-checked by setup. The
+installed native comparator passes all 14 upstream fixtures. The verifier
+creates a unique mode-0700 spool directory on disk outside the staged project,
+passes it only to the comparator, and grants systemd write access only to that
+directory in addition to the Lake cache. Candidate Landrun write permissions
+remain restricted to the Lake cache. Tmpfs and ramfs are rejected. Final
+full-size parsing and kernel replay still require the next isolated run.

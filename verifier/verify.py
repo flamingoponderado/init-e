@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import ctypes
+from contextlib import contextmanager
 import hashlib
 import stat
 import json
@@ -81,8 +82,45 @@ def linux_preflight(env: dict[str, str]) -> None:
         raise VerifyError('Landlock ABI 3 or newer is required')
 
 
+def linux_filesystem_type(path: Path) -> int:
+    """Read Linux statfs.f_type without relying on the remaining ABI layout."""
+    libc = ctypes.CDLL(None, use_errno=True)
+    libc.statfs.argtypes = [ctypes.c_char_p, ctypes.c_void_p]
+    libc.statfs.restype = ctypes.c_int
+    # f_type is the first native long on the supported 64-bit Linux hosts.
+    # Leave ample space for the rest of struct statfs, which we do not inspect.
+    info = ctypes.create_string_buffer(4096)
+    if libc.statfs(os.fsencode(path), info) != 0:
+        error = ctypes.get_errno()
+        raise OSError(error, os.strerror(error), str(path))
+    return ctypes.c_ulong.from_buffer(info).value
+
+
+def validate_spool_directory(spool: Path, project: Path) -> Path:
+    if spool.is_symlink() or not spool.is_dir():
+        raise VerifyError("comparator spool must be an ordinary private directory")
+    spool = spool.resolve()
+    if spool.is_relative_to(project.resolve()):
+        raise VerifyError("comparator spool must stay outside the staged project")
+    info = spool.stat()
+    if info.st_uid != os.getuid() or stat.S_IMODE(info.st_mode) != 0o700:
+        raise VerifyError("comparator spool must be owned by this user with mode 0700")
+    if linux_filesystem_type(spool) in {0x01021994, 0x858458F6}:  # tmpfs, ramfs
+        raise VerifyError("comparator spool requires disk-backed storage, not tmpfs or ramfs")
+    return spool
+
+
+@contextmanager
+def comparator_spool_directory(work: Path, project: Path):
+    # Candidate build sandboxes may write only project/.lake. They neither
+    # receive TMPDIR nor gain a write grant to this separate private directory.
+    with tempfile.TemporaryDirectory(prefix="comparator-spool-", dir=work) as temporary:
+        yield validate_spool_directory(Path(temporary), project)
+
+
 def linux_command(cmd: list[str], project: Path, env: dict[str, str], hidden: list[Path],
-                  wall_seconds: int = WALL_SECONDS) -> tuple[list[str], dict[str, str]]:
+                  wall_seconds: int = WALL_SECONDS, *,
+                  spool_dir: Path | None = None) -> tuple[list[str], dict[str, str]]:
     unit = 'init-e-verify-' + uuid.uuid4().hex[:12]
     # Lake scales parallel builds to visible CPUs. Cap the verifier at 16
     # logical CPUs (or fewer if the host affinity provides fewer).
@@ -106,6 +144,10 @@ def linux_command(cmd: list[str], project: Path, env: dict[str, str], hidden: li
              'INIT_E_VERIFIER_HOST_DEV': str(Path('/dev').stat().st_dev),
              'INIT_E_VERIFIER_HOST_PIDNS': str(Path('/proc/self/ns/pid').stat().st_ino),
              'INIT_E_VERIFIER_HOST_SHM_DEV': str(Path('/dev/shm').stat().st_dev)}
+    if spool_dir is not None:
+        spool_dir = validate_spool_directory(spool_dir, project)
+        properties.append(f'ReadWritePaths={spool_dir}')
+        clean['TMPDIR'] = str(spool_dir)
     command = ['/usr/bin/env', '-i', *[f'{k}={v}' for k, v in clean.items()],
                sys.executable, str(HERE / 'linux_exec.py'), *cmd]
     runtime = os.environ.get('XDG_RUNTIME_DIR', f'/run/user/{os.getuid()}')
@@ -414,14 +456,16 @@ def verify(args: argparse.Namespace) -> dict:
         result["permitted_axioms"] = permitted
         comparator_command = limited_lake_command(
             project, ["lake", "env", env["COMPARATOR_BIN"], str(config_path)])
-        command, clean = linux_command(comparator_command, project, env, [source, *args.hide])
-        code, timeout = run_checked(command, project, clean, log)
-        output = log.read_text(errors="replace")
-        if timeout:
-            return dict(result, status="timeout")
-        if code == 0 and "Your solution is okay!" in output:
-            return dict(result, status="verified", score=policy["score"])
-        return dict(result, status="rejected", reason=output[-1200:])
+        with comparator_spool_directory(work, project) as spool_dir:
+            command, clean = linux_command(comparator_command, project, env,
+                                           [source, *args.hide], spool_dir=spool_dir)
+            code, timeout = run_checked(command, project, clean, log)
+            output = log.read_text(errors="replace")
+            if timeout:
+                return dict(result, status="timeout")
+            if code == 0 and "Your solution is okay!" in output:
+                return dict(result, status="verified", score=policy["score"])
+            return dict(result, status="rejected", reason=output[-1200:])
     except (VerifyError, OSError, subprocess.SubprocessError, ValueError) as exc:
         log.write_text(str(exc) + "\n")
         return dict(result, status="failed", reason=str(exc)[:1200])

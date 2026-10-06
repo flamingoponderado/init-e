@@ -54,3 +54,10 @@ This uses 112 GiB with zero swap, at most 16 logical CPUs and 16 active Lean
 compiler slots, and an eight-hour limit. Without `--constrained`, the script
 still limits CPU affinity, compiler slots and elapsed time, but does not apply
 the memory cap. `--quick` reduces the elapsed limit to ten minutes.
+
+The isolated verifier also requires disk space for two temporary proof exports.
+It creates a unique mode-0700 directory outside the staged project, grants the
+parent comparator write access to that directory, and rejects tmpfs/ramfs.
+Candidate Landrun write access stays restricted to the Lake cache. The pinned
+transport patch and provenance are in `verifier/patches/`; proof comparison,
+axiom checks and full kernel replay remain mandatory.

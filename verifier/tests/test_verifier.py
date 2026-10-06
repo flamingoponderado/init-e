@@ -10,7 +10,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from check_submission import check, claim, score_literal
 from verify import (BUILD_SECONDS, WALL_SECONDS, VerifyError, freeze_submission,
                     limited_lake_command, linux_command, prepare_project, trusted_axioms,
-                    clone_project_cache, REBUILT_NAMESPACES)
+                    clone_project_cache, REBUILT_NAMESPACES, comparator_spool_directory,
+                    validate_spool_directory, linux_filesystem_type)
 
 
 class PolicyTests(unittest.TestCase):
@@ -232,3 +233,68 @@ class ResourceLimitTests(unittest.TestCase):
                     sys.executable, str(project / "tools" / "limited-lake.py"),
                     "--work-dir", str(project / ".lake" / "lean-limit"),
                     "--slots", "16", "--", *inner])
+
+
+class ComparatorSpoolTests(unittest.TestCase):
+    def test_ram_backed_spools_rejected_and_cleaned(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            work = Path(temporary)
+            for kind in (0x01021994, 0x858458F6):
+                with self.subTest(kind=kind), patch("verify.linux_filesystem_type", return_value=kind):
+                    with self.assertRaisesRegex(VerifyError, "disk-backed"):
+                        with comparator_spool_directory(work, work / "project"):
+                            self.fail("RAM-backed spool reached comparator")
+                self.assertEqual(list(work.iterdir()), [])
+
+    def test_private_disk_spool_command_and_exception_cleanup(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            work = Path(temporary)
+            project = work / "project"
+            env = {"COMPARATOR_LANDRUN": "/usr/bin/true",
+                   "COMPARATOR_LEAN4EXPORT": "/usr/bin/true"}
+            with patch("verify.linux_filesystem_type", return_value=0xEF53):
+                with self.assertRaisesRegex(RuntimeError, "comparator failure"):
+                    with comparator_spool_directory(work, project) as spool:
+                        self.assertEqual(spool.stat().st_mode & 0o777, 0o700)
+                        self.assertEqual(spool.parent, work)
+                        self.assertFalse(spool.is_relative_to(project))
+                        command, _ = linux_command(["comparator"], project, env, [], spool_dir=spool)
+                        writable = [arg for arg in command if arg.startswith("ReadWritePaths=")]
+                        self.assertEqual(writable, [f"ReadWritePaths={project / '.lake'}", f"ReadWritePaths={spool}"])
+                        self.assertIn(f"TMPDIR={spool}", command)
+                        self.assertNotIn(f"ReadWritePaths={work}", command)
+                        for property in ("PrivateTmp=yes", "PrivatePIDs=yes", "PrivateUsers=yes",
+                                         "ProtectSystem=strict", "ReadOnlyPaths=/home"):
+                            self.assertIn(property, command)
+                        (spool / "unfinished-export").write_bytes(b"partial")
+                        raise RuntimeError("comparator failure")
+                self.assertFalse(spool.exists())
+
+    def test_spool_cannot_be_candidate_writable_or_public(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            work = Path(temporary)
+            project = work / "project"
+            nested = project / ".lake" / "spool"
+            nested.mkdir(parents=True, mode=0o700)
+            with self.assertRaisesRegex(VerifyError, "outside"):
+                validate_spool_directory(nested, project)
+            public = work / "public"
+            public.mkdir(mode=0o755)
+            with self.assertRaisesRegex(VerifyError, "0700"):
+                validate_spool_directory(public, project)
+            link = work / "linked"
+            link.symlink_to(public)
+            with self.assertRaisesRegex(VerifyError, "ordinary"):
+                validate_spool_directory(link, project)
+
+    def test_audit_command_does_not_get_spool_access(self):
+        env = {"COMPARATOR_LANDRUN": "/usr/bin/true",
+               "COMPARATOR_LEAN4EXPORT": "/usr/bin/true"}
+        command, _ = linux_command(["lake", "build", "TrustedAxioms"], Path("/frozen/project"), env, [])
+        self.assertFalse(any(arg.startswith("TMPDIR=") for arg in command))
+        self.assertEqual([arg for arg in command if arg.startswith("ReadWritePaths=")],
+                         ["ReadWritePaths=/frozen/project/.lake"])
+
+    def test_statfs_failure_fails_closed(self):
+        with self.assertRaises(OSError):
+            linux_filesystem_type(Path("/this-verifier-spool-does-not-exist"))
