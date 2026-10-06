@@ -1,6 +1,7 @@
 import Tools.CompactCertificates
 import Lean
 import InitE.SourceDeclarations
+import InitECandidate.Proofs.DeadComputation
 
 /-! Generate proposed literals for separately certified compiler stages.
 Native evaluation here proposes data; it is never a challenge proof. -/
