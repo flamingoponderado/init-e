@@ -78,6 +78,12 @@ permitted axioms and log paths. It uses the sig.golf verifier pattern and the
 it compares the certificate against an independently built trusted challenge,
 checks the submission definition's type and safety, audits axiom dependencies,
 and replays the exported solution in Lean's kernel.
+A hash-pinned [transport patch](../verifier/patches/README.md) copies exporter
+stdout into temporary files and parses those handles. It preserves declaration
+comparison, both theorem and definition axiom checks, primitive checks, and full
+kernel replay. The verifier requires disk space for both exports in addition
+to the staged build cache. Its private mode-0700 spool directory is outside the
+staged project, and tmpfs/ramfs are rejected.
 
 Baseline literal modules are copied to an immutable `InitEBaselineCandidate`
 namespace in the checking workspace. Trusted baseline references are rewritten
@@ -108,8 +114,9 @@ Lake artifact caching is explicitly disabled. The trusted audit build and the
 complete comparator run (including its builds and kernel checking) each have
 an eight-hour runtime limit. Local builds use `tools/build-lean.sh` with an
 eight-hour limit, or `--quick` with a 10-minute exploratory limit. A timed-out build is unfinished. Networking, signals to other processes, host devices,
-shared memory and the host PID namespace are isolated; only the build cache is
-writable. Missing isolation makes the checker stop before candidate compilation.
+shared memory and the host PID namespace are isolated. Candidate processes
+may write only the build cache; the parent comparator additionally receives
+write access to its private disk spool directory. Missing isolation makes the checker stop before candidate compilation.
 A run reports `verified` only after comparator accepts the exported proof.
 
 Cache staging copies upstream dependencies and useful tool caches into independent files. It omits challenge and submission artifact namespaces that must be rebuilt, then clears those namespaces again before verification. This avoids copying large proof artifacts only to delete them; it does not reuse their certificates. Generated
