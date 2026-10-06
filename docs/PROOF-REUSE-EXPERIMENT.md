@@ -193,3 +193,20 @@ a three-minute timeout. Original measurements and frozen exports are in
 `work/lean-perf/word-function-reuse/`. Portable CPU, replay, and export measurements
 are saved in `tools/certificate-bench/word-reuse-results.json`. The original
 word bodies and proofs agree at baseline revisions `b2d063a22` and `7704dcf16`.
+
+## Complete outside integration check
+
+`lake build InitE Submission InitE.Audit` passed all **53,269 jobs** with the
+retained production changes. The cache-disabled retry took **581.617 seconds
+(9 min 42 s)** with 16 Lean admission slots and a one-hour timeout. This reused
+existing common artifacts; it is not a cold-build performance comparison. Both
+`InitE.Challenge.certificate` and its infinity-termination lemma have exactly
+`propext`, `Classical.choice`, and `Quot.sound` in their axiom closures. All
+printed dependency closures were within that set. Portable results are in
+`tools/certificate-bench/integration-results.json`.
+
+The initial direct invocation failed at the final imports because the host
+artifact cache referenced missing `.olean` files. The successful retry disabled
+that cache, as the project's `tools/build-lean.sh` already does. No proof-source
+repair was needed. The separately running frozen isolated comparator is still
+pending; these checks do not claim isolated acceptance of the new code.
