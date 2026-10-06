@@ -6,7 +6,7 @@ defaultTargets = ["InitE", "Submission"]
 [[require]]
 name = "flapjack"
 git = "https://github.com/flamingoponderado/flapjack"
-rev = "7981f765cdadecf9b2857f326a65bae47371ab15"
+rev = "034bb5a1ed0b757082768d5406206bd2f8e31b7c"
 
 # ZisK accelerator semantics (RiscvZkvm.Rv64.ZiskAccel: Keccak-f, SHA-256
 # compress, Arith256/384Mod, secp256k1/BN254/BLS12-381 affine ops, BLAKE2b

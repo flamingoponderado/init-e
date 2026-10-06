@@ -2,7 +2,7 @@
   "status": "standard_axiom_verification_pending",
   "flapjack": {
     "branch": "riscv-im",
-    "revision": "7981f765cdadecf9b2857f326a65bae47371ab15"
+    "revision": "034bb5a1ed0b757082768d5406206bd2f8e31b7c"
   },
   "source_sha256": "d3cec76f0fd072e943f9be62e201b842317a2aa2adcb51bbd0f5cd9dd74d6016",
   "elf_sha256": "930915c737fe769e0c967faea8cbfa1755ad1f949f544c726cf1ab8acc920b4f",
@@ -380,13 +380,13 @@
     }
   ],
   "current_standard_axiom_verification": {
-    "status": "running",
+    "status": "superseded_by_user",
     "unit": "init-e-full-verifier-spool-standard3.service",
     "invocation_id": "95281914a9f845369accdafc9ea6424b",
     "work": "verifier/runs/full-spool-standard3-20261006",
     "log": "work/lean-perf/full-verifier-spool-standard3.log",
     "time_log": "work/lean-perf/full-verifier-spool-standard3.time",
-    "stage": "Cold trusted audit passed; full disk-spooling comparator running",
+    "stage": "Stopped at user request before repin; no full comparator acceptance",
     "axiom_count": 3,
     "memory_limit_gib": 112,
     "logical_cpus": 16,
@@ -435,12 +435,37 @@
       "invocation_id": "15052944d6f0471a890f9566c55fb549",
       "target_thread": "01a107bb-47af-7960-b576-efd9678059da",
       "scope": "One-shot herdr prompt after the exact outer verifier invocation terminates"
+    },
+    "superseded_result": {
+      "status": "superseded_by_user",
+      "observed_at": "2026-10-06T08:58:57.368183+00:00",
+      "reason": "User requested stopping the old-pin verifier and running a fresh verifier after Flapjack repin. No full acceptance or resource failure claimed.",
+      "stages": [
+        {
+          "unit": "init-e-full-verifier-spool-standard3.service",
+          "invocation_id": "95281914a9f845369accdafc9ea6424b",
+          "status": "stopped_by_user",
+          "cpu_seconds": 43.135674,
+          "memory_peak_bytes": 37155291136,
+          "memory_swap_peak_bytes": 0,
+          "elapsed_seconds": 16179.07876
+        },
+        {
+          "unit": "init-e-verify-bed444a03767.service",
+          "invocation_id": "bbefec5ce3e64843a60cd3c3f193354b",
+          "status": "stopped_by_user",
+          "cpu_seconds": 6555.527439,
+          "memory_peak_bytes": 111525384192,
+          "memory_swap_peak_bytes": 0,
+          "elapsed_seconds": 6612.445188
+        }
+      ]
     }
   },
   "published_standard_axiom_snapshot": {
     "commit": "1eecd1778a5646c9613097220e21e25a4bb67103",
     "pr": 14,
-    "state": "open_ready_for_review",
+    "state": "merged",
     "source_agreement": {
       "trusted_and_configuration_files_checked": 56470,
       "supplement_files_checked": 241,
@@ -448,7 +473,7 @@
       "evidence": "work/lean-perf/published-frozen-source-agreement.json",
       "scope": "Frozen sources and submission agree; this is not verifier acceptance"
     },
-    "readiness_note": "User requested ready status while full comparator acceptance remains pending."
+    "readiness_note": "PR 14 merged by user; recorded source agreement and audit apply to the previous Flapjack pin."
   },
   "standard_axiom_verification_attempts": [
     {
@@ -498,5 +523,29 @@
       "outer_elapsed_seconds": 19453,
       "retry_status": "Transport-only file-spool patch installed; fresh isolated verification pending"
     }
-  ]
+  ],
+  "flapjack_repin": {
+    "previous_revision": "7981f765cdadecf9b2857f326a65bae47371ab15",
+    "revision": "034bb5a1ed0b757082768d5406206bd2f8e31b7c",
+    "status": "smoke_passed_full_verification_pending",
+    "upstream_change": "Remove unsupported RV64 word operations other than ADDIW; prove compressed-instruction rejection",
+    "scope": "Old-pin audit and verifier evidence do not certify this revision.",
+    "smoke_build": {
+      "status": "passed",
+      "jobs": 3616,
+      "targets": [
+        "InitE.Challenge",
+        "InitE.MachineWordMemory",
+        "Flapjack.RiscV.L3.Step.NoCompressed"
+      ],
+      "command": "tools/build-lean.sh --quick InitE.Challenge InitE.MachineWordMemory Flapjack.RiscV.L3.Step.NoCompressed",
+      "timeout_seconds": 600,
+      "log": "work/lean-perf/flapjack-repin-034bb5a1-smoke.log"
+    },
+    "verifier_regression_tests": {
+      "status": "passed",
+      "count": 21,
+      "elapsed_seconds": 8.463
+    }
+  }
 }
