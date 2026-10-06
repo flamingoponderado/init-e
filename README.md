@@ -95,7 +95,8 @@ the required certificate.
 
 Build the challenge and initial submission with `tools/build-lean.sh`; run the
 proof audit with `tools/build-lean.sh InitECandidate.Proofs.Audit`. Build the optional testing
-model with `tools/build-lean.sh Guest`. These commands stop after eight hours;
+model with `tools/build-lean.sh Guest`. Outside builds use up to 32 Lean processes
+at nice level 10 and stop after eight hours;
 use `tools/build-lean.sh --quick MODULE` for a 10-minute exploratory check.
 A timeout means the check is unfinished, not that the proof passed.
 

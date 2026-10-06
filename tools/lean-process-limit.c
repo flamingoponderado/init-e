@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
   }
   char *end;
   long slots = strtol(count, &end, 10);
-  if (*end || slots < 1 || slots > 16) {
+  if (*end || slots < 1 || slots > 32) {
     errno = EINVAL; fail("invalid slot count");
   }
   long preferred = (long)getpid() % slots;

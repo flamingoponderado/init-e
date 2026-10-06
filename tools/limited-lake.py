@@ -17,7 +17,7 @@ import subprocess
 import tempfile
 
 parser=argparse.ArgumentParser(description=__doc__)
-parser.add_argument("--slots",type=int,default=16,choices=range(1,17))
+parser.add_argument("--slots",type=int,default=16,choices=range(1,33))
 parser.add_argument("--work-dir",type=Path)
 parser.add_argument("--project-dir",type=Path,help="Project root when running a copied trusted helper")
 parser.add_argument("command",nargs=argparse.REMAINDER)
@@ -73,7 +73,7 @@ if underlying and inherited_locks:
     run=Path(inherited_locks).resolve()
     try: inherited_slots=int(os.environ["LEAN_LIMIT_SLOTS"])
     except (KeyError,ValueError): raise SystemExit("Invalid inherited slot count")
-    if not run.is_dir() or not run.is_relative_to(root) or inherited_slots not in range(1,17):
+    if not run.is_dir() or not run.is_relative_to(root) or inherited_slots not in range(1,33):
         raise SystemExit("Invalid inherited project-local locks")
     args.slots=min(args.slots,inherited_slots)
     metadata_name=f"nested-{os.getpid()}.json"

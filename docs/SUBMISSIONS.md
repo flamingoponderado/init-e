@@ -114,8 +114,10 @@ trusted audit and comparator use at most 16 active Lean processes, with a
 limiter binaries and locks stay under the writable `.lake/lean-limit` directory;
 Lake artifact caching is explicitly disabled. The trusted audit build and the
 complete comparator run (including its builds and kernel checking) each have
-an eight-hour runtime limit. Local builds use `tools/build-lean.sh` with an
-eight-hour limit, or `--quick` with a 10-minute exploratory limit. A timed-out build is unfinished. Networking, signals to other processes, host devices,
+an eight-hour runtime limit. Local builds use `tools/build-lean.sh` with up to
+32 Lean processes, nice level 10 and an eight-hour limit. `--constrained` keeps
+the verifier's 16-process resource caps; `--quick` uses a 10-minute exploratory
+limit. A timed-out build is unfinished. Networking, signals to other processes, host devices,
 shared memory and the host PID namespace are isolated. Candidate processes
 may write only the build cache; the parent comparator additionally receives
 write access to its private disk spool directory. Missing isolation makes the checker stop before candidate compilation.
