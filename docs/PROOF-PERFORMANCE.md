@@ -1453,3 +1453,13 @@ The bounded compatibility build also passed all 3,616 jobs, including
 `Flapjack.RiscV.L3.Step.NoCompressed`. Its log is
 `work/lean-perf/flapjack-repin-034bb5a1-smoke.log`; it is not a full
 initial-submission or isolated comparator check.
+
+The fresh full verifier is running in
+`init-e-full-verifier-riscv-im-034bb5a1.service`, invocation
+`92688cf3b01a454d82aadb8e857bdeb4`, with source snapshot
+`be28eb472322c3e0af7c420e6ffc4d5abb505293`. Its work directory is
+`verifier/runs/full-riscv-im-034bb5a1-20261006`, with outer log/time files
+`work/lean-perf/full-verifier-riscv-im-034bb5a1.{log,time}`. The same
+112-GiB, zero-swap, 16-CPU/16-compiler-slot and eight-hour inner limits apply;
+the outer allowance is eighteen hours. The session-specific herdr completion
+waker is armed for this exact invocation. Full acceptance remains pending.

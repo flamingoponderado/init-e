@@ -78,7 +78,7 @@ comparison or kernel acceptance. Its cold trusted audit had passed with the
 three standard axioms. The stopped comparator reached a 103.9 GiB peak with
 zero swap; it is recorded as superseded, not an accepted or failed proof.
 Historical old-pin evidence does not certify this revision. A fresh full
-isolated verifier will use the new pin and the same resource limits.
+isolated verifier is running at the new pin with the same resource limits.
 All 21 verifier regression tests pass (8.463 seconds). The ten-minute bounded
 compatibility build passed all 3,616 jobs, including the challenge,
 machine-memory lemmas and upstream `Flapjack.RiscV.L3.Step.NoCompressed`.
