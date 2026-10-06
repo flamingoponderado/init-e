@@ -318,6 +318,90 @@ native object hashes, build/export timings, individual trials, and the rejection
 check are retained in
 [value-sharing-results.json](../tools/certificate-bench/value-sharing-results.json).
 
+### Account for shared replay work before extrapolating
+
+The production comparator creates one empty environment and calls `env.replay`
+once on the solution's exported constant map. Lean's replay tracks declarations
+already processed. It does **not** restart the kernel once per Lean source file.
+Consequently, the common dependency cost in separate fragment benchmarks must
+not be multiplied by the roughly 55,000 source files.
+
+For the four-function shared-equation fixture above, three alternating diagnostic
+runs measured 5.544–5.650 s for the complete replay and 4.956–5.063 s for just the
+transitive dependencies of the theorem's type, legal axioms, and primitives.
+The latter intentionally excludes its proof and is **not an acceptance test**.
+It shows why further local proof changes cannot plausibly halve that particular
+5.5-second complete-closure replay. Both timings used the standard kernel replay.
+
+Benchmark several relevant targets together when testing whether to avoid
+repeated work. Their shared dependencies are then checked once, as they are in
+the production comparator. Separately profile a larger certificate to find
+compiler computation costs: function 79's original optimizer closure took about
+27.5 s, with its individual register-allocation and expression-simplification
+equations accounting for about 3.6 s and 3.3 s, respectively. The small fixture's
+dependency floor is not a model for the entire submission.
+
+`tools/certificate-bench/optimizer-boundaries.py` compares the unchanged optimizer
+statements for one to eight selected functions in a single native comparator
+invocation. `Direct` checks the full computation without intermediate equations;
+`DirectSsa` retains the verified structural SSA rewrite. For functions with all
+eleven `WordStages` pass modules, `Bundle` collects their existing proofs in one
+conjunction, while `CompactBundle` also replaces the first dead-code checkpoint
+tree with a direct structural computation. All used helper proofs remain in the
+export and replay. Each subprocess has a timeout; a timeout is a failed candidate,
+not evidence that a broader rollout is safe.
+
+```sh
+rtk proxy python3 tools/certificate-bench/optimizer-boundaries.py \
+  --labels 79 --base-revision ea78cf9af \
+  --variants Original Direct Bundle CompactBundle \
+  --work work/lean-perf/optimizer-boundaries-confirmation --trials 3
+```
+
+The baseline proof bodies are read from the frozen revision. Run in a checkout
+whose prebuilt imported data and helper modules still match that baseline; the
+harness does not reconstruct arbitrary historical dependency trees.
+
+Three rotating trials on function 79 gave these complete-closure results:
+
+| Proof organization | Export bytes | Median replay | Median comparator wall |
+| --- | ---: | ---: | ---: |
+| Original staged proof | 87,455,624 | 27.648 s | 30.889 s |
+| Direct computation | 47,396,859 | 23.029 s | 25.341 s |
+| Existing equations bundled together | 87,461,168 | 26.523 s | 29.789 s |
+| Bundle with direct structural dead-code check | 59,055,459 | 23.817 s | 26.408 s |
+
+The direct proof saves 16.7% of replay and 18.0% of comparator wall time. It is
+retained for function 79, including in the certified-stage generator. Its public
+statement and all program/oracle literals remain unchanged. Simply putting the
+same equations in one theorem saves only about 4%; removing their intermediate
+certificate dependencies matters more in this example. This is not a 2× result
+and does not justify replacing checkpoints in unmeasured functions.
+
+Every trial passed the real declaration, primitive, axiom, and replay checks.
+The initial fixture build took 21.61 s for the direct proof, 19.29 s for the
+bundle, and 21.65 s for the compact bundle; the baseline fixture only referenced
+its already-built proof, so its 1.74 s build is not a fair proof-build comparison.
+Exports and builds are excluded from the comparator wall column. The individual
+trials and source hashes are retained in
+[optimizer-boundary-results.json](../tools/certificate-bench/optimizer-boundary-results.json).
+
+There is a measured memory tradeoff. An additional before/after comparison of
+the actual public theorem (using the original export as the common reference)
+passed and measured 1,545,592 → 6,052,540 KiB peak RSS, approximately 1.47 →
+5.77 GiB. The changed production module, generator, and the `StackAgreement.Chunk64`
+consumer compiled successfully. The proof change is retained only for this
+measured function; its behavior under the full submission's memory load remains
+unmeasured.
+
+A separate combined screening run on functions 156, 746, and 855 measured
+11.185 → 10.121 s replay and 13.613 → 12.453 s wall for direct computation, with
+peak RSS increasing from 505,644 to 1,291,608 KiB. Keeping the structural SSA
+rewrite took 10.403 s replay and 12.820 s wall. These are single screening trials,
+not confirmation of a broad improvement; none of these three production proofs
+was changed. The native harness also rejected a theorem-hole solution via its
+forbidden `sorryAx` dependency.
+
 ## 6. Retain only validated changes
 
 Before committing:
