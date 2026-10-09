@@ -87,3 +87,8 @@ srcDir = "verifier"
 name = "regenerate-backend"
 root = "Tools.RegenerateBackend"
 supportInterpreter = true
+
+[[lean_exe]]
+name = "regenerate-backend-finishing"
+root = "Tools.RegenerateBackendFinishing"
+supportInterpreter = true
