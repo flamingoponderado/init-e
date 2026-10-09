@@ -23,9 +23,7 @@ private theorem admission_mmio_eq : baselineMmio = admissionMmio := by
   rfl
 
 private def admissionEntryPcs : List (BitVec 64) :=
-  [BitVec.ofNat 64 2147488128,
-    BitVec.ofNat 64 2147488112,
-    BitVec.ofNat 64 2147488096,
+  [BitVec.ofNat 64 2147488096,
     BitVec.ofNat 64 2147488080,
     BitVec.ofNat 64 2147488064,
     BitVec.ofNat 64 2147488048,
@@ -43,6 +41,8 @@ private def admissionEntryPcs : List (BitVec 64) :=
     BitVec.ofNat 64 2147487856,
     BitVec.ofNat 64 2147487840,
     BitVec.ofNat 64 2147487824,
+    BitVec.ofNat 64 2147487808,
+    BitVec.ofNat 64 2147487792,
     BitVec.ofNat 64 2147493360,
     BitVec.ofNat 64 2147493404,
     BitVec.ofNat 64 2147493436,
