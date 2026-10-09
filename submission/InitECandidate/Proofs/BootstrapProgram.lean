@@ -25,7 +25,7 @@ def bootAdd (reg : Nat) : HolAsm 64 :=
   .inst (.arith (.binop .add reg reg (.imm 8)))
 
 /-- Each instruction is paired with its address in the submitted image. The
-five copy-body instructions execute 4616 times; the others execute once. -/
+five copy-body instructions execute 4617 times; the others execute once. -/
 def bootstrapBlocks : List (Nat × HolAsm 64) := [
   (0x80000000, bootLoc 5 0x80000000 initDataRom),
   (0x80000008, bootLoc 6 0x80000008 initDataRam),

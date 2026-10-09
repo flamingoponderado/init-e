@@ -751,7 +751,7 @@ theorem tailState32_control (s : AsmState 64) (pc : s.pc = 0x8000002c) :
 theorem tail_run_state (s : AsmState 64) : run tailCode s = tailState32 s := by rfl
 
 /-- Exact calculated assembler endpoint of the straight-line tail. -/
-noncomputable def tailEndpoint : AsmState 64 := run tailCode (copyState 4616)
+noncomputable def tailEndpoint : AsmState 64 := run tailCode (copyState 4617)
 
 theorem tail_endpoint_fields :
     tailEndpoint.pc = BitVec.ofNat 64 nativePc ∧
@@ -761,8 +761,8 @@ theorem tail_endpoint_fields :
     tailEndpoint.regs 13 = BitVec.ofNat 64 ramEnd ∧
     tailEndpoint.memDomain = bootstrapDomain ∧
     tailEndpoint.lr = 1 ∧ tailEndpoint.align = 2 ∧ tailEndpoint.be = false := by
-  have fields := copyState_fields 4616
-  have control := tailState32_control (copyState 4616) (by simpa using copyState_pc 4616 (by omega))
+  have fields := copyState_fields 4617
+  have control := tailState32_control (copyState 4617) (by simpa using copyState_pc 4617 (by omega))
   simp only [tailEndpoint, tail_run_state]
   simp [control.1, control.2.1, control.2.2.1, control.2.2.2.1, control.2.2.2.2.1,
     control.2.2.2.2.2, fields.1, fields.2.1, fields.2.2.2.1, fields.2.2.2.2,
@@ -770,11 +770,11 @@ theorem tail_endpoint_fields :
 
 /-- The bootstrap also establishes the complete expected register map. -/
 theorem tail_endpoint_registers : tailEndpoint.regs = installedRegisters := by
-  have fields := copyState_fields 4616
-  have control := tailState32_control (copyState 4616)
-    (by simpa using copyState_pc 4616 (by omega))
-  have registers := (congrArg AsmState.regs (tail_run_state (copyState 4616))).trans control.2.1
-  change (run tailCode (copyState 4616)).regs = installedRegisters
+  have fields := copyState_fields 4617
+  have control := tailState32_control (copyState 4617)
+    (by simpa using copyState_pc 4617 (by omega))
+  have registers := (congrArg AsmState.regs (tail_run_state (copyState 4617))).trans control.2.1
+  change (run tailCode (copyState 4617)).regs = installedRegisters
   rw [registers]
   funext r
   by_cases h5 : r = 5
@@ -796,7 +796,7 @@ theorem tail_endpoint_registers : tailEndpoint.regs = installedRegisters := by
   by_cases h28 : r = 28
   · subst r
     simpa [installedRegisters] using InitECandidate.Proofs.BootstrapCopy.copyExit_loaded_register
-  rw [copyState_other_register 4616 r h5 h6 h28]
+  rw [copyState_other_register 4617 r h5 h6 h28]
   simp [copyEntryAsm, initialAsm, installedRegisters, h5, h6, h7, h10, h11, h12, h13, h28]
 
 private theorem load_fpRegs {width : Nat} [NeZero width] (n r : Nat)
@@ -868,10 +868,10 @@ private theorem state_ext {width : Nat} [NeZero width] {s t : AsmState width}
 
 /-- Once local tail admission is proved, every ASM field equals the canonical
 installed state. All fields besides failure were calculated independently. -/
-theorem tail_endpoint_eq (checks : Checked tailCode (copyState 4616)) :
+theorem tail_endpoint_eq (checks : Checked tailCode (copyState 4617)) :
     tailEndpoint = installedAsm := by
-  have fp := (run_fpRegs tailCode (copyState 4616)).trans (copyState_fpRegs 4616)
-  have nonfailed := checked_endpoint_nonfailed tailCode (copyState 4616) checks (by decide)
+  have fp := (run_fpRegs tailCode (copyState 4617)).trans (copyState_fpRegs 4617)
+  have nonfailed := checked_endpoint_nonfailed tailCode (copyState 4617) checks (by decide)
   have fields := tail_endpoint_fields
   apply state_ext
   · exact tail_endpoint_registers
@@ -882,7 +882,7 @@ theorem tail_endpoint_eq (checks : Checked tailCode (copyState 4616)) :
   · exact fields.2.2.2.2.2.2.1
   · exact fields.2.2.2.2.2.2.2.1
   · exact fields.2.2.2.2.2.2.2.2
-  · change (run tailCode (copyState 4616)).failed = false
+  · change (run tailCode (copyState 4617)).failed = false
     simpa only [Bool.not_eq_true] using nonfailed
 
 end InitECandidate.Proofs.BootstrapStraightLine

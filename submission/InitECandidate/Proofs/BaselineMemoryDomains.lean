@@ -93,7 +93,7 @@ theorem baseline_code_bytes :
   apply bytesInMem_literal
   intro i
   have bound : i.val < 904816 := by
-    have hi : i.val < 904056 := by simpa only [baseline_literal_layout.2.1] using i.isLt
+    have hi : i.val < 904196 := by simpa only [baseline_literal_layout.2.1] using i.isLt
     omega
   exact ⟨baseline_native_program_byte i, native_data_excluded i.val bound,
     baseline_native_loaded_byte i⟩
@@ -124,7 +124,7 @@ theorem baseline_code_size_bound : 760 + InitECandidate.nativeCode.length < 2 ^ 
   rw [baseline_literal_layout.2.1]
   decide
 
-private theorem bitmap_index_address (i : Nat) (hi : i < 4613) :
+private theorem bitmap_index_address (i : Nat) (hi : i < 4614) :
     (BitVec.ofNat 64 (initDataRam + 24) + BitVec.ofNat 64 i * (8 : BitVec 64)).toNat =
       0xa0020018 + 8 * i := by
   have sum : BitVec.ofNat 64 (initDataRam + 24) + BitVec.ofNat 64 i * (8 : BitVec 64) =
@@ -152,7 +152,7 @@ theorem baseline_bitmap_aligned_domain :
     let i := (a.toNat - 0xa0020018) / 8
     have remainder : (a.toNat - 0xa0020018) % 8 = 0 := by omega
     have division := Nat.div_add_mod (a.toNat - 0xa0020018) 8
-    have ibound : i < 4613 := by dsimp [i]; omega
+    have ibound : i < 4614 := by dsimp [i]; omega
     refine ⟨i, ibound, ?_⟩
     apply BitVec.eq_of_toNat_eq
     have addr := bitmap_index_address i ibound

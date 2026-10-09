@@ -247,14 +247,14 @@ private theorem unchanged_start (s : AsmState 64)
 
 /-- The tail computes the installation memory from its actual loop endpoint. -/
 theorem tail_copy_memory :
-    (run tailCode (copyState 4616)).mem = installedMemory := by
-  have pc : (copyState 4616).pc = 0x8000002c := by
-    have value := copyState_pc 4616 (Nat.le_refl 4616)
-    simpa only [show ¬ (4616 < 4616) by omega, if_false] using value
-  have be : (copyState 4616).be = false := (copyState_fields 4616).1
-  have start := unchanged_start (copyState 4616) pc be
+    (run tailCode (copyState 4617)).mem = installedMemory := by
+  have pc : (copyState 4617).pc = 0x8000002c := by
+    have value := copyState_pc 4617 (Nat.le_refl 4617)
+    simpa only [show ¬ (4617 < 4617) by omega, if_false] using value
+  have be : (copyState 4617).be = false := (copyState_fields 4617).1
+  have start := unchanged_start (copyState 4617) pc be
   have initial := congrArg (fun t => (run tailCode t).mem) start.symm
-  exact initial.trans ((tail_memory (copyState 4616)).trans
+  exact initial.trans ((tail_memory (copyState 4617)).trans
     ((congrArg tailWrites copyExit_memory).trans tailWrites_copied_memory))
 
 end InitECandidate.Proofs.BootstrapStraightLine
