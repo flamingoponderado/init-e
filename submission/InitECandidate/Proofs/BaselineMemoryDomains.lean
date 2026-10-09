@@ -75,13 +75,13 @@ theorem baseline_program_shared_disjoint :
   intro a prog shared
   exact prog.1.2 shared
 
-private theorem native_address_nat (offset : Nat) (bound : offset < 904816) :
+private theorem native_address_nat (offset : Nat) (bound : offset < 904956) :
     (BitVec.ofNat 64 nativePc + BitVec.ofNat 64 offset).toNat = nativePc + offset := by
   rw [← BitVec.ofNat_add, BitVec.toNat_ofNat, Nat.mod_eq_of_lt]
   norm_num [nativePc]
   omega
 
-private theorem native_data_excluded (offset : Nat) (bound : offset < 904816) :
+private theorem native_data_excluded (offset : Nat) (bound : offset < 904956) :
     baselineDataDm (BitVec.ofNat 64 nativePc + BitVec.ofNat 64 offset) ≠ true := by
   rw [baselineDataDm, baselineBitmapDm, native_address_nat offset bound]
   norm_num [sourceBase, ramEnd, ramStart, ramSize, initDataRam, initDataEnd, nativePc]
@@ -92,7 +92,7 @@ theorem baseline_code_bytes :
       installedAsm.memDomain (fun a => baselineDataDm a = true) := by
   apply bytesInMem_literal
   intro i
-  have bound : i.val < 904816 := by
+  have bound : i.val < 904956 := by
     have hi : i.val < 904196 := by simpa only [baseline_literal_layout.2.1] using i.isLt
     omega
   exact ⟨baseline_native_program_byte i, native_data_excluded i.val bound,
@@ -102,7 +102,7 @@ theorem baseline_code_buffer (n : Nat) (hn : n < 760) :
     installedAsm.memDomain (BitVec.ofNat 64 (n + InitECandidate.nativeCode.length) + installedAsm.pc) ∧
     baselineDataDm (BitVec.ofNat 64 (n + InitECandidate.nativeCode.length) + installedAsm.pc) ≠ true := by
   have count := baseline_literal_layout.2.1
-  have offset : n + InitECandidate.nativeCode.length < 904816 := by rw [count]; omega
+  have offset : n + InitECandidate.nativeCode.length < 904956 := by rw [count]; omega
   have addr : BitVec.ofNat 64 (n + InitECandidate.nativeCode.length) + installedAsm.pc =
       BitVec.ofNat 64 nativePc + BitVec.ofNat 64 (n + InitECandidate.nativeCode.length) :=
     BitVec.add_comm _ _
