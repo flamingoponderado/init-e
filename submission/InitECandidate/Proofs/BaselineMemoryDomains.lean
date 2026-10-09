@@ -98,7 +98,7 @@ theorem baseline_code_bytes :
   exact ⟨baseline_native_program_byte i, native_data_excluded i.val bound,
     baseline_native_loaded_byte i⟩
 
-theorem baseline_code_buffer (n : Nat) (hn : n < 760) :
+theorem baseline_code_buffer (n : Nat) (hn : n < 620) :
     installedAsm.memDomain (BitVec.ofNat 64 (n + InitECandidate.nativeCode.length) + installedAsm.pc) ∧
     baselineDataDm (BitVec.ofNat 64 (n + InitECandidate.nativeCode.length) + installedAsm.pc) ≠ true := by
   have count := baseline_literal_layout.2.1
@@ -120,7 +120,7 @@ theorem baseline_code_buffer (n : Nat) (hn : n < 760) :
     rw [native_address_nat _ offset] at value
     omega
 
-theorem baseline_code_size_bound : 760 + InitECandidate.nativeCode.length < 2 ^ 64 := by
+theorem baseline_code_size_bound : 620 + InitECandidate.nativeCode.length < 2 ^ 64 := by
   rw [baseline_literal_layout.2.1]
   decide
 
