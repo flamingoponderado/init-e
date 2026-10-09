@@ -1,4 +1,3 @@
-import InitECandidate.Proofs.BackendStages.BytePiecesData559
 import InitECandidate.Proofs.BackendStages.BytePiecesData552
 import InitECandidate.Proofs.BackendStages.BytePiecesData553
 import InitECandidate.Proofs.BackendStages.BytePiecesData554
