@@ -140,7 +140,7 @@ def programs := programs864
 def bodies := bodies864
 def frames := frames864
 def after := after864
-def result (bitmapPrefix : AppList (BitVec 64)) := (bodies, frames, after bitmapPrefix, 4552)
-theorem compiled_eq (bitmapPrefix : AppList (BitVec 64)) : WordToStack.Native.compileWordToStackNative riscvConfig false (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length)) programs (bitmapPrefix, 4320) = result bitmapPrefix := compiled864_eq bitmapPrefix
+def result (bitmapPrefix : AppList (BitVec 64)) := (bodies, frames, after bitmapPrefix, 4553)
+theorem compiled_eq (bitmapPrefix : AppList (BitVec 64)) : WordToStack.Native.compileWordToStackNative riscvConfig false (riscvConfig.regCount - (5 + riscvConfig.avoidRegs.length)) programs (bitmapPrefix, 4321) = result bitmapPrefix := compiled864_eq bitmapPrefix
 #print axioms compiled_eq
 end InitECandidate.Proofs.BackendStages.Chunk864_879
