@@ -777,9 +777,9 @@ private theorem tail_guard19 : baselineMachineConfig.progAddresses = (tailState1
   · rw [((tailState19_control (copyState 4617) input_pc).1)]; decide
   · rw [((tailState19_control (copyState 4617) input_pc).1)]; decide
 
-private theorem tail_step20 : asmStep riscvConfig (tailState20 (copyState 4617)) (bootLoc 6 0x80000094 0x800ddd08) (tailState21 (copyState 4617)) := by
-  apply checked_step_to (tailState20 (copyState 4617)) (tailState21 (copyState 4617)) (bootLoc 6 0x80000094 0x800ddd08) rfl
-  · exact installed_tail_instruction (tailState20 (copyState 4617)) 2147483796 (bootLoc 6 0x80000094 0x800ddd08)
+private theorem tail_step20 : asmStep riscvConfig (tailState20 (copyState 4617)) (bootLoc 6 0x80000094 0x800ddd94) (tailState21 (copyState 4617)) := by
+  apply checked_step_to (tailState20 (copyState 4617)) (tailState21 (copyState 4617)) (bootLoc 6 0x80000094 0x800ddd94) rfl
+  · exact installed_tail_instruction (tailState20 (copyState 4617)) 2147483796 (bootLoc 6 0x80000094 0x800ddd94)
       (by simp [bootstrapBlocks, bootLoc, bootConst, bootShift, bootStore])
       ((tailState20_control (copyState 4617) input_pc).1) ((tailState20_control (copyState 4617) input_pc).2.2.1.trans (copyState_fields 4617).2.1) tailState20_frame (by decide) (by decide)
   · exact (tailState20_control (copyState 4617) input_pc).2.2.2.1.trans (copyState_fields 4617).2.2.2.1
@@ -789,7 +789,7 @@ private theorem tail_step20 : asmStep riscvConfig (tailState20 (copyState 4617))
   · decide
 
 private theorem tail_guard20 : baselineMachineConfig.progAddresses = (tailState20 (copyState 4617)).memDomain ∧
-    ffiEntryPcsDisjoint baselineMachineConfig (tailState20 (copyState 4617)) (riscvEnc (bootLoc 6 0x80000094 0x800ddd08)).length := by
+    ffiEntryPcsDisjoint baselineMachineConfig (tailState20 (copyState 4617)) (riscvEnc (bootLoc 6 0x80000094 0x800ddd94)).length := by
   refine ⟨((tailState20_control (copyState 4617) input_pc).2.2.1.trans (copyState_fields 4617).2.1).symm, ?_⟩
   apply bootstrap_ffi_disjoint
   · rw [((tailState20_control (copyState 4617) input_pc).1)]; decide
@@ -1136,7 +1136,7 @@ private theorem tail_trace : TailCheckedTrace tailCode (tailState0 (copyState 46
     (bootStore 6 5 8)
     (bootLoc 6 0x80000088 initDataEnd)
     (bootStore 6 5 16)
-    (bootLoc 6 0x80000094 0x800ddd08)
+    (bootLoc 6 0x80000094 0x800ddd94)
     (bootStore 6 5 24)
     (bootLoc 6 0x800000a0 0x800de000)
     (bootStore 6 5 32)

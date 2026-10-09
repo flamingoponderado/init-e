@@ -29,7 +29,7 @@ theorem copyState_destination (words : Nat) :
   iterations_destination words InitE.copyEntryAsm
 
 private theorem concrete_memory_domain (a : BitVec 64) (lower upper : Nat)
-    (region : (lower = 0x800df000 ∧ upper = 0x800e8040) ∨
+    (region : (lower = 0x800df000 ∧ upper = 0x800e8048) ∨
       (lower = 0xa0020000 ∧ upper = 0xa0029048))
     (lo : lower ≤ a.toNat) (hi : a.toNat < upper) : InitE.bootstrapDomain a := by
   constructor
@@ -54,7 +54,7 @@ theorem concrete_domain_source (k : Nat) (hk : k < 4617) (j : Nat) (hj : j < 8) 
   have addr := wordAddress_toNat (0x800df000 : BitVec 64) k j (by simp; omega)
   have base : (0x800df000 : BitVec 64).toNat = 0x800df000 := by decide
   rw [base] at addr
-  apply concrete_memory_domain _ 0x800df000 0x800e8040 (Or.inl ⟨rfl, rfl⟩)
+  apply concrete_memory_domain _ 0x800df000 0x800e8048 (Or.inl ⟨rfl, rfl⟩)
   · rw [addr]; omega
   · rw [addr]; omega
 

@@ -14,7 +14,7 @@ def tailWrites (memory : BitVec 64 → BitVec 8) : BitVec 64 → BitVec 8 :=
   let memory := wmwMem false memory (BitVec.ofNat 64 sourceBase) 8 (0xa0020018 : BitVec 64)
   let memory := wmwMem false memory (BitVec.ofNat 64 (sourceBase+8)) 8 (0xa0029048 : BitVec 64)
   let memory := wmwMem false memory (BitVec.ofNat 64 (sourceBase+16)) 8 (0xa0029048 : BitVec 64)
-  let memory := wmwMem false memory (BitVec.ofNat 64 (sourceBase+24)) 8 (0x800ddd08 : BitVec 64)
+  let memory := wmwMem false memory (BitVec.ofNat 64 (sourceBase+24)) 8 (0x800ddd94 : BitVec 64)
   wmwMem false memory (BitVec.ofNat 64 (sourceBase+32)) 8 (0x800de000 : BitVec 64)
 
 

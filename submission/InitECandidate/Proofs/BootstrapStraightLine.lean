@@ -471,7 +471,7 @@ theorem tailState20_control (s : AsmState 64) (pc : s.pc = 0x8000002c) :
     obs.2.2.2.2.2.trans prev.2.2.2.2.2⟩
   exact (congrArg (fun p : BitVec 64 => p + 4) prev.1).trans (by decide)
 
-noncomputable def tailState21 (s : AsmState 64) := after (tailState20 s) (bootLoc 6 0x80000094 0x800ddd08)
+noncomputable def tailState21 (s : AsmState 64) := after (tailState20 s) (bootLoc 6 0x80000094 0x800ddd94)
 
 theorem tailState21_control (s : AsmState 64) (pc : s.pc = 0x8000002c) :
     (tailState21 s).pc = 2147483804#64 ∧

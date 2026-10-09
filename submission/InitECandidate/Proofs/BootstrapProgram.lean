@@ -55,7 +55,7 @@ def bootstrapBlocks : List (Nat × HolAsm 64) := [
   (0x80000084, bootStore 6 5 8),
   (0x80000088, bootLoc 6 0x80000088 initDataEnd),
   (0x80000090, bootStore 6 5 16),
-  (0x80000094, bootLoc 6 0x80000094 0x800ddd08),
+  (0x80000094, bootLoc 6 0x80000094 0x800ddd94),
   (0x8000009c, bootStore 6 5 24),
   (0x800000a0, bootLoc 6 0x800000a0 0x800de000),
   (0x800000a8, bootStore 6 5 32),
@@ -81,6 +81,6 @@ theorem bootstrap_instructions_admitted :
 
 def bootstrapSteps : Nat := 6 + 5 * initDataWords + 41
 
-theorem bootstrapSteps_eq : bootstrapSteps = 23127 := by decide
+theorem bootstrapSteps_eq : bootstrapSteps = 23132 := by decide
 
 end InitE
