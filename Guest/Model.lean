@@ -209,9 +209,14 @@ def guestHostFfi : PanValueStatefulFfiHandler Word HostMemory :=
 
 /-- Sub-word accesses follow CakeML's aligned-cell model with the RISC-V byte
 layout: `ld8`/`st8`/`ld32`/`st32` extract or patch bytes of the aligned word
-cell (`Flapjack.RiscV.panRiscVMemoryModel`). -/
+cell (`Flapjack.RiscV.panRiscVMemoryModel`). Ordinary accesses are confined to
+the aligned cells of `[heapBase, heapEnd)`, the challenge's `ordinaryDomain`,
+so a store the source semantics rejects ends the run as `.error`. -/
 def guestMemoryAccess : PanValueMemoryAccess Word :=
   panValueMemoryAccessOfModel RiscV.panRiscVMemoryModel
+    (domain := fun address =>
+      decide (heapBase ≤ address ∧ address < heapEnd ∧ address.toNat % 8 = 0))
+    (sharedDomain := fun _ => true)
 
 /-! ### The run -/
 
