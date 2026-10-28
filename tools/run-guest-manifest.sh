@@ -6,12 +6,13 @@
 # compare the guest's output region with the expected bytes. Prints one
 # OK/MISMATCH/TIMEOUT line per input and exits non-zero unless all are OK.
 # The model is an interpreter: heavy blocks can take far longer than on a
-# machine, so SECONDS (default 3600) bounds each run.
+# machine, so SECONDS (default 14400) bounds each run; the heaviest
+# sample blocks take about 70 minutes.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 manifest="${1:?usage: run-guest-manifest.sh MANIFEST [JOBS] [SECONDS]}"
 jobs="${2:-8}"
-seconds="${3:-3600}"
+seconds="${3:-14400}"
 cd "$ROOT"
 lake build run-guest >/dev/null
 export RUN_GUEST="$ROOT/.lake/build/bin/run-guest" SECONDS_LIMIT="$seconds"
