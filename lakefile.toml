@@ -91,3 +91,12 @@ supportInterpreter = true
 name = "regenerate-backend-finishing"
 root = "Tools.RegenerateBackendFinishing"
 supportInterpreter = true
+
+# The proved EEST runner (Runner/); `lake exe eest-runner [ELF] INPUT OUTPUT`.
+# Not part of the challenge build.
+[[lean_lib]]
+name = "Runner"
+
+[[lean_exe]]
+name = "eest-runner"
+root = "Runner.Main"
