@@ -104,6 +104,10 @@ are in [docs/TESTING.md](docs/TESTING.md). The full EEST procedure is in
 [docs/EEST-SPIKE.md](docs/EEST-SPIKE.md). Tests help develop candidates; submitting
 a solution requires proofs.
 
+[Runner/README.md](Runner/README.md) describes a native EEST runner for the
+software guest. It is proved to agree with the Pancake source semantics, and
+it is not part of the default build.
+
 ## Verification status
 
 The challenge definition builds with the current software guest. The initial
