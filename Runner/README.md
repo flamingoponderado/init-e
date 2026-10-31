@@ -80,3 +80,15 @@ manifest, run with `--jobs 24` (3m24s wall clock):
 * 300 cases are `PASS(full)` and 9 are `PASS(malformed)`.
 * The output bytes, debug bytes, trap and stage markers all agree with a recorded
   Spike run of guest commit 45e6117f.
+
+On the full manifest (33,614 cases), run with `--jobs 24` (7h52m wall clock):
+
+* 33,605 cases are `PASS(full)` and 9 are `PASS(malformed)`. None fail, error
+  or time out.
+* Every case's output bytes, debug bytes, trap, stage marker and class agree
+  with the recorded Spike run.
+* The median case takes 5.2 s and the 90th percentile 8.6 s. 199 cases take
+  over 10 minutes and 22 over an hour, the slowest being the BLS12-381 G2 MSM
+  gas-discount tests (up to 2h38m).
+* The ten 8 MB RLP-limit blocks (cases 21566–21575) finish in 17–65 minutes.
+  The extracted Rocq runner ran out of its 8-hour timeout on them.
